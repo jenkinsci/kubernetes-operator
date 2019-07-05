@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -46,14 +47,16 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *v1.Pod {
 	return &podList.Items[0]
 }
 
-func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins) (jenkinsclient.Jenkins, error) {
+func createJenkinsAPIClient(t *testing.T, jenkins *v1alpha2.Jenkins) (jenkinsclient.Jenkins, error) {
 	adminSecret := &v1.Secret{}
 	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
 	if err := framework.Global.Client.Get(context.TODO(), namespaceName, adminSecret); err != nil {
 		return nil, err
 	}
 
-	jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins), resources.HTTPPortInt, true, true)
+	//jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins), resources.HTTPPortInt, true, true)
+	jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins), jenkins.Spec.Service.NodePort, true, true)
+
 	if err != nil {
 		return nil, err
 	}
@@ -139,10 +142,8 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 }
 
 func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins) jenkinsclient.Jenkins {
-	client, err := createJenkinsAPIClient(jenkins)
-	if err != nil {
-		t.Fatal(err)
-	}
+	client, err := createJenkinsAPIClient(t, jenkins)
+	require.NoError(t, err)
 
 	t.Log("I can establish connection to Jenkins API")
 	return client

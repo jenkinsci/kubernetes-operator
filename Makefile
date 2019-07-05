@@ -269,6 +269,7 @@ docker-login: ## Log in into the Docker repository
 .PHONY: docker-build
 docker-build: check-env build ## Build the container
 	@echo "+ $@"
+	env | grep DOCKER
 	docker build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile
 
 .PHONY: docker-images
@@ -390,3 +391,27 @@ endif
 	@echo "Dependencies:"
 	go mod vendor -v
 	@echo
+
+.PHONY: image
+image: ## Create the docker image from the Dockerfile
+	@echo "+ $@"
+	docker build --rm --force-rm --no-cache \
+	--build-arg GO_VERSION=$(GO_VERSION) \
+	--build-arg MINIKUBE_VERSION=$(MINIKUBE_VERSION) \
+	--build-arg OPERATOR_SDK_VERSION=$(OPERATOR_SDK_VERSION) \
+	-t infrastructure/runner .
+
+.PHONY: indocker
+PWD := $(shell pwd)
+DOCKER_HOST_IP := $(shell minikube docker-env | grep DOCKER_HOST | cut -d '"' -f 2)
+MINIKUBE_IP := $(shell minikube ip)
+indocker: image ## Run make in a docker container
+	@echo "+ $@"
+	docker run --rm -it $(DOCKER_FLAGS) \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		--mount type=bind,source=$(PWD),target=/go/src/github.com/jenkinsci/kubernetes-operator \
+		--mount type=bind,source=$(HOME)/.minikube,target=/minikube \
+		--mount type=bind,source=$(HOME)/.kube,target=/home/builder/.kube \
+		-e DOCKER_HOST=$(DOCKER_HOST_IP) \
+		-e MINIKUBE_IP=$(MINIKUBE_IP) \
+		infrastructure/runner

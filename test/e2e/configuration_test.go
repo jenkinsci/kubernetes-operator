@@ -69,6 +69,8 @@ func TestConfiguration(t *testing.T) {
 	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 
+	verifyPodIsPropagated(t, jenkins)
+
 	verifyJenkinsMasterPodAttributes(t, jenkins)
 	client := verifyJenkinsAPIConnection(t, jenkins)
 	verifyPlugins(t, client, jenkins)
@@ -77,6 +79,14 @@ func TestConfiguration(t *testing.T) {
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 	verifyUserConfiguration(t, client, numberOfExecutors, systemMessage)
 	verifyJenkinsSeedJobs(t, client, []seedJobConfig{mySeedJob})
+}
+
+func verifyPodIsPropagated(t *testing.T, jenkins *v1alpha2.Jenkins) {
+	jenkinsPod := getJenkinsMasterPod(t, jenkins)
+	jenkins = getJenkins(t, jenkins.Namespace, jenkins.Name)
+
+	assert.Equal(t, jenkins.Spec.Master.SecurityContext, jenkinsPod.Spec.SecurityContext)
+	assert.Equal(t, jenkins.Spec.Master.Containers[0].Command, jenkinsPod.Spec.Containers[0].Command)
 }
 
 func createUserConfigurationSecret(t *testing.T, namespace string, systemMessageEnvName, systemMessage string) {
@@ -241,7 +251,6 @@ func verifyPlugins(t *testing.T, jenkinsClient jenkinsclient.Jenkins, jenkins *v
 		}
 	}
 
-	t.Log("All plugins have been installed")
 }
 
 func isPluginValid(plugins *gojenkins.Plugins, requiredPlugin plugins.Plugin) (*gojenkins.Plugin, bool) {

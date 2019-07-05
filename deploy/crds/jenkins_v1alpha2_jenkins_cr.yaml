@@ -8,13 +8,16 @@ spec:
     - name: jenkins-master
       image: jenkins/jenkins:lts
       imagePullPolicy: Always
+#      env:
+#        - name: JENKINS_UC
+#          value: "http://ftp-chi.osuosl.org/pub/jenkins/"
       livenessProbe:
         failureThreshold: 12
         httpGet:
           path: /login
           port: http
           scheme: HTTP
-        initialDelaySeconds: 80
+        initialDelaySeconds: 360
         periodSeconds: 10
         successThreshold: 1
         timeoutSeconds: 5
@@ -24,7 +27,7 @@ spec:
           path: /login
           port: http
           scheme: HTTP
-        initialDelaySeconds: 30
+        initialDelaySeconds: 360
         periodSeconds: 10
         successThreshold: 1
         timeoutSeconds: 1
