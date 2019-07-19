@@ -209,7 +209,8 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 	if !valid {
 		r.events.Emit(jenkins, event.TypeWarning, reasonCRValidationFailure, "Base CR validation failed")
 		logger.V(log.VWarn).Info("Validation of base configuration failed, please correct Jenkins CR")
-		return reconcile.Result{}, nil // don't requeue
+
+		return reconcile.Result{Requeue:true}, nil // now requeue
 	}
 
 	result, jenkinsClient, err := baseConfiguration.Reconcile()

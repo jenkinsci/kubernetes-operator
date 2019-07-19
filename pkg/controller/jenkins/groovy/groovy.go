@@ -100,7 +100,7 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 			return true, err
 		}
 	}
-
+	configMapCounter := make(map[string]int)
 	for _, configMapRef := range g.customization.Configurations {
 		configMap := &corev1.ConfigMap{}
 		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: g.jenkins.ObjectMeta.Namespace}, configMap)
@@ -113,7 +113,6 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 			names = append(names, name)
 		}
 		sort.Strings(names)
-
 		for _, name := range names {
 			groovyScript := updateGroovyScript(configMap.Data[name])
 			if !filter(name) {
@@ -122,7 +121,27 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 			}
 
 			hash := g.calculateCustomizationHash(*secret, name, groovyScript)
+
 			if g.isGroovyScriptAlreadyApplied(configMap.Name, name, hash) {
+				g.logger.V(log.VDebug).Info(fmt.Sprintf("Groovy script applied: %s, Hash: %s", name, hash))
+
+				if _, exists := configMapCounter[hash]; !exists {
+					configMapCounter[hash] = 1
+				} else {
+					configMapCounter[hash] = configMapCounter[hash] + 1
+				}
+
+				if configMapCounter[hash] >= 2 {
+					g.logger.V(log.VDebug).Info("Found two groovy scripts with same hashes")
+
+					err := g.k8sClient.Delete(context.TODO(), configMap)
+					if err != nil {
+						return true, errors.WithStack(err)
+					}
+
+					delete(configMapCounter, hash)
+					return true, errors.WithStack(err)
+				}
 				continue
 			}
 

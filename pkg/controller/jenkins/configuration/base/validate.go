@@ -353,6 +353,7 @@ func (r *ReconcileJenkinsBaseConfiguration) validateCustomization(customization 
 		configMap := &corev1.ConfigMap{}
 		err := r.k8sClient.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: r.jenkins.ObjectMeta.Namespace}, configMap)
 		if err != nil && apierrors.IsNotFound(err) {
+			r.logger.V(log.VWarn).Info(fmt.Sprintf("Config Map Name: " + configMap.Name ))
 			valid = false
 			r.logger.V(log.VWarn).Info(fmt.Sprintf("ConfigMap '%s' configured in %s.configurations[%d] not found", configMapRef.Name, name, index))
 			return false, nil
