@@ -1,7 +1,7 @@
 package plugins
 
 const (
-	configurationAsCodePlugin           = "configuration-as-code:1.29"
+	configurationAsCodePlugin           = "configuration-as-code:1.30"
 	configurationAsCodeSupportPlugin    = "configuration-as-code-support:1.19"
 	gitPlugin                           = "git:3.12.1"
 	jobDslPlugin                        = "job-dsl:1.76"
