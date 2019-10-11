@@ -7,11 +7,11 @@ description: >
   How to customize Jenkins
 ---
 
-Jenkins can be customized using groovy scripts or configuration as code plugin. All custom configuration is stored in
-the **jenkins-operator-user-configuration-<cr_name>** ConfigMap which is automatically created by **Jenkins Operator**.
+Jenkins can be customized using groovy scripts or the configuration as code plugin. All custom configuration is stored in
+the **jenkins-operator-user-configuration-<cr_name>** ConfigMap which is automatically created by the **Jenkins Operator**.
 
-**Jenkins Operator** creates **jenkins-operator-user-configuration-<cr_name>** secret where user can store sensitive 
-information used for custom configuration. If you have entry in secret named `PASSWORD` then you can use it in 
+The **Jenkins Operator** creates a **jenkins-operator-user-configuration-<cr_name>** secret where the user can store sensitive 
+information used for custom configuration. If you have an entry in the secret named `PASSWORD` then you can use it in the 
 Configuration as Plugin as `adminAddress: "${PASSWORD}"`.
 
 ```
@@ -63,9 +63,9 @@ metadata:
   namespace: default
 ``` 
 
-When **jenkins-operator-user-configuration-<cr_name>** ConfigMap is updated Jenkins automatically 
+When the **jenkins-operator-user-configuration-<cr_name>** ConfigMap is updated Jenkins automatically 
 runs the **jenkins-operator-user-configuration** Jenkins Job which executes all scripts then
-runs the **jenkins-operator-user-configuration-casc** Jenkins Job which applies Configuration as Code configuration.
+runs the **jenkins-operator-user-configuration-casc** Jenkins Job which applies the Configuration as Code configuration.
 
 ## Install Plugins
 
@@ -83,7 +83,7 @@ spec:
      version: 0.5.1
 ```
 
-Under `spec.master.basePlugins` you can find plugins for valid **Jenkins Operator** work:
+Under `spec.master.basePlugins` you can find plugins for a valid **Jenkins Operator**:
 
 ```yaml
 apiVersion: jenkins.io/v1alpha2
@@ -111,6 +111,6 @@ spec:
       version: 0.12.1
 ```
 
-You can change version of them.
+You can change their versions.
 
-Then **Jenkins Operator** will automatically install plugins after Jenkins master pod restart.
+Then the **Jenkins Operator** will automatically install those plugins after the Jenkins master pod restart.
