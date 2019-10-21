@@ -310,6 +310,9 @@ type JenkinsMaster struct {
 	// Plugins contains plugins required by user
 	// +optional
 	Plugins []Plugin `json:"plugins,omitempty"`
+
+        //BuildersServiceAccountName Name of the SA bound to the builder
+	BuilderServiceAccountName string `json:"builderServiceAccountName,omitempty"`
 }
 
 // Service defines Kubernetes service attributes

@@ -393,6 +393,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 							},
 						},
 					},
+                                        ServiceAccountName: jenkins.Spec.Master.BuilderServiceAccountName,
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
