@@ -77,16 +77,7 @@ func (r *ReconcileJenkinsBaseConfiguration) Reconcile() (reconcile.Result, jenki
 	}
 	r.logger.V(log.VDebug).Info("Kubernetes resources are present")
 
-	result, err := r.waitForVolumes()
-	if err != nil {
-		return reconcile.Result{}, nil, err
-	}
-	if result.Requeue {
-		return result, nil, nil
-	}
-	r.logger.V(log.VDebug).Info("Jenkins master pod volumes are ready")
-
-	result, err = r.ensureJenkinsMasterPod(metaObject)
+	result, err := r.ensureJenkinsMasterPod(metaObject)
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
@@ -204,26 +195,6 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureResourcesRequiredForJenkinsPod
 	r.logger.V(log.VDebug).Info("Jenkins slave Service is present")
 
 	return nil
-}
-
-func (r *ReconcileJenkinsBaseConfiguration) waitForVolumes() (reconcile.Result, error) {
-	for _, volume := range r.jenkins.Spec.Master.Volumes {
-		if volume.PersistentVolumeClaim != nil {
-			pvc := &corev1.PersistentVolumeClaim{}
-			err := r.k8sClient.Get(context.TODO(), types.NamespacedName{Name: volume.PersistentVolumeClaim.ClaimName, Namespace: r.jenkins.ObjectMeta.Namespace}, pvc)
-			if err != nil {
-				return reconcile.Result{}, err
-			}
-
-			if pvc.Status.Phase != corev1.ClaimBound {
-				r.logger.V(log.VWarn).Info(fmt.Sprintf("PersistentVolumeClaim '%s' have invalid state '%s' - required '%s', volume '%v'",
-					volume.PersistentVolumeClaim.ClaimName, pvc.Status.Phase, corev1.ClaimBound, volume))
-				return reconcile.Result{Requeue: true, RequeueAfter: time.Second * 5}, nil
-			}
-		}
-	}
-
-	return reconcile.Result{}, nil
 }
 
 func (r *ReconcileJenkinsBaseConfiguration) verifyPlugins(jenkinsClient jenkinsclient.Jenkins) (bool, error) {

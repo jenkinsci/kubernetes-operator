@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "0.2.2"
 description: Kubernetes native operator which fully manages Jenkins on Kubernetes
 name: jenkins-operator
-version: 0.0.2
+version: 0.0.3

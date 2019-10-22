@@ -1,0 +1,5 @@
+channels:
+- currentCSV: jenkins-operator.v0.2.2
+  name: alpha
+defaultChannel: alpha
+packageName: jenkins-operator

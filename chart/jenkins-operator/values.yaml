@@ -14,41 +14,42 @@ nameOverride: ""
 fullnameOverride: ""
 
 jenkins:
-    apiVersion: jenkins.io/v1alpha2
-    name: example
-    spec:
-      master:
-        containers:
-          - name: jenkins-master
-            image: jenkins/jenkins:lts
-            imagePullPolicy: Always
-            livenessProbe:
-              failureThreshold: 12
-              httpGet:
-                path: /login
-                port: http
-                scheme: HTTP
-              initialDelaySeconds: 80
-              periodSeconds: 10
-              successThreshold: 1
-              timeoutSeconds: 5
-            readinessProbe:
-              failureThreshold: 3
-              httpGet:
-                path: /login
-                port: http
-                scheme: HTTP
-              initialDelaySeconds: 30
-              periodSeconds: 10
-              successThreshold: 1
-              timeoutSeconds: 1
-            resources:
-              limits:
-                cpu: 1500m
-                memory: 3Gi
-              requests:
-                cpu: "1"
-                memory: 500Mi
+  enabled: true
+  apiVersion: jenkins.io/v1alpha2
+  name: example
+  spec:
+    master:
+      containers:
+        - name: jenkins-master
+          image: jenkins/jenkins:lts
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 12
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 80
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /login
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 3Gi
+            requests:
+              cpu: "1"
+              memory: 500Mi
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

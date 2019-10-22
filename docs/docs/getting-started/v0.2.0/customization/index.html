@@ -35,7 +35,7 @@
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="239">
+<meta itemprop="wordCount" content="252">
 
 
 
@@ -458,11 +458,11 @@
 	<div class="lead">How to customize Jenkins</div>
 	
 
-<p>Jenkins can be customized using groovy scripts or <a href="https://github.com/jenkinsci/configuration-as-code-plugin" target="_blank">configuration as code plugin</a>.
-By using <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" target="_blank">ConfigMap</a> you can create own <strong>Jenkins</strong> customized configuration.
-Then you must reference the <em>ConfigMap</em> in <strong>Jenkins</strong> pod customization file in <code>spec.groovyScripts</code> or <code>spec.configurationAsCode</code></p>
+<p>Jenkins can be customized using groovy scripts or the <a href="https://github.com/jenkinsci/configuration-as-code-plugin" target="_blank">configuration as code plugin</a>.
+By using a <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/" target="_blank">ConfigMap</a> you can create your own <strong>Jenkins</strong> customized configuration.
+Then you must reference the <em>ConfigMap</em> in the <strong>Jenkins</strong> pod customization file in <code>spec.groovyScripts</code> or <code>spec.configurationAsCode</code></p>
 
-<p>For example create <em>ConfigMap</em> with name <code>jenkins-operator-user-configuration</code>. Then, modify the <strong>Jenkins</strong> manifest to look like this:</p>
+<p>For example create a <em>ConfigMap</em> with name <code>jenkins-operator-user-configuration</code>. Then, modify the <strong>Jenkins</strong> manifest to look like this:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins.io/v1alpha2<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -474,7 +474,7 @@ Then you must reference the <em>ConfigMap</em> in <strong>Jenkins</strong> pod c
 </span><span style="color:#f8f8f8;text-decoration:underline">  </span>groovyScripts<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration</code></pre></div>
-<p>Here is example of <code>jenkins-operator-user-configuration</code>:</p>
+<p>Here is an example of <code>jenkins-operator-user-configuration</code>:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>ConfigMap<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -508,15 +508,15 @@ Then you must reference the <em>ConfigMap</em> in <strong>Jenkins</strong> pod c
 <li>*.yaml is configuration as code</li>
 </ul>
 
-<p>If you want to correct your configuration you can edit it while <strong>Jenkins Operator</strong> is running.
-Jenkins will reconcile and apply new configuration.</p>
+<p>If you want to correct your configuration you can edit it while the <strong>Jenkins Operator</strong> is running.
+Jenkins will reconcile and apply the new configuration.</p>
 
-<h3 id="using-secrets-inside-groovy-script">Using secrets inside Groovy script</h3>
+<h3 id="using-secrets-from-a-groovy-script">Using secrets from a Groovy script</h3>
 
-<p>If you configured <code>spec.groovyScripts.secret.name</code>, then this secret is available to use inside map Groovy scripts.
+<p>If you configured <code>spec.groovyScripts.secret.name</code>, then this secret is available to use from map Groovy scripts.
 The secrets are loaded to <code>secrets</code> map.</p>
 
-<p>Create a <a href="https://kubernetes.io/docs/concepts/configuration/secret/" target="_blank">secret</a> with for eg. <code>jenkins-conf-secrets</code> name.</p>
+<p>Create a <a href="https://kubernetes.io/docs/concepts/configuration/secret/" target="_blank">secret</a> with for example the name <code>jenkins-conf-secrets</code>.</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Secret<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>type<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Opaque<span style="color:#f8f8f8;text-decoration:underline">
@@ -556,7 +556,7 @@ The secrets are loaded to <code>secrets</code> map.</p>
 </span><span style="color:#f8f8f8;text-decoration:underline">    
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>jenkins.setSystemMessage(secrets<span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;SYSTEM_MESSAGE&#34;</span><span style="color:#000;font-weight:bold">]</span>)<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>jenkins.save()</code></pre></div>
-<p>Or by applying configuration as code:</p>
+<p>Or by applying this configuration as code:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>ConfigMap<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -565,7 +565,7 @@ The secrets are loaded to <code>secrets</code> map.</p>
 </span><span style="color:#f8f8f8;text-decoration:underline">  </span><span style="color:#0000cf;font-weight:bold">1</span>-system-message.yaml<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#8f5902;font-style:italic">|
 </span><span style="color:#8f5902;font-style:italic">    jenkins:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">      </span>systemMessage<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>${SYSTEM_MESSAGE}</code></pre></div>
-<p>After this, you should see the <code>Hello world</code> system message at <strong>Jenkins</strong> homepage.</p>
+<p>After this, you should see the <code>Hello world</code> system message from the <strong>Jenkins</strong> homepage.</p>
 
 <h2 id="install-plugins">Install Plugins</h2>
 
@@ -582,7 +582,7 @@ spec:
      version: 0.5.1
 </code></pre>
 
-<p>Under <code>spec.master.basePlugins</code> you can find plugins for valid <strong>Jenkins Operator</strong> work:</p>
+<p>Under <code>spec.master.basePlugins</code> you can find plugins for a valid <strong>Jenkins Operator</strong>:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins.io/v1alpha2<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -606,9 +606,9 @@ spec:
 </span><span style="color:#f8f8f8;text-decoration:underline">      </span>version<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;1.19&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>kubernetes-credentials-provider<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">      </span>version<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#0000cf;font-weight:bold">0.12</span>.<span style="color:#0000cf;font-weight:bold">1</span></code></pre></div>
-<p>You can change version of them.</p>
+<p>You can change their versions.</p>
 
-<p>Then <strong>Jenkins Operator</strong> will automatically install plugins after Jenkins master pod restart.</p>
+<p>Then the <strong>Jenkins Operator</strong> will automatically install plugins after the Jenkins master pod restarts.</p>
 
 	
 	

@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
 [![Docker Pulls](https://img.shields.io/docker/pulls/virtuslab/jenkins-operator.svg)](https://hub.docker.com/r/virtuslab/jenkins-operator/tags)
 
-Visit [website](https://jenkinsci.github.io/kubernetes-operator/) for the full documentation, examples and guides.
+Go to [**our documentation website**](https://jenkinsci.github.io/kubernetes-operator/) for more informaiton, with examples and guides.
 
 ![logo](/assets/jenkins_gopher_wide.png)
 
@@ -15,10 +15,10 @@ Jenkins operator is a Kubernetes native operator which fully manages Jenkins on 
 It was built with immutability and declarative configuration as code in mind.
 
 Out of the box it provides:
-- integration with Kubernetes
-- pipelines as code
-- extensibility via groovy scripts or configuration as code plugin
-- security and hardening
+- integration with Kubernetes ([Jenkins kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin))
+- pipelines as code ([Jenkins pipelines](https://jenkins.io/doc/book/pipeline/))
+- extensibility via groovy scripts (simmilar to [Jenkins script console](https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console)) or ([configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin))
+- secure defaults and hardening (see [the security section](https://jenkinsci.github.io/kubernetes-operator/docs/security/) of the documentaiton)
 
 ## Problem statement and goals
 

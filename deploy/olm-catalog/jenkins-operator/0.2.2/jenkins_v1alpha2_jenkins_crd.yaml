@@ -10,6 +10,7 @@ spec:
     plural: jenkins
     singular: jenkins
   scope: Namespaced
+  version: v1alpha2
   versions:
     - name : v1alpha2
       served: true
