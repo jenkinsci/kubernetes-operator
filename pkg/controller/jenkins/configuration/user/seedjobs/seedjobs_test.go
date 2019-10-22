@@ -86,7 +86,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 			},
 		}
 
-		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0])
+		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0],jenkins)
 		assert.NoError(t, err)
 
 		jenkinsClient.EXPECT().GetNode(AgentName).Return(nil, nil).AnyTimes()
@@ -158,6 +158,7 @@ func TestCreateAgent(t *testing.T) {
 
 		agentSecret := "test-secret"
 		jenkins := jenkinsCustomResource()
+                agentDetails := getAgentDetails(jenkins)
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
 		fakeClient := fake.NewFakeClient()
@@ -179,7 +180,7 @@ func TestCreateAgent(t *testing.T) {
 		assert.NoError(t, err)
 
 		// when
-		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkinsCustomResource(), jenkins.Namespace, AgentName)
+		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkinsCustomResource(), jenkins.Namespace, agentDetails)
 
 		// then
 		assert.NoError(t, err)

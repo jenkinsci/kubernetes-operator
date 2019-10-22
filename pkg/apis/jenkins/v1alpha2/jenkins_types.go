@@ -52,6 +52,10 @@ type JenkinsSpec struct {
 	// ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin
 	// +optional
 	ConfigurationAsCode ConfigurationAsCode `json:"configurationAsCode,omitempty"`
+
+	// Agent defines configuration of the build Agents
+	// +optional
+        Agent Agent `json:"agent,omitempty"`
 }
 
 // NotificationLogLevel defines logging level of Notification
@@ -214,6 +218,15 @@ type Plugin struct {
 	Version string `json:"version"`
 }
 
+// Plugin defines Jenkins agent
+type Agent struct {
+	// Name is the name of Jenkins Agent
+	Name string `json:"name"`
+	// Image to be used for the Jenkins Agent
+	Image string `json:"image"`
+	// ServiceAccountName to be used on the Jenins Agent
+	ServiceAccountName string `json:"serviceAccountName"`
+}
 // JenkinsMaster defines the Jenkins master pod attributes and plugins,
 // every single change requires a Jenkins master pod restart
 type JenkinsMaster struct {
