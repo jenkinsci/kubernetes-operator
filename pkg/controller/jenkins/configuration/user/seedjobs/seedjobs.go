@@ -168,7 +168,7 @@ func (s *SeedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 		err := s.k8sClient.Delete(context.TODO(), &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: jenkins.Namespace,
-				Name:      agentDeploymentName(*jenkins, userAgentDetails["AgentName"]),
+				Name:      agentDeploymentName(*jenkins, userAgentDetails.AgentName),
 			},
 		})
 
@@ -318,12 +318,12 @@ func (s *SeedJobs) isRecreatePodNeeded(jenkins v1alpha2.Jenkins) bool {
 }
 
 // createAgent deploys Jenkins agent to Kubernetes cluster
-func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentDetails map[string]string) error {
-	_, err := jenkinsClient.GetNode(agentDetails["AgentName"])
+func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentDetails *agentDetails) error {
+	_, err := jenkinsClient.GetNode(agentDetails.AgentName)
 
 	// Create node if not exists
 	if err != nil && err.Error() == "No node found" {
-		_, err = jenkinsClient.CreateNode(agentDetails["AgentName"], 1, "The jenkins-operator generated agent", "/home/jenkins", agentDetails["AgentName"])
+		_, err = jenkinsClient.CreateNode(agentDetails.AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", agentDetails.AgentName)
 		if err != nil {
 			return stackerr.WithStack(err)
 		}
@@ -331,7 +331,7 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 		return stackerr.WithStack(err)
 	}
 
-	secret, err := jenkinsClient.GetNodeSecret(agentDetails["AgentName"])
+	secret, err := jenkinsClient.GetNodeSecret(agentDetails.AgentName)
 	if err != nil {
 		return err
 	}
@@ -355,10 +355,10 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 	return fmt.Sprintf("%s-%s", agentName, jenkins.Name)
 }
 
-func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, secret string, agentDetails map[string]string) *apps.Deployment {
+func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, secret string, agentDetails *agentDetails) *apps.Deployment {
 	return &apps.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      agentDeploymentName(*jenkins, agentDetails["AgentName"]),
+			Name:      agentDeploymentName(*jenkins, agentDetails.AgentName),
 			Namespace: namespace,
 		},
 		Spec: apps.DeploymentSpec{
@@ -366,8 +366,8 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, secret string,
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Name:  agentDetails["AgentName"],
-							Image: agentDetails["AgentImage"],
+							Name:  agentDetails.AgentName,
+							Image: agentDetails.AgentImage,
 							Env: []corev1.EnvVar{
 								{
 									Name: "JENKINS_TUNNEL",
@@ -382,7 +382,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, secret string,
 								},
 								{
 									Name:  "JENKINS_AGENT_NAME",
-									Value: agentDetails["AgentName"],
+									Value: agentDetails.AgentName,
 								},
 								{
 									Name: "JENKINS_URL",
@@ -399,41 +399,46 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, secret string,
 							},
 						},
 					},
-					ServiceAccountName: agentDetails["ServiceAccountName"],
+					ServiceAccountName: agentDetails.AgentServiceAccountName,
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"app": fmt.Sprintf("%s-selector", agentDetails["AgentName"]),
+						"app": fmt.Sprintf("%s-selector", agentDetails.AgentName),
 					},
 				},
 			},
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": fmt.Sprintf("%s-selector", agentDetails["AgentName"]),
+					"app": fmt.Sprintf("%s-selector", agentDetails.AgentName),
 				},
 			},
 		},
 	}
 }
 
-func getAgentDetails(jenkins *v1alpha2.Jenkins) map[string]string {
-	m := make(map[string]string)
+type agentDetails struct {
+	AgentName string
+	AgentImage string
+	AgentServiceAccountName string
+}
+func getAgentDetails(jenkins *v1alpha2.Jenkins) *agentDetails {
+	details := agentDetails{}
 	if jenkins.Spec.Agent.Name != "" {
-		m["AgentName"] = jenkins.Spec.Agent.Name
+		details.AgentName = jenkins.Spec.Agent.Name
 	} else {
-		m["AgentName"] = AgentName
+		details.AgentName = AgentName
 	}
 	if jenkins.Spec.Agent.Image != "" {
-		m["AgentImage"] = jenkins.Spec.Agent.Image
+		details.AgentImage = jenkins.Spec.Agent.Image
 	} else {
-		m["AgentImage"] = AgentImage
+		details.AgentImage = AgentImage
 	}
 	if jenkins.Spec.Agent.ServiceAccountName != "" {
-		m["AgentServiceAccountName"] = jenkins.Spec.Agent.ServiceAccountName
+		details.AgentServiceAccountName = jenkins.Spec.Agent.ServiceAccountName
 	} else {
-		m["AgentServiceAccountName"] = AgentServiceAccountName
+		details.AgentServiceAccountName = AgentServiceAccountName
 	}
-	return m
+	return &details
 }
 
 func seedJobCreatingGroovyScript(seedJob v1alpha2.SeedJob, jenkins *v1alpha2.Jenkins) (string, error) {
@@ -467,7 +472,7 @@ func seedJobCreatingGroovyScript(seedJob v1alpha2.SeedJob, jenkins *v1alpha2.Jen
 		FailOnMissingPlugin:   seedJob.FailOnMissingPlugin,
 		UnstableOnDeprecation: seedJob.UnstableOnDeprecation,
 		SeedJobSuffix:         constants.SeedJobSuffix,
-		AgentName:             userAgentDetails["AgentName"],
+		AgentName:             userAgentDetails.AgentName,
 	}
 
 	output, err := render.Render(seedJobGroovyScriptTemplate, data)
