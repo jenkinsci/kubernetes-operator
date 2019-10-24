@@ -7,13 +7,13 @@ description: >
   Prevent loss of job history
 ---
 
-Backup and restore is done by container sidecar.
+Backup and restore is done by a container sidecar.
 
 ### PVC
 
 #### Create PVC
 
-Save to file pvc.yaml:
+Save to the file named pvc.yaml:
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -28,7 +28,7 @@ spec:
       storage: 500Gi
 ```
 
-Run command:
+Run the following command:
 ```bash
 $ kubectl -n <namespace> create -f pvc.yaml
 ```
@@ -49,7 +49,7 @@ spec:
     containers:
     - name: jenkins-master
       image: jenkins/jenkins:lts
-    - name: backup # container responsible for backup and restore
+    - name: backup # container responsible for the backup and restore
       env:
       - name: BACKUP_DIR
         value: /backup
@@ -75,7 +75,7 @@ spec:
         command:
         - /home/user/bin/backup.sh # this command is invoked on "backup" container to make backup, for example /home/user/bin/backup.sh <backup_number>, <backup_number> is passed by operator
     interval: 30 # how often make backup in seconds
-    makeBackupBeforePodDeletion: true # make backup before pod deletion
+    makeBackupBeforePodDeletion: true # make a backup before pod deletion
   restore:
     containerName: backup # container name is responsible for restore backup
     action:
