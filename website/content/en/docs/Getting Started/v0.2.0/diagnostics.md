@@ -35,7 +35,7 @@ kubectl logs deployment/jenkins-operator
 
 ## Troubleshooting
 
-Delete Jenkins master pod and wait for the new one to come up:
+Delete the Jenkins master pod and wait for the new one to come up:
 
 ```bash
 kubectl delete pod jenkins-<cr_name>
