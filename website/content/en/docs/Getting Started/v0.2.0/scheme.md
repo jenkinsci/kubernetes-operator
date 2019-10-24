@@ -19,7 +19,7 @@ This document contains API scheme for `jenkins-operator` manifest
 </ul>
 <h2 id="jenkins.io">jenkins.io</h2>
 <p>
-<p>Package v1alpha2 contains API Schema definitions for the jenkins.io v1alpha2 API group</p>
+<p>Package v1alpha2 contains the API Schema definitions for the jenkins.io v1alpha2 API group</p>
 </p>
 Resource Types:
 <ul><li>
@@ -108,7 +108,7 @@ Every single change here requires a pod restart.</p>
 </td>
 <td>
 <em>(Optional)</em>
-<p>SeedJobs defines list of Jenkins Seed Job configurations
+<p>SeedJobs defines a list of Jenkins Seed Job configurations
 More info: <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-seed-jobs-and-pipelines">https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-seed-jobs-and-pipelines</a></p>
 </td>
 </tr>
@@ -123,7 +123,7 @@ Service
 </td>
 <td>
 <em>(Optional)</em>
-<p>Service is Kubernetes service of Jenkins master HTTP pod
+<p>Service is the Kubernetes service of the Jenkins master HTTP pod
 Defaults to :
 port: 8080
 type: ClusterIP</p>
@@ -140,7 +140,7 @@ Service
 </td>
 <td>
 <em>(Optional)</em>
-<p>Service is Kubernetes service of Jenkins slave pods
+<p>Service is the Kubernetes service of the Jenkins slave pods
 Defaults to :
 port: 50000
 type: ClusterIP</p>
@@ -157,7 +157,7 @@ Backup
 </td>
 <td>
 <em>(Optional)</em>
-<p>Backup defines configuration of Jenkins backup
+<p>Backup defines the configuration of a Jenkins backup
 More info: <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-backup-and-restore">https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-backup-and-restore</a></p>
 </td>
 </tr>
@@ -172,7 +172,7 @@ Restore
 </td>
 <td>
 <em>(Optional)</em>
-<p>Backup defines configuration of Jenkins backup restore
+<p>Backup defines the configuration of a Jenkins backup restore
 More info: <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-backup-and-restore">https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-backup-and-restore</a></p>
 </td>
 </tr>
@@ -187,7 +187,7 @@ GroovyScripts
 </td>
 <td>
 <em>(Optional)</em>
-<p>GroovyScripts defines configuration of Jenkins customization via groovy scripts</p>
+<p>GroovyScripts defines the configuration of Jenkins customization via groovy scripts</p>
 </td>
 </tr>
 <tr>
@@ -201,7 +201,7 @@ ConfigurationAsCode
 </td>
 <td>
 <em>(Optional)</em>
-<p>ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin</p>
+<p>ConfigurationAsCode defines the configuration of Jenkins customization via the Configuration as Code Jenkins plugin</p>
 </td>
 </tr>
 </table>
@@ -292,7 +292,7 @@ string
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec">JenkinsSpec</a>)
 </p>
 <p>
-<p>Backup defines configuration of Jenkins backup</p>
+<p>Backup defines the configuration of a Jenkins backup</p>
 </p>
 <table>
 <thead>
@@ -323,7 +323,7 @@ Handler
 </em>
 </td>
 <td>
-<p>Action defines action which performs backup in backup container sidecar</p>
+<p>Action defines the action which performs the backup in the backup container sidecar</p>
 </td>
 </tr>
 <tr>
@@ -334,7 +334,7 @@ uint64
 </em>
 </td>
 <td>
-<p>Interval tells how often make backup in seconds
+<p>Interval tells you how often the backup is made in seconds
 Defaults to 30.</p>
 </td>
 </tr>
@@ -346,7 +346,7 @@ bool
 </em>
 </td>
 <td>
-<p>MakeBackupBeforePodDeletion tells operator to make backup before Jenkins master pod deletion</p>
+<p>MakeBackupBeforePodDeletion tells the operator to make a backup before Jenkins master pod deletion</p>
 </td>
 </tr>
 </tbody>
@@ -358,7 +358,7 @@ bool
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Customization">Customization</a>)
 </p>
 <p>
-<p>ConfigMapRef is reference to Kubernetes ConfigMap</p>
+<p>ConfigMapRef is the reference to Kubernetes ConfigMap</p>
 </p>
 <table>
 <thead>
@@ -387,7 +387,7 @@ string
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec">JenkinsSpec</a>)
 </p>
 <p>
-<p>ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin</p>
+<p>ConfigurationAsCode defines configuration of Jenkins customization via the Configuration as Code Jenkins plugin</p>
 </p>
 <table>
 <thead>
@@ -418,7 +418,7 @@ Customization
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsMaster">JenkinsMaster</a>)
 </p>
 <p>
-<p>Container defines Kubernetes container attributes</p>
+<p>Container defines the Kubernetes container attributes</p>
 </p>
 <table>
 <thead>
@@ -773,7 +773,7 @@ Kubernetes core/v1.ExecAction
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.SeedJob">SeedJob</a>)
 </p>
 <p>
-<p>JenkinsCredentialType defines type of Jenkins credential used to seed job mechanism</p>
+<p>JenkinsCredentialType defines the type of Jenkins credential used in the seed job mechanism</p>
 </p>
 <h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsMaster">JenkinsMaster
 </h3>
@@ -1233,7 +1233,7 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>UserAndPasswordHash is a SHA256 hash made from user and password</p>
+<p>UserAndPasswordHash is a SHA256 hash made from the username and password</p>
 </td>
 </tr>
 <tr>
@@ -1245,7 +1245,7 @@ string
 </td>
 <td>
 <em>(Optional)</em>
-<p>CreatedSeedJobs contains list of seed job id already created in Jenkins</p>
+<p>CreatedSeedJobs contains list of seed job ids already created in Jenkins</p>
 </td>
 </tr>
 <tr>
@@ -1679,7 +1679,7 @@ string
 </em>
 </td>
 <td>
-<p>Targets is the repository path where are seed job definitions</p>
+<p>Targets is the repository path where the seed job definitions are</p>
 </td>
 </tr>
 <tr>
@@ -1690,7 +1690,7 @@ string
 </em>
 </td>
 <td>
-<p>RepositoryBranch is the repository branch where are seed job definitions</p>
+<p>RepositoryBranch is the repository branch where the seed job definitions are</p>
 </td>
 </tr>
 <tr>
@@ -1887,7 +1887,7 @@ int32
 </em>
 </td>
 <td>
-<p>The port that are exposed by this service.
+<p>The port that is exposed by this service.
 More info: <a href="https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies">https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies</a></p>
 </td>
 </tr>
@@ -1902,7 +1902,7 @@ int32
 <em>(Optional)</em>
 <p>The port on each node on which this service is exposed when type=NodePort or LoadBalancer.
 Usually assigned by the system. If specified, it will be allocated to the service
-if unused or else creation of the service will fail.
+if unused, or else creation of the service will fail.
 Default is to auto-allocate a port if the ServiceType of this Service requires one.
 More info: <a href="https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport">https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport</a></p>
 </td>
@@ -1917,7 +1917,7 @@ More info: <a href="https://kubernetes.io/docs/concepts/services-networking/serv
 <td>
 <em>(Optional)</em>
 <p>If specified and supported by the platform, this will restrict traffic through the cloud-provider
-load-balancer will be restricted to the specified client IPs. This field will be ignored if the
+the load-balancer will be restricted to the specified client IPs. This field will be ignored if the
 cloud-provider does not support the feature.&rdquo;
 More info: <a href="https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/">https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/</a></p>
 </td>
