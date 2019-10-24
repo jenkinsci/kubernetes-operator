@@ -7,7 +7,7 @@ description: >
     Additional configuration for Azure Kubernetes Service
 ---
 
-Azure AKS managed Kubernetes service adds to every pod the following envs:
+Azure AKS managed Kubernetes service adds to every pod the following environment variables:
 
 ```yaml
 - name: KUBERNETES_PORT_443_TCP_ADDR
@@ -20,5 +20,5 @@ Azure AKS managed Kubernetes service adds to every pod the following envs:
   value:
 ```
 
-The operator is aware of it and omits these envs when checking if Jenkins pod envs have been changed. It prevents 
-restart Jenkins pod over and over again.
+The operator is aware of it and omits these environment variables when checking if a Jenkins pod environment has been changed. It prevents the 
+restart of a Jenkins pod over and over again.
