@@ -93,11 +93,6 @@
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/notifications/</loc>
-    <lastmod>2019-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/</loc>
     <lastmod>2019-08-05T00:00:00+00:00</lastmod>
   </url>
