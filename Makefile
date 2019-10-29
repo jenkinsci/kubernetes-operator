@@ -459,8 +459,15 @@ endif
 helm-package:
 	@echo "+ $@"
 	cd chart && helm package jenkins-operator
+
 .PHONY: helm-deploy
 helm-deploy: helm-package
 	@echo "+ $@"
 	helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
 	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
+
+.PHONY: generate-docs
+generate-docs: ## Re-generate docs directory from the website directory
+	@echo "+ $@"
+	rm -rf docs || echo "Cannot remove docs dir, ignoring"
+	hugo -s website -d ../docs
