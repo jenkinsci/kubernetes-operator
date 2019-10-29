@@ -35,7 +35,7 @@
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="725">
+<meta itemprop="wordCount" content="726">
 
 
 
@@ -264,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -530,7 +530,7 @@ and deploy keys.</p>
     └── build.jenkins
 </code></pre>
 
-<p><strong>cicd/jobs/build.jenkins</strong> is a job definition:</p>
+<p><strong><code>cicd/jobs/build.jenkins</code></strong> is a job definition:</p>
 
 <pre><code>#!/usr/bin/env groovy
 
@@ -554,7 +554,7 @@ pipelineJob('build-jenkins-operator') {
 }
 </code></pre>
 
-<p><strong>cicd/pipelines/build.jenkins</strong> is an actual Jenkins pipeline:</p>
+<p><strong><code>cicd/pipelines/build.jenkins</code></strong> is an actual Jenkins pipeline:</p>
 
 <pre><code>#!/usr/bin/env groovy
 
@@ -720,7 +720,7 @@ stringData:
 
 <h2 id="http-proxy-for-downloading-plugins">HTTP Proxy for downloading plugins</h2>
 
-<p>To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins CR, for e.g.:</p>
+<p>To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>containers<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -728,7 +728,7 @@ stringData:
 </span><span style="color:#f8f8f8;text-decoration:underline">        </span>env<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">          </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>CURL_OPTIONS<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">            </span>value<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>-L<span style="color:#f8f8f8;text-decoration:underline"> </span>-x<span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;proxy_url&gt;</code></pre></div>
-<p>In <code>CURL_OPTIONS</code> var you can set additional arguments to curl command.</p>
+<p>In <code>CURL_OPTIONS</code> var you can set additional arguments to <code>curl</code> command.</p>
 
 <h2 id="pulling-docker-images-from-private-repositories">Pulling Docker images from private repositories</h2>
 
@@ -744,7 +744,7 @@ stringData:
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl -n &lt;namespace&gt; edit secret &lt;name&gt;</code></pre></div>
 <p>The <code>.dockerconfigjson</code> key&rsquo;s value needs to be replaced with a modified version.</p>
 
-<p>After modifications, it needs to be encoded as a Base64 value before setting the <code>.dockerconfigjson</code> key:q.</p>
+<p>After modifications, it needs to be encoded as a Base64 value before setting the <code>.dockerconfigjson</code> key.</p>
 
 <p>Example config file to modify and use:</p>
 

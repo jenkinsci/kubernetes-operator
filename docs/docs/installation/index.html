@@ -257,7 +257,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -476,7 +476,8 @@
 
 
 <div class="pageinfo pageinfo-primary">
-<p>This document describes installation procedure for jenkins-operator. All container images can be found at virtuslab/jenkins-operator</p>
+<p>This document describes installation procedure for <strong>Jenkins Operator</strong>.
+All container images can be found at <a href="https://hub.docker.com/r/virtuslab/jenkins-operator" target="_blank">virtuslab/jenkins-operator</a></p>
 
 </div>
 
@@ -486,9 +487,9 @@
 <p>To run <strong>Jenkins Operator</strong>, you will need:</p>
 
 <ul>
-<li><p>running Kubernetes cluster version 1.11+</p></li>
+<li><p>access to a Kubernetes cluster version <code>1.11+</code></p></li>
 
-<li><p>kubectl version 1.11+</p></li>
+<li><p><code>kubectl</code> version <code>1.11+</code></p></li>
 </ul>
 
 <h2 id="configure-custom-resource-definition">Configure Custom Resource Definition</h2>
@@ -501,7 +502,7 @@
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml</code></pre></div>
 <p>Watch <strong>Jenkins Operator</strong> instance being created:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get pods -w</code></pre></div>
-<p>Now <strong>Jenkins Operator</strong> should be up and running in <code>default</code> namespace.</p>
+<p>Now <strong>Jenkins Operator</strong> should be up and running in the <code>default</code> namespace.</p>
 
         <div class="section-index">
     

@@ -21,7 +21,7 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
 <title>Diagnostics | Jenkins Operator</title><meta property="og:title" content="Diagnostics" />
-<meta property="og:description" content="How to deal with jenkins-operator problems
+<meta property="og:description" content="How to deal with Jenkins Operator problems
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/diagnostics/" />
@@ -29,20 +29,20 @@
 <meta property="article:modified_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
 
 <meta itemprop="name" content="Diagnostics">
-<meta itemprop="description" content="How to deal with jenkins-operator problems
+<meta itemprop="description" content="How to deal with Jenkins Operator problems
 ">
 
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="56">
+<meta itemprop="wordCount" content="57">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Diagnostics"/>
-<meta name="twitter:description" content="How to deal with jenkins-operator problems
+<meta name="twitter:description" content="How to deal with Jenkins Operator problems
 "/>
 
 
@@ -264,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -486,7 +486,7 @@
             
 <div class="td-content">
 	<h1>Diagnostics</h1>
-	<div class="lead">How to deal with jenkins-operator problems</div>
+	<div class="lead">How to deal with Jenkins Operator problems</div>
 	
 
 <p>Turn on debug in <strong>Jenkins Operator</strong> deployment:</p>
@@ -496,7 +496,7 @@ kubectl apply -f deploy/operator.yaml</code></pre></div>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get events --sort-by<span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;{.lastTimestamp}&#39;</span></code></pre></div>
 <p>Verify Jenkins master logs:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl logs -f jenkins-&lt;cr_name&gt;</code></pre></div>
-<p>Verify jenkins-operator logs:</p>
+<p>Verify the <code>jenkins-operator</code> logs:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl logs deployment/jenkins-operator</code></pre></div>
 <h2 id="troubleshooting">Troubleshooting</h2>
 

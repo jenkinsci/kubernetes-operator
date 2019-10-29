@@ -35,7 +35,7 @@
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="226">
+<meta itemprop="wordCount" content="221">
 
 
 
@@ -264,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -479,30 +479,40 @@
 	<div class="lead">Jenkins Operator fundamentals</div>
 	
 
-<p>The <strong>Jenkins Operator</strong> design incorporates the following concepts:
-- watches any changes of manifests and maintain the desired state according to deployed custom resource manifest
-- implements the main reconciliation loop which consists of two smaller reconciliation loops - base and user</p>
+<p>The <strong>Jenkins Operator</strong> design incorporates the following concepts:</p>
+
+<ul>
+<li>watches any changes of manifests and maintain the desired state according to deployed custom resource manifest</li>
+<li>implements the main reconciliation loop which consists of two smaller reconciliation loops - base and user</li>
+</ul>
 
 <p><img src="/kubernetes-operator/img/reconcile.png" alt="reconcile" /></p>
 
-<p><strong>Base</strong> reconciliation loop takes care of reconciling base Jenkins configuration, which consists of:
-- Ensure Manifests - monitors any changes in manifests
-- Ensure Jenkins Pod - creates and verifies status of Jenkins master Pod
-- Ensure Jenkins Configuration - configures Jenkins instance including hardening, initial configuration for plugins, etc.
-- Ensure Jenkins API token - generates Jenkins API token and initialized Jenkins client</p>
+<p><strong>Base</strong> reconciliation loop takes care of reconciling base Jenkins configuration, which consists of:</p>
 
-<p><strong>User</strong> reconciliation loop takes care of reconciling user provided configuration, which consists of:
-- Ensure Restore Job - creates Restore job and ensures that restore has been successfully performed<br />
-- Ensure Seed Jobs - creates Seed Jobs and ensures that all of them have been successfully executed
-- Ensure User Configuration - executed user provided configuration, like groovy scripts, configuration as code or plugins
-- Ensure Backup Job -  creates Backup job and ensures that backup has been successfully performed</p>
+<ul>
+<li>Ensure Manifests - monitors any changes in manifests</li>
+<li>Ensure Jenkins Pod - creates and verifies the status of Jenkins master Pod</li>
+<li>Ensure Jenkins Configuration - configures Jenkins instance including hardening, initial configuration for plugins, etc.</li>
+<li>Ensure Jenkins API token - generates Jenkins API token and initialized Jenkins client</li>
+</ul>
+
+<p><strong>User</strong> reconciliation loop takes care of reconciling user provided configuration, which consists of:</p>
+
+<ul>
+<li>Ensure Restore Job - creates Restore job and ensures that restore has been successfully performed<br /></li>
+<li>Ensure Seed Jobs - creates Seed Jobs and ensures that all of them have been successfully executed</li>
+<li>Ensure User Configuration - executed user provided configuration, like groovy scripts, configuration as code or plugins</li>
+<li>Ensure Backup Job -  creates a Backup job and ensures that backup has been successfully performed</li>
+</ul>
 
 <p><img src="/kubernetes-operator/img/phases.png" alt="reconcile" /></p>
 
 <h2 id="operator-state">Operator State</h2>
 
-<p>Operator state is kept in custom resource status section, which is used for storing any configuration events or job statuses managed by the operator.
-It helps to maintain or recover desired state even after operator or Jenkins restarts.</p>
+<p>Operator state is kept in the custom resource status section, which is used for storing any configuration events or job statuses managed by the operator.</p>
+
+<p>It helps to maintain or recover the desired state even after the operator or Jenkins restarts.</p>
 
 	
 	

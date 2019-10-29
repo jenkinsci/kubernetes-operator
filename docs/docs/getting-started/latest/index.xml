@@ -28,8 +28,8 @@
       <description>
         
         
-        &lt;p&gt;Once jenkins-operator is up and running let&amp;rsquo;s deploy actual Jenkins instance.
-Create manifest ie. &lt;strong&gt;jenkins_instance.yaml&lt;/strong&gt; with following data and save it on drive.&lt;/p&gt;
+        &lt;p&gt;Once Jenkins Operator is up and running let&amp;rsquo;s deploy actual Jenkins instance.
+Create manifest e.g. &lt;strong&gt;&lt;code&gt;jenkins_instance.yaml&lt;/code&gt;&lt;/strong&gt; with following data and save it on drive.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
@@ -73,7 +73,7 @@ spec:
     description: &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;Jenkins Operator repository&amp;#34;&lt;/span&gt;
     repositoryBranch: master
     repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Deploy a Jenkins to K8s:&lt;/p&gt;
+&lt;p&gt;Deploy a Jenkins to Kubernetes:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl create -f jenkins_instance.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Watch the Jenkins instance being created:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pods -w&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -117,7 +117,7 @@ and deploy keys.&lt;/p&gt;
     └── build.jenkins
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;strong&gt;cicd/jobs/build.jenkins&lt;/strong&gt; is a job definition:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;cicd/jobs/build.jenkins&lt;/code&gt;&lt;/strong&gt; is a job definition:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
 
@@ -141,7 +141,7 @@ pipelineJob(&#39;build-jenkins-operator&#39;) {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;strong&gt;cicd/pipelines/build.jenkins&lt;/strong&gt; is an actual Jenkins pipeline:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;cicd/pipelines/build.jenkins&lt;/code&gt;&lt;/strong&gt; is an actual Jenkins pipeline:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
 
@@ -307,7 +307,7 @@ stringData:
 
 &lt;h2 id=&#34;http-proxy-for-downloading-plugins&#34;&gt;HTTP Proxy for downloading plugins&lt;/h2&gt;
 
-&lt;p&gt;To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins CR, for e.g.:&lt;/p&gt;
+&lt;p&gt;To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;master&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;containers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -315,7 +315,7 @@ stringData:
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;env&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;          &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;CURL_OPTIONS&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;            &lt;/span&gt;value&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-L&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-x&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;proxy_url&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;In &lt;code&gt;CURL_OPTIONS&lt;/code&gt; var you can set additional arguments to curl command.&lt;/p&gt;
+&lt;p&gt;In &lt;code&gt;CURL_OPTIONS&lt;/code&gt; var you can set additional arguments to &lt;code&gt;curl&lt;/code&gt; command.&lt;/p&gt;
 
 &lt;h2 id=&#34;pulling-docker-images-from-private-repositories&#34;&gt;Pulling Docker images from private repositories&lt;/h2&gt;
 
@@ -331,7 +331,7 @@ stringData:
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl -n &amp;lt;namespace&amp;gt; edit secret &amp;lt;name&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The &lt;code&gt;.dockerconfigjson&lt;/code&gt; key&amp;rsquo;s value needs to be replaced with a modified version.&lt;/p&gt;
 
-&lt;p&gt;After modifications, it needs to be encoded as a Base64 value before setting the &lt;code&gt;.dockerconfigjson&lt;/code&gt; key:q.&lt;/p&gt;
+&lt;p&gt;After modifications, it needs to be encoded as a Base64 value before setting the &lt;code&gt;.dockerconfigjson&lt;/code&gt; key.&lt;/p&gt;
 
 &lt;p&gt;Example config file to modify and use:&lt;/p&gt;
 
@@ -405,9 +405,9 @@ stringData:
 
 &lt;p&gt;Jenkins can be customized using groovy scripts or the &lt;a href=&#34;https://github.com/jenkinsci/configuration-as-code-plugin&#34; target=&#34;_blank&#34;&gt;configuration as code plugin&lt;/a&gt;.
 By using a &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/&#34; target=&#34;_blank&#34;&gt;ConfigMap&lt;/a&gt; you can create your own &lt;strong&gt;Jenkins&lt;/strong&gt; customized configuration.
-Then you must reference the &lt;em&gt;ConfigMap&lt;/em&gt; in the &lt;strong&gt;Jenkins&lt;/strong&gt; pod customization file in &lt;code&gt;spec.groovyScripts&lt;/code&gt; or &lt;code&gt;spec.configurationAsCode&lt;/code&gt;&lt;/p&gt;
+Then you must reference the &lt;strong&gt;&lt;code&gt;ConfigMap&lt;/code&gt;&lt;/strong&gt; in the &lt;strong&gt;Jenkins&lt;/strong&gt; pod customization file in &lt;code&gt;spec.groovyScripts&lt;/code&gt; or &lt;code&gt;spec.configurationAsCode&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;For example create a &lt;em&gt;ConfigMap&lt;/em&gt; with name &lt;code&gt;jenkins-operator-user-configuration&lt;/code&gt;. Then, modify the &lt;strong&gt;Jenkins&lt;/strong&gt; manifest to look like this:&lt;/p&gt;
+&lt;p&gt;For example create a &lt;strong&gt;&lt;code&gt;ConfigMap&lt;/code&gt;&lt;/strong&gt; with name &lt;code&gt;jenkins-operator-user-configuration&lt;/code&gt;. Then, modify the &lt;strong&gt;Jenkins&lt;/strong&gt; manifest to look like this:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.io/v1alpha2&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -449,8 +449,8 @@ Then you must reference the &lt;em&gt;ConfigMap&lt;/em&gt; in the &lt;strong&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;    jenkins:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;systemMessage&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;Configuration as Code integration works!!!&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;ul&gt;
-&lt;li&gt;*.groovy is Groovy script configuration&lt;/li&gt;
-&lt;li&gt;*.yaml is configuration as code&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*.groovy&lt;/code&gt; is Groovy script configuration&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*.yaml is&lt;/code&gt; configuration as code&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;If you want to correct your configuration you can edit it while the &lt;strong&gt;Jenkins Operator&lt;/strong&gt; is running.
@@ -486,7 +486,7 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;secret&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-conf-secrets&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Now you can test that the secret is mounted by applying this ConfigMap for Groovy script:&lt;/p&gt;
+&lt;p&gt;Now you can test that the secret is mounted by applying this &lt;code&gt;ConfigMap&lt;/code&gt; for Groovy script:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;ConfigMap&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -514,7 +514,7 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
 
 &lt;h2 id=&#34;install-plugins&#34;&gt;Install Plugins&lt;/h2&gt;
 
-&lt;p&gt;Edit CR under &lt;code&gt;spec.master.plugins&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Edit Custom Resource under &lt;code&gt;spec.master.plugins&lt;/code&gt;:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
@@ -680,9 +680,12 @@ for the Jenkins Operator.&lt;/p&gt;
 
 &lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
 
-&lt;p&gt;Two commands (e.g. scripts) are required:
-- a backup command, e.g. &lt;code&gt;backup.sh&lt;/code&gt; that takes one argument, a &lt;strong&gt;backup number&lt;/strong&gt;
-- a restore command, e.g. &lt;code&gt;backup.sh&lt;/code&gt; that takes one argument, a &lt;strong&gt;backup number&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Two commands (e.g. scripts) are required:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;a backup command, e.g. &lt;code&gt;backup.sh&lt;/code&gt; that takes one argument, a &lt;strong&gt;backup number&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;a restore command, e.g. &lt;code&gt;backup.sh&lt;/code&gt; that takes one argument, a &lt;strong&gt;backup number&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;Both scripts need to return an exit code of &lt;code&gt;0&lt;/code&gt; on success and &lt;code&gt;1&lt;/code&gt; or greater for failure.&lt;/p&gt;
 
@@ -700,15 +703,18 @@ Kubernetes pod as the Jenkins master.&lt;/p&gt;
 &lt;code&gt;spec.backup.containerName&lt;/code&gt; and &lt;code&gt;spec.restore.containerName&lt;/code&gt;.
 In most cases it will be the same container, but we allow for less common use cases.&lt;/p&gt;
 
-&lt;p&gt;The operator will call a backup or restore commands inside a sidecar container when necessary:
-- backup command (defined in &lt;code&gt;spec.backup.action.exec.command&lt;/code&gt;)
-  will be called every &lt;code&gt;N&lt;/code&gt; seconds configurable in: &lt;code&gt;spec.backup.interval&lt;/code&gt;
-  and on pod shutdown (if enabled in &lt;code&gt;spec.backup.makeBackupBeforePodDeletion&lt;/code&gt;)
-  with an integer representing the current backup number as first and only argument
-- restore command (defined in &lt;code&gt;spec.restore.action.exec.command&lt;/code&gt;)
-  will be called at Jenkins startup
-  with an integer representing the backup number to restore as first and only argument
-  (can be overridden using &lt;code&gt;spec.restore.recoveryOnce&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;The operator will call a backup or restore commands inside a sidecar container when necessary:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;backup command (defined in &lt;code&gt;spec.backup.action.exec.command&lt;/code&gt;)
+will be called every &lt;code&gt;N&lt;/code&gt; seconds configurable in: &lt;code&gt;spec.backup.interval&lt;/code&gt;
+and on pod shutdown (if enabled in &lt;code&gt;spec.backup.makeBackupBeforePodDeletion&lt;/code&gt;)
+with an integer representing the current backup number as first and only argument&lt;/li&gt;
+&lt;li&gt;restore command (defined in &lt;code&gt;spec.restore.action.exec.command&lt;/code&gt;)
+will be called at Jenkins startup
+with an integer representing the backup number to restore as first and only argument
+(can be overridden using &lt;code&gt;spec.restore.recoveryOnce&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&#34;example-aws-s3-backup-using-the-cli&#34;&gt;Example AWS S3 backup using the CLI&lt;/h2&gt;
 
@@ -852,21 +858,44 @@ the number of backups under control, e.g. Cloud Formation fragment:&lt;/p&gt;
         
         
 
-&lt;h3 id=&#34;added-seed-job-agent&#34;&gt;Added seed job agent&lt;/h3&gt;
+&lt;h3 id=&#34;major-changes&#34;&gt;Major Changes&lt;/h3&gt;
 
-&lt;p&gt;Seed jobs are not built by master executors, but by dedicated agents deployed into Kubernetes. We disabled master executors for security reasons.&lt;/p&gt;
+&lt;h4 id=&#34;adding-the-seed-job-agent&#34;&gt;Adding the seed job agent&lt;/h4&gt;
 
-&lt;h3 id=&#34;apply-jenkins-configuration-via-groovy-scripts-instead-of-jenkins-jobs&#34;&gt;Apply Jenkins configuration via Groovy scripts instead of Jenkins jobs&lt;/h3&gt;
+&lt;p&gt;From version &lt;code&gt;v0.2.0&lt;/code&gt; seed jobs are not run by master executors, but by a dedicated agent deployed as a Kubernetes Pod.&lt;/p&gt;
 
-&lt;p&gt;We have removed the hardcoded configuration by &lt;strong&gt;Jenkins&lt;/strong&gt; jobs.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ve had disabled master executors for security reasons.&lt;/p&gt;
 
-&lt;p&gt;In &lt;code&gt;v0.1.1&lt;/code&gt; &lt;strong&gt;Jenkins Operator&lt;/strong&gt; configuration was stored in &lt;code&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&amp;gt;&lt;/code&gt;
-If you want to use &lt;code&gt;v0.2.0&lt;/code&gt; or newer you must simply write refererences to old ConfigMap by modifying CR, for example:&lt;/p&gt;
+&lt;h4 id=&#34;replacing-configuration-jobs-with-groovy-scripts&#34;&gt;Replacing configuration jobs with Groovy scripts&lt;/h4&gt;
+
+&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; &lt;strong&gt;Jenkins Operator&lt;/strong&gt; user configuration application was implemented using &lt;strong&gt;Jenkins&lt;/strong&gt; jobs
+and this mechanism was replaced since &lt;code&gt;v0.2.0&lt;/code&gt; with Groovy scripts implementing the same functionality.&lt;/p&gt;
+
+&lt;p&gt;As a result the &lt;strong&gt;Jenkins&lt;/strong&gt; configuration jobs (&amp;ldquo;Configure Seed Jobs&amp;rdquo;, &amp;ldquo;jenkins-operator-base-configuration&amp;rdquo;, &amp;ldquo;jenkins-operator-user-configuration&amp;rdquo;) are no longer visible in &lt;strong&gt;Jenkins&lt;/strong&gt; UI.&lt;/p&gt;
+
+&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; you can see if any of the configuration jobs failed or succeded in the &lt;strong&gt;Jenkins&lt;/strong&gt; UI (job build logs).
+Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl -n logs deployment/jenkins-operator&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&#34;making-user-configuration-sources-configurable&#34;&gt;Making User Configuration sources configurable&lt;/h4&gt;
+
+&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; &lt;strong&gt;Jenkins Operator&lt;/strong&gt; user configuration was stored in a &lt;code&gt;ConfigMap&lt;/code&gt; and a &lt;code&gt;Secret&lt;/code&gt;
+named &lt;code&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&amp;gt;&lt;/code&gt;, and its name was hardcoded in the operator.&lt;/p&gt;
+
+&lt;p&gt;Since &lt;code&gt;v0.2.0&lt;/code&gt; the user configuration can be stored in a multiple &lt;code&gt;ConfigMap&lt;/code&gt; and &lt;code&gt;Secret&lt;/code&gt; manifests
+and has to be explicitly pointed to with &lt;code&gt;spec.configurationAsCode.configurations&lt;/code&gt; and &lt;code&gt;spec.configurationAsCode.secret&lt;/code&gt;
+for the Configuration as Code plugin,
+and &lt;code&gt;spec.groovyScripts.configurations&lt;/code&gt; and &lt;code&gt;spec.groovyScripts.secret&lt;/code&gt; for the more advanced groovy scripts.&lt;/p&gt;
+
+&lt;h3 id=&#34;migration&#34;&gt;Migration&lt;/h3&gt;
+
+&lt;p&gt;If you want to use &lt;code&gt;v0.1.x&lt;/code&gt; operator configuration with &lt;code&gt;v0.2.x&lt;/code&gt; you have to modify your Jenkins Custom Resource(s)
+and add explicit references to the existing &lt;code&gt;ConfigMap&lt;/code&gt; and &lt;code&gt;Secret&lt;/code&gt;, e.g.:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.io/v1alpha2&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;example&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;cr_name&amp;gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;...&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;configurationAsCode&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; 
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
@@ -876,12 +905,8 @@ If you want to use &lt;code&gt;v0.2.0&lt;/code&gt; or newer you must simply writ
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;    secret:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;&lt;strong&gt;Jenkins&lt;/strong&gt; configuration jobs (&lt;em&gt;Configure Seed Jobs&lt;/em&gt;, &lt;em&gt;jenkins-operator-base-configuration&lt;/em&gt;, &lt;em&gt;jenkins-operator-user-configuration&lt;/em&gt;) have been removed from &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;In &lt;code&gt;v0.1.1&lt;/code&gt; you can see if the configuration failed or successfully updated in &lt;strong&gt;Jenkins&lt;/strong&gt; UI (job build logs).
-When Jenkins configuration jobs are removed, you must use the following command to see if configuration was failed.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl -n logs deployment/jenkins-operator&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
+&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;  ...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
     
@@ -903,7 +928,7 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get events --sort-by&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;{.lastTimestamp}&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Verify Jenkins master logs:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl logs -f jenkins-&amp;lt;cr_name&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Verify jenkins-operator logs:&lt;/p&gt;
+&lt;p&gt;Verify the &lt;code&gt;jenkins-operator&lt;/code&gt; logs:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl logs deployment/jenkins-operator&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
 
@@ -913,18 +938,18 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
     </item>
     
     <item>
-      <title>Docs: Scheme</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/scheme/</link>
+      <title>Docs: Schema</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/scheme/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</guid>
       <description>
         
         
         
 
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
-&lt;p&gt;This document contains API scheme for &lt;code&gt;jenkins-operator&lt;/code&gt; manifest&lt;/p&gt;
+&lt;p&gt;This document contains API scheme for &lt;code&gt;jenkins-operator&lt;/code&gt; Custom Resource Definition manifest&lt;/p&gt;
 
 &lt;/div&gt;
 

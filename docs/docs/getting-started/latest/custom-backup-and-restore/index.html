@@ -35,7 +35,7 @@
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="515">
+<meta itemprop="wordCount" content="511">
 
 
 
@@ -264,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -505,9 +505,12 @@ for the Jenkins Operator.</p>
 
 <h2 id="requirements">Requirements</h2>
 
-<p>Two commands (e.g. scripts) are required:
-- a backup command, e.g. <code>backup.sh</code> that takes one argument, a <strong>backup number</strong>
-- a restore command, e.g. <code>backup.sh</code> that takes one argument, a <strong>backup number</strong></p>
+<p>Two commands (e.g. scripts) are required:</p>
+
+<ul>
+<li>a backup command, e.g. <code>backup.sh</code> that takes one argument, a <strong>backup number</strong></li>
+<li>a restore command, e.g. <code>backup.sh</code> that takes one argument, a <strong>backup number</strong></li>
+</ul>
 
 <p>Both scripts need to return an exit code of <code>0</code> on success and <code>1</code> or greater for failure.</p>
 
@@ -525,15 +528,18 @@ Kubernetes pod as the Jenkins master.</p>
 <code>spec.backup.containerName</code> and <code>spec.restore.containerName</code>.
 In most cases it will be the same container, but we allow for less common use cases.</p>
 
-<p>The operator will call a backup or restore commands inside a sidecar container when necessary:
-- backup command (defined in <code>spec.backup.action.exec.command</code>)
-  will be called every <code>N</code> seconds configurable in: <code>spec.backup.interval</code>
-  and on pod shutdown (if enabled in <code>spec.backup.makeBackupBeforePodDeletion</code>)
-  with an integer representing the current backup number as first and only argument
-- restore command (defined in <code>spec.restore.action.exec.command</code>)
-  will be called at Jenkins startup
-  with an integer representing the backup number to restore as first and only argument
-  (can be overridden using <code>spec.restore.recoveryOnce</code>)</p>
+<p>The operator will call a backup or restore commands inside a sidecar container when necessary:</p>
+
+<ul>
+<li>backup command (defined in <code>spec.backup.action.exec.command</code>)
+will be called every <code>N</code> seconds configurable in: <code>spec.backup.interval</code>
+and on pod shutdown (if enabled in <code>spec.backup.makeBackupBeforePodDeletion</code>)
+with an integer representing the current backup number as first and only argument</li>
+<li>restore command (defined in <code>spec.restore.action.exec.command</code>)
+will be called at Jenkins startup
+with an integer representing the backup number to restore as first and only argument
+(can be overridden using <code>spec.restore.recoveryOnce</code>)</li>
+</ul>
 
 <h2 id="example-aws-s3-backup-using-the-cli">Example AWS S3 backup using the CLI</h2>
 

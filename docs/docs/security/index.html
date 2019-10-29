@@ -257,7 +257,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -476,7 +476,8 @@
 	<div class="lead">Jenkins security and hardening out of the box</div>
 	
 
-<p>By default <strong>Jenkins Operator</strong> performs an initial security hardening of Jenkins instance via groovy scripts to prevent any security gaps.</p>
+<p>By default <strong>Jenkins Operator</strong> performs an initial security hardening of Jenkins instance
+via groovy scripts to prevent any security gaps.</p>
 
 <h2 id="jenkins-access-control">Jenkins Access Control</h2>
 
@@ -489,20 +490,24 @@ because <strong>Jenkins Operator</strong> calls Jenkins API.</p>
 
 <h2 id="jenkins-hardening">Jenkins Hardening</h2>
 
-<p>The list below describes all the default security setting configured by the <strong>Jenkins Operator</strong>:
-- basic settings - use <code>Mode.EXCLUSIVE</code> - Jobs must specify that they want to run on master node
-- enable CSRF - Cross Site Request Forgery Protection is enabled
-- disable usage stats - Jenkins usage stats submitting is disabled
-- enable master access control - Slave To Master Access Control is enabled
-- disable old JNLP protocols - <code>JNLP3-connect</code>, <code>JNLP2-connect</code> and <code>JNLP-connect</code> are disabled
-- disable CLI - CLI access of <code>/cli</code> URL is disabled
-- configure kubernetes-plugin - secure configuration for Kubernetes plugin</p>
+<p>The list below describes all the default security setting configured by the <strong>Jenkins Operator</strong>:</p>
+
+<ul>
+<li>basic settings - use <code>Mode.EXCLUSIVE</code> - Jobs must specify that they want to run on master node</li>
+<li>enable CSRF - Cross Site Request Forgery Protection is enabled</li>
+<li>disable usage stats - Jenkins usage stats submitting is disabled</li>
+<li>enable master access control - Slave To Master Access Control is enabled</li>
+<li>disable old JNLP protocols - <code>JNLP3-connect</code>, <code>JNLP2-connect</code> and <code>JNLP-connect</code> are disabled</li>
+<li>disable CLI - CLI access of <code>/cli</code> URL is disabled</li>
+<li>configure kubernetes-plugin - secure configuration for Kubernetes plugin</li>
+</ul>
 
 <p>If you would like to dig a little bit into the code, take a look <a href="../pkg/controller/jenkins/configuration/base/resources/base_configuration_configmap.go">here</a>.</p>
 
 <h2 id="jenkins-api">Jenkins API</h2>
 
-<p>The <strong>Jenkins Operator</strong> generates and configures Basic Authentication token for Jenkins go client and stores it in a Kubernetes Secret.</p>
+<p>The <strong>Jenkins Operator</strong> generates and configures Basic Authentication token for Jenkins Go client
+and stores it in a Kubernetes Secret.</p>
 
 <h2 id="kubernetes">Kubernetes</h2>
 
@@ -510,9 +515,11 @@ because <strong>Jenkins Operator</strong> calls Jenkins API.</p>
 - <a href="../deploy/role.yaml">jenkins-operator role</a><br />
 - <a href="../pkg/controller/jenkins/configuration/base/resources/rbac.go">Jenkins Master role</a></p>
 
-<p>Since <strong>Jenkins Operator</strong> must be able to grant permission for its&rsquo; deployed Jenkins masters to spawn pods (the <code>Jenkins Master role</code> above),
-the operator itself requires permission to create RBAC resources (the <code>jenkins-operator role</code> above).
-Deployed this way, any subject which may create a Pod (including a Jenkins job) may
+<p>Since <strong>Jenkins Operator</strong> must be able to grant permission for its&rsquo; deployed Jenkins masters
+to spawn pods (the <code>Jenkins Master role</code> above),
+the operator itself requires permission to create RBAC resources (the <code>jenkins-operator role</code> above).</p>
+
+<p>Deployed this way, any subject which may create a Pod (including a Jenkins job) may
 assume the <code>jenkins-operator</code> role by using its&rsquo; ServiceAccount, create RBAC rules, and thus escape its granted permissions.
 Any namespace to which the <code>jenkins-operator</code> is deployed must be considered to implicitly grant all
 possible permissions to any subject which can create a Pod in that namespace.</p>
@@ -528,7 +535,7 @@ $ kubectl create ns jenkins</code></pre></div>
 <p>Next, apply the RBAC manifests for <strong>Jenkins Operator</strong> namespace</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl -n jenkins-operator apply -f deploy/service_account.yaml
 $ kubectl -n jenkins-operator apply -f deploy/role_binding.yaml</code></pre></div>
-<p>Create file role_binding_jenkins.yaml in <code>deploy</code> folder:</p>
+<p>Create file <code>role_binding_jenkins.yaml</code> in <code>deploy</code> folder:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>RoleBinding<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>rbac.authorization.k8s.io/v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">

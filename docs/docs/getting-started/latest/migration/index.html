@@ -35,7 +35,7 @@
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="133">
+<meta itemprop="wordCount" content="234">
 
 
 
@@ -264,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-scheme" href="/kubernetes-operator/docs/getting-started/latest/scheme/">Scheme</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
     </li>
@@ -441,8 +441,13 @@
 <ul>
 <li>
 <ul>
-<li><a href="#added-seed-job-agent">Added seed job agent</a></li>
-<li><a href="#apply-jenkins-configuration-via-groovy-scripts-instead-of-jenkins-jobs">Apply Jenkins configuration via Groovy scripts instead of Jenkins jobs</a></li>
+<li><a href="#major-changes">Major Changes</a>
+<ul>
+<li><a href="#adding-the-seed-job-agent">Adding the seed job agent</a></li>
+<li><a href="#replacing-configuration-jobs-with-groovy-scripts">Replacing configuration jobs with Groovy scripts</a></li>
+<li><a href="#making-user-configuration-sources-configurable">Making User Configuration sources configurable</a></li>
+</ul></li>
+<li><a href="#migration">Migration</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -502,21 +507,44 @@
 	<div class="lead">How to migrate from v0.1.x to v0.2.x</div>
 	
 
-<h3 id="added-seed-job-agent">Added seed job agent</h3>
+<h3 id="major-changes">Major Changes</h3>
 
-<p>Seed jobs are not built by master executors, but by dedicated agents deployed into Kubernetes. We disabled master executors for security reasons.</p>
+<h4 id="adding-the-seed-job-agent">Adding the seed job agent</h4>
 
-<h3 id="apply-jenkins-configuration-via-groovy-scripts-instead-of-jenkins-jobs">Apply Jenkins configuration via Groovy scripts instead of Jenkins jobs</h3>
+<p>From version <code>v0.2.0</code> seed jobs are not run by master executors, but by a dedicated agent deployed as a Kubernetes Pod.</p>
 
-<p>We have removed the hardcoded configuration by <strong>Jenkins</strong> jobs.</p>
+<p>We&rsquo;ve had disabled master executors for security reasons.</p>
 
-<p>In <code>v0.1.1</code> <strong>Jenkins Operator</strong> configuration was stored in <code>jenkins-operator-user-configuration-&lt;cr_name&gt;</code>
-If you want to use <code>v0.2.0</code> or newer you must simply write refererences to old ConfigMap by modifying CR, for example:</p>
+<h4 id="replacing-configuration-jobs-with-groovy-scripts">Replacing configuration jobs with Groovy scripts</h4>
+
+<p>In <code>v0.1.x</code> <strong>Jenkins Operator</strong> user configuration application was implemented using <strong>Jenkins</strong> jobs
+and this mechanism was replaced since <code>v0.2.0</code> with Groovy scripts implementing the same functionality.</p>
+
+<p>As a result the <strong>Jenkins</strong> configuration jobs (&ldquo;Configure Seed Jobs&rdquo;, &ldquo;jenkins-operator-base-configuration&rdquo;, &ldquo;jenkins-operator-user-configuration&rdquo;) are no longer visible in <strong>Jenkins</strong> UI.</p>
+
+<p>In <code>v0.1.x</code> you can see if any of the configuration jobs failed or succeded in the <strong>Jenkins</strong> UI (job build logs).
+Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl -n logs deployment/jenkins-operator</code></pre></div>
+<h4 id="making-user-configuration-sources-configurable">Making User Configuration sources configurable</h4>
+
+<p>In <code>v0.1.x</code> <strong>Jenkins Operator</strong> user configuration was stored in a <code>ConfigMap</code> and a <code>Secret</code>
+named <code>jenkins-operator-user-configuration-&lt;cr_name&gt;</code>, and its name was hardcoded in the operator.</p>
+
+<p>Since <code>v0.2.0</code> the user configuration can be stored in a multiple <code>ConfigMap</code> and <code>Secret</code> manifests
+and has to be explicitly pointed to with <code>spec.configurationAsCode.configurations</code> and <code>spec.configurationAsCode.secret</code>
+for the Configuration as Code plugin,
+and <code>spec.groovyScripts.configurations</code> and <code>spec.groovyScripts.secret</code> for the more advanced groovy scripts.</p>
+
+<h3 id="migration">Migration</h3>
+
+<p>If you want to use <code>v0.1.x</code> operator configuration with <code>v0.2.x</code> you have to modify your Jenkins Custom Resource(s)
+and add explicit references to the existing <code>ConfigMap</code> and <code>Secret</code>, e.g.:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins.io/v1alpha2<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>example<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;cr_name&gt;<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>...<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">  </span>configurationAsCode<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> 
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
@@ -526,12 +554,8 @@ If you want to use <code>v0.2.0</code> or newer you must simply write refererenc
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
 </span><span style="color:#8f5902;font-style:italic">    secret:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name&gt;</code></pre></div>
-<p><strong>Jenkins</strong> configuration jobs (<em>Configure Seed Jobs</em>, <em>jenkins-operator-base-configuration</em>, <em>jenkins-operator-user-configuration</em>) have been removed from <strong>Jenkins</strong>.</p>
-
-<p>In <code>v0.1.1</code> you can see if the configuration failed or successfully updated in <strong>Jenkins</strong> UI (job build logs).
-When Jenkins configuration jobs are removed, you must use the following command to see if configuration was failed.</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl -n logs deployment/jenkins-operator</code></pre></div>
+</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
+</span><span style="color:#8f5902;font-style:italic">  ...</span></code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified August 5, 2019
