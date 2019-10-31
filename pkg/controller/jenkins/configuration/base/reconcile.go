@@ -15,7 +15,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/backuprestore"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/groovy"
-	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/version"
@@ -402,11 +402,11 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 				resources.JenkinsMasterContainerName, []string{"bash", "-c", fmt.Sprintf("%s/%s && <custom-command-here> && /sbin/tini -s -- /usr/local/bin/jenkins.sh",
 					resources.JenkinsScriptsVolumePath, resources.InitScriptName)}))
 		}
-		*r.Notifications <- notifications.Event{
-			Jenkins:  *r.Configuration.Jenkins,
-			Phase:    notifications.PhaseBase,
-			LogLevel: v1alpha2.NotificationLogLevelInfo,
-			Message:  "Creating a new Jenkins Master Pod",
+		*r.Notifications <- event.Event{
+			Jenkins: *r.Configuration.Jenkins,
+			Phase:   event.PhaseBase,
+			Level:   v1alpha2.NotificationLevelInfo,
+			Reason:  event.NewPodRestartReason(event.KubernetesSource, []string{"Creating a new Jenkins Master Pod"}, nil),
 		}
 		r.logger.Info(fmt.Sprintf("Creating a new Jenkins Master Pod %s/%s", jenkinsMasterPod.Namespace, jenkinsMasterPod.Name))
 		err = r.createResource(jenkinsMasterPod)

@@ -54,26 +54,26 @@ type JenkinsSpec struct {
 	ConfigurationAsCode ConfigurationAsCode `json:"configurationAsCode,omitempty"`
 }
 
-// NotificationLogLevel defines logging level of Notification
-type NotificationLogLevel string
+// NotificationLevel defines the level of a Notification
+type NotificationLevel string
 
 const (
-	// NotificationLogLevelWarning - Only Warnings
-	NotificationLogLevelWarning NotificationLogLevel = "warning"
+	// NotificationLevelWarning - Only Warnings
+	NotificationLevelWarning NotificationLevel = "warning"
 
-	// NotificationLogLevelInfo - Only info
-	NotificationLogLevelInfo NotificationLogLevel = "info"
+	// NotificationLevelInfo - Only info
+	NotificationLevelInfo NotificationLevel = "info"
 )
 
 // Notification is a service configuration used to send notifications about Jenkins status
 type Notification struct {
-	LoggingLevel NotificationLogLevel `json:"loggingLevel"`
-	Verbose      bool                 `json:"verbose"`
-	Name         string               `json:"name"`
-	Slack        *Slack               `json:"slack,omitempty"`
-	Teams        *MicrosoftTeams      `json:"teams,omitempty"`
-	Mailgun      *Mailgun             `json:"mailgun,omitempty"`
-	SMTP         *SMTP                `json:"smtp,omitempty"`
+	LoggingLevel NotificationLevel `json:"level"`
+	Verbose      bool              `json:"verbose"`
+	Name         string            `json:"name"`
+	Slack        *Slack            `json:"slack,omitempty"`
+	Teams        *MicrosoftTeams   `json:"teams,omitempty"`
+	Mailgun      *Mailgun          `json:"mailgun,omitempty"`
+	SMTP         *SMTP             `json:"smtp,omitempty"`
 }
 
 // Slack is handler for Slack notification channel
