@@ -1,8 +1,11 @@
 package event
 
-import "github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+import (
+	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
+)
 
-// Phase defines the type of configuration
+// Phase defines the context where notification has been generated: base or user.
 type Phase string
 
 // StatusColor is useful for better UX
@@ -16,7 +19,7 @@ type Event struct {
 	Jenkins v1alpha2.Jenkins
 	Phase   Phase
 	Level   v1alpha2.NotificationLevel
-	Reason  Reason
+	Reason  reason.Reason
 }
 
 const (

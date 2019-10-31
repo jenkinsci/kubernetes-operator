@@ -17,7 +17,12 @@ import (
 	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-const content = `
+const (
+	infoColor    = "blue"
+	warningColor = "red"
+	defaultColor = "gray"
+
+	content = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -38,6 +43,7 @@ const content = `
 		<h6 style="font-size: 11px; color: grey; margin-top: 15px;">Powered by Jenkins Operator <3</h6>
 </body>
 </html>`
+)
 
 // MailGun is a sending emails notification service
 type MailGun struct {
@@ -53,11 +59,11 @@ func New(k8sClient k8sclient.Client, config v1alpha2.Notification) *MailGun {
 func (m MailGun) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusColor {
 	switch logLevel {
 	case v1alpha2.NotificationLevelInfo:
-		return "blue"
+		return infoColor
 	case v1alpha2.NotificationLevelWarning:
-		return "red"
+		return warningColor
 	default:
-		return "gray"
+		return defaultColor
 	}
 }
 
@@ -81,16 +87,21 @@ func (m MailGun) Send(event event.Event) error {
 
 	mg := mailgun.NewMailgun(m.config.Mailgun.Domain, secretValue)
 
-	var statusMessage string
+	var statusMessage strings.Builder
+	var reasons string
 
-	reasons := strings.TrimRight(strings.Join(event.Reason.Short(), "</li><li>"), "<li>")
-	statusMessage = "<ul><li>"
-	statusMessage = statusMessage + reasons
-	statusMessage = statusMessage + "</ul>"
-	// TODO: add verbose
+	if m.config.Verbose {
+		reasons = strings.TrimRight(strings.Join(event.Reason.Verbose(), "</li><li>"), "<li>")
+	} else {
+		reasons = strings.TrimRight(strings.Join(event.Reason.Short(), "</li><li>"), "<li>")
+	}
+
+	statusMessage.WriteString("<ul><li>")
+	statusMessage.WriteString(reasons)
+	statusMessage.WriteString("</ul>")
 
 	htmlMessage := fmt.Sprintf(content, m.getStatusColor(event.Level),
-		provider.NotificationTitle(event), statusMessage, event.Jenkins.Name, event.Phase)
+		provider.NotificationTitle(event), statusMessage.String(), event.Jenkins.Name, event.Phase)
 
 	msg := mg.NewMessage(fmt.Sprintf("Jenkins Operator Notifier <%s>",
 		m.config.Mailgun.From), provider.NotificationTitle(event), "", m.config.Mailgun.Recipient)

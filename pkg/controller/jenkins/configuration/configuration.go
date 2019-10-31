@@ -2,11 +2,11 @@ package configuration
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
 
 	stackerr "github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -24,7 +24,7 @@ type Configuration struct {
 }
 
 // RestartJenkinsMasterPod terminate Jenkins master pod and notifies about it
-func (c *Configuration) RestartJenkinsMasterPod() error {
+func (c *Configuration) RestartJenkinsMasterPod(reason reason.Reason) error {
 	currentJenkinsMasterPod, err := c.getJenkinsMasterPod()
 	if err != nil {
 		return err
@@ -34,12 +34,7 @@ func (c *Configuration) RestartJenkinsMasterPod() error {
 		Jenkins: *c.Jenkins,
 		Phase:   event.PhaseBase,
 		Level:   v1alpha2.NotificationLevelInfo,
-		Reason: event.NewPodRestartReason(
-			event.OperatorSource,
-			[]string{fmt.Sprintf("Terminating Jenkins Master Pod %s/%s.",
-				currentJenkinsMasterPod.Namespace, currentJenkinsMasterPod.Name)},
-			nil,
-		),
+		Reason:  reason,
 	}
 
 	return stackerr.WithStack(c.Client.Delete(context.TODO(), currentJenkinsMasterPod))

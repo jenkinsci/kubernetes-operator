@@ -18,6 +18,12 @@ import (
 	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const (
+	infoColor    = "439FE0"
+	warningColor = "E81123"
+	defaultColor = "C8C8C8"
+)
+
 // Teams is a Microsoft MicrosoftTeams notification service
 type Teams struct {
 	httpClient http.Client
@@ -55,11 +61,11 @@ type Fact struct {
 func (t Teams) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusColor {
 	switch logLevel {
 	case v1alpha2.NotificationLevelInfo:
-		return "439FE0"
+		return infoColor
 	case v1alpha2.NotificationLevelWarning:
-		return "E81123"
+		return warningColor
 	default:
-		return "C8C8C8"
+		return defaultColor
 	}
 }
 
@@ -79,7 +85,15 @@ func (t Teams) Send(e event.Event) error {
 		return errors.Errorf("Microsoft Teams WebHook URL is empty in secret '%s/%s[%s]", e.Jenkins.Namespace, selector.Name, selector.Key)
 	}
 
+	var reason string
+	if t.config.Verbose {
+		reason = strings.Join(e.Reason.Verbose(), "\n\n - ")
+	} else {
+		reason = strings.Join(e.Reason.Short(), "\n\n - ")
+	}
+
 	tm := &Message{
+		Title:      provider.NotificationTitle(e),
 		Type:       "MessageCard",
 		Context:    "https://schema.org/extensions",
 		ThemeColor: t.getStatusColor(e.Level),
@@ -94,34 +108,15 @@ func (t Teams) Send(e event.Event) error {
 						Name:  provider.NamespaceFieldName,
 						Value: e.Jenkins.Namespace,
 					},
+					{
+						Name:  provider.PhaseFieldName,
+						Value: string(e.Phase),
+					},
 				},
-				Text: "",
+				Text: reason,
 			},
 		},
-		Summary: "",
-	}
-
-	reason := strings.Join(e.Reason.Short(), "\n\n - ")
-
-	tm.Sections[0].Text = reason
-	tm.Summary = reason
-
-	tm.Title = provider.NotificationTitle(e)
-
-	if t.config.Verbose {
-		message := reason
-		for _, msg := range e.Reason.Verbose() {
-			message = message + "\n\n - " + msg
-		}
-		tm.Sections[0].Text = message
-		tm.Summary = message
-	}
-
-	if e.Phase != event.PhaseUnknown {
-		tm.Sections[0].Facts = append(tm.Sections[0].Facts, Fact{
-			Name:  provider.PhaseFieldName,
-			Value: string(e.Phase),
-		})
+		Summary: reason,
 	}
 
 	msg, err := json.Marshal(tm)

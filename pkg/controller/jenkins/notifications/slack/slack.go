@@ -17,6 +17,12 @@ import (
 	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+const (
+	infoColor    = "#439FE0"
+	warningColor = "danger"
+	defaultColor = "#c8c8c8"
+)
+
 // Slack is a Slack notification service
 type Slack struct {
 	httpClient http.Client
@@ -56,11 +62,11 @@ type Field struct {
 func (s Slack) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusColor {
 	switch logLevel {
 	case v1alpha2.NotificationLevelInfo:
-		return "#439FE0"
+		return infoColor
 	case v1alpha2.NotificationLevelWarning:
-		return "danger"
+		return warningColor
 	default:
-		return "#c8c8c8"
+		return defaultColor
 	}
 }
 
@@ -74,15 +80,21 @@ func (s Slack) Send(e event.Event) error {
 		return err
 	}
 
+	var messageStringBuilder strings.Builder
+	for _, msg := range e.Reason.Short() {
+		messageStringBuilder.WriteString("\n - " + msg + "\n")
+	}
+
 	sm := &Message{
 		Attachments: []Attachment{
 			{
+				Title:    provider.NotificationTitle(e),
 				Fallback: "",
 				Color:    s.getStatusColor(e.Level),
 				Fields: []Field{
 					{
 						Title: "",
-						Value: "",
+						Value: messageStringBuilder.String(),
 						Short: false,
 					},
 					{
@@ -95,28 +107,14 @@ func (s Slack) Send(e event.Event) error {
 						Value: e.Jenkins.Name,
 						Short: true,
 					},
+					{
+						Title: provider.PhaseFieldName,
+						Value: string(e.Phase),
+						Short: true,
+					},
 				},
 			},
 		},
-	}
-
-	mainAttachment := &sm.Attachments[0]
-
-	var messageStringBuilder strings.Builder
-	for _, msg := range e.Reason.Short() {
-		messageStringBuilder.WriteString("\n - " + msg + "\n")
-	}
-	mainAttachment.Fields[0].Value = messageStringBuilder.String()
-	// TODO: add verbose
-
-	mainAttachment.Title = provider.NotificationTitle(e)
-
-	if e.Phase != event.PhaseUnknown {
-		mainAttachment.Fields = append(mainAttachment.Fields, Field{
-			Title: provider.PhaseFieldName,
-			Value: string(e.Phase),
-			Short: true,
-		})
 	}
 
 	slackMessage, err := json.Marshal(sm)

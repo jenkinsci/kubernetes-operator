@@ -16,6 +16,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/version"
@@ -106,8 +107,14 @@ func (r *ReconcileJenkinsBaseConfiguration) Reconcile() (reconcile.Result, jenki
 		return reconcile.Result{}, nil, err
 	}
 	if !ok {
-		r.logger.Info("Some plugins have changed, restarting Jenkins")
-		return reconcile.Result{Requeue: true}, nil, r.Configuration.RestartJenkinsMasterPod()
+		message := "Some plugins have changed, restarting Jenkins"
+		r.logger.Info(message)
+
+		restartReason := reason.NewPodRestart(
+			reason.OperatorSource,
+			[]string{message},
+		)
+		return reconcile.Result{Requeue: true}, nil, r.Configuration.RestartJenkinsMasterPod(restartReason)
 	}
 
 	result, err = r.ensureBaseConfiguration(jenkinsClient)
@@ -406,7 +413,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 			Jenkins: *r.Configuration.Jenkins,
 			Phase:   event.PhaseBase,
 			Level:   v1alpha2.NotificationLevelInfo,
-			Reason:  event.NewPodRestartReason(event.KubernetesSource, []string{"Creating a new Jenkins Master Pod"}, nil),
+			Reason:  reason.NewPodCreation(reason.KubernetesSource, []string{"Creating a new Jenkins Master Pod"}),
 		}
 		r.logger.Info(fmt.Sprintf("Creating a new Jenkins Master Pod %s/%s", jenkinsMasterPod.Namespace, jenkinsMasterPod.Name))
 		err = r.createResource(jenkinsMasterPod)
@@ -457,7 +464,12 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 		for _, msg := range messages {
 			r.logger.Info(msg)
 		}
-		return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod()
+
+		restartReason := reason.NewPodRestart(
+			reason.OperatorSource,
+			messages,
+		)
+		return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
 	}
 
 	return reconcile.Result{}, nil
@@ -723,8 +735,14 @@ func (r *ReconcileJenkinsBaseConfiguration) waitForJenkins(meta metav1.ObjectMet
 	containersReadyCount := 0
 	for _, containerStatus := range jenkinsMasterPod.Status.ContainerStatuses {
 		if containerStatus.State.Terminated != nil {
-			r.logger.Info(fmt.Sprintf("Container '%s' is terminated, status '%+v', recreating pod", containerStatus.Name, containerStatus))
-			return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod()
+			message := fmt.Sprintf("Container '%s' is terminated, status '%+v', recreating pod", containerStatus.Name, containerStatus)
+			r.logger.Info(message)
+
+			restartReason := reason.NewPodRestart(
+				reason.OperatorSource,
+				[]string{message},
+			)
+			return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
 		}
 		if !containerStatus.Ready {
 			r.logger.V(log.VDebug).Info(fmt.Sprintf("Container '%s' not ready, readiness probe failed", containerStatus.Name))

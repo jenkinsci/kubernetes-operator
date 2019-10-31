@@ -13,6 +13,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/user"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/version"
@@ -155,10 +156,9 @@ func (r *ReconcileJenkins) Reconcile(request reconcile.Request) (reconcile.Resul
 				Jenkins: *jenkins,
 				Phase:   event.PhaseBase,
 				Level:   v1alpha2.NotificationLevelWarning,
-				Reason: event.NewPodRestartReason(
-					event.OperatorSource,
+				Reason: reason.NewReconcileLoopFailed(
+					reason.OperatorSource,
 					[]string{fmt.Sprintf("Reconcile loop failed %d times with the same error, giving up: %s", reconcileFailLimit, err)},
-					[]string{fmt.Sprintf("Reconcile loop failed %d times with the same error, giving up: %+v", reconcileFailLimit, err)},
 				),
 			}
 			return reconcile.Result{Requeue: false}, nil
@@ -177,10 +177,10 @@ func (r *ReconcileJenkins) Reconcile(request reconcile.Request) (reconcile.Resul
 				Jenkins: *jenkins,
 				Phase:   event.PhaseBase,
 				Level:   v1alpha2.NotificationLevelWarning,
-				Reason: event.NewPodRestartReason(
-					event.OperatorSource,
-					[]string{fmt.Sprintf("%s Source '%s' Name '%s' groovy script execution failed, logs:", groovyErr.ConfigurationType, groovyErr.Source, groovyErr.Name)},
-					[]string{groovyErr.Logs},
+				Reason: reason.NewGroovyScriptExecutionFailed(
+					reason.OperatorSource,
+					[]string{fmt.Sprintf("%s Source '%s' Name '%s' groovy script execution failed", groovyErr.ConfigurationType, groovyErr.Source, groovyErr.Name)},
+					[]string{fmt.Sprintf("%s Source '%s' Name '%s' groovy script execution failed, logs: %+v", groovyErr.ConfigurationType, groovyErr.Source, groovyErr.Name, groovyErr.Logs)}...,
 				),
 			}
 			return reconcile.Result{Requeue: false}, nil
@@ -219,20 +219,20 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 	// Reconcile base configuration
 	baseConfiguration := base.New(config, r.scheme, logger, r.local, r.minikube, &r.config)
 
-	messages, err := baseConfiguration.Validate(jenkins)
+	baseMessages, err := baseConfiguration.Validate(jenkins)
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if len(messages) > 0 {
+	if len(baseMessages) > 0 {
 		message := "Validation of base configuration failed, please correct Jenkins CR."
 		*r.notificationEvents <- event.Event{
 			Jenkins: *jenkins,
 			Phase:   event.PhaseBase,
 			Level:   v1alpha2.NotificationLevelWarning,
-			Reason:  event.NewPodRestartReason(event.OperatorSource, []string{message}, messages),
+			Reason:  reason.NewBaseConfigurationFailed(reason.HumanSource, []string{message}, append([]string{message}, baseMessages...)...),
 		}
 		logger.V(log.VWarn).Info(message)
-		for _, msg := range messages {
+		for _, msg := range baseMessages {
 			logger.V(log.VWarn).Info(msg)
 		}
 		return reconcile.Result{}, jenkins, nil // don't requeue
@@ -263,14 +263,14 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 			Jenkins: *jenkins,
 			Phase:   event.PhaseBase,
 			Level:   v1alpha2.NotificationLevelInfo,
-			Reason:  event.NewPodRestartReason(event.OperatorSource, []string{message}, messages),
+			Reason:  reason.NewBaseConfigurationComplete(reason.OperatorSource, []string{message}),
 		}
 		logger.Info(message)
 	}
 	// Reconcile user configuration
 	userConfiguration := user.New(config, jenkinsClient, logger, r.config)
 
-	messages, err = userConfiguration.Validate(jenkins)
+	messages, err := userConfiguration.Validate(jenkins)
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
@@ -280,7 +280,7 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 			Jenkins: *jenkins,
 			Phase:   event.PhaseUser,
 			Level:   v1alpha2.NotificationLevelWarning,
-			Reason:  event.NewPodRestartReason(event.OperatorSource, []string{message}, messages),
+			Reason:  reason.NewUserConfigurationFailed(reason.HumanSource, []string{message}, append([]string{message}, messages...)...),
 		}
 
 		logger.V(log.VWarn).Info(message)
@@ -311,7 +311,7 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 			Jenkins: *jenkins,
 			Phase:   event.PhaseUser,
 			Level:   v1alpha2.NotificationLevelInfo,
-			Reason:  event.NewPodRestartReason(event.OperatorSource, []string{message}, messages),
+			Reason:  reason.NewUserConfigurationComplete(reason.OperatorSource, []string{message}),
 		}
 		logger.Info(message)
 	}

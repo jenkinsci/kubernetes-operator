@@ -11,6 +11,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/provider"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
 
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
@@ -22,10 +23,10 @@ var (
 	testPhase     = event.PhaseUser
 	testCrName    = "test-cr"
 	testNamespace = "default"
-	testReason    = event.NewPodRestartReason(
-		event.KubernetesSource,
+	testReason    = reason.NewPodRestart(
+		reason.KubernetesSource,
 		[]string{"test-reason-1"},
-		[]string{"test-verbose-1"},
+		[]string{"test-verbose-1"}...,
 	)
 	testLevel = v1alpha2.NotificationLevelWarning
 )

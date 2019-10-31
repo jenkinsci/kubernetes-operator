@@ -19,7 +19,12 @@ import (
 
 const (
 	mailSubject = "Jenkins Operator Notification"
-	content     = `
+
+	infoColor    = "blue"
+	warningColor = "red"
+	defaultColor = "gray"
+
+	content = `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -84,16 +89,20 @@ func (s SMTP) Send(e event.Event) error {
 	mailer := gomail.NewDialer(s.config.SMTP.Server, s.config.SMTP.Port, usernameSecretValue, passwordSecretValue)
 	mailer.TLSConfig = &tls.Config{InsecureSkipVerify: s.config.SMTP.TLSInsecureSkipVerify}
 
-	var statusMessage string
+	var statusMessage strings.Builder
+	var reasons string
 
-	reasons := strings.TrimRight(strings.Join(e.Reason.Short(), "</li><li>"), "<li>")
-	statusMessage = "<ul><li>"
-	statusMessage = statusMessage + reasons
-	statusMessage = statusMessage + "</ul>"
+	if s.config.Verbose {
+		reasons = strings.TrimRight(strings.Join(e.Reason.Verbose(), "</li><li>"), "<li>")
+	} else {
+		reasons = strings.TrimRight(strings.Join(e.Reason.Short(), "</li><li>"), "<li>")
+	}
 
-	// TODO: add verbose
+	statusMessage.WriteString("<ul><li>")
+	statusMessage.WriteString(reasons)
+	statusMessage.WriteString("</ul>")
 
-	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage, e.Jenkins.Name, e.Phase)
+	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
 	message := gomail.NewMessage()
 
 	message.SetHeader("From", s.config.SMTP.From)
@@ -111,10 +120,10 @@ func (s SMTP) Send(e event.Event) error {
 func (s SMTP) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusColor {
 	switch logLevel {
 	case v1alpha2.NotificationLevelInfo:
-		return "blue"
+		return infoColor
 	case v1alpha2.NotificationLevelWarning:
-		return "red"
+		return warningColor
 	default:
-		return "gray"
+		return defaultColor
 	}
 }
