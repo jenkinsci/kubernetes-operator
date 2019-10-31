@@ -26,7 +26,7 @@ The list below describes all the default security setting configured by the **Je
 - basic settings - use `Mode.EXCLUSIVE` - Jobs must specify that they want to run on master node
 - enable CSRF - Cross Site Request Forgery Protection is enabled
 - disable usage stats - Jenkins usage stats submitting is disabled
-- enable master access control - Slave To Master Access Control is enabled
+- enable master access control - Slave to Master Access Control is enabled
 - disable old JNLP protocols - `JNLP3-connect`, `JNLP2-connect` and `JNLP-connect` are disabled
 - disable CLI - CLI access of `/cli` URL is disabled
 - configure kubernetes-plugin - secure configuration for Kubernetes plugin
