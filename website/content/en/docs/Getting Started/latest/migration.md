@@ -19,7 +19,7 @@ We've had disabled master executors for security reasons.
 In `v0.1.x` **Jenkins Operator** user configuration application was implemented using **Jenkins** jobs 
 and this mechanism was replaced since `v0.2.0` with Groovy scripts implementing the same functionality.
 
-As a result the **Jenkins** configuration jobs ("Configure Seed Jobs", "jenkins-operator-base-configuration", "jenkins-operator-user-configuration") are no longer visible in **Jenkins** UI.
+As a result, the **Jenkins** configuration jobs ("Configure Seed Jobs", "jenkins-operator-base-configuration", "jenkins-operator-user-configuration") are no longer visible in **Jenkins** UI.
 
 In `v0.1.x` you can see if any of the configuration jobs failed or succeded in the **Jenkins** UI (job build logs).
 Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:
