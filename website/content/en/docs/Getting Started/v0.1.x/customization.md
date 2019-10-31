@@ -7,12 +7,12 @@ description: >
   How to customize Jenkins
 ---
 
-Jenkins can be customized using by groovy scripts or the Jenkins Configuration as Code Plugin. All custom configuration is stored in
+Jenkins can be customized by using groovy scripts or the Jenkins Configuration as a Code Plugin. All custom configuration is stored in
 the **jenkins-operator-user-configuration-<cr_name>** ConfigMap, which is automatically created by the **Jenkins Operator**.
 
 The **Jenkins Operator** creates a **jenkins-operator-user-configuration-<cr_name>** secret where the user can store sensitive 
 information used for custom configuration. If you have an entry in the secret named `PASSWORD` then you can use it in the 
-Jenkins Configuration as Code Plugin as `adminAddress: "${PASSWORD}"`.
+Jenkins Configuration as a Code Plugin as `adminAddress: "${PASSWORD}"`.
 
 ```
 kubectl get secret jenkins-operator-user-configuration-<cr_name> -o yaml
