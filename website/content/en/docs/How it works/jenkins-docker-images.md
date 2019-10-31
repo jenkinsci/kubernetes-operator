@@ -9,4 +9,4 @@ description: >
 
 **Jenkins Operator** is fully compatible with **`jenkins:lts`** Docker image and does not introduce any hidden changes to the upstream Jenkins.
 
-If needed, the Docker image can easily be changed in custom resource manifest as long as it supports standard Jenkins file system structure.
+If needed, the Docker image can be easily changed in custom resource manifest as long as it supports standard Jenkins file system structure.
