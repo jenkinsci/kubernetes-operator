@@ -1,10 +1,5 @@
 package reason
 
-import (
-	"fmt"
-	"reflect"
-)
-
 const (
 	// OperatorSource defines that notification concerns operator
 	OperatorSource Source = "operator"
@@ -69,13 +64,13 @@ type UserConfigurationComplete struct {
 
 // NewUndefined returns new instance of Undefined
 func NewUndefined(source Source, short []string, verbose ...string) *Undefined {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &Undefined{source: source, short: short, verbose: verbose}
 }
 
 // NewPodRestart returns new instance of PodRestart
 func NewPodRestart(source Source, short []string, verbose ...string) *PodRestart {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &PodRestart{Undefined{
 		source:  source,
 		short:   short,
@@ -85,7 +80,7 @@ func NewPodRestart(source Source, short []string, verbose ...string) *PodRestart
 
 // NewPodCreation returns new instance of PodCreation
 func NewPodCreation(source Source, short []string, verbose ...string) *PodCreation {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &PodCreation{Undefined{
 		source:  source,
 		short:   short,
@@ -95,7 +90,7 @@ func NewPodCreation(source Source, short []string, verbose ...string) *PodCreati
 
 // NewReconcileLoopFailed returns new instance of ReconcileLoopFailed
 func NewReconcileLoopFailed(source Source, short []string, verbose ...string) *ReconcileLoopFailed {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &ReconcileLoopFailed{Undefined{
 		source:  source,
 		short:   short,
@@ -105,7 +100,7 @@ func NewReconcileLoopFailed(source Source, short []string, verbose ...string) *R
 
 // NewGroovyScriptExecutionFailed returns new instance of GroovyScriptExecutionFailed
 func NewGroovyScriptExecutionFailed(source Source, short []string, verbose ...string) *GroovyScriptExecutionFailed {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &GroovyScriptExecutionFailed{Undefined{
 		source:  source,
 		short:   short,
@@ -115,7 +110,7 @@ func NewGroovyScriptExecutionFailed(source Source, short []string, verbose ...st
 
 // NewBaseConfigurationFailed returns new instance of BaseConfigurationFailed
 func NewBaseConfigurationFailed(source Source, short []string, verbose ...string) *BaseConfigurationFailed {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &BaseConfigurationFailed{Undefined{
 		source:  source,
 		short:   short,
@@ -125,7 +120,7 @@ func NewBaseConfigurationFailed(source Source, short []string, verbose ...string
 
 // NewBaseConfigurationComplete returns new instance of BaseConfigurationComplete
 func NewBaseConfigurationComplete(source Source, short []string, verbose ...string) *BaseConfigurationComplete {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &BaseConfigurationComplete{Undefined{
 		source:  source,
 		short:   short,
@@ -135,7 +130,7 @@ func NewBaseConfigurationComplete(source Source, short []string, verbose ...stri
 
 // NewUserConfigurationFailed returns new instance of UserConfigurationFailed
 func NewUserConfigurationFailed(source Source, short []string, verbose ...string) *UserConfigurationFailed {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &UserConfigurationFailed{Undefined{
 		source:  source,
 		short:   short,
@@ -145,7 +140,7 @@ func NewUserConfigurationFailed(source Source, short []string, verbose ...string
 
 // NewUserConfigurationComplete returns new instance of UserConfigurationComplete
 func NewUserConfigurationComplete(source Source, short []string, verbose ...string) *UserConfigurationComplete {
-	copyToVerboseIfNil(short, verbose)
+	copyToVerboseIfNil(short, &verbose)
 	return &UserConfigurationComplete{Undefined{
 		source:  source,
 		short:   short,
@@ -158,17 +153,16 @@ type Source string
 
 // Short is list of reasons
 func (p Undefined) Short() []string {
-	return append([]string{fmt.Sprintf("pod restarted by: '%s'", p.source)}, p.short...)
+	return p.short
 }
 
 // Verbose is list of reasons with details
 func (p Undefined) Verbose() []string {
-	return append([]string{fmt.Sprintf("pod restarted by: '%s'", p.source)}, p.verbose...)
+	return p.verbose
 }
 
-// TODO: test this
-func copyToVerboseIfNil(short []string, verbose []string) {
-	if reflect.DeepEqual(verbose, []string{}) || verbose == nil {
-		copy(verbose, short)
+func copyToVerboseIfNil(short []string, verbose *[]string) {
+	if verbose == nil || len(*verbose) == 0 {
+		*verbose = short
 	}
 }

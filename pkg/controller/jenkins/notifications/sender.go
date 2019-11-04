@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
-	"strings"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
@@ -68,7 +67,7 @@ func Listen(events chan event.Event, k8sEvent k8sevent.Recorder, k8sClient k8scl
 		k8sEvent.Emit(&e.Jenkins,
 			eventLevelToKubernetesEventType(e.Level),
 			k8sevent.Reason(reflect.TypeOf(e.Reason).Name()),
-			strings.Join(e.Reason.Short(), ";"),
+			e.Reason.Short()[0],
 		)
 	}
 }

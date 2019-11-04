@@ -413,7 +413,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 			Jenkins: *r.Configuration.Jenkins,
 			Phase:   event.PhaseBase,
 			Level:   v1alpha2.NotificationLevelInfo,
-			Reason:  reason.NewPodCreation(reason.KubernetesSource, []string{"Creating a new Jenkins Master Pod"}),
+			Reason:  reason.NewPodCreation(reason.OperatorSource, []string{"Creating a new Jenkins Master Pod"}),
 		}
 		r.logger.Info(fmt.Sprintf("Creating a new Jenkins Master Pod %s/%s", jenkinsMasterPod.Namespace, jenkinsMasterPod.Name))
 		err = r.createResource(jenkinsMasterPod)
@@ -466,7 +466,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 		}
 
 		restartReason := reason.NewPodRestart(
-			reason.OperatorSource,
+			reason.KubernetesSource,
 			messages,
 		)
 		return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
