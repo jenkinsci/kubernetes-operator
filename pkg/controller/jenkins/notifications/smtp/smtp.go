@@ -58,6 +58,31 @@ func New(k8sClient k8sclient.Client, config v1alpha2.Notification) *SMTP {
 	return &SMTP{k8sClient: k8sClient, config: config}
 }
 
+func (s SMTP) generateMessage(e event.Event) *gomail.Message {
+	var statusMessage strings.Builder
+	var reasons string
+
+	if s.config.Verbose {
+		reasons = strings.TrimRight(strings.Join(e.Reason.Verbose(), "</li><li>"), "<li>")
+	} else {
+		reasons = strings.TrimRight(strings.Join(e.Reason.Short(), "</li><li>"), "<li>")
+	}
+
+	statusMessage.WriteString("<ul><li>")
+	statusMessage.WriteString(reasons)
+	statusMessage.WriteString("</ul>")
+
+	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+	message := gomail.NewMessage()
+
+	message.SetHeader("From", s.config.SMTP.From)
+	message.SetHeader("To", s.config.SMTP.To)
+	message.SetHeader("Subject", mailSubject)
+	message.SetBody("text/html", htmlMessage)
+
+	return message
+}
+
 // Send is function for sending notification by SMTP server
 func (s SMTP) Send(e event.Event) error {
 	usernameSecret := &corev1.Secret{}
@@ -89,27 +114,7 @@ func (s SMTP) Send(e event.Event) error {
 	mailer := gomail.NewDialer(s.config.SMTP.Server, s.config.SMTP.Port, usernameSecretValue, passwordSecretValue)
 	mailer.TLSConfig = &tls.Config{InsecureSkipVerify: s.config.SMTP.TLSInsecureSkipVerify}
 
-	var statusMessage strings.Builder
-	var reasons string
-
-	if s.config.Verbose {
-		reasons = strings.TrimRight(strings.Join(e.Reason.Verbose(), "</li><li>"), "<li>")
-	} else {
-		reasons = strings.TrimRight(strings.Join(e.Reason.Short(), "</li><li>"), "<li>")
-	}
-
-	statusMessage.WriteString("<ul><li>")
-	statusMessage.WriteString(reasons)
-	statusMessage.WriteString("</ul>")
-
-	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
-	message := gomail.NewMessage()
-
-	message.SetHeader("From", s.config.SMTP.From)
-	message.SetHeader("To", s.config.SMTP.To)
-	message.SetHeader("Subject", mailSubject)
-	message.SetBody("text/html", htmlMessage)
-
+	message := s.generateMessage(e)
 	if err := mailer.DialAndSend(message); err != nil {
 		return err
 	}

@@ -70,22 +70,19 @@ func (s Slack) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusC
 	}
 }
 
-// Send is function for sending directly to API
-func (s Slack) Send(e event.Event) error {
-	secret := &corev1.Secret{}
-	selector := s.config.Slack.WebHookURLSecretKeySelector
-
-	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: selector.Name, Namespace: e.Jenkins.Namespace}, secret)
-	if err != nil {
-		return err
-	}
-
+func (s Slack) generateMessage(e event.Event) Message {
 	var messageStringBuilder strings.Builder
-	for _, msg := range e.Reason.Short() {
-		messageStringBuilder.WriteString("\n - " + msg + "\n")
+	if s.config.Verbose {
+		for _, msg := range e.Reason.Verbose() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
+	} else {
+		for _, msg := range e.Reason.Short() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
 	}
 
-	sm := &Message{
+	sm := Message{
 		Attachments: []Attachment{
 			{
 				Title:    provider.NotificationTitle(e),
@@ -117,7 +114,20 @@ func (s Slack) Send(e event.Event) error {
 		},
 	}
 
-	slackMessage, err := json.Marshal(sm)
+	return sm
+}
+
+// Send is function for sending directly to API
+func (s Slack) Send(e event.Event) error {
+	secret := &corev1.Secret{}
+	selector := s.config.Slack.WebHookURLSecretKeySelector
+
+	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: selector.Name, Namespace: e.Jenkins.Namespace}, secret)
+	if err != nil {
+		return err
+	}
+
+	slackMessage, err := json.Marshal(s.generateMessage(e))
 	if err != nil {
 		return err
 	}

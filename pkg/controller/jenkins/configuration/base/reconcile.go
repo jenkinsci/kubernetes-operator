@@ -459,16 +459,12 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 		return reconcile.Result{Requeue: true}, nil
 	}
 
-	messages := r.isRecreatePodNeeded(*currentJenkinsMasterPod, userAndPasswordHash)
-	if hasMessages := len(messages) > 0; hasMessages {
-		for _, msg := range messages {
+	restartReason := r.isRecreatePodNeeded(*currentJenkinsMasterPod, userAndPasswordHash)
+	if hasMessages := len(restartReason.Short()) > 0; hasMessages {
+		for _, msg := range restartReason.Verbose() {
 			r.logger.Info(msg)
 		}
 
-		restartReason := reason.NewPodRestart(
-			reason.KubernetesSource,
-			messages,
-		)
 		return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
 	}
 
@@ -492,8 +488,9 @@ func isPodTerminating(pod corev1.Pod) bool {
 	return pod.ObjectMeta.DeletionTimestamp != nil
 }
 
-func (r *ReconcileJenkinsBaseConfiguration) isRecreatePodNeeded(currentJenkinsMasterPod corev1.Pod, userAndPasswordHash string) []string {
+func (r *ReconcileJenkinsBaseConfiguration) isRecreatePodNeeded(currentJenkinsMasterPod corev1.Pod, userAndPasswordHash string) *reason.PodRestart {
 	var messages []string
+	var verbose []string
 	if userAndPasswordHash != r.Configuration.Jenkins.Status.UserAndPasswordHash {
 		messages = append(messages, "User or password have changed, recreating pod")
 	}
@@ -503,7 +500,8 @@ func (r *ReconcileJenkinsBaseConfiguration) isRecreatePodNeeded(currentJenkinsMa
 	}
 
 	if version.Version != r.Configuration.Jenkins.Status.OperatorVersion {
-		messages = append(messages, fmt.Sprintf("Jenkins Operator version has changed, actual '%+v' new '%+v', recreating pod",
+		messages = append(messages, "Jenkins Operator version has changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins Operator version has changed, actual '%+v' new '%+v', recreating pod",
 			r.Configuration.Jenkins.Status.OperatorVersion, version.Version))
 	}
 
@@ -514,37 +512,44 @@ func (r *ReconcileJenkinsBaseConfiguration) isRecreatePodNeeded(currentJenkinsMa
 	}
 
 	if !reflect.DeepEqual(r.Configuration.Jenkins.Spec.Master.SecurityContext, currentJenkinsMasterPod.Spec.SecurityContext) {
-		messages = append(messages, fmt.Sprintf("Jenkins pod security context has changed, actual '%+v' required '%+v', recreating pod",
+		messages = append(messages, fmt.Sprintf("Jenkins pod security context has changed"))
+		verbose = append(verbose, fmt.Sprintf("Jenkins pod security context has changed, actual '%+v' required '%+v', recreating pod",
 			currentJenkinsMasterPod.Spec.SecurityContext, r.Configuration.Jenkins.Spec.Master.SecurityContext))
 	}
 
 	if !reflect.DeepEqual(r.Configuration.Jenkins.Spec.Master.ImagePullSecrets, currentJenkinsMasterPod.Spec.ImagePullSecrets) {
-		messages = append(messages, fmt.Sprintf("Jenkins Pod ImagePullSecrets has changed, actual '%+v' required '%+v', recreating pod",
+		messages = append(messages, "Jenkins Pod ImagePullSecrets has changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins Pod ImagePullSecrets has changed, actual '%+v' required '%+v', recreating pod",
 			currentJenkinsMasterPod.Spec.ImagePullSecrets, r.Configuration.Jenkins.Spec.Master.ImagePullSecrets))
 	}
 
 	if !reflect.DeepEqual(r.Configuration.Jenkins.Spec.Master.NodeSelector, currentJenkinsMasterPod.Spec.NodeSelector) {
-		messages = append(messages, fmt.Sprintf("Jenkins pod node selector has changed, actual '%+v' required '%+v', recreating pod",
+		messages = append(messages, "Jenkins pod node selector has changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins pod node selector has changed, actual '%+v' required '%+v', recreating pod",
 			currentJenkinsMasterPod.Spec.NodeSelector, r.Configuration.Jenkins.Spec.Master.NodeSelector))
 	}
 
 	if len(r.Configuration.Jenkins.Spec.Master.Annotations) > 0 &&
 		!reflect.DeepEqual(r.Configuration.Jenkins.Spec.Master.Annotations, currentJenkinsMasterPod.ObjectMeta.Annotations) {
-		messages = append(messages, fmt.Sprintf("Jenkins pod annotations have changed to '%+v', recreating pod", r.Configuration.Jenkins.Spec.Master.Annotations))
+		messages = append(messages, "Jenkins pod annotations have changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins pod annotations have changed to '%+v', recreating pod", r.Configuration.Jenkins.Spec.Master.Annotations))
 	}
 
 	if !r.compareVolumes(currentJenkinsMasterPod) {
-		messages = append(messages, fmt.Sprintf("Jenkins pod volumes have changed, actual '%v' required '%v', recreating pod",
+		messages = append(messages, "Jenkins pod volumes have changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins pod volumes have changed, actual '%v' required '%v', recreating pod",
 			currentJenkinsMasterPod.Spec.Volumes, r.Configuration.Jenkins.Spec.Master.Volumes))
 	}
 
 	if len(r.Configuration.Jenkins.Spec.Master.Containers) != len(currentJenkinsMasterPod.Spec.Containers) {
-		messages = append(messages, fmt.Sprintf("Jenkins amount of containers has changed to '%+v', recreating pod", len(r.Configuration.Jenkins.Spec.Master.Containers)))
+		messages = append(messages, "Jenkins amount of containers has changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins amount of containers has changed to '%+v', recreating pod", len(r.Configuration.Jenkins.Spec.Master.Containers)))
 	}
 
 	for _, actualContainer := range currentJenkinsMasterPod.Spec.Containers {
 		if actualContainer.Name == resources.JenkinsMasterContainerName {
-			messages = append(messages, r.compareContainers(resources.NewJenkinsMasterContainer(r.Configuration.Jenkins), actualContainer)...)
+			messages = append(messages, "Jenkins master pod container attributes has changed")
+			verbose = append(verbose, r.compareContainers(resources.NewJenkinsMasterContainer(r.Configuration.Jenkins), actualContainer)...)
 			continue
 		}
 
@@ -560,10 +565,11 @@ func (r *ReconcileJenkinsBaseConfiguration) isRecreatePodNeeded(currentJenkinsMa
 			messages = append(messages, fmt.Sprintf("Container '%+v' not found in pod, recreating pod", actualContainer))
 		}
 
-		messages = append(messages, r.compareContainers(*expectedContainer, actualContainer)...)
+		messages = append(messages, "Jenkins master pod container attributes has changed")
+		verbose = append(verbose, r.compareContainers(*expectedContainer, actualContainer)...)
 	}
 
-	return messages
+	return reason.NewPodRestart(reason.HumanSource, messages, verbose...)
 }
 
 func (r *ReconcileJenkinsBaseConfiguration) compareContainers(expected corev1.Container, actual corev1.Container) []string {

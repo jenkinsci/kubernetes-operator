@@ -67,10 +67,27 @@ func (m MailGun) getStatusColor(logLevel v1alpha2.NotificationLevel) event.Statu
 	}
 }
 
+func (m MailGun) generateMessage(event event.Event) string {
+	var statusMessage strings.Builder
+	var reasons string
+
+	if m.config.Verbose {
+		reasons = strings.TrimRight(strings.Join(event.Reason.Verbose(), "</li><li>"), "<li>")
+	} else {
+		reasons = strings.TrimRight(strings.Join(event.Reason.Short(), "</li><li>"), "<li>")
+	}
+
+	statusMessage.WriteString("<ul><li>")
+	statusMessage.WriteString(reasons)
+	statusMessage.WriteString("</ul>")
+
+	return fmt.Sprintf(content, m.getStatusColor(event.Level),
+		provider.NotificationTitle(event), statusMessage.String(), event.Jenkins.Name, event.Phase)
+}
+
 // Send is function for sending directly to API
 func (m MailGun) Send(event event.Event) error {
 	secret := &corev1.Secret{}
-
 	selector := m.config.Mailgun.APIKeySecretKeySelector
 
 	err := m.k8sClient.Get(context.TODO(),
@@ -87,25 +104,9 @@ func (m MailGun) Send(event event.Event) error {
 
 	mg := mailgun.NewMailgun(m.config.Mailgun.Domain, secretValue)
 
-	var statusMessage strings.Builder
-	var reasons string
-
-	if m.config.Verbose {
-		reasons = strings.TrimRight(strings.Join(event.Reason.Verbose(), "</li><li>"), "<li>")
-	} else {
-		reasons = strings.TrimRight(strings.Join(event.Reason.Short(), "</li><li>"), "<li>")
-	}
-
-	statusMessage.WriteString("<ul><li>")
-	statusMessage.WriteString(reasons)
-	statusMessage.WriteString("</ul>")
-
-	htmlMessage := fmt.Sprintf(content, m.getStatusColor(event.Level),
-		provider.NotificationTitle(event), statusMessage.String(), event.Jenkins.Name, event.Phase)
-
 	msg := mg.NewMessage(fmt.Sprintf("Jenkins Operator Notifier <%s>",
 		m.config.Mailgun.From), provider.NotificationTitle(event), "", m.config.Mailgun.Recipient)
-	msg.SetHtml(htmlMessage)
+	msg.SetHtml(m.generateMessage(event))
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 

@@ -69,22 +69,7 @@ func (t Teams) getStatusColor(logLevel v1alpha2.NotificationLevel) event.StatusC
 	}
 }
 
-// Send is function for sending directly to API
-func (t Teams) Send(e event.Event) error {
-	secret := &corev1.Secret{}
-
-	selector := t.config.Teams.WebHookURLSecretKeySelector
-
-	err := t.k8sClient.Get(context.TODO(), types.NamespacedName{Name: selector.Name, Namespace: e.Jenkins.Namespace}, secret)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	secretValue := string(secret.Data[selector.Key])
-	if secretValue == "" {
-		return errors.Errorf("Microsoft Teams WebHook URL is empty in secret '%s/%s[%s]", e.Jenkins.Namespace, selector.Name, selector.Key)
-	}
-
+func (t Teams) generateMessage(e event.Event) Message {
 	var reason string
 	if t.config.Verbose {
 		reason = strings.Join(e.Reason.Verbose(), "\n\n - ")
@@ -92,7 +77,7 @@ func (t Teams) Send(e event.Event) error {
 		reason = strings.Join(e.Reason.Short(), "\n\n - ")
 	}
 
-	tm := &Message{
+	tm := Message{
 		Title:      provider.NotificationTitle(e),
 		Type:       "MessageCard",
 		Context:    "https://schema.org/extensions",
@@ -119,7 +104,26 @@ func (t Teams) Send(e event.Event) error {
 		Summary: reason,
 	}
 
-	msg, err := json.Marshal(tm)
+	return tm
+}
+
+// Send is function for sending directly to API
+func (t Teams) Send(e event.Event) error {
+	secret := &corev1.Secret{}
+
+	selector := t.config.Teams.WebHookURLSecretKeySelector
+
+	err := t.k8sClient.Get(context.TODO(), types.NamespacedName{Name: selector.Name, Namespace: e.Jenkins.Namespace}, secret)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	secretValue := string(secret.Data[selector.Key])
+	if secretValue == "" {
+		return errors.Errorf("Microsoft Teams WebHook URL is empty in secret '%s/%s[%s]", e.Jenkins.Namespace, selector.Name, selector.Key)
+	}
+
+	msg, err := json.Marshal(t.generateMessage(e))
 	if err != nil {
 		return errors.WithStack(err)
 	}
