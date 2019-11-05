@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strings"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
@@ -28,6 +29,18 @@ func Listen(events chan event.Event, k8sEvent k8sevent.Recorder, k8sClient k8scl
 	httpClient := http.Client{}
 	for e := range events {
 		logger := log.Log.WithValues("cr", e.Jenkins.Name)
+
+		if !e.Reason.HasMessages() {
+			logger.V(log.VWarn).Info("Reason has no messages, this should not happen")
+			continue // skip empty messages
+		}
+
+		k8sEvent.Emit(&e.Jenkins,
+			eventLevelToKubernetesEventType(e.Level),
+			k8sevent.Reason(reflect.TypeOf(e.Reason).Name()),
+			strings.Join(e.Reason.Short(), "; "),
+		)
+
 		for _, notificationConfig := range e.Jenkins.Spec.Notifications {
 			var err error
 			var provider Provider
@@ -64,11 +77,6 @@ func Listen(events chan event.Event, k8sEvent k8sevent.Recorder, k8sClient k8scl
 				}
 			}(notificationConfig)
 		}
-		k8sEvent.Emit(&e.Jenkins,
-			eventLevelToKubernetesEventType(e.Level),
-			k8sevent.Reason(reflect.TypeOf(e.Reason).Name()),
-			e.Reason.Short()[0],
-		)
 	}
 }
 

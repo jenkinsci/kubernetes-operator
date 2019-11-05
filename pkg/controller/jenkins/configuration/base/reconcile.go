@@ -460,7 +460,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 	}
 
 	restartReason := r.checkForPodRecreation(*currentJenkinsMasterPod, userAndPasswordHash)
-	if restartReason != nil {
+	if restartReason.HasMessages() {
 		for _, msg := range restartReason.Verbose() {
 			r.logger.Info(msg)
 		}
@@ -502,10 +502,12 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 
 	if userAndPasswordHash != r.Configuration.Jenkins.Status.UserAndPasswordHash {
 		messages = append(messages, "User or password have changed")
+		verbose = append(verbose, "User or password have changed, recreating pod")
 	}
 
 	if r.Configuration.Jenkins.Spec.Restore.RecoveryOnce != 0 && r.Configuration.Jenkins.Status.RestoredBackup != 0 {
 		messages = append(messages, "spec.restore.recoveryOnce is set")
+		verbose = append(verbose, "spec.restore.recoveryOnce is set, recreating pod")
 	}
 
 	if version.Version != r.Configuration.Jenkins.Status.OperatorVersion {

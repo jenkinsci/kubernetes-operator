@@ -34,6 +34,34 @@ func TestCopyToVerboseIfNil(t *testing.T) {
 	})
 }
 
+func TestUndefined_HasMessages(t *testing.T) {
+	t.Run("short full", func(t *testing.T) {
+		podRestart := NewUndefined(KubernetesSource, []string{"test", "another-test"})
+		assert.True(t, podRestart.HasMessages())
+	})
+	
+	t.Run("verbose full", func(t *testing.T) {
+		podRestart := NewUndefined(KubernetesSource, []string{}, []string{"test", "another-test"}...)
+		assert.True(t, podRestart.HasMessages())
+	})
+	
+	t.Run("short empty", func(t *testing.T) {
+		podRestart := NewUndefined(KubernetesSource, []string{})
+		assert.False(t, podRestart.HasMessages())
+	})
+
+	t.Run("verbose and short full", func(t *testing.T) {
+		podRestart := NewUndefined(KubernetesSource, []string{"test", "another-test"}, []string{"test", "another-test"}...)
+		assert.True(t, podRestart.HasMessages())
+	})
+
+	t.Run("verbose and short empty", func(t *testing.T) {
+		podRestart := NewUndefined(KubernetesSource, []string{}, []string{}...)
+		assert.False(t, podRestart.HasMessages())
+	})
+
+}
+
 func TestPodRestartPrepend(t *testing.T) {
 	t.Run("happy with one message", func(t *testing.T) {
 		res := "test-reason"

@@ -15,6 +15,7 @@ const (
 type Reason interface {
 	Short() []string
 	Verbose() []string
+	HasMessages() bool
 }
 
 // Undefined is base or untraceable reason
@@ -72,10 +73,10 @@ func NewUndefined(source Source, short []string, verbose ...string) *Undefined {
 // NewPodRestart returns new instance of PodRestart
 func NewPodRestart(source Source, short []string, verbose ...string) *PodRestart {
 	restartPodMessage := "Jenkins master pod restarted by:"
-	if len(short) > 1 {
-		short = append([]string{restartPodMessage}, short...)
-	} else {
+	if len(short) == 1 {
 		short[0] = fmt.Sprintf("%s %s", restartPodMessage, short[0])
+	} else if len(short) > 1 {
+		short = append([]string{restartPodMessage}, short...)
 	}
 
 	return &PodRestart{
@@ -175,6 +176,11 @@ func (p Undefined) Short() []string {
 // Verbose is list of reasons with details
 func (p Undefined) Verbose() []string {
 	return p.verbose
+}
+
+// HasMessages checks if there is any message
+func (p Undefined) HasMessages() bool {
+	return len(p.short) > 0 || len(p.verbose) > 0
 }
 
 func checkIfVerboseEmpty(short []string, verbose []string) []string {

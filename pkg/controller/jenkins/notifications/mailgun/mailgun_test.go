@@ -49,10 +49,12 @@ func TestGenerateMessages(t *testing.T) {
 		statusMessage.WriteString(r)
 		statusMessage.WriteString("</ul>")
 
-		message := s.generateMessage(e)
+		want := s.generateMessage(e)
 
-		assert.Equal(t, message, fmt.Sprintf(content, s.getStatusColor(e.Level),
-			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase))
+		got := fmt.Sprintf(content, s.getStatusColor(e.Level),
+			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("with nils", func(t *testing.T) {
@@ -88,10 +90,12 @@ func TestGenerateMessages(t *testing.T) {
 		statusMessage.WriteString(r)
 		statusMessage.WriteString("</ul>")
 
-		message := s.generateMessage(e)
+		want := s.generateMessage(e)
 
-		assert.Equal(t, message, fmt.Sprintf(content, s.getStatusColor(e.Level),
-			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase))
+		got := fmt.Sprintf(content, s.getStatusColor(e.Level),
+			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("with empty strings", func(t *testing.T) {
@@ -127,10 +131,12 @@ func TestGenerateMessages(t *testing.T) {
 		statusMessage.WriteString(r)
 		statusMessage.WriteString("</ul>")
 
-		message := s.generateMessage(e)
+		want := s.generateMessage(e)
 
-		assert.Equal(t, message, fmt.Sprintf(content, s.getStatusColor(e.Level),
-			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase))
+		got := fmt.Sprintf(content, s.getStatusColor(e.Level),
+			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("with utf-8 characters", func(t *testing.T) {
@@ -166,9 +172,11 @@ func TestGenerateMessages(t *testing.T) {
 		statusMessage.WriteString(r)
 		statusMessage.WriteString("</ul>")
 
-		message := s.generateMessage(e)
+		want := s.generateMessage(e)
 
-		assert.Equal(t, message, fmt.Sprintf(content, s.getStatusColor(e.Level),
-			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase))
+		got := fmt.Sprintf(content, s.getStatusColor(e.Level),
+			provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+
+		assert.Equal(t, want, got)
 	})
 }
