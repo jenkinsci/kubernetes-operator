@@ -81,8 +81,13 @@ func (m MailGun) generateMessage(event event.Event) string {
 	statusMessage.WriteString(reasons)
 	statusMessage.WriteString("</ul>")
 
-	return fmt.Sprintf(content, m.getStatusColor(event.Level),
-		provider.NotificationTitle(event), statusMessage.String(), event.Jenkins.Name, event.Phase)
+	statusColor := m.getStatusColor(event.Level)
+	messageTitle := provider.NotificationTitle(event)
+	message := statusMessage.String()
+	crName := event.Jenkins.Name
+	phase := event.Phase
+
+	return fmt.Sprintf(content, statusColor, messageTitle, message, crName, phase)
 }
 
 // Send is function for sending directly to API
@@ -103,9 +108,11 @@ func (m MailGun) Send(event event.Event) error {
 	}
 
 	mg := mailgun.NewMailgun(m.config.Mailgun.Domain, secretValue)
+	from := fmt.Sprintf("Jenkins Operator Notifier <%s>", m.config.Mailgun.From)
+	subject := provider.NotificationTitle(event)
+	recipient := m.config.Mailgun.Recipient
 
-	msg := mg.NewMessage(fmt.Sprintf("Jenkins Operator Notifier <%s>",
-		m.config.Mailgun.From), provider.NotificationTitle(event), "", m.config.Mailgun.Recipient)
+	msg := mg.NewMessage(from, subject, "", recipient)
 	msg.SetHtml(m.generateMessage(event))
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

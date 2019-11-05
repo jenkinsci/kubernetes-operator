@@ -206,3 +206,104 @@ func TestSMTP_Send(t *testing.T) {
 
 	assert.NoError(t, err)
 }
+
+func TestGenerateMessage(t *testing.T) {
+	t.Run("happy", func(t *testing.T) {
+		crName := "test-jenkins"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"test"}, []string{"test-verbose"}...)
+
+		from := "from@jenkins.local"
+		to := "to@jenkins.local"
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: crName,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+		s := SMTP{
+			k8sClient: fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				LoggingLevel: level,
+				SMTP: &v1alpha2.SMTP{
+					From: from,
+					To:   to,
+				},
+			},
+		}
+		message := s.generateMessage(e)
+		assert.NotNil(t, message)
+	})
+
+	t.Run("with nils", func(t *testing.T) {
+		crName := "nil"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"nil"}, []string{"nil"}...)
+
+		from := "nil"
+		to := "nil"
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: crName,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+		s := SMTP{
+			k8sClient: fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				LoggingLevel: level,
+				SMTP: &v1alpha2.SMTP{
+					From: from,
+					To:   to,
+				},
+			},
+		}
+		message := s.generateMessage(e)
+		assert.NotNil(t, message)
+	})
+
+	t.Run("with empty strings", func(t *testing.T) {
+		crName := ""
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{""}, []string{""}...)
+
+		from := ""
+		to := ""
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: crName,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+		s := SMTP{
+			k8sClient: fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				LoggingLevel: level,
+				SMTP: &v1alpha2.SMTP{
+					From: from,
+					To:   to,
+				},
+			},
+		}
+		message := s.generateMessage(e)
+		assert.NotNil(t, message)
+	})
+}

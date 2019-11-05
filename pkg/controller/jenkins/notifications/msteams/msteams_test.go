@@ -112,3 +112,176 @@ func TestTeams_Send(t *testing.T) {
 	err = teams.Send(event)
 	assert.NoError(t, err)
 }
+
+func TestGenerateMessages(t *testing.T) {
+	t.Run("happy", func(t *testing.T) {
+		crName := "test-jenkins"
+		crNamespace := "test-namespace"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"test-string"}, "test-verbose")
+
+		s := Teams{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		msg := strings.Join(e.Reason.Verbose(), "\n\n - ")
+
+		mainSection := message.Sections[0]
+
+		crNameFact := mainSection.Facts[0]
+		namespaceFact := mainSection.Facts[1]
+		phaseFact := mainSection.Facts[2]
+
+		assert.Equal(t, mainSection.Text, msg)
+		assert.Equal(t, crNameFact.Value, e.Jenkins.Name)
+		assert.Equal(t, namespaceFact.Value, e.Jenkins.Namespace)
+		assert.Equal(t, event.Phase(phaseFact.Value), e.Phase)
+	})
+
+	t.Run("with nils", func(t *testing.T) {
+		crName := "nil"
+		crNamespace := "nil"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"nil"}, "nil")
+
+		s := Teams{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		msg := strings.Join(e.Reason.Verbose(), "\n\n - ")
+
+		mainSection := message.Sections[0]
+
+		crNameFact := mainSection.Facts[0]
+		namespaceFact := mainSection.Facts[1]
+		phaseFact := mainSection.Facts[2]
+
+		assert.Equal(t, mainSection.Text, msg)
+		assert.Equal(t, crNameFact.Value, e.Jenkins.Name)
+		assert.Equal(t, namespaceFact.Value, e.Jenkins.Namespace)
+		assert.Equal(t, event.Phase(phaseFact.Value), e.Phase)
+	})
+
+	t.Run("with empty strings", func(t *testing.T) {
+		crName := ""
+		crNamespace := ""
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{""}, "")
+
+		s := Teams{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		msg := strings.Join(e.Reason.Verbose(), "\n\n - ")
+
+		mainSection := message.Sections[0]
+
+		crNameFact := mainSection.Facts[0]
+		namespaceFact := mainSection.Facts[1]
+		phaseFact := mainSection.Facts[2]
+
+		assert.Equal(t, mainSection.Text, msg)
+		assert.Equal(t, crNameFact.Value, e.Jenkins.Name)
+		assert.Equal(t, namespaceFact.Value, e.Jenkins.Namespace)
+		assert.Equal(t, event.Phase(phaseFact.Value), e.Phase)
+	})
+
+	t.Run("with utf-8 characters", func(t *testing.T) {
+		crName := "ąśćńółżź"
+		crNamespace := "ąśćńółżź"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"ąśćńółżź"}, "ąśćńółżź")
+		s := Teams{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		msg := strings.Join(e.Reason.Verbose(), "\n\n - ")
+
+		mainSection := message.Sections[0]
+
+		crNameFact := mainSection.Facts[0]
+		namespaceFact := mainSection.Facts[1]
+		phaseFact := mainSection.Facts[2]
+
+		assert.Equal(t, mainSection.Text, msg)
+		assert.Equal(t, crNameFact.Value, e.Jenkins.Name)
+		assert.Equal(t, namespaceFact.Value, e.Jenkins.Namespace)
+		assert.Equal(t, event.Phase(phaseFact.Value), e.Phase)
+	})
+}

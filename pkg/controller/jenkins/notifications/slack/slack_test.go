@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -113,4 +114,190 @@ func TestSlack_Send(t *testing.T) {
 
 	err = slack.Send(e)
 	assert.NoError(t, err)
+}
+
+func TestGenerateMessage(t *testing.T) {
+	t.Run("happy", func(t *testing.T) {
+		crName := "test-jenkins"
+		crNamespace := "test-namespace"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"test-string"}, "test-verbose")
+
+		s := Slack{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		var messageStringBuilder strings.Builder
+		for _, msg := range e.Reason.Verbose() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
+
+		mainAttachment := message.Attachments[0]
+		messageField := mainAttachment.Fields[0]
+		namespaceField := mainAttachment.Fields[1]
+		crNameField := mainAttachment.Fields[2]
+		phaseField := mainAttachment.Fields[3]
+
+		assert.Equal(t, messageField.Value, messageStringBuilder.String())
+		assert.Equal(t, namespaceField.Value, e.Jenkins.Namespace)
+		assert.Equal(t, crNameField.Value, e.Jenkins.Name)
+		assert.Equal(t, event.Phase(phaseField.Value), e.Phase)
+	})
+
+	t.Run("with nils", func(t *testing.T) {
+		crName := "nil"
+		crNamespace := "nil"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"nil"}, "nil")
+
+		s := Slack{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		var messageStringBuilder strings.Builder
+		for _, msg := range e.Reason.Verbose() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
+
+		mainAttachment := message.Attachments[0]
+		messageField := mainAttachment.Fields[0]
+		namespaceField := mainAttachment.Fields[1]
+		crNameField := mainAttachment.Fields[2]
+		phaseField := mainAttachment.Fields[3]
+
+		assert.Equal(t, messageField.Value, messageStringBuilder.String())
+		assert.Equal(t, namespaceField.Value, e.Jenkins.Namespace)
+		assert.Equal(t, crNameField.Value, e.Jenkins.Name)
+		assert.Equal(t, event.Phase(phaseField.Value), e.Phase)
+	})
+
+	t.Run("with empty strings", func(t *testing.T) {
+		crName := ""
+		crNamespace := ""
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{""}, "")
+
+		s := Slack{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		var messageStringBuilder strings.Builder
+		for _, msg := range e.Reason.Verbose() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
+
+		mainAttachment := message.Attachments[0]
+		messageField := mainAttachment.Fields[0]
+		namespaceField := mainAttachment.Fields[1]
+		crNameField := mainAttachment.Fields[2]
+		phaseField := mainAttachment.Fields[3]
+
+		assert.Equal(t, messageField.Value, messageStringBuilder.String())
+		assert.Equal(t, namespaceField.Value, e.Jenkins.Namespace)
+		assert.Equal(t, crNameField.Value, e.Jenkins.Name)
+		assert.Equal(t, event.Phase(phaseField.Value), e.Phase)
+	})
+
+	t.Run("with utf-8 characters", func(t *testing.T) {
+		crName := "ąśćńółżź"
+		crNamespace := "ąśćńółżź"
+		phase := event.PhaseBase
+		level := v1alpha2.NotificationLevelInfo
+		res := reason.NewUndefined(reason.KubernetesSource, []string{"ąśćńółżź"}, "ąśćńółżź")
+
+		s := Slack{
+			httpClient: http.Client{},
+			k8sClient:  fake.NewFakeClient(),
+			config: v1alpha2.Notification{
+				Verbose: true,
+			},
+		}
+
+		e := event.Event{
+			Jenkins: v1alpha2.Jenkins{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      crName,
+					Namespace: crNamespace,
+				},
+			},
+			Phase:  phase,
+			Level:  level,
+			Reason: res,
+		}
+
+		message := s.generateMessage(e)
+
+		var messageStringBuilder strings.Builder
+		for _, msg := range e.Reason.Verbose() {
+			messageStringBuilder.WriteString("\n - " + msg + "\n")
+		}
+
+		mainAttachment := message.Attachments[0]
+		messageField := mainAttachment.Fields[0]
+		namespaceField := mainAttachment.Fields[1]
+		crNameField := mainAttachment.Fields[2]
+		phaseField := mainAttachment.Fields[3]
+
+		assert.Equal(t, messageField.Value, messageStringBuilder.String())
+		assert.Equal(t, namespaceField.Value, e.Jenkins.Namespace)
+		assert.Equal(t, crNameField.Value, e.Jenkins.Name)
+		assert.Equal(t, event.Phase(phaseField.Value), e.Phase)
+	})
 }
