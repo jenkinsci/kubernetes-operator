@@ -770,8 +770,18 @@ func (r *ReconcileJenkinsBaseConfiguration) waitForJenkins(meta metav1.ObjectMet
 }
 
 func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsClient(meta metav1.ObjectMeta) (jenkinsclient.Jenkins, error) {
-	jenkinsURL, err := jenkinsclient.BuildJenkinsAPIUrl(r.Client,
-		r.Configuration.Jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(r.Configuration.Jenkins), r.hostname, r.port)
+	var service corev1.Service
+
+	err := r.Client.Get(context.TODO(), types.NamespacedName{
+		Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace,
+		Name:      resources.GetJenkinsHTTPServiceName(r.Configuration.Jenkins),
+	}, &service)
+
+	if err != nil {
+		return nil, err
+	}
+
+	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, r.hostname, r.port)
 
 	if prefix, ok := GetJenkinsOpts(*r.Configuration.Jenkins)["prefix"]; ok {
 		jenkinsURL = jenkinsURL + prefix

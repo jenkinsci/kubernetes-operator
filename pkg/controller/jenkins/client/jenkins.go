@@ -1,7 +1,6 @@
 package client
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -10,8 +9,6 @@ import (
 	"github.com/bndr/gojenkins"
 	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/types"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var (
@@ -82,38 +79,16 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func BuildJenkinsAPIUrl(k8sClient client.Client, namespace, serviceName string, hostname, port string) (string, error) {
+func BuildJenkinsAPIUrl(service v1.Service, hostname, port string) string {
 	if hostname == "" && port == "" {
-		servicePort, err := getServicePort(k8sClient, namespace, serviceName)
-		if err != nil {
-			return "", err
-		}
-		return fmt.Sprintf("http://%s.%s:%d", serviceName, namespace, servicePort), nil
+		return fmt.Sprintf("http://%s.%s:%d", service.Name, service.Namespace, service.Spec.Ports[0].Port)
 	}
 
 	if hostname != "" && port == "NodePort" {
-		nodePort, err := getServiceNodePort(k8sClient, namespace, serviceName)
-		if err != nil {
-			return "", err
-		}
-		return fmt.Sprintf("http://%s:%d", hostname, nodePort), nil
+		return fmt.Sprintf("http://%s:%d", hostname, service.Spec.Ports[0].NodePort)
 	}
 
-	return fmt.Sprintf("http://%s:%s", hostname, port), nil
-}
-
-func getServiceNodePort(k8sClient client.Client, namespace, serviceName string) (int32, error) {
-	var service v1.Service
-	err := k8sClient.Get(context.TODO(), types.NamespacedName{Name: serviceName, Namespace: namespace}, &service)
-
-	return service.Spec.Ports[0].NodePort, err
-}
-
-func getServicePort(k8sClient client.Client, namespace, serviceName string) (int32, error) {
-	var service v1.Service
-	err := k8sClient.Get(context.TODO(), types.NamespacedName{Name: serviceName, Namespace: namespace}, &service)
-
-	return service.Spec.Ports[0].Port, err
+	return fmt.Sprintf("http://%s:%s", hostname, port)
 }
 
 // New creates Jenkins API client

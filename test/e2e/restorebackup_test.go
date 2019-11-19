@@ -31,7 +31,7 @@ func TestBackupAndRestore(t *testing.T) {
 	jenkins := createJenkinsWithBackupAndRestoreConfigured(t, "e2e", namespace)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 
-	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port)
 	waitForJob(t, jenkinsClient, jobID)
 	job, err := jenkinsClient.GetJob(jobID)
 	require.NoError(t, err, job)
@@ -43,7 +43,7 @@ func TestBackupAndRestore(t *testing.T) {
 	restartJenkinsMasterPod(t, jenkins)
 	waitForRecreateJenkinsMasterPod(t, jenkins)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
-	jenkinsClient = verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient = verifyJenkinsAPIConnection(t, jenkins, *hostname, *port)
 	waitForJob(t, jenkinsClient, jobID)
 	verifyJobBuildsAfterRestoreBackup(t, jenkinsClient, jobID)
 }

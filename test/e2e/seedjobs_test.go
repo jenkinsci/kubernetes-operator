@@ -58,7 +58,7 @@ func TestSeedJobs(t *testing.T) {
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 
 	verifyJenkinsMasterPodAttributes(t, jenkins)
-	client := verifyJenkinsAPIConnection(t, jenkins)
+	client := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port)
 	verifyPlugins(t, client, jenkins)
 
 	// user

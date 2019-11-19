@@ -162,6 +162,8 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
+CLUSTER_HOSTNAME := $(shell minikube ip)
+CLUSTER_PORT := NodePort
 e2e: docker-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
@@ -174,7 +176,7 @@ ifeq ($(OSFLAG), LINUX)
 	sed -i 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 ifeq ($(KUBECTL_CONTEXT),minikube)
 	sed -i 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i 's|\(args:\).*|\1\ ["--hostname=$(shell minikube ip)", "--port=NodePort"\]|' deploy/namespace-init.yaml
+	sed -i 's|\(args:\).*|\1\ ["--hostname=$(CLUSTER_HOSTNAME)", "--port=$(CLUSTER_PORT)"\]|' deploy/namespace-init.yaml
 endif
 endif
 
@@ -182,12 +184,13 @@ ifeq ($(OSFLAG), OSX)
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 ifeq ($(KUBECTL_CONTEXT),minikube)
 	sed -i '' 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i '' 's|\(args:\).*|\1\ ["--hostname=$(shell minikube ip)", "--port=NodePort"\]|' deploy/namespace-init.yaml
+	sed -i '' 's|\(args:\).*|\1\ ["--hostname=$(CLUSTER_HOSTNAME)", "--port=$(CLUSTER_PORT)"\]|' deploy/namespace-init.yaml
 endif
 endif
 
 	@RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -tags "$(BUILDTAGS) cgo" -v -timeout 30m -run "$(E2E_TEST_SELECTOR)" \
-		-root=$(CURRENT_DIRECTORY) -kubeconfig=$(HOME)/.kube/config -globalMan deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml -namespacedMan deploy/namespace-init.yaml $(EXTRA_ARGS)
+		-root=$(CURRENT_DIRECTORY) -kubeconfig=$(HOME)/.kube/config -globalMan deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml \
+		-hostname=$(CLUSTER_HOSTNAME) -port=$(CLUSTER_PORT)  -namespacedMan deploy/namespace-init.yaml $(EXTRA_ARGS)
 
 .PHONY: vet
 vet: ## Verifies `go vet` passes
