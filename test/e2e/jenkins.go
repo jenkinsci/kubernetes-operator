@@ -1,12 +1,15 @@
 package e2e
 
 import (
+	"bytes"
 	"context"
+	"os/exec"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
+	"github.com/pkg/errors"
 
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"k8s.io/api/core/v1"
@@ -53,7 +56,18 @@ func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins) (jenkinsclient.Jenkins, e
 		return nil, err
 	}
 
-	jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins), resources.HTTPPortInt, true, true)
+	nodePort, err := getServiceNodePort(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins))
+	if err != nil {
+		return nil, err
+	}
+
+	jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(
+		framework.Global.Client.Client,
+		jenkins.ObjectMeta.Namespace,
+		resources.GetJenkinsHTTPServiceName(jenkins),
+		"192.168.99.124",
+		nodePort)
+
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +77,19 @@ func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins) (jenkinsclient.Jenkins, e
 		string(adminSecret.Data[resources.OperatorCredentialsSecretUserNameKey]),
 		string(adminSecret.Data[resources.OperatorCredentialsSecretTokenKey]),
 	)
+}
+
+func getServiceNodePort(namespace, serviceName string) (string, error) {
+	//kubectl get svc jenkins-operator-http-jenkins -o=jsonpath='{.spec.ports[0].nodePort}'
+	cmd := exec.Command("kubectl", "-n", namespace, "get", "svc", serviceName, "-o=jsonpath='{.spec.ports[0].nodePort}'")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+
+	return out.String()[1 : len(out.String())-1], nil
 }
 
 func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode) *v1alpha2.Jenkins {

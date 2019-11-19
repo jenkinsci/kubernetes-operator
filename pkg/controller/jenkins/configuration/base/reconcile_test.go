@@ -234,7 +234,7 @@ func TestCompareVolumes(t *testing.T) {
 				Volumes:            resources.GetJenkinsMasterPodBaseVolumes(jenkins),
 			},
 		}
-		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, false, false, nil)
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, "", "", nil)
 
 		got := reconciler.compareVolumes(pod)
 
@@ -258,7 +258,7 @@ func TestCompareVolumes(t *testing.T) {
 				Volumes:            resources.GetJenkinsMasterPodBaseVolumes(jenkins),
 			},
 		}
-		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, false, false, nil)
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, "", "", nil)
 
 		got := reconciler.compareVolumes(pod)
 
@@ -282,7 +282,7 @@ func TestCompareVolumes(t *testing.T) {
 				Volumes:            append(resources.GetJenkinsMasterPodBaseVolumes(jenkins), corev1.Volume{Name: "added"}),
 			},
 		}
-		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, false, false, nil)
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, nil, "", "", nil)
 
 		got := reconciler.compareVolumes(pod)
 
