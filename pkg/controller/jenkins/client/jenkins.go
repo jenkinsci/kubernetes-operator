@@ -1,15 +1,17 @@
 package client
 
 import (
-	"bytes"
+	"context"
 	"fmt"
 	"net/http"
-	"os/exec"
 	"regexp"
 	"strings"
 
 	"github.com/bndr/gojenkins"
 	"github.com/pkg/errors"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var (
@@ -80,34 +82,38 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func BuildJenkinsAPIUrl(namespace, serviceName string, portNumber int32, local, minikube bool) (string, error) {
-	// Get Jenkins URL from minikube command
-	if local && minikube {
-		cmd := exec.Command("minikube", "service", "--url", "-n", namespace, serviceName)
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
+func BuildJenkinsAPIUrl(k8sClient client.Client, namespace, serviceName string, hostname, port string) (string, error) {
+	if hostname == "" && port == "" {
+		servicePort, err := getServicePort(k8sClient, namespace, serviceName)
 		if err != nil {
-			return "", errors.WithStack(err)
+			return "", err
 		}
-		lines := strings.Split(out.String(), "\n")
-		// First is for http, the second one is for Jenkins slaves communication
-		// see pkg/controller/jenkins/configuration/base/resources/service.go
-		url := lines[0]
-		if strings.HasPrefix(url, "* ") {
-			return url[2:], nil
-		}
-
-		return url, nil
+		return fmt.Sprintf("http://%s.%s:%d", serviceName, namespace, servicePort), nil
 	}
 
-	if local {
-		// When run locally make port-forward to jenkins pod ('kubectl -n default port-forward jenkins-operator-example 8080')
-		return fmt.Sprintf("http://localhost:%d", portNumber), nil
+	if hostname != "" && port == "NodePort" {
+		nodePort, err := getServiceNodePort(k8sClient, namespace, serviceName)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("http://%s:%d", hostname, nodePort), nil
 	}
 
-	// Connect through Kubernetes service, operator has to be run inside cluster
-	return fmt.Sprintf("http://%s.%s:%d", serviceName, namespace, portNumber), nil
+	return fmt.Sprintf("http://%s:%s", hostname, port), nil
+}
+
+func getServiceNodePort(k8sClient client.Client, namespace, serviceName string) (int32, error) {
+	var service v1.Service
+	err := k8sClient.Get(context.TODO(), types.NamespacedName{Name: serviceName, Namespace: namespace}, &service)
+
+	return service.Spec.Ports[0].NodePort, err
+}
+
+func getServicePort(k8sClient client.Client, namespace, serviceName string) (int32, error) {
+	var service v1.Service
+	err := k8sClient.Get(context.TODO(), types.NamespacedName{Name: serviceName, Namespace: namespace}, &service)
+
+	return service.Spec.Ports[0].Port, err
 }
 
 // New creates Jenkins API client

@@ -64,8 +64,8 @@ func main() {
 	// controller-runtime)
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 
-	minikube := pflag.Bool("minikube", false, "Use minikube as a Kubernetes platform")
-	local := pflag.Bool("local", false, "Run operator locally")
+	hostname := pflag.String("hostname", "", "Hostname or IP of Kubernetes cluster")
+	port := pflag.String("port", "", "The port on which kubernetes listening")
 	debug := pflag.Bool("debug", false, "Set log level to debug")
 	pflag.Parse()
 
@@ -124,7 +124,7 @@ func main() {
 	go notifications.Listen(c, events, mgr.GetClient())
 
 	// setup Jenkins controller
-	if err := jenkins.Add(mgr, *local, *minikube, *clientSet, *cfg, &c); err != nil {
+	if err := jenkins.Add(mgr, *hostname, *port, *clientSet, *cfg, &c); err != nil {
 		fatal(errors.Wrap(err, "failed to setup controllers"), *debug)
 	}
 

@@ -41,18 +41,18 @@ const (
 // ReconcileJenkinsBaseConfiguration defines values required for Jenkins base configuration
 type ReconcileJenkinsBaseConfiguration struct {
 	configuration.Configuration
-	logger          logr.Logger
-	local, minikube bool
-	config          *rest.Config
+	logger         logr.Logger
+	hostname, port string
+	config         *rest.Config
 }
 
 // New create structure which takes care of base configuration
-func New(config configuration.Configuration, logger logr.Logger, local, minikube bool, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
+func New(config configuration.Configuration, logger logr.Logger, hostname, port string, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
 	return &ReconcileJenkinsBaseConfiguration{
 		Configuration: config,
 		logger:        logger,
-		local:         local,
-		minikube:      minikube,
+		hostname:      hostname,
+		port:          port,
 		config:        restConfig,
 	}
 }
@@ -770,8 +770,8 @@ func (r *ReconcileJenkinsBaseConfiguration) waitForJenkins(meta metav1.ObjectMet
 }
 
 func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsClient(meta metav1.ObjectMeta) (jenkinsclient.Jenkins, error) {
-	jenkinsURL, err := jenkinsclient.BuildJenkinsAPIUrl(
-		r.Configuration.Jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Service.Port, r.local, r.minikube)
+	jenkinsURL, err := jenkinsclient.BuildJenkinsAPIUrl(r.Client,
+		r.Configuration.Jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(r.Configuration.Jenkins), r.hostname, r.port)
 
 	if prefix, ok := GetJenkinsOpts(*r.Configuration.Jenkins)["prefix"]; ok {
 		jenkinsURL = jenkinsURL + prefix

@@ -174,7 +174,7 @@ ifeq ($(OSFLAG), LINUX)
 	sed -i 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 ifeq ($(KUBECTL_CONTEXT),minikube)
 	sed -i 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i 's|\(args:\).*|\1\ ["--minikube"\]|' deploy/namespace-init.yaml
+	sed -i 's|\(args:\).*|\1\ ["--hostname=$(shell minikube ip)", "--port=NodePort"\]|' deploy/namespace-init.yaml
 endif
 endif
 
@@ -182,7 +182,7 @@ ifeq ($(OSFLAG), OSX)
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 ifeq ($(KUBECTL_CONTEXT),minikube)
 	sed -i '' 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i '' 's|\(args:\).*|\1\ ["--minikube"\]|' deploy/namespace-init.yaml
+	sed -i '' 's|\(args:\).*|\1\ ["--hostname=$(shell minikube ip)", "--port=NodePort"\]|' deploy/namespace-init.yaml
 endif
 endif
 
