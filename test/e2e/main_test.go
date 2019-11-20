@@ -17,20 +17,23 @@ import (
 const (
 	jenkinsOperatorDeploymentName     = constants.OperatorName
 	seedJobConfigurationParameterName = "seed-job-config"
-	hostnameParameterName             = "hostname"
-	portParameterName                 = "port"
+	hostnameParameterName             = "jenkins-api-hostname"
+	portParameterName                 = "jenkins-api-port"
+	nodePortParameterName             = "jenkins-api-use-nodeport"
 )
 
 var (
 	seedJobConfigurationFile *string
 	hostname                 *string
-	port                     *string
+	port                     *int
+	useNodePort              *bool
 )
 
 func TestMain(m *testing.M) {
 	seedJobConfigurationFile = flag.String(seedJobConfigurationParameterName, "", "path to seed job config")
-	hostname = flag.String(hostnameParameterName, "", "The cluster hostname")
-	port = flag.String(portParameterName, "", "The port that is used by cluster")
+	hostname = flag.String(hostnameParameterName, "", "The Jenkins API IP")
+	port = flag.Int(portParameterName, -1, "The port that is used by Jenkins API")
+	useNodePort = flag.Bool(nodePortParameterName, false, "Connect using the nodePort instead of service port")
 	f.MainEntry(m)
 }
 

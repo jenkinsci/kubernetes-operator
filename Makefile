@@ -15,9 +15,11 @@ else
 	endif
 endif
 
+include config.base.env
+
 # Import config
 # You can change the default config with `make config="config_special.env" build`
-config ?= config.env
+config ?= config.minikube.env
 include $(config)
 
 # Set an output prefix, which is the local directory if not specified
@@ -162,8 +164,7 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
-CLUSTER_HOSTNAME := $(shell minikube ip)
-CLUSTER_PORT := NodePort
+JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
 e2e: docker-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
@@ -174,23 +175,23 @@ e2e: docker-build ## Runs e2e tests, you can use EXTRA_ARGS
 	cat deploy/operator.yaml >> deploy/namespace-init.yaml
 ifeq ($(OSFLAG), LINUX)
 	sed -i 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
-ifeq ($(KUBECTL_CONTEXT),minikube)
+ifeq ($(KUBERNETES_PROVIDER),minikube)
 	sed -i 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i 's|\(args:\).*|\1\ ["--hostname=$(CLUSTER_HOSTNAME)", "--port=$(CLUSTER_PORT)"\]|' deploy/namespace-init.yaml
 endif
 endif
 
 ifeq ($(OSFLAG), OSX)
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
-ifeq ($(KUBECTL_CONTEXT),minikube)
+ifeq ($(KUBERNETES_PROVIDER),minikube)
 	sed -i '' 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
-	sed -i '' 's|\(args:\).*|\1\ ["--hostname=$(CLUSTER_HOSTNAME)", "--port=$(CLUSTER_PORT)"\]|' deploy/namespace-init.yaml
 endif
 endif
 
 	@RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -tags "$(BUILDTAGS) cgo" -v -timeout 30m -run "$(E2E_TEST_SELECTOR)" \
 		-root=$(CURRENT_DIRECTORY) -kubeconfig=$(HOME)/.kube/config -globalMan deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml \
-		-hostname=$(CLUSTER_HOSTNAME) -port=$(CLUSTER_PORT)  -namespacedMan deploy/namespace-init.yaml $(EXTRA_ARGS)
+		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) \
+		-namespacedMan deploy/namespace-init.yaml $(EXTRA_ARGS)
+
 
 .PHONY: vet
 vet: ## Verifies `go vet` passes

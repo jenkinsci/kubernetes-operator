@@ -89,7 +89,7 @@ func TestConfiguration(t *testing.T) {
 	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	verifyJenkinsMasterPodAttributes(t, jenkins)
-	client := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port)
+	client := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	verifyPlugins(t, client, jenkins)
 
 	// user
@@ -121,7 +121,7 @@ func TestPlugins(t *testing.T) {
 	jenkins := createJenkinsCR(t, "k8s-e2e", namespace, seedJobs, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{})
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 
-	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port)
+	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	waitForJob(t, jenkinsClient, jobID)
 	job, err := jenkinsClient.GetJob(jobID)
 

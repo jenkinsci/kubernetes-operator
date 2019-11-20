@@ -79,16 +79,16 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func BuildJenkinsAPIUrl(service v1.Service, hostname, port string) string {
-	if hostname == "" && port == "" {
+func BuildJenkinsAPIUrl(service v1.Service, hostname string, port int, useNodePort bool) string {
+	if hostname == "" && port == -1 {
 		return fmt.Sprintf("http://%s.%s:%d", service.Name, service.Namespace, service.Spec.Ports[0].Port)
 	}
 
-	if hostname != "" && port == "NodePort" {
+	if hostname != "" && useNodePort {
 		return fmt.Sprintf("http://%s:%d", hostname, service.Spec.Ports[0].NodePort)
 	}
 
-	return fmt.Sprintf("http://%s:%s", hostname, port)
+	return fmt.Sprintf("http://%s:%d", hostname, port)
 }
 
 // New creates Jenkins API client

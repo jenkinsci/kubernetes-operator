@@ -45,17 +45,18 @@ var reconcileErrors = map[string]reconcileError{}
 
 // Add creates a new Jenkins Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager, hostname, port string, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
-	return add(mgr, newReconciler(mgr, hostname, port, clientSet, config, notificationEvents))
+func Add(mgr manager.Manager, hostname string, port int, useNodePort bool, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
+	return add(mgr, newReconciler(mgr, hostname, port, useNodePort, clientSet, config, notificationEvents))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, hostname, port string, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, hostname string, port int, useNodePort bool, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) reconcile.Reconciler {
 	return &ReconcileJenkins{
 		client:             mgr.GetClient(),
 		scheme:             mgr.GetScheme(),
 		hostname:           hostname,
 		port:               port,
+		useNodePort:        useNodePort,
 		clientSet:          clientSet,
 		config:             config,
 		notificationEvents: notificationEvents,
@@ -114,7 +115,9 @@ var _ reconcile.Reconciler = &ReconcileJenkins{}
 type ReconcileJenkins struct {
 	client             client.Client
 	scheme             *runtime.Scheme
-	hostname, port     string
+	hostname           string
+	port               int
+	useNodePort        bool
 	clientSet          kubernetes.Clientset
 	config             rest.Config
 	notificationEvents *chan event.Event
@@ -218,7 +221,7 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 	}
 
 	// Reconcile base configuration
-	baseConfiguration := base.New(config, logger, r.hostname, r.port, &r.config)
+	baseConfiguration := base.New(config, logger, r.hostname, r.port, r.useNodePort, &r.config)
 
 	baseMessages, err := baseConfiguration.Validate(jenkins)
 	if err != nil {
@@ -424,16 +427,8 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins, logger logr.Lo
 	if reflect.DeepEqual(jenkins.Spec.Service, v1alpha2.Service{}) {
 		logger.Info("Setting default Jenkins master service")
 		changed = true
-		var serviceType corev1.ServiceType
-		if r.port == "NodePort" {
-			// When running locally with minikube cluster Jenkins Service have to be exposed via node port
-			// to allow communication operator -> Jenkins API
-			serviceType = corev1.ServiceTypeNodePort
-		} else {
-			serviceType = corev1.ServiceTypeClusterIP
-		}
 		jenkins.Spec.Service = v1alpha2.Service{
-			Type: serviceType,
+			Type: corev1.ServiceTypeClusterIP,
 			Port: constants.DefaultHTTPPortInt32,
 		}
 	}

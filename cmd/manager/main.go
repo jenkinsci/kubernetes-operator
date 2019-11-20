@@ -64,8 +64,9 @@ func main() {
 	// controller-runtime)
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 
-	hostname := pflag.String("hostname", "", "Hostname or IP of Kubernetes cluster")
-	port := pflag.String("port", "", "The port on which kubernetes listening")
+	hostname := pflag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins service")
+	port := pflag.Int("jenkins-api-port", -1, "The port on which Jenkins working")
+	useNodePort := pflag.Bool("jenkins-api-use-nodeport", false, "Connect using the nodePort instead of service port")
 	debug := pflag.Bool("debug", false, "Set log level to debug")
 	pflag.Parse()
 
@@ -124,7 +125,7 @@ func main() {
 	go notifications.Listen(c, events, mgr.GetClient())
 
 	// setup Jenkins controller
-	if err := jenkins.Add(mgr, *hostname, *port, *clientSet, *cfg, &c); err != nil {
+	if err := jenkins.Add(mgr, *hostname, *port, *useNodePort, *clientSet, *cfg, &c); err != nil {
 		fatal(errors.Wrap(err, "failed to setup controllers"), *debug)
 	}
 

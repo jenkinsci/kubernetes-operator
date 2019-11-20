@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -45,7 +46,7 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *v1.Pod {
 	return &podList.Items[0]
 }
 
-func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname, port string) (jenkinsclient.Jenkins, error) {
+func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname string, port int, useNodePort bool) (jenkinsclient.Jenkins, error) {
 	adminSecret := &v1.Secret{}
 	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
 	if err := framework.Global.Client.Get(context.TODO(), namespaceName, adminSecret); err != nil {
@@ -63,7 +64,7 @@ func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname, port string) (j
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, hostname, port)
+	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, hostname, port, useNodePort)
 
 	return jenkinsclient.New(
 		jenkinsURL,
@@ -136,6 +137,10 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 				NodeSelector: map[string]string{"kubernetes.io/hostname": "minikube"},
 			},
 			SeedJobs: seedJobs,
+			Service: v1alpha2.Service{
+				Type: corev1.ServiceTypeNodePort,
+				Port: constants.DefaultHTTPPortInt32,
+			},
 		},
 	}
 
@@ -147,8 +152,8 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 	return jenkins
 }
 
-func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins, hostname, port string) jenkinsclient.Jenkins {
-	client, err := createJenkinsAPIClient(jenkins, hostname, port)
+func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins, hostname string, port int, useNodePort bool) jenkinsclient.Jenkins {
+	client, err := createJenkinsAPIClient(jenkins, hostname, port, useNodePort)
 	if err != nil {
 		t.Fatal(err)
 	}

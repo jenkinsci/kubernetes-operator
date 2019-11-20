@@ -41,18 +41,21 @@ const (
 // ReconcileJenkinsBaseConfiguration defines values required for Jenkins base configuration
 type ReconcileJenkinsBaseConfiguration struct {
 	configuration.Configuration
-	logger         logr.Logger
-	hostname, port string
-	config         *rest.Config
+	logger      logr.Logger
+	hostname    string
+	port        int
+	useNodePort bool
+	config      *rest.Config
 }
 
 // New create structure which takes care of base configuration
-func New(config configuration.Configuration, logger logr.Logger, hostname, port string, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
+func New(config configuration.Configuration, logger logr.Logger, hostname string, port int, useNodePort bool, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
 	return &ReconcileJenkinsBaseConfiguration{
 		Configuration: config,
 		logger:        logger,
 		hostname:      hostname,
 		port:          port,
+		useNodePort:   useNodePort,
 		config:        restConfig,
 	}
 }
@@ -781,15 +784,12 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsClient(meta metav1.Obje
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, r.hostname, r.port)
+	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, r.hostname, r.port, r.useNodePort)
 
 	if prefix, ok := GetJenkinsOpts(*r.Configuration.Jenkins)["prefix"]; ok {
 		jenkinsURL = jenkinsURL + prefix
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	r.logger.V(log.VDebug).Info(fmt.Sprintf("Jenkins API URL '%s'", jenkinsURL))
 
 	credentialsSecret := &corev1.Secret{}
