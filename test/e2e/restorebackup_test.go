@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"testing"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/stretchr/testify/assert"

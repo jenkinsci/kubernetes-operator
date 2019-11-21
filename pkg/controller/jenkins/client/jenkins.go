@@ -61,14 +61,11 @@ type jenkins struct {
 	gojenkins.Jenkins
 }
 
+// JenkinsAPIConnectionSettings is struct that handle information about Jenkins API connection
 type JenkinsAPIConnectionSettings struct {
-	Hostname         string
-	Port             int
-	NodePort         int32
-	UseNodePort      bool
-	ServiceName      string
-	ServiceNamespace string
-	ServicePort      int32
+	Hostname    string
+	Port        int
+	UseNodePort bool
 }
 
 // CreateOrUpdateJob creates or updates a job from config
@@ -88,16 +85,29 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl() string {
+func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl(serviceName string, serviceNamespace string, servicePort int32, serviceNodePort int32) string {
 	if j.Hostname == "" && j.Port == -1 {
-		return fmt.Sprintf("http://%s.%s:%d", j.ServiceName, j.ServiceNamespace, j.ServicePort)
+		return fmt.Sprintf("http://%s.%s:%d", serviceName, serviceNamespace, servicePort)
 	}
 
 	if j.Hostname != "" && j.UseNodePort {
-		return fmt.Sprintf("http://%s:%d", j.Hostname, j.NodePort)
+		return fmt.Sprintf("http://%s:%d", j.Hostname, serviceNodePort)
 	}
 
 	return fmt.Sprintf("http://%s:%d", j.Hostname, j.Port)
+}
+
+// Validate validates jenkins API connection settings
+func (j JenkinsAPIConnectionSettings) Validate() error {
+	if j.Port != -1 && j.UseNodePort {
+		return errors.New("can't use service port and nodePort both. Please use port or nodePort")
+	}
+
+	if j.Port < -1 {
+		return errors.New("service port cannot be lower than -1")
+	}
+
+	return nil
 }
 
 // New creates Jenkins API client

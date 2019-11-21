@@ -12,6 +12,7 @@ import (
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications"
 	e "github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/event"
@@ -64,9 +65,9 @@ func main() {
 	// controller-runtime)
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 
-	hostname := pflag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins service")
-	port := pflag.Int("jenkins-api-port", -1, "The port on which Jenkins working")
-	useNodePort := pflag.Bool("jenkins-api-use-nodeport", false, "Connect using the nodePort instead of service port")
+	hostname := pflag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins API. It can be service name, node IP or localhost.")
+	port := pflag.Int("jenkins-api-port", -1, "The port on which Jenkins API is running. Note: If you want to use nodePort don't set this setting and --jenkins-api-use-nodeport must be true.")
+	useNodePort := pflag.Bool("jenkins-api-use-nodeport", false, "Connect to Jenkins API using the service nodePort instead of service port. If you want to set this as true - don't set --jenkins-api-port.")
 	debug := pflag.Bool("debug", false, "Set log level to debug")
 	pflag.Parse()
 
@@ -124,8 +125,14 @@ func main() {
 	c := make(chan e.Event)
 	go notifications.Listen(c, events, mgr.GetClient())
 
+	// validate jenkins API connection
+	jenkinsAPIConnectionSettings := client.JenkinsAPIConnectionSettings{Hostname: *hostname, Port: *port, UseNodePort: *useNodePort}
+	if err := jenkinsAPIConnectionSettings.Validate(); err != nil {
+		fatal(errors.Wrap(err, "invalid command line parameters"), *debug)
+	}
+
 	// setup Jenkins controller
-	if err := jenkins.Add(mgr, *hostname, *port, *useNodePort, *clientSet, *cfg, &c); err != nil {
+	if err := jenkins.Add(mgr, jenkinsAPIConnectionSettings, *clientSet, *cfg, &c); err != nil {
 		fatal(errors.Wrap(err, "failed to setup controllers"), *debug)
 	}
 

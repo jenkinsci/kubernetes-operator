@@ -2,12 +2,12 @@ package e2e
 
 import (
 	"context"
-	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -64,18 +64,14 @@ func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname string, port int
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.JenkinsAPIConnectionSettings{
-		Hostname:         hostname,
-		Port:             port,
-		NodePort:         service.Spec.Ports[0].NodePort,
-		ServiceName:      service.Name,
-		ServiceNamespace: service.Namespace,
-		ServicePort:      service.Spec.Ports[0].Port,
-		UseNodePort:      useNodePort,
-	}.BuildJenkinsAPIUrl()
+	jenkinsAPIURL := jenkinsclient.JenkinsAPIConnectionSettings{
+		Hostname:    hostname,
+		Port:        port,
+		UseNodePort: useNodePort,
+	}.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
 
 	return jenkinsclient.New(
-		jenkinsURL,
+		jenkinsAPIURL,
 		string(adminSecret.Data[resources.OperatorCredentialsSecretUserNameKey]),
 		string(adminSecret.Data[resources.OperatorCredentialsSecretTokenKey]),
 	)

@@ -41,22 +41,18 @@ const (
 // ReconcileJenkinsBaseConfiguration defines values required for Jenkins base configuration
 type ReconcileJenkinsBaseConfiguration struct {
 	configuration.Configuration
-	logger      logr.Logger
-	hostname    string
-	port        int
-	useNodePort bool
-	config      *rest.Config
+	logger                       logr.Logger
+	jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings
+	config                       *rest.Config
 }
 
 // New create structure which takes care of base configuration
-func New(config configuration.Configuration, logger logr.Logger, hostname string, port int, useNodePort bool, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
+func New(config configuration.Configuration, logger logr.Logger, jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings, restConfig *rest.Config) *ReconcileJenkinsBaseConfiguration {
 	return &ReconcileJenkinsBaseConfiguration{
-		Configuration: config,
-		logger:        logger,
-		hostname:      hostname,
-		port:          port,
-		useNodePort:   useNodePort,
-		config:        restConfig,
+		Configuration:                config,
+		logger:                       logger,
+		jenkinsAPIConnectionSettings: jenkinsAPIConnectionSettings,
+		config:                       restConfig,
 	}
 }
 
@@ -784,15 +780,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsClient(meta metav1.Obje
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.JenkinsAPIConnectionSettings{
-		Hostname:         r.hostname,
-		Port:             r.port,
-		NodePort:         service.Spec.Ports[0].NodePort,
-		ServiceName:      service.Name,
-		ServiceNamespace: service.Namespace,
-		ServicePort:      service.Spec.Ports[0].Port,
-		UseNodePort:      r.useNodePort,
-	}.BuildJenkinsAPIUrl()
+	jenkinsURL := r.jenkinsAPIConnectionSettings.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
 
 	if prefix, ok := GetJenkinsOpts(*r.Configuration.Jenkins)["prefix"]; ok {
 		jenkinsURL = jenkinsURL + prefix

@@ -31,9 +31,10 @@ var (
 
 func TestMain(m *testing.M) {
 	seedJobConfigurationFile = flag.String(seedJobConfigurationParameterName, "", "path to seed job config")
-	hostname = flag.String(hostnameParameterName, "", "The Jenkins API IP")
-	port = flag.Int(portParameterName, -1, "The port that is used by Jenkins API")
-	useNodePort = flag.Bool(nodePortParameterName, false, "Connect using the nodePort instead of service port")
+	hostname = flag.String(hostnameParameterName, "", "Hostname or IP of Jenkins API. It can be service name, node IP or localhost.")
+	port = flag.Int(portParameterName, -1, "The port on which Jenkins API is working. Note: If you want to use nodePort don't set this setting and --jenkins-api-use-nodeport must be false.")
+	useNodePort = flag.Bool(nodePortParameterName, false, "Connect to Jenkins API using the nodePort instead of service port. If you want to set this as true - don't set --jenkins-api-port.")
+
 	f.MainEntry(m)
 }
 

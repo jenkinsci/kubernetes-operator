@@ -45,21 +45,19 @@ var reconcileErrors = map[string]reconcileError{}
 
 // Add creates a new Jenkins Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager, hostname string, port int, useNodePort bool, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
-	return add(mgr, newReconciler(mgr, hostname, port, useNodePort, clientSet, config, notificationEvents))
+func Add(mgr manager.Manager, jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
+	return add(mgr, newReconciler(mgr, jenkinsAPIConnectionSettings, clientSet, config, notificationEvents))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, hostname string, port int, useNodePort bool, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) reconcile.Reconciler {
+func newReconciler(mgr manager.Manager, jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) reconcile.Reconciler {
 	return &ReconcileJenkins{
-		client:             mgr.GetClient(),
-		scheme:             mgr.GetScheme(),
-		hostname:           hostname,
-		port:               port,
-		useNodePort:        useNodePort,
-		clientSet:          clientSet,
-		config:             config,
-		notificationEvents: notificationEvents,
+		client:                       mgr.GetClient(),
+		scheme:                       mgr.GetScheme(),
+		jenkinsAPIConnectionSettings: jenkinsAPIConnectionSettings,
+		clientSet:                    clientSet,
+		config:                       config,
+		notificationEvents:           notificationEvents,
 	}
 }
 
@@ -113,14 +111,12 @@ var _ reconcile.Reconciler = &ReconcileJenkins{}
 
 // ReconcileJenkins reconciles a Jenkins object
 type ReconcileJenkins struct {
-	client             client.Client
-	scheme             *runtime.Scheme
-	hostname           string
-	port               int
-	useNodePort        bool
-	clientSet          kubernetes.Clientset
-	config             rest.Config
-	notificationEvents *chan event.Event
+	client                       client.Client
+	scheme                       *runtime.Scheme
+	jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings
+	clientSet                    kubernetes.Clientset
+	config                       rest.Config
+	notificationEvents           *chan event.Event
 }
 
 // Reconcile it's a main reconciliation loop which maintain desired state based on Jenkins.Spec
@@ -221,7 +217,7 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 	}
 
 	// Reconcile base configuration
-	baseConfiguration := base.New(config, logger, r.hostname, r.port, r.useNodePort, &r.config)
+	baseConfiguration := base.New(config, logger, r.jenkinsAPIConnectionSettings, &r.config)
 
 	baseMessages, err := baseConfiguration.Validate(jenkins)
 	if err != nil {
