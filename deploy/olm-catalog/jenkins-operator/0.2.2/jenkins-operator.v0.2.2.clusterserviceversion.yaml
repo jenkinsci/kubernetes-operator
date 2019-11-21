@@ -43,9 +43,6 @@ spec:
 
     Some of the problems we want to solve:
 
-
-    volumes handling (AWS EBS volume attach/detach issue when using PVC)
-
     installing plugins with incompatible versions or security vulnerabilities
 
     better configuration as code
@@ -70,8 +67,7 @@ spec:
   keywords:
     - jenkins
     - operator
-    - ci
-    - cd
+    - CI/CD
   maintainers:
     - name: Tomasz Sęk
       email: tomasz.sek.88@gmail.com
@@ -240,11 +236,11 @@ spec:
         serviceAccountName: jenkins-operator
     strategy: deployment
   installModes:
-  - supported: true
+  - supported: false
     type: OwnNamespace
   - supported: true
     type: SingleNamespace
   - supported: false
     type: MultiNamespace
-  - supported: true
+  - supported: false
     type: AllNamespaces
