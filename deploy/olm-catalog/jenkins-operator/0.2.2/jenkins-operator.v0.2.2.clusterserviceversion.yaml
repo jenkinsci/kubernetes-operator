@@ -235,7 +235,7 @@ spec:
         serviceAccountName: jenkins-operator
     strategy: deployment
   installModes:
-  - supported: true
+  - supported: false
     type: OwnNamespace
   - supported: true
     type: SingleNamespace
