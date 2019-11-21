@@ -784,7 +784,15 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsClient(meta metav1.Obje
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, r.hostname, r.port, r.useNodePort)
+	jenkinsURL := jenkinsclient.JenkinsAPIConnectionSettings{
+		Hostname:         r.hostname,
+		Port:             r.port,
+		NodePort:         service.Spec.Ports[0].NodePort,
+		ServiceName:      service.Name,
+		ServiceNamespace: service.Namespace,
+		ServicePort:      service.Spec.Ports[0].Port,
+		UseNodePort:      r.useNodePort,
+	}.BuildJenkinsAPIUrl()
 
 	if prefix, ok := GetJenkinsOpts(*r.Configuration.Jenkins)["prefix"]; ok {
 		jenkinsURL = jenkinsURL + prefix

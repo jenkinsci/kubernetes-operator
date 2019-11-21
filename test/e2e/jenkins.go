@@ -64,7 +64,15 @@ func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname string, port int
 		return nil, err
 	}
 
-	jenkinsURL := jenkinsclient.BuildJenkinsAPIUrl(service, hostname, port, useNodePort)
+	jenkinsURL := jenkinsclient.JenkinsAPIConnectionSettings{
+		Hostname:         hostname,
+		Port:             port,
+		NodePort:         service.Spec.Ports[0].NodePort,
+		ServiceName:      service.Name,
+		ServiceNamespace: service.Namespace,
+		ServicePort:      service.Spec.Ports[0].Port,
+		UseNodePort:      useNodePort,
+	}.BuildJenkinsAPIUrl()
 
 	return jenkinsclient.New(
 		jenkinsURL,

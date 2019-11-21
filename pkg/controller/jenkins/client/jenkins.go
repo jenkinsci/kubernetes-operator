@@ -8,7 +8,6 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/pkg/errors"
-	v1 "k8s.io/api/core/v1"
 )
 
 var (
@@ -62,6 +61,16 @@ type jenkins struct {
 	gojenkins.Jenkins
 }
 
+type JenkinsAPIConnectionSettings struct {
+	Hostname         string
+	Port             int
+	NodePort         int32
+	UseNodePort      bool
+	ServiceName      string
+	ServiceNamespace string
+	ServicePort      int32
+}
+
 // CreateOrUpdateJob creates or updates a job from config
 func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkins.Job, created bool, err error) {
 	// create or update
@@ -79,16 +88,16 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func BuildJenkinsAPIUrl(service v1.Service, hostname string, port int, useNodePort bool) string {
-	if hostname == "" && port == -1 {
-		return fmt.Sprintf("http://%s.%s:%d", service.Name, service.Namespace, service.Spec.Ports[0].Port)
+func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl() string {
+	if j.Hostname == "" && j.Port == -1 {
+		return fmt.Sprintf("http://%s.%s:%d", j.ServiceName, j.ServiceNamespace, j.ServicePort)
 	}
 
-	if hostname != "" && useNodePort {
-		return fmt.Sprintf("http://%s:%d", hostname, service.Spec.Ports[0].NodePort)
+	if j.Hostname != "" && j.UseNodePort {
+		return fmt.Sprintf("http://%s:%d", j.Hostname, j.NodePort)
 	}
 
-	return fmt.Sprintf("http://%s:%d", hostname, port)
+	return fmt.Sprintf("http://%s:%d", j.Hostname, j.Port)
 }
 
 // New creates Jenkins API client
