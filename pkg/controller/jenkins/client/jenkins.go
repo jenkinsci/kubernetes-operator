@@ -1,10 +1,8 @@
 package client
 
 import (
-	"bytes"
 	"fmt"
 	"net/http"
-	"os/exec"
 	"regexp"
 	"strings"
 
@@ -63,6 +61,13 @@ type jenkins struct {
 	gojenkins.Jenkins
 }
 
+// JenkinsAPIConnectionSettings is struct that handle information about Jenkins API connection
+type JenkinsAPIConnectionSettings struct {
+	Hostname    string
+	Port        int
+	UseNodePort bool
+}
+
 // CreateOrUpdateJob creates or updates a job from config
 func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkins.Job, created bool, err error) {
 	// create or update
@@ -80,34 +85,33 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
-func BuildJenkinsAPIUrl(namespace, serviceName string, portNumber int32, local, minikube bool) (string, error) {
-	// Get Jenkins URL from minikube command
-	if local && minikube {
-		cmd := exec.Command("minikube", "service", "--url", "-n", namespace, serviceName)
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			return "", errors.WithStack(err)
-		}
-		lines := strings.Split(out.String(), "\n")
-		// First is for http, the second one is for Jenkins slaves communication
-		// see pkg/controller/jenkins/configuration/base/resources/service.go
-		url := lines[0]
-		if strings.HasPrefix(url, "* ") {
-			return url[2:], nil
-		}
-
-		return url, nil
+func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl(serviceName string, serviceNamespace string, servicePort int32, serviceNodePort int32) string {
+	if j.Hostname == "" && j.Port == 0 {
+		return fmt.Sprintf("http://%s.%s:%d", serviceName, serviceNamespace, servicePort)
 	}
 
-	if local {
-		// When run locally make port-forward to jenkins pod ('kubectl -n default port-forward jenkins-operator-example 8080')
-		return fmt.Sprintf("http://localhost:%d", portNumber), nil
+	if j.Hostname != "" && j.UseNodePort {
+		return fmt.Sprintf("http://%s:%d", j.Hostname, serviceNodePort)
 	}
 
-	// Connect through Kubernetes service, operator has to be run inside cluster
-	return fmt.Sprintf("http://%s.%s:%d", serviceName, namespace, portNumber), nil
+	return fmt.Sprintf("http://%s:%d", j.Hostname, j.Port)
+}
+
+// Validate validates jenkins API connection settings
+func (j JenkinsAPIConnectionSettings) Validate() error {
+	if j.Port >= 0 && j.UseNodePort {
+		return errors.New("can't use service port and nodePort both. Please use port or nodePort")
+	}
+
+	if j.Port < 0 {
+		return errors.New("service port cannot be lower than 0")
+	}
+
+	if (j.Hostname == "" && j.Port > 0) || (j.Hostname == "" && j.UseNodePort) {
+		return errors.New("empty hostname is now allowed. Please provide hostname")
+	}
+
+	return nil
 }
 
 // New creates Jenkins API client

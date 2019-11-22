@@ -89,7 +89,7 @@ func TestConfiguration(t *testing.T) {
 	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	verifyJenkinsMasterPodAttributes(t, jenkins)
-	client := verifyJenkinsAPIConnection(t, jenkins)
+	client := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	verifyPlugins(t, client, jenkins)
 
 	// user
@@ -121,7 +121,7 @@ func TestPlugins(t *testing.T) {
 	jenkins := createJenkinsCR(t, "k8s-e2e", namespace, seedJobs, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{})
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 
-	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	waitForJob(t, jenkinsClient, jobID)
 	job, err := jenkinsClient.GetJob(jobID)
 
@@ -267,7 +267,7 @@ func verifyJenkinsMasterPodAttributes(t *testing.T, jenkins *v1alpha2.Jenkins) {
 func verifyContainer(t *testing.T, expected corev1.Container, actual corev1.Container) {
 	assert.Equal(t, expected.Args, actual.Args, expected.Name, expected.Name)
 	assert.Equal(t, expected.Command, actual.Command, expected.Name)
-	assert.Equal(t, expected.Env, actual.Env, expected.Name)
+	assert.ElementsMatch(t, expected.Env, actual.Env, expected.Name)
 	assert.Equal(t, expected.EnvFrom, actual.EnvFrom, expected.Name)
 	assert.Equal(t, expected.Image, actual.Image, expected.Name)
 	assert.Equal(t, expected.ImagePullPolicy, actual.ImagePullPolicy, expected.Name)

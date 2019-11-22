@@ -7,7 +7,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
-
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -46,17 +46,29 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *v1.Pod {
 	return &podList.Items[0]
 }
 
-func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins) (jenkinsclient.Jenkins, error) {
+func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname string, port int, useNodePort bool) (jenkinsclient.Jenkins, error) {
 	adminSecret := &v1.Secret{}
 	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
 	if err := framework.Global.Client.Get(context.TODO(), namespaceName, adminSecret); err != nil {
 		return nil, err
 	}
 
-	jenkinsAPIURL, err := jenkinsclient.BuildJenkinsAPIUrl(jenkins.ObjectMeta.Namespace, resources.GetJenkinsHTTPServiceName(jenkins), resources.HTTPPortInt, true, true)
+	var service corev1.Service
+
+	err := framework.Global.Client.Get(context.TODO(), types.NamespacedName{
+		Namespace: jenkins.Namespace,
+		Name:      resources.GetJenkinsHTTPServiceName(jenkins),
+	}, &service)
+
 	if err != nil {
 		return nil, err
 	}
+
+	jenkinsAPIURL := jenkinsclient.JenkinsAPIConnectionSettings{
+		Hostname:    hostname,
+		Port:        port,
+		UseNodePort: useNodePort,
+	}.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
 
 	return jenkinsclient.New(
 		jenkinsAPIURL,
@@ -129,6 +141,10 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 				NodeSelector: map[string]string{"kubernetes.io/hostname": "minikube"},
 			},
 			SeedJobs: seedJobs,
+			Service: v1alpha2.Service{
+				Type: corev1.ServiceTypeNodePort,
+				Port: constants.DefaultHTTPPortInt32,
+			},
 		},
 	}
 
@@ -140,8 +156,8 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 	return jenkins
 }
 
-func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins) jenkinsclient.Jenkins {
-	client, err := createJenkinsAPIClient(jenkins)
+func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins, hostname string, port int, useNodePort bool) jenkinsclient.Jenkins {
+	client, err := createJenkinsAPIClient(jenkins, hostname, port, useNodePort)
 	if err != nil {
 		t.Fatal(err)
 	}
