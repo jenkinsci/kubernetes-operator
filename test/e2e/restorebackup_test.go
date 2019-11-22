@@ -9,6 +9,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestBackupAndRestore(t *testing.T) {
 	jenkins := createJenkinsWithBackupAndRestoreConfigured(t, "e2e", namespace)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 
-	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	waitForJob(t, jenkinsClient, jobID)
 	job, err := jenkinsClient.GetJob(jobID)
 	require.NoError(t, err, job)
@@ -43,7 +44,7 @@ func TestBackupAndRestore(t *testing.T) {
 	restartJenkinsMasterPod(t, jenkins)
 	waitForRecreateJenkinsMasterPod(t, jenkins)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
-	jenkinsClient = verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient = verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	waitForJob(t, jenkinsClient, jobID)
 	verifyJobBuildsAfterRestoreBackup(t, jenkinsClient, jobID)
 }
@@ -161,6 +162,10 @@ func createJenkinsWithBackupAndRestoreConfigured(t *testing.T, name, namespace s
 					RepositoryBranch:      "master",
 					RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
 				},
+			},
+			Service: v1alpha2.Service{
+				Type: corev1.ServiceTypeNodePort,
+				Port: constants.DefaultHTTPPortInt32,
 			},
 		},
 	}

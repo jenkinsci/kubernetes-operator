@@ -48,7 +48,7 @@ func TestSafeRestart(t *testing.T) {
 	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, nil, groovyScriptsConfig, v1alpha2.ConfigurationAsCode{})
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
-	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins)
+	jenkinsClient := verifyJenkinsAPIConnection(t, jenkins, *hostname, *port, *useNodePort)
 	checkIfAuthorizationStrategyUnsecuredIsSet(t, jenkinsClient)
 
 	err := jenkinsClient.SafeRestart()
