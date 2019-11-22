@@ -86,7 +86,7 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
 func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl(serviceName string, serviceNamespace string, servicePort int32, serviceNodePort int32) string {
-	if j.Hostname == "" && j.Port == -1 {
+	if j.Hostname == "" && j.Port == 0 {
 		return fmt.Sprintf("http://%s.%s:%d", serviceName, serviceNamespace, servicePort)
 	}
 
@@ -99,12 +99,16 @@ func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl(serviceName string, ser
 
 // Validate validates jenkins API connection settings
 func (j JenkinsAPIConnectionSettings) Validate() error {
-	if j.Port != -1 && j.UseNodePort {
+	if j.Port >= 0 && j.UseNodePort {
 		return errors.New("can't use service port and nodePort both. Please use port or nodePort")
 	}
 
-	if j.Port < -1 {
-		return errors.New("service port cannot be lower than -1")
+	if j.Port < 0 {
+		return errors.New("service port cannot be lower than 0")
+	}
+
+	if (j.Hostname == "" && j.Port > 0) || (j.Hostname == "" && j.UseNodePort) {
+		return errors.New("empty hostname is now allowed. Please provide hostname")
 	}
 
 	return nil
