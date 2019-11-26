@@ -10,7 +10,7 @@ BACKUP_TMP_DIR=$(mktemp -d)
 backup_number=$1
 echo "Running backup"
 
-tar -C ${JENKINS_HOME} -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/config.xml --exclude jobs/*/workspace* -c jobs && \
+tar -C ${JENKINS_HOME} -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/workspace* -c jobs && \
 mv ${BACKUP_TMP_DIR}/${backup_number}.tar.gz ${BACKUP_DIR}/${backup_number}.tar.gz
 
 [[ ! -s ${BACKUP_DIR}/${backup_number}.tar.gz ]] && echo "backup file '${BACKUP_DIR}/${backup_number}.tar.gz' is empty" && exit 1;
