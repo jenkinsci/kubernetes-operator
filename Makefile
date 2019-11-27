@@ -43,6 +43,8 @@ BUILD_TAG := $(GITBRANCH)-$(GITCOMMIT)
 
 BUILD_PATH := ./cmd/manager
 
+CR := docker
+
 # Set any default go build tags
 BUILDTAGS :=
 
@@ -67,7 +69,7 @@ ARGS ?= /usr/bin/jenkins-operator --local --namespace=$(NAMESPACE) $(EXTRA_ARGS)
 .DEFAULT_GOAL := help
 
 .PHONY: all
-all: status checkmake clean build verify install docker-build docker-images ## Build the image
+all: status checkmake clean build verify install cr-build cr-images ## Build the image
 	@echo "+ $@"
 
 .PHONY: check-env
@@ -165,23 +167,37 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
 JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
-e2e: docker-build ## Runs e2e tests, you can use EXTRA_ARGS
+USE_ORGANIZATION := false
+e2e: cr-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
+ifeq ($(KUBERNETES_PROVIDER),minikube)
 	kubectl config use-context $(KUBECTL_CONTEXT)
+endif
+ifeq ($(KUBERNETES_PROVIDER),crc)
+	oc project $(CRC_OC_PROJECT)
+endif
 	cp deploy/service_account.yaml deploy/namespace-init.yaml
 	cat deploy/role.yaml >> deploy/namespace-init.yaml
 	cat deploy/role_binding.yaml >> deploy/namespace-init.yaml
 	cat deploy/operator.yaml >> deploy/namespace-init.yaml
 ifeq ($(OSFLAG), LINUX)
+ifeq ($(USE_ORGANIZATION), true)
+	sed -i 's|\(image:\).*|\1 $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+else
 	sed -i 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+endif
 ifeq ($(KUBERNETES_PROVIDER),minikube)
 	sed -i 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
 endif
 endif
 
 ifeq ($(OSFLAG), OSX)
+ifeq ($(USE_ORGANIZATION), true)
+	sed -i '' 's|\(image:\).*|\1 $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+else
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+endif
 ifeq ($(KUBERNETES_PROVIDER),minikube)
 	sed -i '' 's|\(imagePullPolicy\): IfNotPresent|\1: Never|g' deploy/namespace-init.yaml
 endif
@@ -236,7 +252,12 @@ run: export WATCH_NAMESPACE = $(NAMESPACE)
 run: export OPERATOR_NAME = $(NAME)
 run: build ## Run the executable, you can use EXTRA_ARGS
 	@echo "+ $@"
+ifeq ($(KUBERNETES_PROVIDER),minikube)
 	kubectl config use-context $(KUBECTL_CONTEXT)
+endif
+ifeq ($(KUBERNETES_PROVIDER),crc)
+	oc project $(CRC_OC_PROJECT)
+endif
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
 	build/_output/bin/jenkins-operator --local $(EXTRA_ARGS)
@@ -290,40 +311,46 @@ ifndef HAS_CHECKMAKE
 endif
 	@checkmake Makefile
 
-.PHONY: docker-login
-docker-login: ## Log in into the Docker repository
+.PHONY: cr-login
+cr-login: ## Log in into the Docker repository
 	@echo "+ $@"
 
-.PHONY: docker-build
-docker-build: check-env ## Build the container
+.PHONY: cr-build
+cr-build: check-env ## Build the container
 	@echo "+ $@"
-	docker build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile
+	$(CR) build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile $(CR_EXTRA_ARGS)
 
-.PHONY: docker-images
-docker-images: ## List all local containers
+.PHONY: cr-images
+cr-images: ## List all local containers
 	@echo "+ $@"
-	docker images
+	$(CR) images $(CR_EXTRA_ARGS)
 
-.PHONY: docker-push
-docker-push: ## Push the container
+.PHONY: cr-push
+cr-push: ## Push the container
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG)
+	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
+	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
 
-.PHONY: docker-release-version
-docker-release-version: ## Release image with version tag (in addition to build tag)
+.PHONY: cr-snapshot-push
+cr-snapshot-push:
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG)
+	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
+	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
 
-.PHONY: docker-release-latest
-docker-release-latest: ## Release image with latest tags (in addition to build tag)
+.PHONY: cr-release-version
+cr-release-version: ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG)
+	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
+	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
 
-.PHONY: docker-release
-docker-release: docker-build docker-release-version docker-release-latest ## Release image with version and latest tags (in addition to build tag)
+.PHONY: cr-release-latest
+cr-release-latest: ## Release image with latest tags (in addition to build tag)
+	@echo "+ $@"
+	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
+	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
+
+.PHONY: cr-release
+cr-release: cr-build cr-release-version cr-release-latest ## Release image with version and latest tags (in addition to build tag)
 	@echo "+ $@"
 
 # if this session isn't interactive, then we don't want to allocate a
@@ -334,12 +361,12 @@ ifeq ($(INTERACTIVE), 1)
     DOCKER_FLAGS += -t
 endif
 
-.PHONY: docker-run
-docker-run: ## Run the container in docker, you can use EXTRA_ARGS
+.PHONY: cr-run
+cr-run: ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
-	docker run --rm -i $(DOCKER_FLAGS) \
+	$(CR) run --rm -i $(DOCKER_FLAGS) \
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
-		$(DOCKER_REGISTRY):$(GITCOMMIT) $(ARGS)
+		$(DOCKER_REGISTRY):$(GITCOMMIT) $(ARGS) $(CR_EXTRA_ARGS)
 
 .PHONY: minikube-run
 minikube-run: export WATCH_NAMESPACE = $(NAMESPACE)

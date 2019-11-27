@@ -99,7 +99,7 @@ func (j JenkinsAPIConnectionSettings) BuildJenkinsAPIUrl(serviceName string, ser
 
 // Validate validates jenkins API connection settings
 func (j JenkinsAPIConnectionSettings) Validate() error {
-	if j.Port >= 0 && j.UseNodePort {
+	if j.Port > 0 && j.UseNodePort {
 		return errors.New("can't use service port and nodePort both. Please use port or nodePort")
 	}
 
