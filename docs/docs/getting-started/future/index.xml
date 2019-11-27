@@ -1,17 +1,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Jenkins Operator – Latest (v0.2.x)</title>
-    <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
+    <title>Jenkins Operator – Future (v0.3.x)</title>
+    <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/</link>
     <description>Recent Hugo news from gohugo.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Mon, 05 Aug 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://jenkinsci.github.io/kubernetes-operator/img/hugo.png</url>
       <title>GoHugo.io</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/</link>
     </image>
     
-	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -21,10 +21,10 @@
     
     <item>
       <title>Docs: Deploy Jenkins</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/deploy-jenkins/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/deploy-jenkins/</guid>
       <description>
         
         
@@ -92,10 +92,10 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
     
     <item>
       <title>Docs: Configuration</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configuration/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configuration/</guid>
       <description>
         
         
@@ -394,10 +394,10 @@ stringData:
     
     <item>
       <title>Docs: Customization</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/customization/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/customization/</guid>
       <description>
         
         
@@ -560,10 +560,10 @@ spec:
     
     <item>
       <title>Docs: AKS</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/aks/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/aks/</guid>
       <description>
         
         
@@ -584,10 +584,10 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     
     <item>
       <title>Docs: Configure backup and restore</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configure-backup-and-restore/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configure-backup-and-restore/</guid>
       <description>
         
         
@@ -666,10 +666,10 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     
     <item>
       <title>Docs: Custom Backup and Restore Providers</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/custom-backup-and-restore/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/custom-backup-and-restore/</guid>
       <description>
         
         
@@ -848,74 +848,11 @@ the number of backups under control, e.g. Cloud Formation fragment:&lt;/p&gt;
     </item>
     
     <item>
-      <title>Docs: Migration from v0.1.x</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/migration/</link>
-      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/migration/</guid>
-      <description>
-        
-        
-        
-
-&lt;h3 id=&#34;major-changes&#34;&gt;Major Changes&lt;/h3&gt;
-
-&lt;h4 id=&#34;adding-the-seed-job-agent&#34;&gt;Adding the seed job agent&lt;/h4&gt;
-
-&lt;p&gt;From version &lt;code&gt;v0.2.0&lt;/code&gt; seed jobs are not run by master executors, but by a dedicated agent deployed as a Kubernetes Pod.&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;ve had disabled master executors for security reasons.&lt;/p&gt;
-
-&lt;h4 id=&#34;replacing-configuration-jobs-with-groovy-scripts&#34;&gt;Replacing configuration jobs with Groovy scripts&lt;/h4&gt;
-
-&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; &lt;strong&gt;Jenkins Operator&lt;/strong&gt; user configuration application was implemented using &lt;strong&gt;Jenkins&lt;/strong&gt; jobs
-and this mechanism was replaced since &lt;code&gt;v0.2.0&lt;/code&gt; with Groovy scripts implementing the same functionality.&lt;/p&gt;
-
-&lt;p&gt;As a result, the &lt;strong&gt;Jenkins&lt;/strong&gt; configuration jobs (&amp;ldquo;Configure Seed Jobs&amp;rdquo;, &amp;ldquo;jenkins-operator-base-configuration&amp;rdquo;, &amp;ldquo;jenkins-operator-user-configuration&amp;rdquo;) are no longer visible in &lt;strong&gt;Jenkins&lt;/strong&gt; UI.&lt;/p&gt;
-
-&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; you can see if any of the configuration jobs failed or succeded in the &lt;strong&gt;Jenkins&lt;/strong&gt; UI (job build logs).
-Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl -n logs deployment/jenkins-operator&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h4 id=&#34;making-user-configuration-sources-configurable&#34;&gt;Making User Configuration sources configurable&lt;/h4&gt;
-
-&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; &lt;strong&gt;Jenkins Operator&lt;/strong&gt; user configuration was stored in a &lt;code&gt;ConfigMap&lt;/code&gt; and a &lt;code&gt;Secret&lt;/code&gt;
-named &lt;code&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&amp;gt;&lt;/code&gt;, and its name was hardcoded in the operator.&lt;/p&gt;
-
-&lt;p&gt;Since &lt;code&gt;v0.2.0&lt;/code&gt; the user configuration can be stored in a multiple &lt;code&gt;ConfigMap&lt;/code&gt; and &lt;code&gt;Secret&lt;/code&gt; manifests
-and has to be explicitly pointed to with &lt;code&gt;spec.configurationAsCode.configurations&lt;/code&gt; and &lt;code&gt;spec.configurationAsCode.secret&lt;/code&gt;
-for the Configuration as Code plugin,
-and &lt;code&gt;spec.groovyScripts.configurations&lt;/code&gt; and &lt;code&gt;spec.groovyScripts.secret&lt;/code&gt; for the more advanced groovy scripts.&lt;/p&gt;
-
-&lt;h3 id=&#34;migration&#34;&gt;Migration&lt;/h3&gt;
-
-&lt;p&gt;If you want to use &lt;code&gt;v0.1.x&lt;/code&gt; operator configuration with &lt;code&gt;v0.2.x&lt;/code&gt; you have to modify your Jenkins Custom Resource(s)
-and add explicit references to the existing &lt;code&gt;ConfigMap&lt;/code&gt; and &lt;code&gt;Secret&lt;/code&gt;, e.g.:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.io/v1alpha2&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;cr_name&amp;gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;...&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;configurationAsCode&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; 
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;    secret:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;  groovyScripts:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;    secret:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;  ...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-      </description>
-    </item>
-    
-    <item>
       <title>Docs: Diagnostics</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/diagnostics/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/diagnostics/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/diagnostics/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/diagnostics/</guid>
       <description>
         
         
@@ -939,10 +876,10 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
     
     <item>
       <title>Docs: Schema</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/schema/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/schema/</guid>
       <description>
         
         
@@ -2926,10 +2863,10 @@ on git commit &lt;code&gt;f4c4235&lt;/code&gt;.
     
     <item>
       <title>Docs: Developer Guide</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/developer-guide/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/developer-guide/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/developer-guide/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/developer-guide/</guid>
       <description>
         
         
@@ -2963,7 +2900,7 @@ make go-dependencies&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;build-and-run-with-a-minikube&#34;&gt;Build and run with a minikube&lt;/h2&gt;
 
 &lt;p&gt;Build and run &lt;strong&gt;Jenkins Operator&lt;/strong&gt; locally:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make build minikube-run &lt;span style=&#34;color:#000&#34;&gt;EXTRA_ARGS&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;--minikube --local&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make build minikube-run &lt;span style=&#34;color:#000&#34;&gt;EXTRA_ARGS&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;--jenkins-api-hostname=$(eval minikube ip) --jenkins-api-use-nodeport=true&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Once minikube and &lt;strong&gt;Jenkins Operator&lt;/strong&gt; are up and running, apply Jenkins custom resource:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl apply -f deploy/crds/jenkins_v1alpha2_jenkins_cr.yaml
 kubectl get jenkins -o yaml
@@ -2985,9 +2922,13 @@ kubectl --context remote-k8s --namespace default get po&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Run e2e tests with minikube:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make minikube-start
 &lt;span style=&#34;color:#204a87&#34;&gt;eval&lt;/span&gt; &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;$(&lt;/span&gt;minikube docker-env&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;)&lt;/span&gt;
-make build e2e&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+make build e2e &lt;span style=&#34;color:#000&#34;&gt;config&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;config.minikube.env &lt;span style=&#34;color:#000&#34;&gt;CR&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;podman&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;config.minikube.env&lt;/code&gt; is the E2E test profile which provides all connection info to operator to run on minikube.&lt;/p&gt;
+
 &lt;p&gt;Run the specific e2e test:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make build e2e &lt;span style=&#34;color:#000&#34;&gt;E2E_TEST_SELECTOR&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;^TestConfiguration$&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make build e2e &lt;span style=&#34;color:#000&#34;&gt;E2E_TEST_SELECTOR&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;^TestConfiguration$&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;config&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;config.minikube.env &lt;span style=&#34;color:#000&#34;&gt;CR&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;podman&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you want to run E2E tests on CRC (Code Ready Containers by OpenShift), you should use &lt;code&gt;config.crc.env&lt;/code&gt; profile instead of &lt;code&gt;config.minikube.env&lt;/code&gt;.&lt;/p&gt;
+
 &lt;h3 id=&#34;running-e2e-tests-on-macos&#34;&gt;Running E2E tests on macOS&lt;/h3&gt;
 
 &lt;p&gt;At first, you need to start minikube:&lt;/p&gt;
@@ -2999,9 +2940,23 @@ $ &lt;span style=&#34;color:#204a87&#34;&gt;eval&lt;/span&gt; &lt;span style=&#3
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ make build&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then exit the container and run:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;make e2e
+&lt;pre&gt;&lt;code&gt;make e2e CONFIG=config.minikube.env
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;or with CRC:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;make e2e CONFIG=config.crc.env
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;use-docker-image-instead-of-podman-code-ready-containers&#34;&gt;Use Docker image instead of podman (Code Ready Containers)&lt;/h3&gt;
+
+&lt;p&gt;If you have trouble to build image with &lt;code&gt;podman&lt;/code&gt;, you can set additional flag &lt;code&gt;USE_ORGANIZATION&lt;/code&gt; to pull image from organization.&lt;/p&gt;
+
+&lt;p&gt;At first, edit you &lt;code&gt;config.base.env&lt;/code&gt; and change &lt;code&gt;DOCKER_ORGANIZATION&lt;/code&gt; to your account/organization name from &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;hub&lt;/a&gt;.
+Next, you need to pull image to your repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ make cr-build cr-snapshot-push&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When image will be uploaded to repository, you can now write this command to run E2E tests:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ make e2e &lt;span style=&#34;color:#000&#34;&gt;E2E_TEST_SELECTOR&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;^TestConfiguration$&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;config&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;config.crc.env  &lt;span style=&#34;color:#000&#34;&gt;USE_ORGANIZATION&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;true&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;tips-tricks&#34;&gt;Tips &amp;amp; Tricks&lt;/h2&gt;
 
 &lt;h3 id=&#34;building-docker-image-on-minikube-for-e2e-tests&#34;&gt;Building docker image on minikube (for e2e tests)&lt;/h3&gt;

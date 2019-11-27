@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,21 +20,29 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>v0.1.x | Jenkins Operator</title><meta property="og:title" content="v0.1.x" />
-<meta property="og:description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<title>Diagnostics | Jenkins Operator</title><meta property="og:title" content="Diagnostics" />
+<meta property="og:description" content="How to deal with Jenkins Operator problems
 " />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/diagnostics/" />
+<meta property="article:published_time" content="2019-08-05T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
 
-<meta property="og:updated_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
-
-<meta itemprop="name" content="v0.1.x">
-<meta itemprop="description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<meta itemprop="name" content="Diagnostics">
+<meta itemprop="description" content="How to deal with Jenkins Operator problems
 ">
 
+
+<meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="57">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="v0.1.x"/>
-<meta name="twitter:description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<meta name="twitter:title" content="Diagnostics"/>
+<meta name="twitter:description" content="How to deal with Jenkins Operator problems
 "/>
 
 
@@ -51,9 +58,9 @@
   crossorigin="anonymous"></script>
 
 
-    <title>v0.1.x | Jenkins Operator</title>
+    <title>Diagnostics | Jenkins Operator</title>
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -199,10 +206,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
+    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
   </li>
   <ul>
-    <li class="collapse " id="kubernetes-operator-docs-getting-started-future">
+    <li class="collapse show" id="kubernetes-operator-docs-getting-started-future">
       
       
       
@@ -245,7 +252,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-future-diagnostics" href="/kubernetes-operator/docs/getting-started/future/diagnostics/">Diagnostics</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-future-diagnostics" href="/kubernetes-operator/docs/getting-started/future/diagnostics/">Diagnostics</a>
       
       
       
@@ -359,10 +366,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/v0.1.x/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">v0.1.x</a>
+    <a  href="/kubernetes-operator/docs/getting-started/v0.1.x/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">v0.1.x</a>
   </li>
   <ul>
-    <li class="collapse show" id="kubernetes-operator-docs-getting-started-v0-1-x">
+    <li class="collapse " id="kubernetes-operator-docs-getting-started-v0-1-x">
       
       
       
@@ -475,8 +482,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/v0.1.x/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=v0.1.x" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/future/diagnostics.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=Diagnostics" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -505,6 +512,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/">Documentation</a>
 </li>
@@ -519,8 +529,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/">Future (v0.3.x)</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/">v0.1.x</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/diagnostics/">Diagnostics</a>
 </li>
 
 	</ol>
@@ -528,187 +545,29 @@
 
             
 <div class="td-content">
-	<h1>v0.1.x</h1>
-	<div class="lead">How to work with jenkins-operator legacy version. We recommend migration to a latest version</div>
+	<h1>Diagnostics</h1>
+	<div class="lead">How to deal with Jenkins Operator problems</div>
 	
 
+<p>Turn on debug in <strong>Jenkins Operator</strong> deployment:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sed -i <span style="color:#4e9a06">&#39;s|\(args:\).*|\1\ [&#34;--debug&#34;\]|&#39;</span> deploy/operator.yaml
+kubectl apply -f deploy/operator.yaml</code></pre></div>
+<p>Watch Kubernetes events:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get events --sort-by<span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;{.lastTimestamp}&#39;</span></code></pre></div>
+<p>Verify Jenkins master logs:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl logs -f jenkins-&lt;cr_name&gt;</code></pre></div>
+<p>Verify the <code>jenkins-operator</code> logs:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl logs deployment/jenkins-operator</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
 
-
-<div class="pageinfo pageinfo-primary">
-<p>This document describes a getting started guide for <strong>Jenkins Operator</strong> <code>v0.1.x</code> and an additional configuration.</p>
-
-</div>
-
-
-<h2 id="first-steps">First Steps</h2>
-
-<p>Prepare your Kubernetes cluster and set up your <code>kubectl</code> access.</p>
-
-<p>Once you have running Kubernetes cluster you can focus on installing <strong>Jenkins Operator</strong> according to the <a href="/docs/installation/">Installation</a> guide.</p>
-
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/deploy-jenkins/">Deploy Jenkins</a>
-                    </h5>
-                    <p>Deploy production ready Jenkins Operator manifest
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/">Configuration</a>
-                    </h5>
-                    <p>How to configure Jenkins with Operator
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/customization/">Customization</a>
-                    </h5>
-                    <p>How to customize Jenkins
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/aks/">AKS</a>
-                    </h5>
-                    <p>Additional configuration for Azure Kubernetes Service
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configure-backup-and-restore/">Configure backup and restore</a>
-                    </h5>
-                    <p>Prevent loss of job history
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/diagnostics/">Diagnostics</a>
-                    </h5>
-                    <p>How to deal with jenkins-operator problems
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/scheme/">Scheme</a>
-                    </h5>
-                    <p>API Schema definitions for Jenkins CR
-</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/">Migration guide from v1alpha1 to v1alpha2</a>
-                    </h5>
-                    <p>How to migrate to new CRD manifest
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/developer-guide/">Developer Guide</a>
-                    </h5>
-                    <p>Jenkins Operator for developers
-</p>
-                </div>
-            
-        
-    
-</div>
-
+<p>Delete the Jenkins master pod and wait for the new one to come up:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl delete pod jenkins-&lt;cr_name&gt;</code></pre></div>
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified August 5, 2019
 </div>
 </div>
+
 
           </main>
         </div>

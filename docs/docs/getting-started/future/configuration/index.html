@@ -20,29 +20,29 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>Migration from v0.1.x | Jenkins Operator</title><meta property="og:title" content="Migration from v0.1.x" />
-<meta property="og:description" content="How to migrate from v0.1.x to v0.2.x
+<title>Configuration | Jenkins Operator</title><meta property="og:title" content="Configuration" />
+<meta property="og:description" content="How to configure Jenkins with Operator
 " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/migration/" />
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configuration/" />
 <meta property="article:published_time" content="2019-08-05T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
 
-<meta itemprop="name" content="Migration from v0.1.x">
-<meta itemprop="description" content="How to migrate from v0.1.x to v0.2.x
+<meta itemprop="name" content="Configuration">
+<meta itemprop="description" content="How to configure Jenkins with Operator
 ">
 
 
 <meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="234">
+<meta itemprop="wordCount" content="726">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Migration from v0.1.x"/>
-<meta name="twitter:description" content="How to migrate from v0.1.x to v0.2.x
+<meta name="twitter:title" content="Configuration"/>
+<meta name="twitter:description" content="How to configure Jenkins with Operator
 "/>
 
 
@@ -58,7 +58,7 @@
   crossorigin="anonymous"></script>
 
 
-    <title>Migration from v0.1.x | Jenkins Operator</title>
+    <title>Configuration | Jenkins Operator</title>
   </head>
   <body class="td-page">
     <header>
@@ -206,10 +206,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
+    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
   </li>
   <ul>
-    <li class="collapse " id="kubernetes-operator-docs-getting-started-future">
+    <li class="collapse show" id="kubernetes-operator-docs-getting-started-future">
       
       
       
@@ -222,7 +222,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-future-configuration" href="/kubernetes-operator/docs/getting-started/future/configuration/">Configuration</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-future-configuration" href="/kubernetes-operator/docs/getting-started/future/configuration/">Configuration</a>
       
       
       
@@ -283,10 +283,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/latest/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Latest (v0.2.x)</a>
+    <a  href="/kubernetes-operator/docs/getting-started/latest/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Latest (v0.2.x)</a>
   </li>
   <ul>
-    <li class="collapse show" id="kubernetes-operator-docs-getting-started-latest">
+    <li class="collapse " id="kubernetes-operator-docs-getting-started-latest">
       
       
       
@@ -329,7 +329,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-latest-migration" href="/kubernetes-operator/docs/getting-started/latest/migration/">Migration from v0.1.x</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-migration" href="/kubernetes-operator/docs/getting-started/latest/migration/">Migration from v0.1.x</a>
       
       
       
@@ -482,8 +482,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/migration.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=Migration%20from%20v0.1.x" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/future/configuration.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=Configuration" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -499,15 +499,22 @@
 <ul>
 <li>
 <ul>
-<li>
+<li><a href="#configure-seed-jobs-and-pipelines">Configure Seed Jobs and Pipelines</a></li>
+<li><a href="#prepare-job-definitions-and-pipelines">Prepare job definitions and pipelines</a></li>
+<li><a href="#configure-seed-jobs">Configure Seed Jobs</a>
 <ul>
-<li><a href="#major-changes">Major Changes</a>
+<li><a href="#ssh-authentication">SSH authentication</a>
 <ul>
-<li><a href="#adding-the-seed-job-agent">Adding the seed job agent</a></li>
-<li><a href="#replacing-configuration-jobs-with-groovy-scripts">Replacing configuration jobs with Groovy scripts</a></li>
-<li><a href="#making-user-configuration-sources-configurable">Making User Configuration sources configurable</a></li>
+<li><a href="#generate-ssh-keys">Generate SSH Keys</a></li>
+<li><a href="#public-key">Public key</a></li>
+<li><a href="#configure-ssh-authentication">Configure SSH authentication</a></li>
 </ul></li>
-<li><a href="#migration">Migration</a></li>
+<li><a href="#username-password-authentication">Username &amp; password authentication</a></li>
+</ul></li>
+<li><a href="#http-proxy-for-downloading-plugins">HTTP Proxy for downloading plugins</a></li>
+<li><a href="#pulling-docker-images-from-private-repositories">Pulling Docker images from private repositories</a>
+<ul>
+<li><a href="#docker-hub-configuration">Docker Hub Configuration</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -548,14 +555,14 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/">Latest (v0.2.x)</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/">Future (v0.3.x)</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/migration/">Migration from v0.1.x</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/configuration/">Configuration</a>
 </li>
 
 	</ol>
@@ -563,59 +570,298 @@
 
             
 <div class="td-content">
-	<h1>Migration from v0.1.x</h1>
-	<div class="lead">How to migrate from v0.1.x to v0.2.x</div>
+	<h1>Configuration</h1>
+	<div class="lead">How to configure Jenkins with Operator</div>
 	
 
-<h3 id="major-changes">Major Changes</h3>
+<h2 id="configure-seed-jobs-and-pipelines">Configure Seed Jobs and Pipelines</h2>
 
-<h4 id="adding-the-seed-job-agent">Adding the seed job agent</h4>
+<p>Jenkins operator uses <a href="https://github.com/jenkinsci/job-dsl-plugin" target="_blank">job-dsl</a> and <a href="https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/" target="_blank">kubernetes-credentials-provider</a> plugins for configuring jobs
+and deploy keys.</p>
 
-<p>From version <code>v0.2.0</code> seed jobs are not run by master executors, but by a dedicated agent deployed as a Kubernetes Pod.</p>
+<h2 id="prepare-job-definitions-and-pipelines">Prepare job definitions and pipelines</h2>
 
-<p>We&rsquo;ve had disabled master executors for security reasons.</p>
+<p>First you have to prepare pipelines and job definition in your GitHub repository using the following structure:</p>
 
-<h4 id="replacing-configuration-jobs-with-groovy-scripts">Replacing configuration jobs with Groovy scripts</h4>
+<pre><code>cicd/
+├── jobs
+│   └── build.jenkins
+└── pipelines
+    └── build.jenkins
+</code></pre>
 
-<p>In <code>v0.1.x</code> <strong>Jenkins Operator</strong> user configuration application was implemented using <strong>Jenkins</strong> jobs
-and this mechanism was replaced since <code>v0.2.0</code> with Groovy scripts implementing the same functionality.</p>
+<p><strong><code>cicd/jobs/build.jenkins</code></strong> is a job definition:</p>
 
-<p>As a result, the <strong>Jenkins</strong> configuration jobs (&ldquo;Configure Seed Jobs&rdquo;, &ldquo;jenkins-operator-base-configuration&rdquo;, &ldquo;jenkins-operator-user-configuration&rdquo;) are no longer visible in <strong>Jenkins</strong> UI.</p>
+<pre><code>#!/usr/bin/env groovy
 
-<p>In <code>v0.1.x</code> you can see if any of the configuration jobs failed or succeded in the <strong>Jenkins</strong> UI (job build logs).
-Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl -n logs deployment/jenkins-operator</code></pre></div>
-<h4 id="making-user-configuration-sources-configurable">Making User Configuration sources configurable</h4>
+pipelineJob('build-jenkins-operator') {
+    displayName('Build jenkins-operator')
 
-<p>In <code>v0.1.x</code> <strong>Jenkins Operator</strong> user configuration was stored in a <code>ConfigMap</code> and a <code>Secret</code>
-named <code>jenkins-operator-user-configuration-&lt;cr_name&gt;</code>, and its name was hardcoded in the operator.</p>
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('https://github.com/jenkinsci/kubernetes-operator.git')
+                        credentials('jenkins-operator')
+                    }
+                    branches('*/master')
+                }
+            }
+            scriptPath('cicd/pipelines/build.jenkins')
+        }
+    }
+}
+</code></pre>
 
-<p>Since <code>v0.2.0</code> the user configuration can be stored in a multiple <code>ConfigMap</code> and <code>Secret</code> manifests
-and has to be explicitly pointed to with <code>spec.configurationAsCode.configurations</code> and <code>spec.configurationAsCode.secret</code>
-for the Configuration as Code plugin,
-and <code>spec.groovyScripts.configurations</code> and <code>spec.groovyScripts.secret</code> for the more advanced groovy scripts.</p>
+<p><strong><code>cicd/pipelines/build.jenkins</code></strong> is an actual Jenkins pipeline:</p>
 
-<h3 id="migration">Migration</h3>
+<pre><code>#!/usr/bin/env groovy
 
-<p>If you want to use <code>v0.1.x</code> operator configuration with <code>v0.2.x</code> you have to modify your Jenkins Custom Resource(s)
-and add explicit references to the existing <code>ConfigMap</code> and <code>Secret</code>, e.g.:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins.io/v1alpha2<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;cr_name&gt;<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>...<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>configurationAsCode<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> 
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">    secret:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">  groovyScripts:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">    secret:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-operator-user-configuration-&lt;cr_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">  ...</span></code></pre></div>
+def label = &quot;build-jenkins-operator-${UUID.randomUUID().toString()}&quot;
+def home = &quot;/home/jenkins&quot;
+def workspace = &quot;${home}/workspace/build-jenkins-operator&quot;
+def workdir = &quot;${workspace}/src/github.com/jenkinsci/kubernetes-operator/&quot;
+
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:alpine'),
+                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
+        ],
+        envVars: [
+                envVar(key: 'GOPATH', value: workspace),
+        ],
+        ) {
+
+    node(label) {
+        dir(workdir) {
+            stage('Init') {
+                timeout(time: 3, unit: 'MINUTES') {
+                    checkout scm
+                }
+                container('go') {
+                    sh 'apk --no-cache --update add make git gcc libc-dev'
+                }
+            }
+
+            stage('Dep') {
+                container('go') {
+                    sh 'make dep'
+                }
+            }
+
+            stage('Test') {
+                container('go') {
+                    sh 'make test'
+                }
+            }
+
+            stage('Build') {
+                container('go') {
+                    sh 'make build'
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<h2 id="configure-seed-jobs">Configure Seed Jobs</h2>
+
+<p>Jenkins Seed Jobs are configured using <code>Jenkins.spec.seedJobs</code> section from your custom resource manifest:</p>
+
+<pre><code>apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator
+    targets: &quot;cicd/jobs/*.jenkins&quot;
+    description: &quot;Jenkins Operator repository&quot;
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+</code></pre>
+
+<p><strong>Jenkins Operator</strong> will automatically discover and configure all the seed jobs.</p>
+
+<p>You can verify if deploy keys were successfully configured in the Jenkins <strong>Credentials</strong> tab.</p>
+
+<p><img src="/kubernetes-operator/img/jenkins-credentials.png" alt="jenkins" /></p>
+
+<p>You can verify if your pipelines were successfully configured in the Jenkins Seed Job console output.</p>
+
+<p><img src="/kubernetes-operator/img/jenkins-seed.png" alt="jenkins" /></p>
+
+<p>If your GitHub repository is <strong>private</strong> you have to configure SSH or username/password authentication.</p>
+
+<h3 id="ssh-authentication">SSH authentication</h3>
+
+<h4 id="generate-ssh-keys">Generate SSH Keys</h4>
+
+<p>There are two methods of SSH private key generation:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ openssl genrsa -out &lt;filename&gt; <span style="color:#0000cf;font-weight:bold">2048</span></code></pre></div>
+<p>or</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ssh-keygen -t rsa -b <span style="color:#0000cf;font-weight:bold">2048</span>
+$ ssh-keygen -p -f &lt;filename&gt; -m pem</code></pre></div>
+<p>Then copy content from generated file.</p>
+
+<h4 id="public-key">Public key</h4>
+
+<p>If you want to upload your public key to your Git server you need to extract it.</p>
+
+<p>If key was generated by <code>openssl</code> then you need to type this to extract public key:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ openssl rsa -in &lt;filename&gt; -pubout &gt; &lt;filename&gt;.pub</code></pre></div>
+<p>If key was generated by <code>ssh-keygen</code> the public key content is located in <filename>.pub and there is no need to extract public key</p>
+
+<h4 id="configure-ssh-authentication">Configure SSH authentication</h4>
+
+<p>Configure a seed job like this:</p>
+
+<pre><code>apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-ssh
+    credentialType: basicSSHUserPrivateKey
+    credentialID: k8s-ssh
+    targets: &quot;cicd/jobs/*.jenkins&quot;
+    description: &quot;Jenkins Operator repository&quot;
+    repositoryBranch: master
+    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git
+</code></pre>
+
+<p>and create a Kubernetes Secret (name of secret should be the same from <code>credentialID</code> field):</p>
+
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-ssh
+stringData:
+  privateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
+    oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
+    ...
+  username: github_user_name
+</code></pre>
+
+<h3 id="username-password-authentication">Username &amp; password authentication</h3>
+
+<p>Configure the seed job like:</p>
+
+<pre><code>apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-user-pass
+    credentialType: usernamePassword
+    credentialID: k8s-user-pass
+    targets: &quot;cicd/jobs/*.jenkins&quot;
+    description: &quot;Jenkins Operator repository&quot;
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+</code></pre>
+
+<p>and create a Kubernetes Secret (name of secret should be the same from <code>credentialID</code> field):</p>
+
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-user-pass
+stringData:
+  username: github_user_name
+  password: password_or_token
+</code></pre>
+
+<h2 id="http-proxy-for-downloading-plugins">HTTP Proxy for downloading plugins</h2>
+
+<p>To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">    </span>containers<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">      </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-master<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">        </span>env<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>CURL_OPTIONS<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">            </span>value<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>-L<span style="color:#f8f8f8;text-decoration:underline"> </span>-x<span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;proxy_url&gt;</code></pre></div>
+<p>In <code>CURL_OPTIONS</code> var you can set additional arguments to <code>curl</code> command.</p>
+
+<h2 id="pulling-docker-images-from-private-repositories">Pulling Docker images from private repositories</h2>
+
+<p>To pull a Docker Image from private repository you can use <code>imagePullSecrets</code>.</p>
+
+<p>Please follow the instructions on <a href="https://kubernetes.io/docs/concepts/containers/images/?origin_team=T42NTAGHM#creating-a-secret-with-a-docker-config" target="_blank">creating a secret with a docker config</a>.</p>
+
+<h3 id="docker-hub-configuration">Docker Hub Configuration</h3>
+
+<p>To use Docker Hub additional steps are required.</p>
+
+<p>Edit the previously created secret:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl -n &lt;namespace&gt; edit secret &lt;name&gt;</code></pre></div>
+<p>The <code>.dockerconfigjson</code> key&rsquo;s value needs to be replaced with a modified version.</p>
+
+<p>After modifications, it needs to be encoded as a Base64 value before setting the <code>.dockerconfigjson</code> key.</p>
+
+<p>Example config file to modify and use:</p>
+
+<pre><code>{
+    &quot;auths&quot;:{
+        &quot;https://index.docker.io/v1/&quot;:{
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;auth.docker.io&quot;:{
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;registry.docker.io&quot;:{
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;docker.io&quot;:{
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;https://registry-1.docker.io/v2/&quot;: {
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;registry-1.docker.io/v2/&quot;: {
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;registry-1.docker.io&quot;: {
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        },
+        &quot;https://registry-1.docker.io&quot;: {
+            &quot;username&quot;:&quot;user&quot;,
+            &quot;password&quot;:&quot;password&quot;,
+            &quot;email&quot;:&quot;yourdockeremail@gmail.com&quot;,
+            &quot;auth&quot;:&quot;base64 of string user:password&quot;
+        }
+    }
+}
+</code></pre>
+
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified August 5, 2019
