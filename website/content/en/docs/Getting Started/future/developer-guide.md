@@ -122,7 +122,7 @@ make e2e CONFIG=config.crc.env
 
 ### Use Docker image instead of podman (Code Ready Containers)
 
-If you have trouble to build image with `podman`, you can set additional flag `USE_ORGANIZATION` to pull image from organization.
+If you have trouble to build image with `podman`, you can set additional flag `IMAGE_PULL_MODE` to pull image from organization.
 
 At first, edit you `config.base.env` and change `DOCKER_ORGANIZATION` to your account/organization name from [hub](https://hub.docker.com/).
 Next, you need to pull image to your repository:
@@ -134,7 +134,7 @@ $ make cr-build cr-snapshot-push
 When image will be uploaded to repository, you can now write this command to run E2E tests:
 
 ```bash
-$ make e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.crc.env  USE_ORGANIZATION=true
+$ make e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.crc.env  IMAGE_PULL_MODE=remote
 ```
 
 ## Tips & Tricks
