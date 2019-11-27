@@ -43,6 +43,7 @@ BUILD_TAG := $(GITBRANCH)-$(GITCOMMIT)
 
 BUILD_PATH := ./cmd/manager
 
+# CR is Container Runtime - it could be docker or podmana
 CR := docker
 
 # Set any default go build tags
@@ -167,7 +168,7 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
 JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
-USE_ORGANIZATION := false
+IMAGE_PULL_MODE=local
 e2e: cr-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
@@ -182,8 +183,9 @@ endif
 	cat deploy/role_binding.yaml >> deploy/namespace-init.yaml
 	cat deploy/operator.yaml >> deploy/namespace-init.yaml
 ifeq ($(OSFLAG), LINUX)
-ifeq ($(USE_ORGANIZATION), true)
+ifeq ($(IMAGE_PULL_MODE), remote)
 	sed -i 's|\(image:\).*|\1 $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+	sed -i 's|\(imagePullPolicy\): IfNotPresent|\1: Always|g' deploy/namespace-init.yaml
 else
 	sed -i 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 endif
@@ -193,8 +195,9 @@ endif
 endif
 
 ifeq ($(OSFLAG), OSX)
-ifeq ($(USE_ORGANIZATION), true)
+ifeq ($(IMAGE_PULL_MODE), remote)
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
+	sed -i '' 's|\(imagePullPolicy\): IfNotPresent|\1: Always|g' deploy/namespace-init.yaml
 else
 	sed -i '' 's|\(image:\).*|\1 $(DOCKER_REGISTRY):$(GITCOMMIT)|g' deploy/namespace-init.yaml
 endif
