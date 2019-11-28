@@ -66,7 +66,7 @@ PACKAGES_FOR_UNIT_TESTS = $(shell go list -f '{{.ImportPath}}/' ./... | grep -v 
 E2E_TEST_SELECTOR ?= .*
 
 JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
-OPERATOR_ENTRYPOINT ?= /usr/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) --namespace=$(NAMESPACE) $(EXTRA_ARGS)
+OPERATOR_ARGS ?= --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) --namespace=$(NAMESPACE) $(OPERATOR_EXTRA_ARGS)
 
 .DEFAULT_GOAL := help
 
@@ -262,7 +262,7 @@ ifeq ($(KUBERNETES_PROVIDER),crc)
 endif
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
-	build/_output/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(EXTRA_ARGS)
+	build/_output/bin/jenkins-operator $(OPERATOR_ARGS)
 
 .PHONY: clean
 clean: ## Cleanup any build binaries or packages
@@ -368,7 +368,7 @@ container-runtime-run: ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) run $(CONTAINER_RUNTIME_EXTRA_ARGS) --rm -i $(DOCKER_FLAGS) \
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
-		$(DOCKER_REGISTRY):$(GITCOMMIT) $(OPERATOR_ENTRYPOINT)
+		$(DOCKER_REGISTRY):$(GITCOMMIT) /usr/bin/jenkins-operator $(OPERATOR_ARGS)
 
 .PHONY: minikube-run
 minikube-run: export WATCH_NAMESPACE = $(NAMESPACE)
@@ -378,7 +378,7 @@ minikube-run: minikube-start ## Run the operator locally and use minikube as Kub
 	kubectl config use-context minikube
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
-	build/_output/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(EXTRA_ARGS)
+	build/_output/bin/jenkins-operator $(OPERATOR_ARGS)
 
 .PHONY: deepcopy-gen
 deepcopy-gen: ## Generate deepcopy golang code
