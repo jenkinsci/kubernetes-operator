@@ -65,7 +65,8 @@ PACKAGES_FOR_UNIT_TESTS = $(shell go list -f '{{.ImportPath}}/' ./... | grep -v 
 # Run all the e2e tests by default
 E2E_TEST_SELECTOR ?= .*
 
-ARGS ?= /usr/bin/jenkins-operator --local --namespace=$(NAMESPACE) $(EXTRA_ARGS)
+JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
+OPERATOR_ENTRYPOINT ?= /usr/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) --namespace=$(NAMESPACE) $(EXTRA_ARGS)
 
 .DEFAULT_GOAL := help
 
@@ -167,7 +168,6 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
-JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
 e2e: container-runtime-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
@@ -208,7 +208,7 @@ endif
 	@RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -tags "$(BUILDTAGS) cgo" -v -timeout 30m -run "$(E2E_TEST_SELECTOR)" \
 		-root=$(CURRENT_DIRECTORY) -kubeconfig=$(HOME)/.kube/config -globalMan deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) \
-		-namespacedMan deploy/namespace-init.yaml $(EXTRA_ARGS)
+		-namespacedMan deploy/namespace-init.yaml $(TEST_ARGS)
 
 
 .PHONY: vet
@@ -262,7 +262,7 @@ ifeq ($(KUBERNETES_PROVIDER),crc)
 endif
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
-	build/_output/bin/jenkins-operator --local $(EXTRA_ARGS)
+	build/_output/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(EXTRA_ARGS)
 
 .PHONY: clean
 clean: ## Cleanup any build binaries or packages
@@ -320,36 +320,36 @@ container-runtime-login: ## Log in into the Docker repository
 .PHONY: container-runtime-build
 container-runtime-build: check-env ## Build the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-images
 container-runtime-images: ## List all local containers
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) images $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) images $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-push
 container-runtime-push: ## Push the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-snapshot-push
 container-runtime-snapshot-push:
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-release-version
 container-runtime-release-version: ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-release-latest
 container-runtime-release-latest: ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-release
 container-runtime-release: container-runtime-build container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
@@ -366,9 +366,9 @@ endif
 .PHONY: container-runtime-run
 container-runtime-run: ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) run --rm -i $(DOCKER_FLAGS) \
+	$(CONTAINER_RUNTIME_COMMAND) run $(CONTAINER_RUNTIME_EXTRA_ARGS) --rm -i $(DOCKER_FLAGS) \
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
-		$(DOCKER_REGISTRY):$(GITCOMMIT) $(ARGS) $(CR_EXTRA_ARGS)
+		$(DOCKER_REGISTRY):$(GITCOMMIT) $(OPERATOR_ENTRYPOINT)
 
 .PHONY: minikube-run
 minikube-run: export WATCH_NAMESPACE = $(NAMESPACE)
@@ -378,7 +378,7 @@ minikube-run: minikube-start ## Run the operator locally and use minikube as Kub
 	kubectl config use-context minikube
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
-	build/_output/bin/jenkins-operator $(EXTRA_ARGS)
+	build/_output/bin/jenkins-operator --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(EXTRA_ARGS)
 
 .PHONY: deepcopy-gen
 deepcopy-gen: ## Generate deepcopy golang code
