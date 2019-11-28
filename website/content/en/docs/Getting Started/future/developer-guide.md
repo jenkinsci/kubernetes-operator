@@ -77,7 +77,7 @@ Run e2e tests with minikube:
 ```bash
 make minikube-start
 eval $(minikube docker-env)
-make build e2e config=config.minikube.env CR=podman
+make build e2e config=config.minikube.env CONTAINER_RUNTIME=podman
 ```
 
 `config.minikube.env` is the E2E test profile which provides all connection info to operator to run on minikube.
@@ -85,7 +85,7 @@ make build e2e config=config.minikube.env CR=podman
 Run the specific e2e test:
 
 ```bash
-make build e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.minikube.env CR=podman
+make build e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.minikube.env CONTAINER_RUNTIME=podman
 ```
 
 If you want to run E2E tests on CRC (Code Ready Containers by OpenShift), you should use `config.crc.env` profile instead of `config.minikube.env`.
