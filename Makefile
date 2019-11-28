@@ -43,8 +43,8 @@ BUILD_TAG := $(GITBRANCH)-$(GITCOMMIT)
 
 BUILD_PATH := ./cmd/manager
 
-# CR is Container Runtime - it could be docker or podmana
-CR := docker
+# CONTAINER_RUNTIME_COMMAND is Container Runtime - it could be docker or podman
+CONTAINER_RUNTIME_COMMAND := docker
 
 # Set any default go build tags
 BUILDTAGS :=
@@ -70,7 +70,7 @@ ARGS ?= /usr/bin/jenkins-operator --local --namespace=$(NAMESPACE) $(EXTRA_ARGS)
 .DEFAULT_GOAL := help
 
 .PHONY: all
-all: status checkmake clean build verify install cr-build cr-images ## Build the image
+all: status checkmake clean build verify install container-runtime-build container-runtime-images ## Build the image
 	@echo "+ $@"
 
 .PHONY: check-env
@@ -168,8 +168,7 @@ prepare-all-in-one-deploy-file: ## Prepares all in one deploy file
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)
 JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND))
-IMAGE_PULL_MODE=local
-e2e: cr-build ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: container-runtime-build ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	@echo "Docker image: $(DOCKER_REGISTRY):$(GITCOMMIT)"
 ifeq ($(KUBERNETES_PROVIDER),minikube)
@@ -314,46 +313,46 @@ ifndef HAS_CHECKMAKE
 endif
 	@checkmake Makefile
 
-.PHONY: cr-login
-cr-login: ## Log in into the Docker repository
+.PHONY: container-runtime-login
+container-runtime-login: ## Log in into the Docker repository
 	@echo "+ $@"
 
-.PHONY: cr-build
-cr-build: check-env ## Build the container
+.PHONY: container-runtime-build
+container-runtime-build: check-env ## Build the container
 	@echo "+ $@"
-	$(CR) build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) build . -t $(DOCKER_REGISTRY):$(GITCOMMIT) --file build/Dockerfile $(CR_EXTRA_ARGS)
 
-.PHONY: cr-images
-cr-images: ## List all local containers
+.PHONY: container-runtime-images
+container-runtime-images: ## List all local containers
 	@echo "+ $@"
-	$(CR) images $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) images $(CR_EXTRA_ARGS)
 
-.PHONY: cr-push
-cr-push: ## Push the container
+.PHONY: container-runtime-push
+container-runtime-push: ## Push the container
 	@echo "+ $@"
-	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
-	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CR_EXTRA_ARGS)
 
-.PHONY: cr-snapshot-push
-cr-snapshot-push:
+.PHONY: container-runtime-snapshot-push
+container-runtime-snapshot-push:
 	@echo "+ $@"
-	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
-	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CR_EXTRA_ARGS)
 
-.PHONY: cr-release-version
-cr-release-version: ## Release image with version tag (in addition to build tag)
+.PHONY: container-runtime-release-version
+container-runtime-release-version: ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
-	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CR_EXTRA_ARGS)
 
-.PHONY: cr-release-latest
-cr-release-latest: ## Release image with latest tags (in addition to build tag)
+.PHONY: container-runtime-release-latest
+container-runtime-release-latest: ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
-	$(CR) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
-	$(CR) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CR_EXTRA_ARGS)
 
-.PHONY: cr-release
-cr-release: cr-build cr-release-version cr-release-latest ## Release image with version and latest tags (in addition to build tag)
+.PHONY: container-runtime-release
+container-runtime-release: container-runtime-build container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
 	@echo "+ $@"
 
 # if this session isn't interactive, then we don't want to allocate a
@@ -364,10 +363,10 @@ ifeq ($(INTERACTIVE), 1)
     DOCKER_FLAGS += -t
 endif
 
-.PHONY: cr-run
-cr-run: ## Run the container in docker, you can use EXTRA_ARGS
+.PHONY: container-runtime-run
+container-runtime-run: ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
-	$(CR) run --rm -i $(DOCKER_FLAGS) \
+	$(CONTAINER_RUNTIME_COMMAND) run --rm -i $(DOCKER_FLAGS) \
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
 		$(DOCKER_REGISTRY):$(GITCOMMIT) $(ARGS) $(CR_EXTRA_ARGS)
 
