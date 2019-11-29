@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,21 +20,29 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>v0.1.x | Jenkins Operator</title><meta property="og:title" content="v0.1.x" />
-<meta property="og:description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<title>Developer Guide | Jenkins Operator</title><meta property="og:title" content="Developer Guide" />
+<meta property="og:description" content="Jenkins Operator for developers
 " />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/developer-guide/" />
+<meta property="article:published_time" content="2019-08-05T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
 
-<meta property="og:updated_time" content="2019-08-05T00:00:00&#43;00:00"/><meta property="og:site_name" content="Jenkins Operator" />
-
-<meta itemprop="name" content="v0.1.x">
-<meta itemprop="description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<meta itemprop="name" content="Developer Guide">
+<meta itemprop="description" content="Jenkins Operator for developers
 ">
 
+
+<meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="544">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="v0.1.x"/>
-<meta name="twitter:description" content="How to work with jenkins-operator legacy version. We recommend migration to a latest version
+<meta name="twitter:title" content="Developer Guide"/>
+<meta name="twitter:description" content="Jenkins Operator for developers
 "/>
 
 
@@ -51,9 +58,9 @@
   crossorigin="anonymous"></script>
 
 
-    <title>v0.1.x | Jenkins Operator</title>
+    <title>Developer Guide | Jenkins Operator</title>
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -199,10 +206,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
+    <a  href="/kubernetes-operator/docs/getting-started/future/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Future (v0.3.x)</a>
   </li>
   <ul>
-    <li class="collapse " id="kubernetes-operator-docs-getting-started-future">
+    <li class="collapse show" id="kubernetes-operator-docs-getting-started-future">
       
       
       
@@ -257,7 +264,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-future-developer-guide" href="/kubernetes-operator/docs/getting-started/future/developer-guide/">Developer Guide</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-future-developer-guide" href="/kubernetes-operator/docs/getting-started/future/developer-guide/">Developer Guide</a>
       
       
     </li>
@@ -359,10 +366,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/v0.1.x/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">v0.1.x</a>
+    <a  href="/kubernetes-operator/docs/getting-started/v0.1.x/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">v0.1.x</a>
   </li>
   <ul>
-    <li class="collapse show" id="kubernetes-operator-docs-getting-started-v0-1-x">
+    <li class="collapse " id="kubernetes-operator-docs-getting-started-v0-1-x">
       
       
       
@@ -475,8 +482,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/v0.1.x/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=v0.1.x" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/future/developer-guide.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?title=Developer%20Guide" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -488,6 +495,38 @@
 
 
 
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#clone-repository-and-download-dependencies">Clone repository and download dependencies</a></li>
+<li><a href="#build-and-run-with-a-minikube">Build and run with a minikube</a></li>
+<li><a href="#build-and-run-with-a-remote-kubernetes-cluster">Build and run with a remote Kubernetes cluster</a></li>
+<li><a href="#testing">Testing</a>
+<ul>
+<li><a href="#running-e2e-tests-on-linux">Running E2E tests on Linux</a></li>
+<li><a href="#running-e2e-tests-on-macos">Running E2E tests on macOS</a></li>
+<li><a href="#using-docker-instead-of-podman">Using Docker instead of podman</a></li>
+</ul></li>
+<li><a href="#tips-tricks">Tips &amp; Tricks</a>
+<ul>
+<li><a href="#building-docker-image-on-minikube-for-e2e-tests">Building docker image on minikube (for e2e tests)</a></li>
+<li><a href="#when-pkg-apis-jenkinsio-jenkins-types-go-has-changed">When <code>pkg/apis/jenkinsio/*/jenkins_types.go</code> has changed</a></li>
+<li><a href="#getting-the-jenkins-url-and-basic-credentials">Getting the Jenkins URL and basic credentials</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#tools">Tools</a>
+<ul>
+<li><a href="#configure-environment-variables">Configure environment variables</a></li>
+<li><a href="#goimports">goimports</a></li>
+<li><a href="#golint">golint</a></li>
+<li><a href="#checkmake">checkmake</a></li>
+<li><a href="#staticcheck">staticcheck</a></li>
+</ul></li>
+</ul>
+</nav>
+
 
 
           </div>
@@ -495,6 +534,9 @@
             <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
 	<ol class="breadcrumb spb-1">
 		
+
+
+
 
 
 
@@ -519,8 +561,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/">Future (v0.3.x)</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/">v0.1.x</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/future/developer-guide/">Developer Guide</a>
 </li>
 
 	</ol>
@@ -528,187 +577,157 @@
 
             
 <div class="td-content">
-	<h1>v0.1.x</h1>
-	<div class="lead">How to work with jenkins-operator legacy version. We recommend migration to a latest version</div>
+	<h1>Developer Guide</h1>
+	<div class="lead">Jenkins Operator for developers</div>
 	
 
 
 
 <div class="pageinfo pageinfo-primary">
-<p>This document describes a getting started guide for <strong>Jenkins Operator</strong> <code>v0.1.x</code> and an additional configuration.</p>
+<p>This document explains how to setup your development environment.</p>
 
 </div>
 
 
-<h2 id="first-steps">First Steps</h2>
+<h2 id="prerequisites">Prerequisites</h2>
 
-<p>Prepare your Kubernetes cluster and set up your <code>kubectl</code> access.</p>
+<ul>
+<li><a href="https://github.com/operator-framework/operator-sdk" target="_blank">operator_sdk</a> version v0.8.1</li>
+<li><a href="https://git-scm.com/downloads" target="_blank">git</a></li>
+<li><a href="https://golang.org/dl/" target="_blank">go</a> version v1.12+</li>
+<li><a href="install_dev_tools.md" target="_blank">goimports, golint, checkmake and staticcheck</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/" target="_blank">minikube</a> version v1.1.0+ (preferred Hypervisor - <a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">virtualbox</a>)</li>
+<li><a href="https://docs.docker.com/install/" target="_blank">docker</a> version 17.03+</li>
+</ul>
 
-<p>Once you have running Kubernetes cluster you can focus on installing <strong>Jenkins Operator</strong> according to the <a href="/docs/installation/">Installation</a> guide.</p>
+<h2 id="clone-repository-and-download-dependencies">Clone repository and download dependencies</h2>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mkdir -p <span style="color:#000">$GOPATH</span>/src/github.com/jenkinsci
+<span style="color:#204a87">cd</span> <span style="color:#000">$GOPATH</span>/src/github.com/jenkinsci/
+git clone git@github.com:jenkinsci/kubernetes-operator.git
+<span style="color:#204a87">cd</span> kubernetes-operator
+make go-dependencies</code></pre></div>
+<h2 id="build-and-run-with-a-minikube">Build and run with a minikube</h2>
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/deploy-jenkins/">Deploy Jenkins</a>
-                    </h5>
-                    <p>Deploy production ready Jenkins Operator manifest
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/">Configuration</a>
-                    </h5>
-                    <p>How to configure Jenkins with Operator
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/customization/">Customization</a>
-                    </h5>
-                    <p>How to customize Jenkins
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/aks/">AKS</a>
-                    </h5>
-                    <p>Additional configuration for Azure Kubernetes Service
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configure-backup-and-restore/">Configure backup and restore</a>
-                    </h5>
-                    <p>Prevent loss of job history
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/diagnostics/">Diagnostics</a>
-                    </h5>
-                    <p>How to deal with jenkins-operator problems
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/scheme/">Scheme</a>
-                    </h5>
-                    <p>API Schema definitions for Jenkins CR
-</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/">Migration guide from v1alpha1 to v1alpha2</a>
-                    </h5>
-                    <p>How to migrate to new CRD manifest
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/developer-guide/">Developer Guide</a>
-                    </h5>
-                    <p>Jenkins Operator for developers
-</p>
-                </div>
-            
-        
-    
-</div>
+<p>Build and run <strong>Jenkins Operator</strong> locally:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make build minikube-run <span style="color:#000">OPERATOR_EXTRA_ARGS</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;--jenkins-api-hostname=$(eval minikube ip) --jenkins-api-use-nodeport=true&#39;</span></code></pre></div>
+<p>Once minikube and <strong>Jenkins Operator</strong> are up and running, apply Jenkins custom resource:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f deploy/crds/jenkins_v1alpha2_jenkins_cr.yaml
+kubectl get jenkins -o yaml
+kubectl get po</code></pre></div>
+<h2 id="build-and-run-with-a-remote-kubernetes-cluster">Build and run with a remote Kubernetes cluster</h2>
+
+<p>You can also run the controller locally and make it listen to a remote Kubernetes server.</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make run <span style="color:#000">NAMESPACE</span><span style="color:#ce5c00;font-weight:bold">=</span>default <span style="color:#000">KUBECTL_CONTEXT</span><span style="color:#ce5c00;font-weight:bold">=</span>remote-k8s <span style="color:#000">OPERATOR_EXTRA_ARGS</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;--kubeconfig ~/.kube/config&#39;</span></code></pre></div>
+<p>Once minikube and <strong>Jenkins Operator</strong> are up and running, apply Jenkins custom resource:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl --context remote-k8s --namespace default apply -f deploy/crds/jenkins_v1alpha2_jenkins_cr.yaml
+kubectl --context remote-k8s --namespace default get jenkins -o yaml
+kubectl --context remote-k8s --namespace default get po</code></pre></div>
+<h2 id="testing">Testing</h2>
+
+<p>Run unit tests:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make test</code></pre></div>
+<h3 id="running-e2e-tests-on-linux">Running E2E tests on Linux</h3>
+
+<p>Run e2e tests with minikube:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make minikube-start
+<span style="color:#204a87">eval</span> <span style="color:#204a87;font-weight:bold">$(</span>minikube docker-env<span style="color:#204a87;font-weight:bold">)</span>
+make build e2e <span style="color:#000">config</span><span style="color:#ce5c00;font-weight:bold">=</span>config.minikube.env <span style="color:#000">CONTAINER_RUNTIME</span><span style="color:#ce5c00;font-weight:bold">=</span>podman</code></pre></div>
+<p><code>config.minikube.env</code> is the E2E test profile which provides all connection info to operator to run on minikube.</p>
+
+<p>Run the specific e2e test:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make build e2e <span style="color:#000">E2E_TEST_SELECTOR</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;^TestConfiguration$&#39;</span> <span style="color:#000">config</span><span style="color:#ce5c00;font-weight:bold">=</span>config.minikube.env <span style="color:#000">CONTAINER_RUNTIME</span><span style="color:#ce5c00;font-weight:bold">=</span>podman</code></pre></div>
+<p>If you want to run E2E tests on CRC (Code Ready Containers by OpenShift), you should use <code>config.crc.env</code> profile instead of <code>config.minikube.env</code>.
+If you have some trouble with <code>podman</code> (for example building) then check <a href="#using-docker-instead-of-podman">how to use docker instead of podman</a>.</p>
+
+<h3 id="running-e2e-tests-on-macos">Running E2E tests on macOS</h3>
+
+<p>At first, you need to start minikube:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ make minikube-start
+$ <span style="color:#204a87">eval</span> <span style="color:#204a87;font-weight:bold">$(</span>minikube docker-env<span style="color:#204a87;font-weight:bold">)</span> </code></pre></div>
+<p>Build a Docker image inside the provided Linux container by:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ make indocker</code></pre></div>
+<p>Build <strong>Jenkins Operator</strong> inside a container using:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ make build</code></pre></div>
+<p>Then exit the container and run:</p>
+
+<pre><code>make e2e config=config.minikube.env
+</code></pre>
+
+<p>or using <code>crc</code> as cluster software:</p>
+
+<pre><code>make e2e config=config.crc.env
+</code></pre>
+
+<h3 id="using-docker-instead-of-podman">Using Docker instead of podman</h3>
+
+<p>If you have trouble with building image using the <code>podman</code>, you can set additional flag <code>IMAGE_PULL_MODE</code> to pull image from the organization.</p>
+
+<p>At first, you need to edit <code>config.base.env</code> and change the <code>DOCKER_ORGANIZATION</code> to your <a href="https://hub.docker.com/" target="_blank">Docker Hub</a> account/organization.
+After this change the <code>IMAGE_PULL_MODE</code> to <code>remote</code>. It will setup the <code>Makefile</code> goal to pull Docker image from registry.
+Then you need to pull image from your repository:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ make container-runtime-build container-runtime-snapshot-push</code></pre></div>
+<p>When image will be uploaded to repository, you can now write this command to run E2E tests:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ make e2e <span style="color:#000">E2E_TEST_SELECTOR</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;^TestConfiguration$&#39;</span> <span style="color:#000">config</span><span style="color:#ce5c00;font-weight:bold">=</span>config.crc.env</code></pre></div>
+<h2 id="tips-tricks">Tips &amp; Tricks</h2>
+
+<h3 id="building-docker-image-on-minikube-for-e2e-tests">Building docker image on minikube (for e2e tests)</h3>
+
+<p>To be able to work with the docker daemon on <code>minikube</code> machine run the following command before building an image:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">eval</span> <span style="color:#204a87;font-weight:bold">$(</span>minikube docker-env<span style="color:#204a87;font-weight:bold">)</span></code></pre></div>
+<h3 id="when-pkg-apis-jenkinsio-jenkins-types-go-has-changed">When <code>pkg/apis/jenkinsio/*/jenkins_types.go</code> has changed</h3>
+
+<p>Run:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make deepcopy-gen</code></pre></div>
+<h3 id="getting-the-jenkins-url-and-basic-credentials">Getting the Jenkins URL and basic credentials</h3>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">minikube service jenkins-operator-http-&lt;cr_name&gt; --url
+kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="color:#4e9a06">&#39;jsonpath={.data.user}&#39;</span> <span style="color:#000;font-weight:bold">|</span> base64 -d
+kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="color:#4e9a06">&#39;jsonpath={.data.password}&#39;</span> <span style="color:#000;font-weight:bold">|</span> base64 -d</code></pre></div>
+<h1 id="tools">Tools</h1>
+
+<h2 id="configure-environment-variables">Configure environment variables</h2>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">export</span> <span style="color:#000">GOPATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/home/go <span style="color:#8f5902;font-style:italic"># example value</span>
+<span style="color:#204a87">export</span> <span style="color:#000">GOROOT</span><span style="color:#ce5c00;font-weight:bold">=</span>/usr/lib/go-1.12 <span style="color:#8f5902;font-style:italic"># example value</span>
+<span style="color:#204a87">export</span> <span style="color:#000">PATH</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">$GOPATH</span>/bin:<span style="color:#000">$PATH</span></code></pre></div>
+<h2 id="goimports">goimports</h2>
+
+<pre><code>go get golang.org/x/tools/cmd/goimports
+cd $GOPATH/src/golang.org/x/tools/cmd/goimports
+go build
+go install
+</code></pre>
+
+<h2 id="golint">golint</h2>
+
+<pre><code>go get -u golang.org/x/lint/golint
+cd  $GOPATH/src/golang.org/x/lint/golint
+go build
+go install
+</code></pre>
+
+<h2 id="checkmake">checkmake</h2>
+
+<pre><code>go get github.com/mrtazz/checkmake
+cd $GOPATH/src/github.com/mrtazz/checkmake
+go build
+go install
+</code></pre>
+
+<h2 id="staticcheck">staticcheck</h2>
+
+<pre><code>mkdir -p $GOPATH/src/github.com/dominikh/
+cd $GOPATH/src/github.com/dominikh/
+git clone https://github.com/dominikh/go-tools.git
+cd  $GOPATH/src/github.com/dominikh/go-tools/staticcheck
+go build
+go install
+</code></pre>
 
 	
 	
 	<div class="text-muted mt-5 pt-3 border-top">Last modified August 5, 2019
 </div>
 </div>
+
 
           </main>
         </div>
