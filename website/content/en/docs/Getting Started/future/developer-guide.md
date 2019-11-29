@@ -35,7 +35,7 @@ make go-dependencies
 Build and run **Jenkins Operator** locally:
 
 ```bash
-make build minikube-run EXTRA_ARGS='--jenkins-api-hostname=$(eval minikube ip) --jenkins-api-use-nodeport=true'
+make build minikube-run OPERATOR_EXTRA_ARGS='--jenkins-api-hostname=$(eval minikube ip) --jenkins-api-use-nodeport=true'
 ```
 
 Once minikube and **Jenkins Operator** are up and running, apply Jenkins custom resource:
@@ -51,7 +51,7 @@ kubectl get po
 You can also run the controller locally and make it listen to a remote Kubernetes server.
 
 ```bash
-make run NAMESPACE=default KUBECTL_CONTEXT=remote-k8s EXTRA_ARGS='--kubeconfig ~/.kube/config'
+make run NAMESPACE=default KUBECTL_CONTEXT=remote-k8s OPERATOR_EXTRA_ARGS='--kubeconfig ~/.kube/config'
 ```
 
 Once minikube and **Jenkins Operator** are up and running, apply Jenkins custom resource:
@@ -89,6 +89,8 @@ make build e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.minikube.en
 ```
 
 If you want to run E2E tests on CRC (Code Ready Containers by OpenShift), you should use `config.crc.env` profile instead of `config.minikube.env`.
+If you have some trouble with `podman` (for example building) then check [how to use docker instead of podman](#using-docker-instead-of-podman).
+
 
 ### Running E2E tests on macOS
 
@@ -112,29 +114,30 @@ $ make build
 
 Then exit the container and run:
 ```
-make e2e CONFIG=config.minikube.env
+make e2e config=config.minikube.env
 ```
 
-or with CRC:
+or using `crc` as cluster software:
 ```
-make e2e CONFIG=config.crc.env
+make e2e config=config.crc.env
 ```
 
-### Use Docker image instead of podman (Code Ready Containers)
+### Using Docker instead of podman
 
-If you have trouble to build image with `podman`, you can set additional flag `IMAGE_PULL_MODE` to pull image from organization.
+If you have trouble with building image using the `podman`, you can set additional flag `IMAGE_PULL_MODE` to pull image from the organization.
 
-At first, edit you `config.base.env` and change `DOCKER_ORGANIZATION` to your account/organization name from [hub](https://hub.docker.com/).
-Next, you need to pull image to your repository:
+At first, you need to edit `config.base.env` and change the `DOCKER_ORGANIZATION` to your [Docker Hub](https://hub.docker.com/) account/organization.
+After this change the `IMAGE_PULL_MODE` to `remote`. It will setup the `Makefile` goal to pull Docker image from registry. 
+Then you need to pull image from your repository:
 
 ```bash
-$ make cr-build cr-snapshot-push
+$ make container-runtime-build container-runtime-snapshot-push
 ```
 
 When image will be uploaded to repository, you can now write this command to run E2E tests:
 
 ```bash
-$ make e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.crc.env  IMAGE_PULL_MODE=remote
+$ make e2e E2E_TEST_SELECTOR='^TestConfiguration$' config=config.crc.env
 ```
 
 ## Tips & Tricks
