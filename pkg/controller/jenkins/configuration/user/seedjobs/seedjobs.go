@@ -164,6 +164,14 @@ func (s *SeedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 		if err != nil {
 			return false, err
 		}
+
+		requeue, err := s.waitForSeedJobAgent(AgentName)
+		if err != nil {
+			return false, err
+		}
+		if requeue {
+			return false, nil
+		}
 	} else if len(jenkins.Spec.SeedJobs) == 0 {
 		err := s.Client.Delete(context.TODO(), &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
@@ -196,6 +204,25 @@ func (s *SeedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	}
 
 	return true, nil
+}
+
+func (s SeedJobs) waitForSeedJobAgent(agentName string) (requeue bool, err error) {
+	agent := appsv1.Deployment{}
+	err = s.Client.Get(context.TODO(), types.NamespacedName{Name: agentDeploymentName(*s.Jenkins, agentName), Namespace: s.Jenkins.Namespace}, &agent)
+	if apierrors.IsNotFound(err) {
+		return true, nil
+	} else if err != nil {
+		return true, err
+	}
+
+	noReadyReplicas := agent.Status.ReadyReplicas == 0
+
+	if noReadyReplicas {
+		s.logger.Info(fmt.Sprintf("Waiting for Seed Job Agent `%s`...", agentName))
+		return true, nil
+	}
+
+	return false, nil
 }
 
 // createJob is responsible for creating jenkins job which configures jenkins seed jobs and deploy keys
