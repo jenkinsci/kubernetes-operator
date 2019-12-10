@@ -481,9 +481,9 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins, logger logr.Lo
 	if jenkins.Spec.Master.SeedJobAgentExecutors < 1 {
 		logger.Info("Setting default seed job agents executors amount")
 		changed = true
-		var defaultExecutorsAmount = 1
+		var defaultExecutorsNumber = 1
 
-		jenkins.Spec.Master.SeedJobAgentExecutors = defaultExecutorsAmount
+		jenkins.Spec.Master.SeedJobAgentExecutors = defaultExecutorsNumber
 	}
 
 	if changed {

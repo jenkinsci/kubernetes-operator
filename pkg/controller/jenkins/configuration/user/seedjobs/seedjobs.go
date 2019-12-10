@@ -344,7 +344,7 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 			return err
 		}
 
-		customResourceSeedJobExecutors, err := strconv.Atoi(currentDeployment.Annotations["seedJobExecutorsAmount"])
+		customResourceSeedJobExecutors, err := strconv.Atoi(currentDeployment.Annotations["seedJobExecutorsNumber"])
 		if err != nil {
 			return err
 		}
@@ -382,7 +382,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 	return &apps.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Annotations: map[string]string{
-				"seedJobExecutorsAmount": strconv.Itoa(jenkins.Spec.Master.SeedJobAgentExecutors),
+				"seedJobExecutorsNumber": strconv.Itoa(jenkins.Spec.Master.SeedJobAgentExecutors),
 			},
 			Name:      agentDeploymentName(*jenkins, agentName),
 			Namespace: namespace,

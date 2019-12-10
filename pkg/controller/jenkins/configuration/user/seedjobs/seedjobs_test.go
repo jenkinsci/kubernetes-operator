@@ -201,7 +201,7 @@ func TestCreateAgent(t *testing.T) {
 		err = fakeClient.Create(ctx, &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
 				Annotations: map[string]string{
-					"seedJobExecutorsAmount": "1",
+					"seedJobExecutorsNumber": "1",
 				},
 				Name:      agentDeploymentName(*jenkins, AgentName),
 				Namespace: jenkins.Namespace,

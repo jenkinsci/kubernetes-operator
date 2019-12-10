@@ -314,7 +314,7 @@ type JenkinsMaster struct {
 	// DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins
 	DisableCSRFProtection bool `json:"disableCSRFProtection"`
 
-	// SeedJobAgentExecutors is the amount of the seed job agent executors. Default: 1
+	// SeedJobAgentExecutors is the number of the seed job agent executors. Default: 1
 	SeedJobAgentExecutors int `json:"seedJobAgentExecutors"`
 }
 
