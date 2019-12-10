@@ -2,6 +2,7 @@ package seedjobs
 
 import (
 	"context"
+	"fmt"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"testing"
 
@@ -49,6 +50,7 @@ func jenkinsCustomResource() *v1alpha2.Jenkins {
 						},
 					},
 				},
+				SeedJobAgentExecutors: 1,
 			},
 			SeedJobs: []v1alpha2.SeedJob{
 				{
@@ -92,6 +94,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Client:        fakeClient,
 			ClientSet:     kubernetes.Clientset{},
 			Notifications: nil,
+			Jenkins:       jenkins,
 		}
 
 		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0])
@@ -135,6 +138,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Client:        fakeClient,
 			ClientSet:     kubernetes.Clientset{},
 			Notifications: nil,
+			Jenkins:       jenkins,
 		}
 
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
@@ -183,17 +187,22 @@ func TestCreateAgent(t *testing.T) {
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
 		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
+		jenkinsClient.EXPECT().ExecuteScript(fmt.Sprintf(changeAgentExecutorsGroovyScript, AgentName, 1)).Return("", nil).AnyTimes()
 
 		config := configuration.Configuration{
 			Client:        fakeClient,
 			ClientSet:     kubernetes.Clientset{},
 			Notifications: nil,
+			Jenkins:       jenkins,
 		}
 
 		seedJobsClient := New(jenkinsClient, config, logger)
 
 		err = fakeClient.Create(ctx, &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
+				Annotations: map[string]string{
+					"seedJobExecutorsAmount": "1",
+				},
 				Name:      agentDeploymentName(*jenkins, AgentName),
 				Namespace: jenkins.Namespace,
 			},
@@ -201,7 +210,7 @@ func TestCreateAgent(t *testing.T) {
 		assert.NoError(t, err)
 
 		// when
-		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkinsCustomResource(), jenkins.Namespace, AgentName)
+		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkins, jenkins.Namespace, AgentName)
 
 		// then
 		assert.NoError(t, err)

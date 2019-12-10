@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"reflect"
+	"strconv"
 	"text/template"
 
 	"github.com/jenkinsci/kubernetes-operator/internal/render"
@@ -16,6 +17,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/notifications/reason"
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
 	"github.com/go-logr/logr"
 	stackerr "github.com/pkg/errors"
@@ -129,6 +131,17 @@ jobRef.addTrigger(new TimerTrigger("{{ .BuildPeriodically }}"))
 jobRef.setAssignedLabel(new LabelAtom("{{ .AgentName }}"))
 jenkins.getQueue().schedule(jobRef)
 `))
+
+var changeAgentExecutorsGroovyScript = `
+import groovy.xml.XmlUtil
+filePath = System.getenv('JENKINS_HOME') + '/nodes/%s/config.xml'
+fileContents = new File(filePath).text
+def config = new XmlSlurper().parseText(fileContents)
+config.numExecutors = %d
+def writer = new FileWriter(filePath)
+XmlUtil.serialize(config, writer)
+Jenkins.instance.reload()
+`
 
 // SeedJobs defines API for configuring and ensuring Jenkins Seed Jobs and Deploy Keys
 type SeedJobs struct {
@@ -303,7 +316,7 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 
 	// Create node if not exists
 	if err != nil && err.Error() == "No node found" {
-		_, err = jenkinsClient.CreateNode(agentName, 1, "The jenkins-operator generated agent", "/home/jenkins", agentName)
+		_, err = jenkinsClient.CreateNode(agentName, jenkinsManifest.Spec.Master.SeedJobAgentExecutors, "The jenkins-operator generated agent", "/home/jenkins", agentName)
 		if err != nil {
 			return stackerr.WithStack(err)
 		}
@@ -320,12 +333,42 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 
 	err = k8sClient.Create(context.TODO(), deployment)
 	if apierrors.IsAlreadyExists(err) {
+		currentDeployment := &appsv1.Deployment{}
+		err = k8sClient.Get(context.TODO(), types.NamespacedName{Namespace: jenkinsManifest.Namespace, Name: agentDeploymentName(*jenkinsManifest, agentName)}, currentDeployment)
+		if err != nil {
+			return err
+		}
+
 		err := k8sClient.Update(context.TODO(), deployment)
 		if err != nil {
-			return stackerr.WithStack(err)
+			return err
+		}
+
+		customResourceSeedJobExecutors, err := strconv.Atoi(currentDeployment.Annotations["seedJobExecutorsAmount"])
+		if err != nil {
+			return err
+		}
+
+		if customResourceSeedJobExecutors != jenkinsManifest.Spec.Master.SeedJobAgentExecutors {
+			s.logger.V(log.VDebug).Info("Seed Job Executors amount has changed.")
+			err = s.changeAgentExecutors(agentName, jenkinsManifest.Spec.Master.SeedJobAgentExecutors)
+			if err != nil {
+				return err
+			}
 		}
 	} else if err != nil {
 		return stackerr.WithStack(err)
+	}
+
+	return nil
+}
+
+func (s SeedJobs) changeAgentExecutors(agentName string, numExecutors int) error {
+	script := fmt.Sprintf(changeAgentExecutorsGroovyScript, agentName, numExecutors)
+
+	_, err := s.jenkinsClient.ExecuteScript(script)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -338,6 +381,9 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string) *apps.Deployment {
 	return &apps.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
+			Annotations: map[string]string{
+				"seedJobExecutorsAmount": strconv.Itoa(jenkins.Spec.Master.SeedJobAgentExecutors),
+			},
 			Name:      agentDeploymentName(*jenkins, agentName),
 			Namespace: namespace,
 		},
