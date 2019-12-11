@@ -25,7 +25,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 
-func jenkinsCustomResource() *v1alpha2.Jenkins {
+func jenkinsCustomResource(numExecutors int) *v1alpha2.Jenkins {
 	return &v1alpha2.Jenkins{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "jenkins",
@@ -50,7 +50,7 @@ func jenkinsCustomResource() *v1alpha2.Jenkins {
 						},
 					},
 				},
-				SeedJobAgentExecutors: 1,
+				SeedJobAgentExecutors: numExecutors,
 			},
 			SeedJobs: []v1alpha2.SeedJob{
 				{
@@ -79,7 +79,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
-		jenkins := jenkinsCustomResource()
+		jenkins := jenkinsCustomResource(1)
 		err = fakeClient.Create(ctx, jenkins)
 		assert.NoError(t, err)
 
@@ -101,7 +101,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		assert.NoError(t, err)
 
 		jenkinsClient.EXPECT().GetNode(AgentName).Return(nil, nil).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "A seed jobs agent owned by the Jenkins operator", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 		jenkinsClient.EXPECT().ExecuteScript(seedJobCreatingScript).AnyTimes()
 
@@ -126,7 +126,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		defer ctrl.Finish()
 
 		agentSecret := "test-secret"
-		jenkins := jenkinsCustomResource()
+		jenkins := jenkinsCustomResource(1)
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
@@ -142,7 +142,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		}
 
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "A seed jobs agent owned by the Jenkins operator", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		seedJobsClient := New(jenkinsClient, config, logger)
@@ -177,7 +177,7 @@ func TestCreateAgent(t *testing.T) {
 		defer ctrl.Finish()
 
 		agentSecret := "test-secret"
-		jenkins := jenkinsCustomResource()
+		jenkins := jenkinsCustomResource(1)
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
 		fakeClient := fake.NewFakeClient()
@@ -185,7 +185,7 @@ func TestCreateAgent(t *testing.T) {
 		assert.NoError(t, err)
 
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "A seed jobs agent owned by the Jenkins operator", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 		jenkinsClient.EXPECT().ExecuteScript(fmt.Sprintf(changeAgentExecutorsGroovyScript, AgentName, 1)).Return("", nil).AnyTimes()
 
@@ -214,6 +214,60 @@ func TestCreateAgent(t *testing.T) {
 
 		// then
 		assert.NoError(t, err)
+	})
+
+	t.Run("invalid seed job executors number", func(t *testing.T) {
+		// given
+		logger := logf.ZapLogger(false)
+		ctrl := gomock.NewController(t)
+		ctx := context.TODO()
+		defer ctrl.Finish()
+
+		numExecutors := -1
+
+		agentSecret := "test-secret"
+		jenkins := jenkinsCustomResource(numExecutors)
+
+		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
+		fakeClient := fake.NewFakeClient()
+		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
+		assert.NoError(t, err)
+
+		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(AgentName, numExecutors, "A seed jobs agent owned by the Jenkins operator", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
+		jenkinsClient.EXPECT().ExecuteScript(fmt.Sprintf(changeAgentExecutorsGroovyScript, AgentName, 1)).Return("", nil).AnyTimes()
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       jenkins,
+		}
+
+		seedJobsClient := New(jenkinsClient, config, logger)
+
+		err = fakeClient.Create(ctx, &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Annotations: map[string]string{
+					"seedJobExecutorsNumber": "-1",
+				},
+				Name:      agentDeploymentName(*jenkins, AgentName),
+				Namespace: jenkins.Namespace,
+			},
+		})
+		assert.NoError(t, err)
+
+		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkins, jenkins.Namespace, AgentName)
+		assert.NoError(t, err)
+
+		// when
+		deployedAgent := &appsv1.Deployment{}
+		err = fakeClient.Get(context.TODO(), types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, deployedAgent)
+
+		//then
+		assert.NoError(t, err)
+		assert.Equal(t, "1", deployedAgent.Annotations["seedJobExecutorsNumber"])
 	})
 }
 

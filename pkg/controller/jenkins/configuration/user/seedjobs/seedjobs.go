@@ -316,7 +316,7 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 
 	// Create node if not exists
 	if err != nil && err.Error() == "No node found" {
-		_, err = jenkinsClient.CreateNode(agentName, jenkinsManifest.Spec.Master.SeedJobAgentExecutors, "The jenkins-operator generated agent", "/home/jenkins", agentName)
+		_, err = jenkinsClient.CreateNode(agentName, jenkinsManifest.Spec.Master.SeedJobAgentExecutors, "A seed jobs agent owned by the Jenkins operator", "/home/jenkins", agentName)
 		if err != nil {
 			return stackerr.WithStack(err)
 		}
@@ -346,11 +346,27 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 
 		customResourceSeedJobExecutors, err := strconv.Atoi(currentDeployment.Annotations["seedJobExecutorsNumber"])
 		if err != nil {
+			s.logger.V(log.VWarn).Info(fmt.Sprintf("Invalid `seedJobExecutorsNumber` value: %+v", err))
 			return err
 		}
 
+		if customResourceSeedJobExecutors < 1 {
+			s.logger.V(log.VDebug).Info("Invalid Seed Job agent executors number, resetting to 1")
+			err = s.changeAgentExecutors(agentName, 1)
+			if err != nil {
+				return err
+			}
+
+			currentDeployment.Annotations["seedJobExecutorsNumber"] = "1"
+
+			err := k8sClient.Update(context.TODO(), currentDeployment)
+			if err != nil {
+				return err
+			}
+		}
+
 		if customResourceSeedJobExecutors != jenkinsManifest.Spec.Master.SeedJobAgentExecutors {
-			s.logger.V(log.VDebug).Info("Seed Job Executors amount has changed.")
+			s.logger.V(log.VDebug).Info("Seed Job Executors number has changed.")
 			err = s.changeAgentExecutors(agentName, jenkinsManifest.Spec.Master.SeedJobAgentExecutors)
 			if err != nil {
 				return err

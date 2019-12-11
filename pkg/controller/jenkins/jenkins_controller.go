@@ -478,12 +478,12 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins, logger logr.Lo
 		jenkins.Spec.Master.SecurityContext = &securityContext
 	}
 
-	if jenkins.Spec.Master.SeedJobAgentExecutors < 1 {
-		logger.Info("Setting default seed job agents executors amount")
+	var minimalExecutorsNumber = 1
+	if jenkins.Spec.Master.SeedJobAgentExecutors < minimalExecutorsNumber {
+		logger.Info(fmt.Sprintf("Setting a default minimal seed job agents executors number of: %d", minimalExecutorsNumber))
 		changed = true
-		var defaultExecutorsNumber = 1
 
-		jenkins.Spec.Master.SeedJobAgentExecutors = defaultExecutorsNumber
+		jenkins.Spec.Master.SeedJobAgentExecutors = minimalExecutorsNumber
 	}
 
 	if changed {
