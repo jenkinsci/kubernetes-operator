@@ -198,7 +198,7 @@ func (s *SeedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	}
 
 	seedJobIDs := s.getAllSeedJobIDs(*jenkins)
-	if done && !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
+	if !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
 		jenkins.Status.CreatedSeedJobs = seedJobIDs
 		return false, stackerr.WithStack(s.Client.Update(context.TODO(), jenkins))
 	}
@@ -216,7 +216,6 @@ func (s SeedJobs) waitForSeedJobAgent(agentName string) (requeue bool, err error
 	}
 
 	noReadyReplicas := agent.Status.ReadyReplicas == 0
-
 	if noReadyReplicas {
 		s.logger.Info(fmt.Sprintf("Waiting for Seed Job Agent `%s`...", agentName))
 		return true, nil
