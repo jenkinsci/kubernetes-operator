@@ -58,7 +58,9 @@ func waitForJenkinsBaseConfigurationToComplete(t *testing.T, jenkins *v1alpha2.J
 		t.Logf("Current Jenkins status: '%+v', error '%s'", jenkins.Status, err)
 		return err == nil && jenkins.Status.BaseConfigurationCompletedTime != nil
 	})
-	assert.NoError(t, err)
+	if err != nil {
+		failTestAndPrintLogs(t, jenkins.Namespace, err)
+	}
 	t.Log("Jenkins pod is running")
 
 	// update jenkins CR because Operator sets default values
@@ -83,7 +85,7 @@ func waitForRecreateJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) {
 		return podList.Items[0].DeletionTimestamp == nil, nil
 	})
 	if err != nil {
-		t.Fatal(err)
+		failTestAndPrintLogs(t, jenkins.Namespace, err)
 	}
 	t.Log("Jenkins pod has been recreated")
 }
@@ -95,7 +97,7 @@ func waitForJenkinsUserConfigurationToComplete(t *testing.T, jenkins *v1alpha2.J
 		return err == nil && jenkins.Status.UserConfigurationCompletedTime != nil
 	})
 	if err != nil {
-		t.Fatal(err)
+		failTestAndPrintLogs(t, jenkins.Namespace, err)
 	}
 	t.Log("Jenkins pod is running")
 }
