@@ -44,7 +44,7 @@ func TestSeedJobs(t *testing.T) {
 	seedJobsConfig := loadSeedJobsConfig(t)
 	namespace, ctx := setupTest(t)
 
-	defer cleanupAndShowLogs(t, ctx)
+	defer showLogsAndCleanup(t, ctx)
 
 	jenkinsCRName := "e2e"
 	var seedJobs []v1alpha2.SeedJob

@@ -24,7 +24,7 @@ func TestBackupAndRestore(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
 
-	defer cleanupAndShowLogs(t, ctx)
+	defer showLogsAndCleanup(t, ctx)
 
 	jobID := "e2e-jenkins-operator"
 	createPVC(t, namespace)

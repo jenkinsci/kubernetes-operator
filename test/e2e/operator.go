@@ -69,9 +69,10 @@ func getOperatorLogs(namespace string) (string, error) {
 }
 
 func printOperatorLogs(t *testing.T, namespace string) {
+	t.Logf("Operator logs in '%s' namespace:\n", namespace)
 	logs, err := getOperatorLogs(namespace)
 	if err != nil {
-		t.Errorf("Couldn't get pod logs: %s", err)
+		t.Errorf("Couldn't get the operator pod logs: %s", err)
 	} else {
 		t.Logf("Last %d lines of log from operator:\n %s", podLogTailLimit, logs)
 	}
@@ -95,6 +96,7 @@ func getKubernetesEvents(namespace string) ([]v1beta1.Event, error) {
 }
 
 func printKubernetesEvents(t *testing.T, namespace string) {
+	t.Logf("Kubernetes events in '%s' namespace:\n", namespace)
 	events, err := getKubernetesEvents(namespace)
 	if err != nil {
 		t.Errorf("Couldn't get kubernetes events: %s", err)
@@ -107,42 +109,33 @@ func printKubernetesEvents(t *testing.T, namespace string) {
 	}
 }
 
-func getKubernetesPods(namespace string) ([]v1.Pod, error) {
-	pods, err := framework.Global.KubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	return pods.Items, nil
+func getKubernetesPods(namespace string) (*v1.PodList, error) {
+	return framework.Global.KubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{})
 }
 
 func printKubernetesPods(t *testing.T, namespace string) {
+	t.Logf("All pods in '%s' namespace:\n", namespace)
 	podList, err := getKubernetesPods(namespace)
 	if err != nil {
 		t.Errorf("Couldn't get kubernetes pods: %s", err)
 	}
 
-	for _, pod := range podList {
+	for _, pod := range podList.Items {
 		t.Logf("%+v\n\n", pod)
 	}
 }
 
-func cleanupAndShowLogs(t *testing.T, ctx *framework.TestCtx) {
+func showLogsAndCleanup(t *testing.T, ctx *framework.TestCtx) {
 	if t.Failed() {
-		t.Error("Test failed. Bellow here you can check logs:")
-		t.Fail()
+		t.Log("Test failed. Bellow here you can check logs:")
+
 		namespace, err := ctx.GetNamespace()
 		if err != nil {
 			t.Fatalf("Failed to get '%s' namespace", err)
 		}
 
-		t.Logf("Operator logs in '%s' namespace:\n", namespace)
 		printOperatorLogs(t, namespace)
-
-		t.Logf("Kubernetes events in '%s' namespace:\n", namespace)
 		printKubernetesEvents(t, namespace)
-
-		t.Logf("Pods in '%s' namespace:\n", namespace)
 		printKubernetesPods(t, namespace)
 	}
 
