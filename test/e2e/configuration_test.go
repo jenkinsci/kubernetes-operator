@@ -25,7 +25,7 @@ import (
 func TestConfiguration(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
-	// Deletes test namespace
+
 	defer ctx.Cleanup()
 
 	jenkinsCRName := "e2e"
@@ -192,12 +192,12 @@ func createDefaultLimitsForContainersInNamespace(t *testing.T, namespace string)
 				{
 					Type: corev1.LimitTypeContainer,
 					DefaultRequest: map[corev1.ResourceName]resource.Quantity{
-						corev1.ResourceCPU:    resource.MustParse("1"),
-						corev1.ResourceMemory: resource.MustParse("1Gi"),
+						corev1.ResourceCPU:    resource.MustParse("128m"),
+						corev1.ResourceMemory: resource.MustParse("256Mi"),
 					},
 					Default: map[corev1.ResourceName]resource.Quantity{
-						corev1.ResourceCPU:    resource.MustParse("4"),
-						corev1.ResourceMemory: resource.MustParse("4Gi"),
+						corev1.ResourceCPU:    resource.MustParse("256m"),
+						corev1.ResourceMemory: resource.MustParse("512Mi"),
 					},
 				},
 			},
