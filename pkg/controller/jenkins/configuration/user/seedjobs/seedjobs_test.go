@@ -92,6 +92,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Client:        fakeClient,
 			ClientSet:     kubernetes.Clientset{},
 			Notifications: nil,
+			Jenkins:       jenkins,
 		}
 
 		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0])
@@ -135,6 +136,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Client:        fakeClient,
 			ClientSet:     kubernetes.Clientset{},
 			Notifications: nil,
+			Jenkins:       jenkins,
 		}
 
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
