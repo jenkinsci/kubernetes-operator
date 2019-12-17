@@ -23,8 +23,8 @@ const pvcName = "pvc"
 func TestBackupAndRestore(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
-	// Deletes test namespace
-	defer ctx.Cleanup()
+
+	defer cleanupAndShowLogs(t, ctx)
 
 	jobID := "e2e-jenkins-operator"
 	createPVC(t, namespace)

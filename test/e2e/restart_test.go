@@ -17,8 +17,8 @@ import (
 func TestJenkinsMasterPodRestart(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
-	// Deletes test namespace
-	defer ctx.Cleanup()
+
+	defer cleanupAndShowLogs(t, ctx)
 
 	jenkins := createJenkinsCR(t, "e2e", namespace, nil, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{})
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)

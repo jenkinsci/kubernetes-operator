@@ -59,7 +59,7 @@ func waitForJenkinsBaseConfigurationToComplete(t *testing.T, jenkins *v1alpha2.J
 		return err == nil && jenkins.Status.BaseConfigurationCompletedTime != nil
 	})
 	if err != nil {
-		failTestAndPrintLogs(t, jenkins.Namespace, err)
+		t.Fatal(err)
 	}
 	t.Log("Jenkins pod is running")
 
@@ -85,7 +85,7 @@ func waitForRecreateJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) {
 		return podList.Items[0].DeletionTimestamp == nil, nil
 	})
 	if err != nil {
-		failTestAndPrintLogs(t, jenkins.Namespace, err)
+		t.Fatal(err)
 	}
 	t.Log("Jenkins pod has been recreated")
 }
@@ -97,7 +97,7 @@ func waitForJenkinsUserConfigurationToComplete(t *testing.T, jenkins *v1alpha2.J
 		return err == nil && jenkins.Status.UserConfigurationCompletedTime != nil
 	})
 	if err != nil {
-		failTestAndPrintLogs(t, jenkins.Namespace, err)
+		t.Fatal(err)
 	}
 	t.Log("Jenkins pod is running")
 }

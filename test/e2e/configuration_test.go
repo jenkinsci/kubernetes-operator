@@ -25,8 +25,8 @@ import (
 func TestConfiguration(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
-	// Deletes test namespace
-	defer ctx.Cleanup()
+
+	defer cleanupAndShowLogs(t, ctx)
 
 	jenkinsCRName := "e2e"
 	numberOfExecutors := 6
@@ -102,7 +102,7 @@ func TestPlugins(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
 	// Deletes test namespace
-	defer ctx.Cleanup()
+	defer cleanupAndShowLogs(t, ctx)
 
 	jobID := "k8s-e2e"
 
