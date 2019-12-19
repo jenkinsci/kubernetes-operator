@@ -43,6 +43,10 @@ func (r *ReconcileJenkinsBaseConfiguration) Validate(jenkins *v1alpha2.Jenkins) 
 		}
 	}
 
+	if msg := r.validateResourceQuota(); len(msg) > 0 {
+		messages = append(messages, msg...)
+	}
+
 	if msg := r.validatePlugins(plugins.BasePlugins(), jenkins.Spec.Master.BasePlugins, jenkins.Spec.Master.Plugins); len(msg) > 0 {
 		messages = append(messages, msg...)
 	}
@@ -63,6 +67,33 @@ func (r *ReconcileJenkinsBaseConfiguration) Validate(jenkins *v1alpha2.Jenkins) 
 	}
 
 	return messages, nil
+}
+
+func (r *ReconcileJenkinsBaseConfiguration) validateResourceQuota() []string {
+	res := r.Jenkins.Spec.Master.Containers[0].Resources
+	memoryLimitInMi := res.Limits.Memory().Value() / (1024 * 1024)
+	cpuLimitInMillicores := res.Limits.Cpu().MilliValue()
+
+	var messages []string
+	var minMemoryLimitInMi int64 = 512
+	if memoryLimitInMi < minMemoryLimitInMi {
+		messages = append(messages,
+			fmt.Sprintf("spec.master.containers[0].resources.limit.memory '%dMi' is too low (must be greater or equal to: '%dMi'",
+				memoryLimitInMi,
+				minMemoryLimitInMi),
+		)
+	}
+
+	var minCPULimitInMillicores int64 = 1000
+	if cpuLimitInMillicores < minCPULimitInMillicores {
+		messages = append(messages,
+			fmt.Sprintf("spec.master.containers[0].resources.limit.cpu '%dm' is too low (must be greater or equal to: '%dm'",
+				cpuLimitInMillicores,
+				minCPULimitInMillicores),
+		)
+	}
+
+	return messages
 }
 
 func (r *ReconcileJenkinsBaseConfiguration) validateImagePullSecrets() ([]string, error) {
