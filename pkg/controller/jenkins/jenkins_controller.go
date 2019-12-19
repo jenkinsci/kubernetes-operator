@@ -423,16 +423,14 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins, logger logr.Lo
 	if reflect.DeepEqual(jenkins.Spec.Service, v1alpha2.Service{}) {
 		logger.Info("Setting default Jenkins master service")
 		changed = true
+
+		var serviceType = corev1.ServiceTypeClusterIP
 		if r.jenkinsAPIConnectionSettings.UseNodePort {
-			jenkins.Spec.Service = v1alpha2.Service{
-				Type: corev1.ServiceTypeNodePort,
-				Port: constants.DefaultHTTPPortInt32,
-			}
-		} else {
-			jenkins.Spec.Service = v1alpha2.Service{
-				Type: corev1.ServiceTypeClusterIP,
-				Port: constants.DefaultHTTPPortInt32,
-			}
+			serviceType = corev1.ServiceTypeNodePort
+		}
+		jenkins.Spec.Service = v1alpha2.Service{
+			Type: serviceType,
+			Port: constants.DefaultHTTPPortInt32,
 		}
 	}
 	if reflect.DeepEqual(jenkins.Spec.SlaveService, v1alpha2.Service{}) {
