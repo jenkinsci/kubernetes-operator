@@ -24,7 +24,6 @@ import (
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -428,20 +427,6 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins, logger logr.Lo
 		changed = true
 		jenkins.Status.OperatorVersion = version.Version
 	}
-	if isResourceRequirementsNotSet(jenkinsContainer.Resources) {
-		logger.Info("Setting default Jenkins master container resource requirements")
-		changed = true
-		jenkinsContainer.Resources = corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse("1"),
-				corev1.ResourceMemory: resource.MustParse("500Mi"),
-			},
-			Limits: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse("1500m"),
-				corev1.ResourceMemory: resource.MustParse("3Gi"),
-			},
-		}
-	}
 	if reflect.DeepEqual(jenkins.Spec.Service, v1alpha2.Service{}) {
 		logger.Info("Setting default Jenkins master service")
 		changed = true
@@ -519,31 +504,8 @@ func setDefaultsForContainer(jenkins *v1alpha2.Jenkins, containerIndex int, logg
 		changed = true
 		jenkins.Spec.Master.Containers[containerIndex].ImagePullPolicy = corev1.PullAlways
 	}
-	if isResourceRequirementsNotSet(jenkins.Spec.Master.Containers[containerIndex].Resources) {
-		logger.Info("Setting default container resource requirements")
-		changed = true
-		jenkins.Spec.Master.Containers[containerIndex].Resources = corev1.ResourceRequirements{
-			Requests: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse("50m"),
-				corev1.ResourceMemory: resource.MustParse("50Mi"),
-			},
-			Limits: corev1.ResourceList{
-				corev1.ResourceCPU:    resource.MustParse("100m"),
-				corev1.ResourceMemory: resource.MustParse("100Mi"),
-			},
-		}
-	}
 
 	return changed
-}
-
-func isResourceRequirementsNotSet(requirements corev1.ResourceRequirements) bool {
-	_, requestCPUSet := requirements.Requests[corev1.ResourceCPU]
-	_, requestMemorySet := requirements.Requests[corev1.ResourceMemory]
-	_, limitCPUSet := requirements.Limits[corev1.ResourceCPU]
-	_, limitMemorySet := requirements.Limits[corev1.ResourceMemory]
-
-	return !limitCPUSet || !limitMemorySet || !requestCPUSet || !requestMemorySet
 }
 
 func basePlugins() (result []v1alpha2.Plugin) {
