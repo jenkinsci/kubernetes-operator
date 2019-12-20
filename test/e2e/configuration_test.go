@@ -18,7 +18,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -85,7 +84,6 @@ func TestConfiguration(t *testing.T) {
 	createUserConfigurationSecret(t, namespace, stringData)
 	createUserConfigurationConfigMap(t, namespace, numberOfExecutorsEnvName, fmt.Sprintf("${%s}", systemMessageEnvName))
 	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc)
-	createDefaultLimitsForContainersInNamespace(t, namespace)
 	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	verifyJenkinsMasterPodAttributes(t, jenkins)
@@ -177,35 +175,6 @@ unclassified:
 
 	t.Logf("User configuration %+v", *userConfiguration)
 	if err := framework.Global.Client.Create(context.TODO(), userConfiguration, nil); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func createDefaultLimitsForContainersInNamespace(t *testing.T, namespace string) {
-	limitRange := &corev1.LimitRange{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "e2e",
-			Namespace: namespace,
-		},
-		Spec: corev1.LimitRangeSpec{
-			Limits: []corev1.LimitRangeItem{
-				{
-					Type: corev1.LimitTypeContainer,
-					DefaultRequest: map[corev1.ResourceName]resource.Quantity{
-						corev1.ResourceCPU:    resource.MustParse("128m"),
-						corev1.ResourceMemory: resource.MustParse("256Mi"),
-					},
-					Default: map[corev1.ResourceName]resource.Quantity{
-						corev1.ResourceCPU:    resource.MustParse("256m"),
-						corev1.ResourceMemory: resource.MustParse("512Mi"),
-					},
-				},
-			},
-		},
-	}
-
-	t.Logf("LimitRange %+v", *limitRange)
-	if err := framework.Global.Client.Create(context.TODO(), limitRange, nil); err != nil {
 		t.Fatal(err)
 	}
 }
