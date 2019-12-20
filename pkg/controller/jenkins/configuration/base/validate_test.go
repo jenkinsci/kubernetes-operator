@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
@@ -553,6 +554,131 @@ func TestValidateContainerVolumeMounts(t *testing.T) {
 		got := baseReconcileLoop.validateContainerVolumeMounts(jenkins.Spec.Master.Containers[0])
 
 		assert.Equal(t, got, []string{"Not found volume for 'missing-volume' volume mount in container ''"})
+	})
+}
+
+func TestValidateResourceQuota(t *testing.T) {
+	t.Run("happy - not set", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					Containers: []v1alpha2.Container{
+						{
+							Resources: v1.ResourceRequirements{},
+						},
+					},
+				},
+			},
+		}
+
+		baseReconcileLoop := New(configuration.Configuration{
+			Jenkins: &jenkins,
+		}, logf.ZapLogger(false), client.JenkinsAPIConnectionSettings{}, nil)
+		got := baseReconcileLoop.validateResourceQuota()
+
+		assert.Nil(t, got)
+	})
+	t.Run("happy - set minimal limits", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					Containers: []v1alpha2.Container{
+						{
+							Resources: v1.ResourceRequirements{
+								Limits: v1.ResourceList{
+									v1.ResourceCPU:    resource.MustParse("1000m"),
+									v1.ResourceMemory: resource.MustParse("512Mi"),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		baseReconcileLoop := New(configuration.Configuration{
+			Jenkins: &jenkins,
+		}, logf.ZapLogger(false), client.JenkinsAPIConnectionSettings{}, nil)
+		got := baseReconcileLoop.validateResourceQuota()
+
+		assert.Nil(t, got)
+	})
+	t.Run("too low cpu milliicores", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					Containers: []v1alpha2.Container{
+						{
+							Resources: v1.ResourceRequirements{
+								Limits: v1.ResourceList{
+									v1.ResourceCPU:    resource.MustParse("999m"),
+									v1.ResourceMemory: resource.MustParse("512Mi"),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		baseReconcileLoop := New(configuration.Configuration{
+			Jenkins: &jenkins,
+		}, logf.ZapLogger(false), client.JenkinsAPIConnectionSettings{}, nil)
+		got := baseReconcileLoop.validateResourceQuota()
+
+		assert.NotNil(t, got)
+	})
+
+	t.Run("too low memory mebibytes", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					Containers: []v1alpha2.Container{
+						{
+							Resources: v1.ResourceRequirements{
+								Limits: v1.ResourceList{
+									v1.ResourceCPU:    resource.MustParse("1000m"),
+									v1.ResourceMemory: resource.MustParse("511Mi"),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		baseReconcileLoop := New(configuration.Configuration{
+			Jenkins: &jenkins,
+		}, logf.ZapLogger(false), client.JenkinsAPIConnectionSettings{}, nil)
+		got := baseReconcileLoop.validateResourceQuota()
+
+		assert.NotNil(t, got)
+	})
+
+	t.Run("too low memory mebibytes and cpu millicores", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					Containers: []v1alpha2.Container{
+						{
+							Resources: v1.ResourceRequirements{
+								Limits: v1.ResourceList{
+									v1.ResourceCPU:    resource.MustParse("999m"),
+									v1.ResourceMemory: resource.MustParse("511Mi"),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		baseReconcileLoop := New(configuration.Configuration{
+			Jenkins: &jenkins,
+		}, logf.ZapLogger(false), client.JenkinsAPIConnectionSettings{}, nil)
+		got := baseReconcileLoop.validateResourceQuota()
+
+		assert.NotNil(t, got)
 	})
 }
 
