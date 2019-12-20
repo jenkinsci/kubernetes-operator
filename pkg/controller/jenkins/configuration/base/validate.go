@@ -76,7 +76,7 @@ func (r *ReconcileJenkinsBaseConfiguration) validateResourceQuota() []string {
 
 	var messages []string
 	var minMemoryLimitInMi int64 = 512
-	if memoryLimitInMi < minMemoryLimitInMi {
+	if memoryLimitInMi < minMemoryLimitInMi && memoryLimitInMi != 0 {
 		messages = append(messages,
 			fmt.Sprintf("spec.master.containers[0].resources.limit.memory '%dMi' is too low (must be greater or equal to: '%dMi'",
 				memoryLimitInMi,
@@ -85,7 +85,7 @@ func (r *ReconcileJenkinsBaseConfiguration) validateResourceQuota() []string {
 	}
 
 	var minCPULimitInMillicores int64 = 1000
-	if cpuLimitInMillicores < minCPULimitInMillicores {
+	if cpuLimitInMillicores < minCPULimitInMillicores && cpuLimitInMillicores != 0 {
 		messages = append(messages,
 			fmt.Sprintf("spec.master.containers[0].resources.limit.cpu '%dm' is too low (must be greater or equal to: '%dm'",
 				cpuLimitInMillicores,
