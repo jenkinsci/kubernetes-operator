@@ -2,7 +2,7 @@
 title: "Migration from v0.2.x"
 linkTitle: "Migration from v0.2.x"
 weight: 10
-date: 2019-08-05
+date: 2020-01-03
 description: >
     How to migrate from v0.2.x to v0.3.x
 ---
