@@ -10,7 +10,7 @@ description: >
 ### Changes
 
 - new Jenkins Custom Resource Definition version `jenkins.io/v1alpha2`:
-  - `spec.master.masterAnnotations` was deprecated, use `spec.master.masterAnnotations`
+  - `spec.master.masterAnnotations` was deprecated, use `spec.master.annotations`
   - added `spec.notifications`
   - added `spec.master.tolerations` (in v0.3.1)
   - added `spec.master.disableCSRFProtection`
