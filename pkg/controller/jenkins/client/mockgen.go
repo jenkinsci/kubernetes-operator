@@ -70,10 +70,23 @@ func (m *MockJenkins) Info() (*gojenkins.ExecutorResponse, error) {
 	return ret0, ret1
 }
 
+// GetVersion mocks base method
+func (m *MockJenkins) GetVersion() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetVersion")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
 // Info indicates an expected call of Info
 func (mr *MockJenkinsMockRecorder) Info() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Info", reflect.TypeOf((*MockJenkins)(nil).Info))
+}
+
+func (mr *MockJenkinsMockRecorder) GetVersion() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetVersion", reflect.TypeOf((*MockJenkins)(nil).Info))
 }
 
 // SafeRestart mocks base method

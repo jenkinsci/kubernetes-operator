@@ -5,6 +5,8 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -34,7 +36,9 @@ import (
 )
 
 const (
-	fetchAllPlugins = 1
+	fetchAllPlugins         = 1
+	jenkinsUpdateCenterURL  = "https://updates.jenkins.io/"
+	jenkinsLatestVersionURL = jenkinsUpdateCenterURL + "current/latestCore.txt"
 )
 
 // ReconcileJenkinsBaseConfiguration defines values required for Jenkins base configuration
@@ -113,9 +117,38 @@ func (r *ReconcileJenkinsBaseConfiguration) Reconcile() (reconcile.Result, jenki
 		return reconcile.Result{Requeue: true}, nil, r.Configuration.RestartJenkinsMasterPod(restartReason)
 	}
 
+	currentJenkinsVersion := jenkinsClient.GetVersion()
+	r.logger.V(log.VDebug).Info(fmt.Sprintf("Jenkins version: %s", currentJenkinsVersion))
+
+	jenkinsOutdated, latestVersion, err := isJenkinsOutdated(jenkinsClient.GetVersion())
+	if err != nil {
+		r.logger.Info(fmt.Sprintf("Cannot check current Jenkins version: %s", err))
+	} else if jenkinsOutdated {
+		// TODO: Add notification, not just only logger ino
+		r.logger.Info(fmt.Sprintf("Jenkins is outdated! Current version: %s, latest version: %s", currentJenkinsVersion, latestVersion))
+	}
+
 	result, err = r.ensureBaseConfiguration(jenkinsClient)
 
 	return result, jenkinsClient, err
+}
+
+func isJenkinsOutdated(currentVersion string) (outdated bool, latestVersion string, err error) {
+	resp, err := http.Get(jenkinsLatestVersionURL)
+	if err != nil {
+		return false, "", err
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	lastVersion, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return false, "", err
+	}
+
+	return string(lastVersion) > currentVersion, string(lastVersion), nil
 }
 
 // GetJenkinsOpts gets JENKINS_OPTS env parameter, parses it's values and returns it as a map`

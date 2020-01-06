@@ -30,6 +30,7 @@ type Jenkins interface {
 	CopyJob(copyFrom string, newName string) (*gojenkins.Job, error)
 	DeleteJob(name string) (bool, error)
 	BuildJob(name string, options ...interface{}) (int64, error)
+	GetVersion() string
 	GetNode(name string) (*gojenkins.Node, error)
 	GetLabel(name string) (*gojenkins.Label, error)
 	GetBuild(jobName string, number int64) (*gojenkins.Build, error)
@@ -82,6 +83,11 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 
 	err = job.UpdateConfig(config)
 	return job, false, errors.WithStack(err)
+}
+
+// GetVersion returns current Jenkins version
+func (jenkins *jenkins) GetVersion() string {
+	return jenkins.Version
 }
 
 // BuildJenkinsAPIUrl returns Jenkins API URL
