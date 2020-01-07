@@ -15,6 +15,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -564,7 +565,7 @@ func TestValidateResourceQuota(t *testing.T) {
 				Master: v1alpha2.JenkinsMaster{
 					Containers: []v1alpha2.Container{
 						{
-							Resources: v1.ResourceRequirements{},
+							Resources: corev1.ResourceRequirements{},
 						},
 					},
 				},
@@ -584,10 +585,10 @@ func TestValidateResourceQuota(t *testing.T) {
 				Master: v1alpha2.JenkinsMaster{
 					Containers: []v1alpha2.Container{
 						{
-							Resources: v1.ResourceRequirements{
-								Limits: v1.ResourceList{
-									v1.ResourceCPU:    resource.MustParse("1000m"),
-									v1.ResourceMemory: resource.MustParse("512Mi"),
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("1000m"),
+									corev1.ResourceMemory: resource.MustParse("512Mi"),
 								},
 							},
 						},
@@ -609,10 +610,10 @@ func TestValidateResourceQuota(t *testing.T) {
 				Master: v1alpha2.JenkinsMaster{
 					Containers: []v1alpha2.Container{
 						{
-							Resources: v1.ResourceRequirements{
-								Limits: v1.ResourceList{
-									v1.ResourceCPU:    resource.MustParse("999m"),
-									v1.ResourceMemory: resource.MustParse("512Mi"),
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("999m"),
+									corev1.ResourceMemory: resource.MustParse("512Mi"),
 								},
 							},
 						},
@@ -635,10 +636,10 @@ func TestValidateResourceQuota(t *testing.T) {
 				Master: v1alpha2.JenkinsMaster{
 					Containers: []v1alpha2.Container{
 						{
-							Resources: v1.ResourceRequirements{
-								Limits: v1.ResourceList{
-									v1.ResourceCPU:    resource.MustParse("1000m"),
-									v1.ResourceMemory: resource.MustParse("511Mi"),
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("1000m"),
+									corev1.ResourceMemory: resource.MustParse("511Mi"),
 								},
 							},
 						},
@@ -661,10 +662,10 @@ func TestValidateResourceQuota(t *testing.T) {
 				Master: v1alpha2.JenkinsMaster{
 					Containers: []v1alpha2.Container{
 						{
-							Resources: v1.ResourceRequirements{
-								Limits: v1.ResourceList{
-									v1.ResourceCPU:    resource.MustParse("999m"),
-									v1.ResourceMemory: resource.MustParse("511Mi"),
+							Resources: corev1.ResourceRequirements{
+								Limits: corev1.ResourceList{
+									corev1.ResourceCPU:    resource.MustParse("999m"),
+									corev1.ResourceMemory: resource.MustParse("511Mi"),
 								},
 							},
 						},
