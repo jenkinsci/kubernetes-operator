@@ -35,6 +35,6 @@ backup_file="${BACKUP_DIR}/${backup_number}.tar.gz"
 docker exec -it ${cid} /bin/bash -c "JENKINS_HOME=${RESTORE_FOLDER};/home/user/bin/restore.sh ${backup_number}"
 
 echo "Compare directories"
-diff --brief --recursive ${JENKINS_HOME} ${RESTORE_FOLDER}
-echo "Directories are the same"
+test $(diff --brief --recursive ${JENKINS_HOME} ${RESTORE_FOLDER} | wc -l) = 3
+echo "Directories are the same except for 2 excluded config.xml and the 1 workspace file"
 echo PASS

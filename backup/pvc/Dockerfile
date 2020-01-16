@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM debian:buster-slim
 
 ENV USER=user
 ENV UID=1000
@@ -10,8 +10,8 @@ RUN addgroup --gid "$GID" "$USER" && \
     --gecos "" \
     --ingroup "$USER" \
     --uid "$UID" \
-    "$USER" && \
-    apk add --no-cache bash
+    "$USER"
+
 WORKDIR /home/user/bin
 COPY bin .
 RUN chmod +x *.sh
