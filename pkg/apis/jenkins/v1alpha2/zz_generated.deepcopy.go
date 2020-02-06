@@ -257,7 +257,7 @@ func (in *JenkinsAPISettings) DeepCopy() *JenkinsAPISettings {
 func (in *JenkinsList) DeepCopyInto(out *JenkinsList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Jenkins, len(*in))
