@@ -402,7 +402,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureExtraRBAC(meta metav1.ObjectMe
 	}
 
 	roleBindings := &rbacv1.RoleBindingList{}
-	err = r.Client.List(context.TODO(), roleBindings, client.InNamespace(r.Configuration.Jenkins.Namespace)) // &client.ListOptions{Namespace: r.Configuration.Jenkins.Namespace}, roleBindings)
+	err = r.Client.List(context.TODO(), roleBindings, client.InNamespace(r.Configuration.Jenkins.Namespace))
 	if err != nil {
 		return stackerr.WithStack(err)
 	}
@@ -857,7 +857,7 @@ func (r *ReconcileJenkinsBaseConfiguration) detectJenkinsMasterPodStartingIssues
 		now := time.Now().UTC()
 		if now.After(timeout) {
 			events := &corev1.EventList{}
-			err = r.Client.List(context.TODO(), events, client.InNamespace(r.Configuration.Jenkins.Namespace)) //&client.ListOptions{Namespace: r.Configuration.Jenkins.Namespace}, events)
+			err = r.Client.List(context.TODO(), events, client.InNamespace(r.Configuration.Jenkins.Namespace))
 			if err != nil {
 				return false, stackerr.WithStack(err)
 			}

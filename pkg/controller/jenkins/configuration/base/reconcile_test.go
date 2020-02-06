@@ -748,7 +748,7 @@ func TestEnsureExtraRBAC(t *testing.T) {
 
 	fetchAllRoleBindings := func(client k8sclient.Client) (roleBindings *rbacv1.RoleBindingList, err error) {
 		roleBindings = &rbacv1.RoleBindingList{}
-		err = client.List(context.TODO(), roleBindings, k8sclient.InNamespace(namespace)) //client  &k8sclient.ListOptions{Namespace: namespace}, roleBindings)
+		err = client.List(context.TODO(), roleBindings, k8sclient.InNamespace(namespace))
 		return
 	}
 
