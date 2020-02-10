@@ -12,7 +12,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
+
+	logf "sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 var fakePrivateKey = `-----BEGIN RSA PRIVATE KEY-----
@@ -82,7 +83,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -110,7 +111,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -150,7 +151,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -189,7 +190,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -229,7 +230,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -260,7 +261,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -289,7 +290,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -318,7 +319,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -347,7 +348,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -387,7 +388,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -426,7 +427,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -466,7 +467,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -505,7 +506,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -544,7 +545,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -576,7 +577,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -609,7 +610,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -640,7 +641,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -677,7 +678,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -708,7 +709,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -745,7 +746,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			Notifications: nil,
 		}
 
-		seedJobs := New(nil, config, logf.ZapLogger(false))
+		seedJobs := New(nil, config, logf.Logger(false))
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
@@ -765,7 +766,7 @@ func TestValidateIfIDIsUnique(t *testing.T) {
 			Notifications: nil,
 		}
 
-		ctrl := New(nil, config, logf.ZapLogger(false))
+		ctrl := New(nil, config, logf.Logger(false))
 		got := ctrl.validateIfIDIsUnique(seedJobs)
 		assert.Nil(t, got)
 	})
@@ -780,7 +781,7 @@ func TestValidateIfIDIsUnique(t *testing.T) {
 			Notifications: nil,
 		}
 
-		ctrl := New(nil, config, logf.ZapLogger(false))
+		ctrl := New(nil, config, logf.Logger(false))
 		got := ctrl.validateIfIDIsUnique(seedJobs)
 
 		assert.Equal(t, got, []string{"'first' seed job ID is not unique"})
