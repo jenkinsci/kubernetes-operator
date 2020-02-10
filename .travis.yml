@@ -1,4 +1,5 @@
 language: go
+os: linux
 
 env:
   global:
@@ -12,17 +13,25 @@ env:
 go:
   - 1.13.x
 
-sudo: required
-
 before_install:
   - |
-    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-      TRAVIS_COMMIT_RANGE="FETCH_HEAD...$TRAVIS_BRANCH"
+    if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+      # Pull requests are slightly complicated because $TRAVIS_COMMIT_RANGE
+      # may include more changes than desired if the history is convoluted.
+      # Instead, explicitly fetch the base branch and compare against the
+      # merge-base commit.
+      git fetch -q origin +refs/heads/$TRAVIS_BRANCH
+      changes=$(git diff --name-only HEAD $(git merge-base HEAD FETCH_HEAD))
+    else
+      changes=$(git diff --name-only $TRAVIS_COMMIT_RANGE)
     fi
-    git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md$)|(^(docs|website))/' || {
+    echo "Files changed:"
+    echo "$changes"
+    if ! echo "$changes" | grep -qvE '(\.md$)|(^(docs|website))/'
+    then
       echo "Only docs were updated, stopping build process."
       exit
-    }
+    fi
   - make go-dependencies
 
 jobs:
