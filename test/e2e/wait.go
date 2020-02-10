@@ -2,10 +2,11 @@ package e2e
 
 import (
 	goctx "context"
-	"golang.org/x/net/context"
 	"net/http"
 	"testing"
 	"time"
+
+	"golang.org/x/net/context"
 
 	"github.com/jenkinsci/kubernetes-operator/internal/try"
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -136,7 +137,7 @@ func WaitUntilJenkinsConditionSet(retryInterval time.Duration, retries int, jenk
 func waitUntilNamespaceDestroyed(namespace string) error {
 	err := try.Until(func() (bool, error) {
 		var namespaceList v1.NamespaceList
-		err := framework.Global.Client.List(context.TODO(), &client.ListOptions{}, &namespaceList)
+		err := framework.Global.Client.List(context.TODO(), &namespaceList, &client.ListOptions{})
 		if err != nil {
 			return true, err
 		}

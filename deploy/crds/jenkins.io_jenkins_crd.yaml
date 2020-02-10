@@ -19,12 +19,12 @@ spec:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
             of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
           type: string
         kind:
           description: 'Kind is a string value representing the REST resource this
             object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
           type: string
         metadata:
           type: object
@@ -248,7 +248,7 @@ spec:
                                       type: string
                                     optional:
                                       description: Specify whether the ConfigMap or
-                                        it's key must be defined
+                                        its key must be defined
                                       type: boolean
                                   required:
                                   - key
@@ -306,7 +306,7 @@ spec:
                                         kind, uid?'
                                       type: string
                                     optional:
-                                      description: Specify whether the Secret or it's
+                                      description: Specify whether the Secret or its
                                         key must be defined
                                       type: boolean
                                   required:
@@ -465,12 +465,17 @@ spec:
                             type: object
                           preStop:
                             description: 'PreStop is called immediately before a container
-                              is terminated. The container is terminated after the
-                              handler completes. The reason for termination is passed
-                              to the handler. Regardless of the outcome of the handler,
-                              the container is eventually terminated. Other management
-                              of the container blocks until the hook completes. More
-                              info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks'
+                              is terminated due to an API request or management event
+                              such as liveness/startup probe failure, preemption,
+                              resource contention, etc. The handler is not called
+                              if the container crashes or exits. The reason for termination
+                              is passed to the handler. The Pod''s termination grace
+                              period countdown begins before the PreStop hooked is
+                              executed. Regardless of the outcome of the handler,
+                              the container will eventually terminate within the Pod''s
+                              termination grace period. Other management of the container
+                              blocks until the hook completes or until the termination
+                              grace period is reached. More info: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks'
                             properties:
                               exec:
                                 description: One and only one of the following should
@@ -642,7 +647,8 @@ spec:
                           successThreshold:
                             description: Minimum consecutive successes for the probe
                               to be considered successful after having failed. Defaults
-                              to 1. Must be 1 for liveness. Minimum value is 1.
+                              to 1. Must be 1 for liveness and startup. Minimum value
+                              is 1.
                             format: int32
                             type: integer
                           tcpSocket:
@@ -805,7 +811,8 @@ spec:
                           successThreshold:
                             description: Minimum consecutive successes for the probe
                               to be considered successful after having failed. Defaults
-                              to 1. Must be 1 for liveness. Minimum value is 1.
+                              to 1. Must be 1 for liveness and startup. Minimum value
+                              is 1.
                             format: int32
                             type: integer
                           tcpSocket:
@@ -955,6 +962,38 @@ spec:
                                   to the container.
                                 type: string
                             type: object
+                          windowsOptions:
+                            description: The Windows specific settings applied to
+                              all containers. If unspecified, the options from the
+                              PodSecurityContext will be used. If set in both SecurityContext
+                              and PodSecurityContext, the value specified in SecurityContext
+                              takes precedence.
+                            properties:
+                              gmsaCredentialSpec:
+                                description: GMSACredentialSpec is where the GMSA
+                                  admission webhook (https://github.com/kubernetes-sigs/windows-gmsa)
+                                  inlines the contents of the GMSA credential spec
+                                  named by the GMSACredentialSpecName field. This
+                                  field is alpha-level and is only honored by servers
+                                  that enable the WindowsGMSA feature flag.
+                                type: string
+                              gmsaCredentialSpecName:
+                                description: GMSACredentialSpecName is the name of
+                                  the GMSA credential spec to use. This field is alpha-level
+                                  and is only honored by servers that enable the WindowsGMSA
+                                  feature flag.
+                                type: string
+                              runAsUserName:
+                                description: The UserName in Windows to run the entrypoint
+                                  of the container process. Defaults to the user specified
+                                  in image metadata if unspecified. May also be set
+                                  in PodSecurityContext. If set in both SecurityContext
+                                  and PodSecurityContext, the value specified in SecurityContext
+                                  takes precedence. This field is alpha-level and
+                                  it is only honored by servers that enable the WindowsRunAsUserName
+                                  feature flag.
+                                type: string
+                            type: object
                         type: object
                       volumeMounts:
                         description: Pod volumes to mount into the container's filesystem.
@@ -983,6 +1022,14 @@ spec:
                               description: Path within the volume from which the container's
                                 volume should be mounted. Defaults to "" (volume's
                                 root).
+                              type: string
+                            subPathExpr:
+                              description: Expanded path within the volume from which
+                                the container's volume should be mounted. Behaves
+                                similarly to SubPath but environment variable references
+                                $(VAR_NAME) are expanded using the container's environment.
+                                Defaults to "" (volume's root). SubPathExpr and SubPath
+                                are mutually exclusive. This field is beta in 1.15.
                               type: string
                           required:
                           - mountPath
@@ -1154,6 +1201,36 @@ spec:
                         - value
                         type: object
                       type: array
+                    windowsOptions:
+                      description: The Windows specific settings applied to all containers.
+                        If unspecified, the options within a container's SecurityContext
+                        will be used. If set in both SecurityContext and PodSecurityContext,
+                        the value specified in SecurityContext takes precedence.
+                      properties:
+                        gmsaCredentialSpec:
+                          description: GMSACredentialSpec is where the GMSA admission
+                            webhook (https://github.com/kubernetes-sigs/windows-gmsa)
+                            inlines the contents of the GMSA credential spec named
+                            by the GMSACredentialSpecName field. This field is alpha-level
+                            and is only honored by servers that enable the WindowsGMSA
+                            feature flag.
+                          type: string
+                        gmsaCredentialSpecName:
+                          description: GMSACredentialSpecName is the name of the GMSA
+                            credential spec to use. This field is alpha-level and
+                            is only honored by servers that enable the WindowsGMSA
+                            feature flag.
+                          type: string
+                        runAsUserName:
+                          description: The UserName in Windows to run the entrypoint
+                            of the container process. Defaults to the user specified
+                            in image metadata if unspecified. May also be set in PodSecurityContext.
+                            If set in both SecurityContext and PodSecurityContext,
+                            the value specified in SecurityContext takes precedence.
+                            This field is alpha-level and it is only honored by servers
+                            that enable the WindowsRunAsUserName feature flag.
+                          type: string
+                      type: object
                   type: object
                 tolerations:
                   description: If specified, the pod's tolerations.
@@ -1294,7 +1371,7 @@ spec:
                         properties:
                           monitors:
                             description: 'Required: Monitors is a collection of Ceph
-                              monitors More info: https://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it'
+                              monitors More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                             items:
                               type: string
                             type: array
@@ -1305,17 +1382,17 @@ spec:
                           readOnly:
                             description: 'Optional: Defaults to false (read/write).
                               ReadOnly here will force the ReadOnly setting in VolumeMounts.
-                              More info: https://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it'
+                              More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                             type: boolean
                           secretFile:
                             description: 'Optional: SecretFile is the path to key
                               ring for User, default is /etc/ceph/user.secret More
-                              info: https://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it'
+                              info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                             type: string
                           secretRef:
                             description: 'Optional: SecretRef is reference to the
                               authentication secret for User, default is empty. More
-                              info: https://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it'
+                              info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                             properties:
                               name:
                                 description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -1325,25 +1402,25 @@ spec:
                             type: object
                           user:
                             description: 'Optional: User is the rados user name, default
-                              is admin More info: https://releases.k8s.io/HEAD/examples/volumes/cephfs/README.md#how-to-use-it'
+                              is admin More info: https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it'
                             type: string
                         required:
                         - monitors
                         type: object
                       cinder:
                         description: 'Cinder represents a cinder volume attached and
-                          mounted on kubelets host machine More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md'
+                          mounted on kubelets host machine. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                         properties:
                           fsType:
                             description: 'Filesystem type to mount. Must be a filesystem
                               type supported by the host operating system. Examples:
                               "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4"
-                              if unspecified. More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md'
+                              if unspecified. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                             type: string
                           readOnly:
                             description: 'Optional: Defaults to false (read/write).
                               ReadOnly here will force the ReadOnly setting in VolumeMounts.
-                              More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md'
+                              More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                             type: boolean
                           secretRef:
                             description: 'Optional: points to a secret object containing
@@ -1357,7 +1434,7 @@ spec:
                             type: object
                           volumeID:
                             description: 'volume id used to identify the volume in
-                              cinder More info: https://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md'
+                              cinder. More info: https://examples.k8s.io/mysql-cinder-pd/README.md'
                             type: string
                         required:
                         - volumeID
@@ -1416,9 +1493,54 @@ spec:
                               TODO: Add other useful fields. apiVersion, kind, uid?'
                             type: string
                           optional:
-                            description: Specify whether the ConfigMap or it's keys
+                            description: Specify whether the ConfigMap or its keys
                               must be defined
                             type: boolean
+                        type: object
+                      csi:
+                        description: CSI (Container Storage Interface) represents
+                          storage that is handled by an external CSI driver (Alpha
+                          feature).
+                        properties:
+                          driver:
+                            description: Driver is the name of the CSI driver that
+                              handles this volume. Consult with your admin for the
+                              correct name as registered in the cluster.
+                            type: string
+                          fsType:
+                            description: Filesystem type to mount. Ex. "ext4", "xfs",
+                              "ntfs". If not provided, the empty value is passed to
+                              the associated CSI driver which will determine the default
+                              filesystem to apply.
+                            type: string
+                          nodePublishSecretRef:
+                            description: NodePublishSecretRef is a reference to the
+                              secret object containing sensitive information to pass
+                              to the CSI driver to complete the CSI NodePublishVolume
+                              and NodeUnpublishVolume calls. This field is optional,
+                              and  may be empty if no secret is required. If the secret
+                              object contains more than one secret, all secret references
+                              are passed.
+                            properties:
+                              name:
+                                description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                  TODO: Add other useful fields. apiVersion, kind,
+                                  uid?'
+                                type: string
+                            type: object
+                          readOnly:
+                            description: Specifies a read-only configuration for the
+                              volume. Defaults to false (read/write).
+                            type: boolean
+                          volumeAttributes:
+                            additionalProperties:
+                              type: string
+                            description: VolumeAttributes stores driver-specific properties
+                              that are passed to the CSI driver. Consult your driver's
+                              documentation for supported values.
+                            type: object
+                        required:
+                        - driver
                         type: object
                       downwardAPI:
                         description: DownwardAPI represents downward API about the
@@ -1663,20 +1785,20 @@ spec:
                         type: object
                       glusterfs:
                         description: 'Glusterfs represents a Glusterfs mount on the
-                          host that shares a pod''s lifetime. More info: https://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md'
+                          host that shares a pod''s lifetime. More info: https://examples.k8s.io/volumes/glusterfs/README.md'
                         properties:
                           endpoints:
                             description: 'EndpointsName is the endpoint name that
-                              details Glusterfs topology. More info: https://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod'
+                              details Glusterfs topology. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                             type: string
                           path:
                             description: 'Path is the Glusterfs volume path. More
-                              info: https://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod'
+                              info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                             type: string
                           readOnly:
                             description: 'ReadOnly here will force the Glusterfs volume
                               to be mounted with read-only permissions. Defaults to
-                              false. More info: https://releases.k8s.io/HEAD/examples/volumes/glusterfs/README.md#create-a-pod'
+                              false. More info: https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod'
                             type: boolean
                         required:
                         - endpoints
@@ -1706,7 +1828,7 @@ spec:
                       iscsi:
                         description: 'ISCSI represents an ISCSI Disk resource that
                           is attached to a kubelet''s host machine and then exposed
-                          to the pod. More info: https://releases.k8s.io/HEAD/examples/volumes/iscsi/README.md'
+                          to the pod. More info: https://examples.k8s.io/volumes/iscsi/README.md'
                         properties:
                           chapAuthDiscovery:
                             description: whether support iSCSI Discovery CHAP authentication
@@ -1922,7 +2044,7 @@ spec:
                                       type: string
                                     optional:
                                       description: Specify whether the ConfigMap or
-                                        it's keys must be defined
+                                        its keys must be defined
                                       type: boolean
                                   type: object
                                 downwardAPI:
@@ -2114,6 +2236,11 @@ spec:
                               pair (multiple entries are separated with commas) which
                               acts as the central registry for volumes
                             type: string
+                          tenant:
+                            description: Tenant owning the given Quobyte volume in
+                              the Backend Used with dynamically provisioned Quobyte
+                              volumes, value is set by the plugin
+                            type: string
                           user:
                             description: User to map volume access to Defaults to
                               serivceaccount user
@@ -2128,7 +2255,7 @@ spec:
                         type: object
                       rbd:
                         description: 'RBD represents a Rados Block Device mount on
-                          the host that shares a pod''s lifetime. More info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md'
+                          the host that shares a pod''s lifetime. More info: https://examples.k8s.io/volumes/rbd/README.md'
                         properties:
                           fsType:
                             description: 'Filesystem type of the volume that you want
@@ -2140,30 +2267,30 @@ spec:
                               compromising the machine'
                             type: string
                           image:
-                            description: 'The rados image name. More info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                            description: 'The rados image name. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             type: string
                           keyring:
                             description: 'Keyring is the path to key ring for RBDUser.
-                              Default is /etc/ceph/keyring. More info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              Default is /etc/ceph/keyring. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             type: string
                           monitors:
                             description: 'A collection of Ceph monitors. More info:
-                              https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             items:
                               type: string
                             type: array
                           pool:
                             description: 'The rados pool name. Default is rbd. More
-                              info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             type: string
                           readOnly:
                             description: 'ReadOnly here will force the ReadOnly setting
-                              in VolumeMounts. Defaults to false. More info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              in VolumeMounts. Defaults to false. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             type: boolean
                           secretRef:
                             description: 'SecretRef is name of the authentication
                               secret for RBDUser. If provided overrides keyring. Default
-                              is nil. More info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              is nil. More info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             properties:
                               name:
                                 description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -2173,7 +2300,7 @@ spec:
                             type: object
                           user:
                             description: 'The rados user name. Default is admin. More
-                              info: https://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it'
+                              info: https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it'
                             type: string
                         required:
                         - image
@@ -2286,7 +2413,7 @@ spec:
                               type: object
                             type: array
                           optional:
-                            description: Specify whether the Secret or it's keys must
+                            description: Specify whether the Secret or its keys must
                               be defined
                             type: boolean
                           secretName:
