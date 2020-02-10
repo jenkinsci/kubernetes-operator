@@ -21,7 +21,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
+	logf "sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 func jenkinsCustomResource() *v1alpha2.Jenkins {
@@ -67,7 +67,7 @@ func jenkinsCustomResource() *v1alpha2.Jenkins {
 func TestEnsureSeedJobs(t *testing.T) {
 	t.Run("happy", func(t *testing.T) {
 		// given
-		logger := logf.ZapLogger(false)
+		logger := logf.Logger(false)
 		ctrl := gomock.NewController(t)
 		ctx := context.TODO()
 		defer ctrl.Finish()
@@ -118,7 +118,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 
 	t.Run("delete agent deployment when no seed jobs", func(t *testing.T) {
 		// given
-		logger := logf.ZapLogger(false)
+		logger := logf.Logger(false)
 		ctrl := gomock.NewController(t)
 		ctx := context.TODO()
 		defer ctrl.Finish()
@@ -169,7 +169,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 func TestCreateAgent(t *testing.T) {
 	t.Run("don't fail when deployment is already created", func(t *testing.T) {
 		// given
-		logger := logf.ZapLogger(false)
+		logger := logf.Logger(false)
 		ctrl := gomock.NewController(t)
 		ctx := context.TODO()
 		defer ctrl.Finish()
