@@ -1,8 +1,39 @@
 {{ if .Values.jenkins.enabled }}
-apiVersion: {{ .Values.jenkins.apiVersion }}
+apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
   name: {{ .Values.jenkins.name }}
+  namespace: {{ .Values.jenkins.namespace }}
 spec:
-  {{- toYaml .Values.jenkins.spec | nindent 4 }}
+  master:
+    containers:
+      - name: jenkins-master
+        image: jenkins/jenkins:lts
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 12
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 80
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        {{- with .Values.jenkins.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }}
+  {{- with .Values.jenkins.seedJobs }}
+  seedJobs: {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
