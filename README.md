@@ -5,20 +5,30 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
 [![Docker Pulls](https://img.shields.io/docker/pulls/virtuslab/jenkins-operator.svg)](https://hub.docker.com/r/virtuslab/jenkins-operator/tags)
 
-Go to [**our documentation website**](https://jenkinsci.github.io/kubernetes-operator/) for more information, with examples and guides.
-
 ![logo](/assets/jenkins_gopher_wide.png)
 
 ## What's the Jenkins Operator?
 
-Jenkins operator is a Kubernetes native operator which fully manages Jenkins on Kubernetes.
-It was built with immutability and declarative configuration as code in mind.
+The Jenkins Operator is a [Kubernetes Native Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) which manages operations for Jenkins on Kubernetes.
+It has been built with Immutability and declarative Configuration as Code in mind.
 
-Out of the box it provides:
-- integration with Kubernetes ([Jenkins kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin))
-- pipelines as code ([Jenkins pipelines](https://jenkins.io/doc/book/pipeline/))
-- extensibility via groovy scripts (similar to [Jenkins script console](https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console)) or ([configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin))
-- secure defaults and hardening (see [the security section](https://jenkinsci.github.io/kubernetes-operator/docs/security/) of the documentation)
+
+## Preliminaries
+
+Considering that this Operator is created for managing instances for Jenkins, 
+it is important to understand what 
+- [Jenkins Pipelines](https://jenkins.io/doc/book/pipeline/) and 
+- CasC ([Configuration as Code](https://github.com/jenkinsci/configuration-as-code-plugin)) are.
+
+Jenkins Pipelines use Scripts written in [Groovy](https://groovy-lang.org/) which aid in the CasC aspect of Jenkins.
+
+Jenkins uses [plugins](https://plugins.jenkins.io/) like CasC to extend it's solution space by carrying out Jobs of different kinds and providing a composable infrastructure for your CI/CD.
+
+### Out of the box it provides:
+- Integration with Kubernetes ([Jenkins kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin))
+- Pipelines as Code ([Jenkins pipelines](https://jenkins.io/doc/book/pipeline/))
+- Extensibility via Groovy Scripts (similar to [Jenkins script console](https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console)) or ([configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin))
+- Secure Defaults and Hardening (see [the security section](https://jenkinsci.github.io/kubernetes-operator/docs/security/) of the documentation)
 
 ## Problem statement and goals
 
@@ -47,15 +57,18 @@ Selected content:
 5. [Developer Guide](https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/)
 5. [Jenkins Custom Resource Definition scheme](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/scheme/)
 
-## Common Jenkins issues and workarounds
+## Common Issues and Workarounds
 
-- Multibranch pipelines and backup issues: https://github.com/jenkinsci/kubernetes-operator/issues/104#issuecomment-554289768
+- Multibranch Pipelines and Backup Issues: https://github.com/jenkinsci/kubernetes-operator/issues/104#issuecomment-554289768
 
-## Community & Contribution
+## Community
 
-There is a dedicated channel `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com) ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7))
+we have a dedicated channel called `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com) 
+Fill out ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7)) and come say hi ! 
 
-Feel free to file [issues](https://github.com/jenkinsci/kubernetes-operator/issues) or [pull requests](https://github.com/jenkinsci/kubernetes-operator/pulls).    
+## Contribution
+
+Feel free to file [issues](https://github.com/jenkinsci/kubernetes-operator/issues) or [pull requests](https://github.com/jenkinsci/kubernetes-operator/pulls).
 
 Before any big pull request please consult the maintainers to ensure a common direction.
 
