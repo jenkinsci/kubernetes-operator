@@ -19,7 +19,7 @@ jenkins:
   name: jenkins
   namespace: default
   imagePullSecrets: []
-  notificaftions: []
+  notifications: []
   plugins:
     - name: simple-theme-plugin
       version: 0.5.1
