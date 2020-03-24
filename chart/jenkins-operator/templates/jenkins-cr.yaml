@@ -6,10 +6,19 @@ metadata:
   namespace: {{ .Values.jenkins.namespace }}
 spec:
   master:
+    {{- with .Values.jenkins.plugins }}
+    plugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.jenkins.notifications }}
+    notifications: {{ toYaml . | nindent 4 }}
+    {{- end }}
     containers:
       - name: jenkins-master
         image: jenkins/jenkins:lts
         imagePullPolicy: Always
+        {{- with .Values.jenkins.imagePullSecrets }}
+        imagePullSecrets: {{ toYaml . | nindent 10 }}
+        {{- end }}
         livenessProbe:
           failureThreshold: 12
           httpGet:

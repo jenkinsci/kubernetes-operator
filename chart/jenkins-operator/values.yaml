@@ -15,8 +15,14 @@ fullnameOverride: ""
 
 jenkins:
   enabled: true
+  metadata:
   name: jenkins
   namespace: default
+  imagePullSecrets: []
+  notificaftions: []
+  plugins:
+    - name: simple-theme-plugin
+      version: 0.5.1
   seedJobs:
   - id: jenkins-operator
     targets: "cicd/jobs/*.jenkins"
