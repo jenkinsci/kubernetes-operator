@@ -13,6 +13,27 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+backup:
+  enabled: false
+  storageSize: 5Gi
+  image: virtuslab/jenkins-operator-backup-pvc:v0.0.7
+
+  backupDir: /backup
+  backupCount: 3
+  jenkinsHome: /jenkins-home
+
+  #backup container
+  containerName: backup
+  interval: 30 # how often make backup in seconds
+  makeBackupBeforePodDeletion: true
+#  recoveryOnce: 0
+
+  backupCommand:
+    - /home/user/bin/backup.sh
+  restoreCommand:
+    - /home/user/bin/restore.sh
+
+
 jenkins:
   enabled: true
 

@@ -5,6 +5,27 @@ metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
 spec:
+  {{- if .Values.backup.enabled }}
+  backup:
+    containerName: {{ .Values.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.backup.backupCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    interval: {{ .Values.backup.interval }}
+    makeBackupBeforePodDeletion: {{ .Values.backup.makeBackupBeforePodDeletion }}
+  restore:
+    containerName: {{ .Values.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.backup.restoreCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    {{- if .Values.backup.recoveryOnce }}
+    recoveryOnce: {{ .Values.backup.recoveryOnce }}
+    {{- end }}
+  {{- end }}
   {{- with .Values.jenkins.plugins }}
   plugins: {{ toYaml . | nindent 4 }}
   {{- end }}
@@ -42,6 +63,28 @@ spec:
         {{- with .Values.jenkins.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}
+      {{- if .Values.backup.enabled }}
+      - name: {{ .Values.backup.containerName }}
+        env:
+          - name: BACKUP_DIR
+            value: {{ .Values.backup.backupDir }}
+          - name: JENKINS_HOME
+            value: {{ .Values.backup.jenkinsHome }}
+          - name: BACKUP_COUNT
+            value: {{ .Values.backup.backupCount | quote }}
+        image: {{ .Values.backup.image }}
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: {{ .Values.backup.jenkinsHome }}
+            name: jenkins-home
+          - mountPath: {{ .Values.backup.backupDir }}
+            name: backup
+    volumes:
+      - name: backup
+        persistentVolumeClaim:
+          claimName: {{ .Values.jenkins.name }}-backuppvc
+    {{- end }}
+
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

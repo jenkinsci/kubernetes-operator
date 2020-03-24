@@ -1,0 +1,13 @@
+{{ if .Values.backup.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.jenkins.name }}-backuppvc
+  namespace: {{ .Values.jenkins.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.backup.storageSize }}
+{{ end }}
