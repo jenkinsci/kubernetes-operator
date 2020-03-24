@@ -1,20 +1,20 @@
 {{ if .Values.jenkins.enabled }}
-apiVersion: jenkins.io/v1alpha2
+apiVersion: {{ .Values.jenkins.apiVersion }}
 kind: Jenkins
 metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
 spec:
+  {{- with .Values.jenkins.plugins }}
+  plugins: {{ toYaml . | nindent 4 }}
+  {{- end }}
   master:
-    {{- with .Values.jenkins.plugins }}
-    plugins: {{ toYaml . | nindent 4 }}
-    {{- end }}
     {{- with .Values.jenkins.notifications }}
     notifications: {{ toYaml . | nindent 4 }}
     {{- end }}
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:lts
+        image: {{ .Values.jenkins.image }}
         imagePullPolicy: Always
         {{- with .Values.jenkins.imagePullSecrets }}
         imagePullSecrets: {{ toYaml . | nindent 10 }}
