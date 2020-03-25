@@ -2,26 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-backup:
-  enabled: false
-  storageSize: 5Gi
-  image: virtuslab/jenkins-operator-backup-pvc:v0.0.7
-
-  backupDir: /backup
-  backupCount: 3
-  jenkinsHome: /jenkins-home
-
-  #backup container
-  containerName: backup
-  interval: 30 # how often make backup in seconds
-  makeBackupBeforePodDeletion: true
-#  recoveryOnce: 0
-
-  backupCommand:
-    - /home/user/bin/backup.sh
-  restoreCommand:
-    - /home/user/bin/restore.sh
-
 
 jenkins:
   enabled: true
@@ -49,6 +29,47 @@ jenkins:
     requests:
       cpu: 1
       memory: 500Mi
+
+  backup:
+    enabled: false
+    image: virtuslab/jenkins-operator-backup-pvc:v0.0.7
+
+    #backup container
+    containerName: backup
+    interval: 30 # how often make backup in seconds
+    makeBackupBeforePodDeletion: true
+    #  recoveryOnce: 0
+
+    backupCommand:
+      - /home/user/bin/backup.sh
+    restoreCommand:
+      - /home/user/bin/restore.sh
+
+    pvc:
+      enabled: true
+      size: 5Gi
+      className: ""
+
+    env:
+      - name: BACKUP_DIR
+        value: /backup
+      - name: JENKINS_HOME
+        value: /jenkins-home
+      - name: BACKUP_COUNT
+        value: "3" # keep only the 2 most recent backups
+    volumes:
+      - name: backup # PVC volume where backups will be stored
+        persistentVolumeClaim:
+          claimName: jenkins-backup
+    volumeMounts:
+      - name: jenkins-home
+        mountPath: /jenkins-home # Jenkins home volume
+      - mountPath: /backup # backup volume
+        name: backup
+
+  configuration:
+    configurationAsCode: {}
+    groovyScript: {}
 
 operator:
   replicaCount: 1

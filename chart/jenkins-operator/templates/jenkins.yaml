@@ -5,35 +5,41 @@ metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
 spec:
-  disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
-  {{- if .Values.backup.enabled }}
+  {{- with .Values.jenkins.configuration.configurationAsCode }}
+  configurationAsCode: {{ toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.jenkins.configuration.groovyScriots }}
+  groovyScripts: {{ toYaml . | nindent 8 }}
+  {{- end }}
+  {{- if .Values.jenkins.backup.enabled }}
   backup:
-    containerName: {{ .Values.backup.containerName }}
+    containerName: {{ .Values.jenkins.backup.containerName }}
     action:
       exec:
-        {{- with .Values.backup.backupCommand }}
+        {{- with .Values.jenkins.backup.backupCommand }}
         command: {{ toYaml . | nindent 8 }}
         {{- end }}
-    interval: {{ .Values.backup.interval }}
-    makeBackupBeforePodDeletion: {{ .Values.backup.makeBackupBeforePodDeletion }}
+    interval: {{ .Values.jenkins.backup.interval }}
+    makeBackupBeforePodDeletion: {{ .Values.jenkins.backup.makeBackupBeforePodDeletion }}
   restore:
-    containerName: {{ .Values.backup.containerName }}
+    containerName: {{ .Values.jenkins.backup.containerName }}
     action:
       exec:
-        {{- with .Values.backup.restoreCommand }}
+        {{- with .Values.jenkins.backup.restoreCommand }}
         command: {{ toYaml . | nindent 8 }}
         {{- end }}
-    {{- if .Values.backup.recoveryOnce }}
-    recoveryOnce: {{ .Values.backup.recoveryOnce }}
+    {{- if .Values.jenkins.backup.recoveryOnce }}
+    recoveryOnce: {{ .Values.jenkins.backup.recoveryOnce }}
     {{- end }}
+  {{- end }}
+  {{- with .Values.jenkins.notifications }}
+  notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
   {{- with .Values.jenkins.plugins }}
   plugins: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
-    {{- with .Values.jenkins.notifications }}
-    notifications: {{ toYaml . | nindent 4 }}
-    {{- end }}
+    disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
       - name: jenkins-master
         image: {{ .Values.jenkins.image }}
@@ -64,28 +70,20 @@ spec:
         {{- with .Values.jenkins.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}
-      {{- if .Values.backup.enabled }}
-      - name: {{ .Values.backup.containerName }}
-        env:
-          - name: BACKUP_DIR
-            value: {{ .Values.backup.backupDir }}
-          - name: JENKINS_HOME
-            value: {{ .Values.backup.jenkinsHome }}
-          - name: BACKUP_COUNT
-            value: {{ .Values.backup.backupCount | quote }}
-        image: {{ .Values.backup.image }}
+      {{- if .Values.jenkins.backup.enabled }}
+      - name: {{ .Values.jenkins.backup.containerName }}
+        {{- with .Values.jenkins.backup.env }}
+        env: {{- toYaml . | nindent 4 }}
+        {{- end }}
+        image: {{ .Values.jenkins.backup.image }}
         imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: {{ .Values.backup.jenkinsHome }}
-            name: jenkins-home
-          - mountPath: {{ .Values.backup.backupDir }}
-            name: backup
-    volumes:
-      - name: backup
-        persistentVolumeClaim:
-          claimName: {{ .Values.jenkins.name }}-backuppvc
+        {{- with .Values.jenkins.backup.volumeMounts }}
+        volumeMounts: {{- toYaml . | nindent 4 }}
+        {{- end }}
+    {{- with .Values.jenkins.backup.volumes }}
+    volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
-
+      {{- end }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}
