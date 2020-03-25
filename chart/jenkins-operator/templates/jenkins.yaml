@@ -5,6 +5,7 @@ metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
 spec:
+  disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
   {{- if .Values.backup.enabled }}
   backup:
     containerName: {{ .Values.backup.containerName }}

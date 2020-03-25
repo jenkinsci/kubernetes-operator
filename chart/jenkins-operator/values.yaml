@@ -2,17 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
-image:
-  repository: virtuslab/jenkins-operator
-  tag: v0.3.3
-  pullPolicy: IfNotPresent
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
 backup:
   enabled: false
   storageSize: 5Gi
@@ -42,6 +31,8 @@ jenkins:
   namespace: default
   image: jenkins/jenkins:lts
 
+  disableCSRFProtection: false
+
   imagePullSecrets: []
   notifications: []
   plugins: []
@@ -59,7 +50,19 @@ jenkins:
       cpu: 1
       memory: 500Mi
 
-resources: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+operator:
+  replicaCount: 1
+
+  image:
+    repository: virtuslab/jenkins-operator
+    tag: v0.3.3
+    pullPolicy: IfNotPresent
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
