@@ -4,6 +4,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: jenkins-backup
   namespace: {{ .Values.jenkins.namespace }}
+  labels:
+    app: jenkins-operator
+    jenkins-cr: {{ .Values.jenkins.name }}
 spec:
   storageClassName: {{ .Values.jenkins.backup.pvc.className }}
   accessModes:
