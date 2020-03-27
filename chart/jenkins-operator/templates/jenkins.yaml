@@ -5,11 +5,15 @@ metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
 spec:
-  {{- with .Values.jenkins.configuration.configurationAsCode }}
-  configurationAsCode: {{ toYaml . | nindent 8 }}
+  {{- if .Values.jenkins.configuration.configurationAsCode.content }}
+  configurationAsCode:
+    configurations:
+    - name: jenkins-operator-casc-user-configuration-{{ .Values.jenkins.name }}
   {{- end }}
-  {{- with .Values.jenkins.configuration.groovyScriots }}
-  groovyScripts: {{ toYaml . | nindent 8 }}
+  {{- if .Values.jenkins.configuration.groovyScript.content }}
+  groovyScripts:
+    configurations:
+    - name: jenkins-operator-gs-user-configuration-{{ .Values.jenkins.name }}
   {{- end }}
   {{- if .Values.jenkins.backup.enabled }}
   backup:
@@ -35,15 +39,15 @@ spec:
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.jenkins.plugins }}
-  plugins: {{ toYaml . | nindent 4 }}
-  {{- end }}
   master:
+    {{- with .Values.jenkins.plugins }}
+    plugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
-      - name: jenkins-master
+      - name:  {{ .Values.jenkins.name }}-master
         image: {{ .Values.jenkins.image }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
         {{- with .Values.jenkins.imagePullSecrets }}
         imagePullSecrets: {{ toYaml . | nindent 10 }}
         {{- end }}
@@ -72,18 +76,18 @@ spec:
         {{- end }}
       {{- if .Values.jenkins.backup.enabled }}
       - name: {{ .Values.jenkins.backup.containerName }}
-        {{- with .Values.jenkins.backup.env }}
-        env: {{- toYaml . | nindent 4 }}
-        {{- end }}
         image: {{ .Values.jenkins.backup.image }}
         imagePullPolicy: IfNotPresent
-        {{- with .Values.jenkins.backup.volumeMounts }}
-        volumeMounts: {{- toYaml . | nindent 4 }}
+        {{- with .Values.jenkins.backup.env }}
+        env: {{- toYaml . | nindent 8 }}
         {{- end }}
-    {{- with .Values.jenkins.backup.volumes }}
+        {{- with .Values.jenkins.backup.volumeMounts }}
+        volumeMounts: {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    {{- with .Values.jenkins.volumes }}
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
-      {{- end }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

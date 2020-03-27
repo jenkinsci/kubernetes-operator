@@ -9,7 +9,9 @@ jenkins:
   apiVersion: jenkins.io/v1alpha2
   name: jenkins
   namespace: default
+
   image: jenkins/jenkins:lts
+  imagePullPolicy: Always
 
   disableCSRFProtection: false
 
@@ -30,15 +32,20 @@ jenkins:
       cpu: 1
       memory: 500Mi
 
+  volumes:
+    - name: backup # PVC volume where backups will be stored
+      persistentVolumeClaim:
+        claimName: jenkins-backup
+
   backup:
-    enabled: false
-    image: virtuslab/jenkins-operator-backup-pvc:v0.0.7
+    enabled: true
+    image: virtuslab/jenkins-operator-backup-pvc:v0.0.8
 
     #backup container
     containerName: backup
     interval: 30 # how often make backup in seconds
     makeBackupBeforePodDeletion: true
-    #  recoveryOnce: 0
+#    recoveryOnce: 0
 
     backupCommand:
       - /home/user/bin/backup.sh
@@ -56,11 +63,8 @@ jenkins:
       - name: JENKINS_HOME
         value: /jenkins-home
       - name: BACKUP_COUNT
-        value: "3" # keep only the 2 most recent backups
-    volumes:
-      - name: backup # PVC volume where backups will be stored
-        persistentVolumeClaim:
-          claimName: jenkins-backup
+        value: "3" # keep only the 3 most recent backups
+
     volumeMounts:
       - name: jenkins-home
         mountPath: /jenkins-home # Jenkins home volume
@@ -68,16 +72,18 @@ jenkins:
         name: backup
 
   configuration:
-    configurationAsCode: {}
-    groovyScript: {}
+    configurationAsCode:
+      content: {}
+      secretName: ""
+    groovyScript:
+      content: {}
+      secretName: ""
 
 operator:
   replicaCount: 1
 
-  image:
-    repository: virtuslab/jenkins-operator
-    tag: v0.3.3
-    pullPolicy: IfNotPresent
+  image: virtuslab/jenkins-operator:v0.3.3
+  imagePullPolicy: IfNotPresent
 
   imagePullSecrets: []
   nameOverride: ""

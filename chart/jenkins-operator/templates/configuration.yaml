@@ -1,0 +1,20 @@
+{{ if .Values.jenkins.configuration.configurationAsCode.content }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-casc-user-configuration-{{ .Values.jenkins.name }}
+  namespace: {{ .Values.jenkins.namespace }}
+{{- with .Values.jenkins.configuration.configurationAsCode.content }}
+data: {{ toYaml . | nindent 2 }}
+{{- end }}
+{{ end }}
+{{ if .Values.jenkins.configuration.groovyScript.content }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-operator-gs-user-configuration-{{ .Values.jenkins.name }}
+  namespace: {{ .Values.jenkins.namespace }}
+{{- with .Values.jenkins.configuration.groovyScript.content }}
+data: {{ toYaml . | nindent 2 }}
+{{- end }}
+{{ end }}
