@@ -8,12 +8,16 @@ spec:
   {{- if .Values.jenkins.configuration.configurationAsCode.content }}
   configurationAsCode:
     configurations:
-    - name: jenkins-operator-casc-user-configuration-{{ .Values.jenkins.name }}
+    - name: jenkins-{{ .Values.jenkins.name }}-casc
+    secret:
+      name: {{ .Values.jenkins.configuration.configurationAsCode.secretName }}
   {{- end }}
-  {{- if .Values.jenkins.configuration.groovyScript.content }}
+  {{- if .Values.jenkins.configuration.groovyScripts.content }}
   groovyScripts:
     configurations:
-    - name: jenkins-operator-gs-user-configuration-{{ .Values.jenkins.name }}
+    - name: jenkins-{{ .Values.jenkins.name }}-groovyScripts
+    secret:
+      name: {{ .Values.jenkins.configuration.groovyScripts.secretName }}
   {{- end }}
   {{- if .Values.jenkins.backup.enabled }}
   backup:
@@ -40,6 +44,9 @@ spec:
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
+    {{- with .Values.jenkins.basePlugins }}
+    basePlugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
     {{- with .Values.jenkins.plugins }}
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}

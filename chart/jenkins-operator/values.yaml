@@ -17,7 +17,10 @@ jenkins:
 
   imagePullSecrets: []
   notifications: []
+
+  basePlugins: []
   plugins: []
+
   seedJobs: []
 #  - id: jenkins-operator
 #    targets: "cicd/jobs/*.jenkins"
@@ -75,7 +78,7 @@ jenkins:
     configurationAsCode:
       content: {}
       secretName: ""
-    groovyScript:
+    groovyScripts:
       content: {}
       secretName: ""
 
