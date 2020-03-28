@@ -1,4 +1,5 @@
 // +build !OpenShift
+// +build !OpenShiftOAuth
 
 package e2e
 
@@ -8,6 +9,9 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 )
 
+const skipTestSafeRestart = false
+
 func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
+	t.Log("Update Jenkins CR")
 	// do nothing
 }

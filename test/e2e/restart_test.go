@@ -29,6 +29,9 @@ func TestJenkinsMasterPodRestart(t *testing.T) {
 }
 
 func TestSafeRestart(t *testing.T) {
+	if skipTestSafeRestart {
+		t.Skip()
+	}
 	t.Parallel()
 	namespace, ctx := setupTest(t)
 	// Deletes test namespace

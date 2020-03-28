@@ -11,7 +11,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+const skipTestSafeRestart = false
+
 func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
+	t.Log("Update Jenkins CR: OpenShift")
+
 	jenkins.Spec.Master.Containers[0].Image = "quay.io/openshift/origin-jenkins"
 	jenkins.Spec.Master.Containers[0].Command = []string{
 		"bash",

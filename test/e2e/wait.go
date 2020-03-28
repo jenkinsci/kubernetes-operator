@@ -58,7 +58,7 @@ func waitForJobToFinish(t *testing.T, job *gojenkins.Job, tick, timeout time.Dur
 
 func waitForJenkinsBaseConfigurationToComplete(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Waiting for Jenkins base configuration to complete")
-	_, err := WaitUntilJenkinsConditionSet(retryInterval, 150, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
+	_, err := WaitUntilJenkinsConditionSet(retryInterval, 170, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
 		t.Logf("Current Jenkins status: '%+v', error '%s'", jenkins.Status, err)
 		return err == nil && jenkins.Status.BaseConfigurationCompletedTime != nil
 	})
@@ -96,7 +96,7 @@ func waitForRecreateJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) {
 
 func waitForJenkinsUserConfigurationToComplete(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Waiting for Jenkins user configuration to complete")
-	_, err := WaitUntilJenkinsConditionSet(retryInterval, 75, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
+	_, err := WaitUntilJenkinsConditionSet(retryInterval, 110, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
 		t.Logf("Current Jenkins status: '%+v', error '%s'", jenkins.Status, err)
 		return err == nil && jenkins.Status.UserConfigurationCompletedTime != nil
 	})

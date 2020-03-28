@@ -183,6 +183,7 @@ func createJenkinsWithBackupAndRestoreConfigured(t *testing.T, name, namespace s
 			},
 		},
 	}
+	updateJenkinsCR(t, jenkins)
 
 	t.Logf("Jenkins CR %+v", *jenkins)
 	err := framework.Global.Client.Create(context.TODO(), jenkins, nil)

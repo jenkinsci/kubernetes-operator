@@ -6,15 +6,20 @@ import (
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/client"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration"
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
+
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/client-go/kubernetes"
 )
 
 const (
@@ -44,37 +49,6 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.Pod {
 		t.Fatalf("Jenkins pod not found, pod list: %+v", podList)
 	}
 	return &podList.Items[0]
-}
-
-func createJenkinsAPIClient(jenkins *v1alpha2.Jenkins, hostname string, port int) (jenkinsclient.Jenkins, error) {
-	adminSecret := &corev1.Secret{}
-	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
-	if err := framework.Global.Client.Get(context.TODO(), namespaceName, adminSecret); err != nil {
-		return nil, err
-	}
-
-	var service corev1.Service
-
-	err := framework.Global.Client.Get(context.TODO(), types.NamespacedName{
-		Namespace: jenkins.Namespace,
-		Name:      resources.GetJenkinsHTTPServiceName(jenkins),
-	}, &service)
-
-	if err != nil {
-		return nil, err
-	}
-
-	jenkinsAPIURL := jenkinsclient.JenkinsAPIConnectionSettings{
-		Hostname:    hostname,
-		Port:        port,
-		UseNodePort: false,
-	}.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
-
-	return jenkinsclient.NewUserAndPasswordAuthorization(
-		jenkinsAPIURL,
-		string(adminSecret.Data[resources.OperatorCredentialsSecretUserNameKey]),
-		string(adminSecret.Data[resources.OperatorCredentialsSecretTokenKey]),
-	)
 }
 
 func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode) *v1alpha2.Jenkins {
@@ -178,7 +152,49 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 	return jenkins
 }
 
+func createJenkinsAPIClientFromServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins, jenkinsAPIURL string) (jenkinsclient.Jenkins, error) {
+	t.Log("Creating Jenkins API client from service account")
+	podName := resources.GetJenkinsMasterPodName(*jenkins)
+
+	clientSet, err := kubernetes.NewForConfig(framework.Global.KubeConfig)
+	if err != nil {
+		return nil, err
+	}
+	config := configuration.Configuration{Jenkins: jenkins, ClientSet: *clientSet, Config: framework.Global.KubeConfig}
+	r := base.New(config, nil, jenkinsclient.JenkinsAPIConnectionSettings{})
+
+	token, _, err := r.Configuration.Exec(podName, resources.JenkinsMasterContainerName, []string{"cat", "/var/run/secrets/kubernetes.io/serviceaccount/token"})
+	if err != nil {
+		return nil, err
+	}
+
+	return jenkinsclient.NewBearerTokenAuthorization(jenkinsAPIURL, token.String())
+}
+
+func createJenkinsAPIClientFromSecret(t *testing.T, jenkins *v1alpha2.Jenkins, jenkinsAPIURL string) (jenkinsclient.Jenkins, error) {
+	t.Log("Creating Jenkins API client from secret")
+
+	adminSecret := &corev1.Secret{}
+	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
+	if err := framework.Global.Client.Get(context.TODO(), namespaceName, adminSecret); err != nil {
+		return nil, err
+	}
+
+	return jenkinsclient.NewUserAndPasswordAuthorization(
+		jenkinsAPIURL,
+		string(adminSecret.Data[resources.OperatorCredentialsSecretUserNameKey]),
+		string(adminSecret.Data[resources.OperatorCredentialsSecretTokenKey]),
+	)
+}
+
 func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins, namespace string) (jenkinsclient.Jenkins, func()) {
+	var service corev1.Service
+	err := framework.Global.Client.Get(context.TODO(), types.NamespacedName{
+		Namespace: jenkins.Namespace,
+		Name:      resources.GetJenkinsHTTPServiceName(jenkins),
+	}, &service)
+	require.NoError(t, err)
+
 	podName := resources.GetJenkinsMasterPodName(*jenkins)
 	port, cleanUpFunc, waitFunc, portForwardFunc, err := setupPortForwardToPod(t, namespace, podName, int(constants.DefaultHTTPPortInt32))
 	if err != nil {
@@ -186,7 +202,20 @@ func verifyJenkinsAPIConnection(t *testing.T, jenkins *v1alpha2.Jenkins, namespa
 	}
 	go portForwardFunc()
 	waitFunc()
-	client, err := createJenkinsAPIClient(jenkins, "localhost", port)
+
+	jenkinsAPIURL := jenkinsclient.JenkinsAPIConnectionSettings{
+		Hostname:    "localhost",
+		Port:        port,
+		UseNodePort: false,
+	}.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
+
+	var client jenkinsclient.Jenkins
+	if jenkins.Spec.JenkinsAPISettings.AuthorizationStrategy == v1alpha2.ServiceAccountAuthorizationStrategy {
+		client, err = createJenkinsAPIClientFromServiceAccount(t, jenkins, jenkinsAPIURL)
+	} else {
+		client, err = createJenkinsAPIClientFromSecret(t, jenkins, jenkinsAPIURL)
+	}
+
 	if err != nil {
 		defer cleanUpFunc()
 		t.Fatal(err)
