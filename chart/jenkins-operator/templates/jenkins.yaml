@@ -9,22 +9,22 @@ spec:
   configurationAsCode:
     configurations:
     - name: jenkins-{{ .Values.jenkins.name }}-casc
-        secret:
-      {{- if .Values.jenkins.configuration.configurationAsCode.secretRefName }}
-      name: {{ .Values.jenkins.configuration.configurationAsCode.secretRefName }}
-      {{ else if .Values.jenkins.configuration.configurationAsCode.secretData }}
-      name: jenkins-{{ .Values.jenkins.name }}-casc
-  {{- end }}
+    secret:
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{ else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
+      {{- end }}
   {{- end }}
   {{- if .Values.jenkins.configuration.groovyScripts.content }}
   groovyScripts:
     configurations:
     - name: jenkins-{{ .Values.jenkins.name }}-gs
     secret:
-      {{- if .Values.jenkins.configuration.groovyScripts.secretRefName }}
-      name: {{ .Values.jenkins.configuration.groovyScripts.secretRefName }}
-      {{ else if .Values.jenkins.configuration.groovyScripts.secretData }}
-      name: jenkins-{{ .Values.jenkins.name }}-gs
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{ else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
       {{- end }}
   {{- end }}
   {{- if .Values.jenkins.backup.enabled }}
