@@ -77,10 +77,12 @@ jenkins:
   configuration:
     configurationAsCode:
       content: {}
-      secretName: ""
+      secretRefName: ""
+      secretData: {}
     groovyScripts:
       content: {}
-      secretName: ""
+      secretRefName: ""
+      secretData: {}
 
 operator:
   replicaCount: 1
