@@ -1,13 +1,14 @@
-# Jenkins Custom Resource (CR) Helm chart
+# Jenkins Operator Helm chart
 
-# jenkins configures pod instance
+# Jenkins instance configuration
 jenkins:
-  # enabled can enable or disable the jenkins instance
-  # Set to false if you have configured CR already and/or you want to deploy only operator
+  # enabled can enable or disable the Jenkins instance
+  # Set to false if you have configured CR already and/or you want to deploy an operator only
   enabled: true
 
   # apiVersion is version of the CR manifest template
   # The recommended and default value is "jenkins.io/v1alpha2"
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/ for more migration guide
   apiVersion: jenkins.io/v1alpha2
 
   # name of resource
@@ -19,7 +20,7 @@ jenkins:
   # Create new namespace for jenkins (called e.g. jenkins)
   namespace: default
 
-  # image used by resource
+  # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
   image: jenkins/jenkins:lts
@@ -55,7 +56,7 @@ jenkins:
   #             name: <secret_name>
   #           key: <key>
   #
-  # # Teams
+  # # Microsoft Teams
   # kind: Jenkins
   # spec:
   #   master:
@@ -89,6 +90,7 @@ jenkins:
   notifications: []
 
   # basePlugins are plugins installed by operator
+  # Shouldn't contain plugins defined by user
   # You can change their versions here
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins for more details
   #
@@ -137,7 +139,7 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
-  # resources used by Jenkins
+  # Resource limit/request for Jenkins
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
     limits:
@@ -234,7 +236,7 @@ jenkins:
 operator:
   replicaCount: 1
 
-  # image used as operator
+  # image is the name (and tag) of the Jenkins Operator image
   image: virtuslab/jenkins-operator:v0.3.3
 
   # imagePullPolicy defines policy for pulling images
@@ -243,10 +245,10 @@ operator:
   # imagePullSecrets is used if you want to pull images from private repository
   imagePullSecrets: []
 
-  # nameOverride overrides the deployment name
+  # nameOverride overrides the app name
   nameOverride: ""
 
-  # nameOverride overrides the deployment name
+  # fullnameOverride overrides the deployment name
   fullnameOverride: ""
 
   resources: {}
