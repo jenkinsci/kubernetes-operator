@@ -6,7 +6,7 @@ jenkins:
   # Set to false if you have configured CR already and/or you want to deploy an operator only
   enabled: true
 
-  # apiVersion is version of the CR manifest template
+  # apiVersion is the version of the CR manifest
   # The recommended and default value is "jenkins.io/v1alpha2"
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/ for more migration guide
   apiVersion: jenkins.io/v1alpha2
@@ -28,7 +28,7 @@ jenkins:
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: Always
 
-  # disableCSRFProtection can enable or disable operatoor built-in CSRF protection
+  # disableCSRFProtection can enable or disable operator built-in CSRF protection
   # Set it to true if you are using OpenShift Jenkins Plugin
   # See https://github.com/jenkinsci/kubernetes-operator/pull/193 for more info
   disableCSRFProtection: false
@@ -39,57 +39,9 @@ jenkins:
 
   # notifications is feature that notify user about Jenkins reconcilation status
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/ for more info
-  #
-  # Example:
-  #
-  # # Slack
-  # kind: Jenkins
-  # spec:
-  #   master:
-  #     notifications:
-  #     - loggingLevel: info
-  #       verbose: true
-  #       name: <name>
-  #       slack:
-  #         webHookURLSecretKeySelector:
-  #           secret:
-  #             name: <secret_name>
-  #           key: <key>
-  #
-  # # Microsoft Teams
-  # kind: Jenkins
-  # spec:
-  #   master:
-  #     notifications:
-  #     - loggingLevel: info
-  #       verbose: true
-  #       name: <name>
-  #       teams:
-  #         webHookURLSecretKeySelector:
-  #           secret:
-  #             name: <secret_name>
-  #           key: <key>
-  #
-  # # Mailgun
-  # kind: Jenkins
-  # spec:
-  #   master:
-  #     notifications:
-  #     - loggingLevel: info
-  #       verbose: true
-  #       name: <name>
-  #       mailgun:
-  #         domain: <domain>
-  #         apiKeySecretKeySelector:
-  #           secret:
-  #             name: <secret_name>
-  #           key: <key>
-  #         recipient: <your_email>
-  #         from: <mailgun_email>
-  #
   notifications: []
 
-  # basePlugins are plugins installed by operator
+  # basePlugins are plugins installed and required by the operator
   # Shouldn't contain plugins defined by user
   # You can change their versions here
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins for more details
@@ -115,7 +67,7 @@ jenkins:
   #   version: 0.12.1
   basePlugins: []
 
-  # plugins are plugins installed by user
+  # plugins are plugins required by the user
   # You can define plugins here
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins for more details
   #
@@ -199,7 +151,7 @@ jenkins:
       className: ""
 
     # env contains container environment variables
-    # Operator handles these variables:
+    # PVC backup provider handles these variables:
     # BACKUP_DIR - path for storing backup files (default: "/backup")
     # JENKINS_HOME - path to jenkins home (default: "/jenkins-home")
     # BACKUP_COUNT - define how much recent backups will be kept
