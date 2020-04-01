@@ -1,32 +1,144 @@
-# Default values for jenkins-operator.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Jenkins Custom Resource (CR) Helm chart
 
-
+# jenkins configures pod instance
 jenkins:
+  # enabled can enable or disable the jenkins instance
+  # Set to false if you have configured CR already and/or you want to deploy only operator
   enabled: true
 
+  # apiVersion is version of the CR manifest template
+  # The recommended and default value is "jenkins.io/v1alpha2"
   apiVersion: jenkins.io/v1alpha2
+
+  # name of resource
+  # The pod name will be jenkins-<name> (name will be set as suffix)
   name: jenkins
+
+  # namespace is the namespace where the resources will be deployed
+  # It's not recommended to use default namespace
+  # Create new namespace for jenkins (called e.g. jenkins)
   namespace: default
 
+  # image used by resource
+  # Default: jenkins/jenkins:lts
+  # It's recommended to use LTS (tag: "lts") version
   image: jenkins/jenkins:lts
+
+  # imagePullPolicy defines policy for pulling images
   imagePullPolicy: Always
 
+  # disableCSRFProtection can enable or disable operatoor built-in CSRF protection
+  # Set it to true if you are using OpenShift Jenkins Plugin
+  # See https://github.com/jenkinsci/kubernetes-operator/pull/193 for more info
   disableCSRFProtection: false
 
+  # imagePullSecrets is used if you want to pull images from private repository
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories for more info
   imagePullSecrets: []
+
+  # notifications is feature that notify user about Jenkins reconcilation status
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/ for more info
+  #
+  # Example:
+  #
+  # # Slack
+  # kind: Jenkins
+  # spec:
+  #   master:
+  #     notifications:
+  #     - loggingLevel: info
+  #       verbose: true
+  #       name: <name>
+  #       slack:
+  #         webHookURLSecretKeySelector:
+  #           secret:
+  #             name: <secret_name>
+  #           key: <key>
+  #
+  # # Teams
+  # kind: Jenkins
+  # spec:
+  #   master:
+  #     notifications:
+  #     - loggingLevel: info
+  #       verbose: true
+  #       name: <name>
+  #       teams:
+  #         webHookURLSecretKeySelector:
+  #           secret:
+  #             name: <secret_name>
+  #           key: <key>
+  #
+  # # Mailgun
+  # kind: Jenkins
+  # spec:
+  #   master:
+  #     notifications:
+  #     - loggingLevel: info
+  #       verbose: true
+  #       name: <name>
+  #       mailgun:
+  #         domain: <domain>
+  #         apiKeySecretKeySelector:
+  #           secret:
+  #             name: <secret_name>
+  #           key: <key>
+  #         recipient: <your_email>
+  #         from: <mailgun_email>
+  #
   notifications: []
 
+  # basePlugins are plugins installed by operator
+  # You can change their versions here
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins for more details
+  #
+  # Example:
+  #
+  # basePlugins:
+  # - name: kubernetes
+  #   version: 1.18.3
+  # - name: workflow-job
+  #   version: "2.34"
+  # - name: workflow-aggregator
+  #   version: "2.6"
+  # - name: git
+  #   version: 3.12.0
+  # - name: job-dsl
+  #   version: "1.76"
+  # - name: configuration-as-code
+  #   version: "1.29"
+  # - name: configuration-as-code-support
+  #   version: "1.19"
+  # - name: kubernetes-credentials-provider
+  #   version: 0.12.1
   basePlugins: []
+
+  # plugins are plugins installed by user
+  # You can define plugins here
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins for more details
+  #
+  # Example:
+  #
+  # plugins:
+  # - name: simple-theme-plugin
+  #   version: 0.5.1
   plugins: []
 
+  # seedJobs is placeholder for jenkins seed jobs
+  # For seed job creation tutorial, check https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs for additional info
+  # Example:
+  #
+  # seedJobs:
+  #  - id: jenkins-operator
+  #    targets: "cicd/jobs/*.jenkins"
+  #    description: "Jenkins Operator repository"
+  #    repositoryBranch: master
+  #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
-#  - id: jenkins-operator
-#    targets: "cicd/jobs/*.jenkins"
-#    description: "Jenkins Operator repository"
-#    repositoryBranch: master
-#    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+
+  # resources used by Jenkins
+  # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
     limits:
       cpu: 1500m
@@ -35,31 +147,60 @@ jenkins:
       cpu: 1
       memory: 500Mi
 
+  # volumes used by Jenkins
+  # By default, we are only using backup
   volumes:
     - name: backup # PVC volume where backups will be stored
       persistentVolumeClaim:
         claimName: jenkins-backup
 
+  # backup is section for configuring operator's backup feature
+  # By default backup feature is enabled and pre-configured
+  # This section simplifies the configuration described here: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/
+  # For customization tips see https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/
   backup:
+    # enabled is enable/disable switch for backup feature
+    # By default the feature is enabled
     enabled: true
+
+    # image used by backup feature
+    # By default using prebuilt backup PVC image by VirtusLab
     image: virtuslab/jenkins-operator-backup-pvc:v0.0.8
 
-    #backup container
+    # containerName is backup container name
     containerName: backup
-    interval: 30 # how often make backup in seconds
-    makeBackupBeforePodDeletion: true
-#    recoveryOnce: 0
 
+    # interval defines how often make backup in seconds
+    interval: 30
+
+    # makeBackupBeforePodDeletion when enabled will make backup before pod deletion
+    makeBackupBeforePodDeletion: true
+
+    # backupCommand is backup container command
     backupCommand:
       - /home/user/bin/backup.sh
+
+    # restoreCommand is backup restore command
     restoreCommand:
       - /home/user/bin/restore.sh
 
+    # pvc is Persistent Volume Claim Kubernetes resource
     pvc:
+      # enabled is enable/disable switch for PVC
       enabled: true
+
+      # size is size of PVC
       size: 5Gi
+
+      # className is storageClassName for PVC
+      # See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1 for more details
       className: ""
 
+    # env contains container environment variables
+    # Operator handles these variables:
+    # BACKUP_DIR - path for storing backup files (default: "/backup")
+    # JENKINS_HOME - path to jenkins home (default: "/jenkins-home")
+    # BACKUP_COUNT - define how much recent backups will be kept
     env:
       - name: BACKUP_DIR
         value: /backup
@@ -68,28 +209,44 @@ jenkins:
       - name: BACKUP_COUNT
         value: "3" # keep only the 3 most recent backups
 
+    # volumeMounts holds the mount points for volumes
     volumeMounts:
       - name: jenkins-home
         mountPath: /jenkins-home # Jenkins home volume
       - mountPath: /backup # backup volume
         name: backup
 
+  # configuration is section where we can configure Jenkins instance
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/ for details
   configuration:
     configurationAsCode:
       content: {}
     groovyScripts:
       content: {}
+
+    # secretRefName of existing secret (previously created)
     secretRefName: ""
+
+    # secretData creates new secret if secretRefName is empty and fills with data provided in secretData
     secretData: {}
 
+# operator is section for configuring operator deployment
 operator:
   replicaCount: 1
 
+  # image used as operator
   image: virtuslab/jenkins-operator:v0.3.3
+
+  # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
 
+  # imagePullSecrets is used if you want to pull images from private repository
   imagePullSecrets: []
+
+  # nameOverride overrides the deployment name
   nameOverride: ""
+
+  # nameOverride overrides the deployment name
   fullnameOverride: ""
 
   resources: {}
