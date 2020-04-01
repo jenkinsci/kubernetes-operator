@@ -30,44 +30,31 @@
         
         
 
-
-
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document explains how to install the Go tools used by the development process.&lt;/p&gt;
 
 &lt;/div&gt;
 
-
 &lt;h2 id=&#34;configure-environment-variables&#34;&gt;Configure environment variables&lt;/h2&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;GOPATH&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;/home/go &lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# example value&lt;/span&gt;
 &lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;GOROOT&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;/usr/lib/go-1.12 &lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# example value&lt;/span&gt;
-&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;PATH&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$GOPATH&lt;/span&gt;/bin:&lt;span style=&#34;color:#000&#34;&gt;$PATH&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2 id=&#34;goimports&#34;&gt;goimports&lt;/h2&gt;
-
+&lt;span style=&#34;color:#204a87&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#000&#34;&gt;PATH&lt;/span&gt;&lt;span style=&#34;color:#ce5c00;font-weight:bold&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#000&#34;&gt;$GOPATH&lt;/span&gt;/bin:&lt;span style=&#34;color:#000&#34;&gt;$PATH&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;goimports&#34;&gt;goimports&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;go get golang.org/x/tools/cmd/goimports
 cd $GOPATH/src/golang.org/x/tools/cmd/goimports
 go build
 go install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;golint&#34;&gt;golint&lt;/h2&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;golint&#34;&gt;golint&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;go get -u golang.org/x/lint/golint
 cd  $GOPATH/src/golang.org/x/lint/golint
 go build
 go install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;checkmake&#34;&gt;checkmake&lt;/h2&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;checkmake&#34;&gt;checkmake&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;go get github.com/mrtazz/checkmake
 cd $GOPATH/src/github.com/mrtazz/checkmake
 go build
 go install
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;staticcheck&#34;&gt;staticcheck&lt;/h2&gt;
-
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;staticcheck&#34;&gt;staticcheck&lt;/h2&gt;
 &lt;pre&gt;&lt;code&gt;mkdir -p $GOPATH/src/github.com/dominikh/
 cd $GOPATH/src/github.com/dominikh/
 git clone https://github.com/dominikh/go-tools.git
@@ -75,7 +62,6 @@ cd  $GOPATH/src/github.com/dominikh/go-tools/staticcheck
 go build
 go install
 &lt;/code&gt;&lt;/pre&gt;
-
       </description>
     </item>
     

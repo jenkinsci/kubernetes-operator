@@ -30,18 +30,13 @@
         
         
 
-
-
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document describes a getting started guide for &lt;strong&gt;Jenkins Operator&lt;/strong&gt; &lt;code&gt;v0.3.x&lt;/code&gt; and an additional configuration.&lt;/p&gt;
 
 &lt;/div&gt;
 
-
 &lt;h2 id=&#34;first-steps&#34;&gt;First Steps&lt;/h2&gt;
-
 &lt;p&gt;Prepare your Kubernetes cluster and set up your &lt;code&gt;kubectl&lt;/code&gt; access.&lt;/p&gt;
-
 &lt;p&gt;Once you have running Kubernetes cluster you can focus on installing &lt;strong&gt;Jenkins Operator&lt;/strong&gt; according to the &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/installation/&#34;&gt;Installation&lt;/a&gt; guide.&lt;/p&gt;
 
       </description>
@@ -58,18 +53,13 @@
         
         
 
-
-
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document describes a getting started guide for &lt;strong&gt;Jenkins Operator&lt;/strong&gt; &lt;code&gt;v0.1.x&lt;/code&gt; and an additional configuration.&lt;/p&gt;
 
 &lt;/div&gt;
 
-
 &lt;h2 id=&#34;first-steps&#34;&gt;First Steps&lt;/h2&gt;
-
 &lt;p&gt;Prepare your Kubernetes cluster and set up your &lt;code&gt;kubectl&lt;/code&gt; access.&lt;/p&gt;
-
 &lt;p&gt;Once you have running Kubernetes cluster you can focus on installing &lt;strong&gt;Jenkins Operator&lt;/strong&gt; according to the &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/installation/&#34;&gt;Installation&lt;/a&gt; guide.&lt;/p&gt;
 
       </description>
@@ -86,18 +76,13 @@
         
         
 
-
-
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document describes a getting started guide for &lt;strong&gt;Jenkins Operator&lt;/strong&gt; &lt;code&gt;v0.2.x&lt;/code&gt; and an additional configuration.&lt;/p&gt;
 
 &lt;/div&gt;
 
-
 &lt;h2 id=&#34;first-steps&#34;&gt;First Steps&lt;/h2&gt;
-
 &lt;p&gt;Prepare your Kubernetes cluster and set up your &lt;code&gt;kubectl&lt;/code&gt; access.&lt;/p&gt;
-
 &lt;p&gt;Once you have running Kubernetes cluster you can focus on installing &lt;strong&gt;Jenkins Operator&lt;/strong&gt; according to the &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/installation/&#34;&gt;Installation&lt;/a&gt; guide.&lt;/p&gt;
 
       </description>
