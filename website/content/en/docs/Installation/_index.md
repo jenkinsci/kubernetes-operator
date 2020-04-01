@@ -30,6 +30,10 @@ kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator
 
 ## Deploy Jenkins Operator
 
+There are two ways to deploy the Jenkins Operator.
+
+### Using YAML's
+
 Apply Service Account and RBAC roles:
 
 ```bash
@@ -43,3 +47,14 @@ kubectl get pods -w
 ```
 
 Now **Jenkins Operator** should be up and running in the `default` namespace.
+
+### Using Helm Chart
+
+There is a option to use Helm to install the operator. It requires the Helm 3+ for deployment.
+
+To install, you need only to type these commands:
+
+```bash
+$ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+$ helm install jenkins/jenkins-operator
+```
