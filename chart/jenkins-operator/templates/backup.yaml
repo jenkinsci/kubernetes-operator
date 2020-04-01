@@ -1,0 +1,17 @@
+{{ if .Values.jenkins.backup.pvc.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-backup
+  namespace: {{ .Values.jenkins.namespace }}
+  labels:
+    app: jenkins-operator
+    jenkins-cr: {{ .Values.jenkins.name }}
+spec:
+  storageClassName: {{ .Values.jenkins.backup.pvc.className }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.jenkins.backup.pvc.size }}
+{{ end }}

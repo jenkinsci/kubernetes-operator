@@ -1,0 +1,109 @@
+{{ if .Values.jenkins.enabled }}
+apiVersion: {{ .Values.jenkins.apiVersion }}
+kind: Jenkins
+metadata:
+  name: {{ .Values.jenkins.name }}
+  namespace: {{ .Values.jenkins.namespace }}
+spec:
+  {{- if .Values.jenkins.configuration.configurationAsCode.content }}
+  configurationAsCode:
+    configurations:
+    - name: jenkins-{{ .Values.jenkins.name }}-casc
+    secret:
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{ else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
+      {{- end }}
+  {{- end }}
+  {{- if .Values.jenkins.configuration.groovyScripts.content }}
+  groovyScripts:
+    configurations:
+    - name: jenkins-{{ .Values.jenkins.name }}-gs
+    secret:
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{ else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
+      {{- end }}
+  {{- end }}
+  {{- if .Values.jenkins.backup.enabled }}
+  backup:
+    containerName: {{ .Values.jenkins.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.jenkins.backup.backupCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    interval: {{ .Values.jenkins.backup.interval }}
+    makeBackupBeforePodDeletion: {{ .Values.jenkins.backup.makeBackupBeforePodDeletion }}
+  restore:
+    containerName: {{ .Values.jenkins.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.jenkins.backup.restoreCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    {{- if .Values.jenkins.backup.recoveryOnce }}
+    recoveryOnce: {{ .Values.jenkins.backup.recoveryOnce }}
+    {{- end }}
+  {{- end }}
+  {{- with .Values.jenkins.notifications }}
+  notifications: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  master:
+    {{- with .Values.jenkins.basePlugins }}
+    basePlugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.jenkins.plugins }}
+    plugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
+    disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
+    containers:
+      - name:  {{ .Values.jenkins.name }}-master
+        image: {{ .Values.jenkins.image }}
+        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
+        {{- with .Values.jenkins.imagePullSecrets }}
+        imagePullSecrets: {{ toYaml . | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 12
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 80
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        {{- with .Values.jenkins.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }}
+      {{- if .Values.jenkins.backup.enabled }}
+      - name: {{ .Values.jenkins.backup.containerName }}
+        image: {{ .Values.jenkins.backup.image }}
+        imagePullPolicy: IfNotPresent
+        {{- with .Values.jenkins.backup.env }}
+        env: {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.jenkins.backup.volumeMounts }}
+        volumeMounts: {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    {{- with .Values.jenkins.volumes }}
+    volumes: {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.jenkins.seedJobs }}
+  seedJobs: {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

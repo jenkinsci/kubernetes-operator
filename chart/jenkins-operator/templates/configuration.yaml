@@ -1,0 +1,20 @@
+{{ if .Values.jenkins.configuration.configurationAsCode.content }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-{{ .Values.jenkins.name }}-casc
+  namespace: {{ .Values.jenkins.namespace }}
+{{- with .Values.jenkins.configuration.configurationAsCode.content }}
+data: {{ toYaml . | nindent 2 }}
+{{- end }}
+{{ end }}
+{{ if .Values.jenkins.configuration.groovyScripts.content }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-{{ .Values.jenkins.name }}-gs
+  namespace: {{ .Values.jenkins.namespace }}
+{{- with .Values.jenkins.configuration.groovyScripts.content }}
+data: {{ toYaml . | nindent 2 }}
+{{- end }}
+{{ end }}

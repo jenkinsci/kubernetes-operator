@@ -1,8 +1,0 @@
-{{ if .Values.jenkins.enabled }}
-apiVersion: {{ .Values.jenkins.apiVersion }}
-kind: Jenkins
-metadata:
-  name: {{ .Values.jenkins.name }}
-spec:
-  {{- toYaml .Values.jenkins.spec | nindent 4 }}
-{{- end }}
