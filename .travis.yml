@@ -40,6 +40,10 @@ jobs:
       name: "Jenkins Operator - unit tests"
       script:
         - travis_wait 15 make verify
+    - stage: helm
+      name: "Helm Chart - lint"
+      script:
+        - ./chart/tests.sh
     - stage: e2e
       name: "Backup PVC - e2e"
       script:
