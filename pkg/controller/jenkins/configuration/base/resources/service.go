@@ -2,9 +2,9 @@ package resources
 
 import (
 	"fmt"
-
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
+	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
 
 	corev1 "k8s.io/api/core/v1"
 
@@ -43,33 +43,56 @@ func GetJenkinsSlavesServiceName(jenkins *v1alpha2.Jenkins) string {
 }
 
 // GetJenkinsHTTPServiceFQDN returns Kubernetes service FQDN used for expose Jenkins HTTP endpoint
-func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins) string {
-	clusterDomain := getClusterDomain()
+func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
+	clusterDomain, err := getClusterDomain()
+	if err != nil {
+		return "", err
+	}
 
-	return fmt.Sprintf("%s-http-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain)
+	return fmt.Sprintf("%s-http-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
 }
 
 // GetJenkinsSlavesServiceFQDN returns Kubernetes service FQDN used for expose Jenkins slave endpoint
-func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins) string {
-	clusterDomain := getClusterDomain()
+func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
+	clusterDomain, err := getClusterDomain()
+	if err != nil {
+		return "", err
+	}
 
-	return fmt.Sprintf("%s-slave-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain)
+	return fmt.Sprintf("%s-slave-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
 }
 
 // GetClusterDomain returns Kubernetes cluster domain, default to "cluster.local"
-func getClusterDomain() string {
-	apiSvc := "kubernetes.default.svc"
-
+func getClusterDomain() (string, error) {
 	clusterDomain := "cluster.local"
+
+	if ok, err := isRunningInCluster(); !ok {
+		return clusterDomain, nil
+	} else if err != nil {
+		return "", nil
+	}
+
+	apiSvc := "kubernetes.default.svc"
 
 	cname, err := net.LookupCNAME(apiSvc)
 	if err != nil {
-		return clusterDomain
+		return "", err
 	}
 
 	clusterDomain = strings.TrimPrefix(cname, "kubernetes.default.svc")
 	clusterDomain = strings.TrimPrefix(clusterDomain, ".")
 	clusterDomain = strings.TrimSuffix(clusterDomain, ".")
 
-	return clusterDomain
+	return clusterDomain, nil
+}
+
+func isRunningInCluster() (bool, error) {
+	_, err := k8sutil.GetOperatorNamespace()
+	if err != nil {
+		if err == k8sutil.ErrNoNamespace || err == k8sutil.ErrRunLocal {
+			return false, nil
+		}
+		return true, nil
+	}
+	return false, err
 }

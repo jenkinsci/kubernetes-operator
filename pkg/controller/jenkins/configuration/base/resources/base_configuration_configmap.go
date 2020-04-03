@@ -178,8 +178,16 @@ func GetBaseConfigurationConfigMapName(jenkins *v1alpha2.Jenkins) string {
 }
 
 // NewBaseConfigurationConfigMap builds Kubernetes config map used to base configuration
-func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins) *corev1.ConfigMap {
+func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins) (*corev1.ConfigMap, error) {
 	meta.Name = GetBaseConfigurationConfigMapName(jenkins)
+	jenkinsServiceFQDN, err := GetJenkinsHTTPServiceFQDN(jenkins)
+	if err != nil {
+		return nil, err
+	}
+	jenkinsSlavesServiceFQDN, err := GetJenkinsSlavesServiceFQDN(jenkins)
+	if err != nil {
+		return nil, err
+	}
 	groovyScriptsMap := map[string]string{
 		basicSettingsGroovyScriptName:             fmt.Sprintf(basicSettingsFmt, constants.DefaultAmountOfExecutors),
 		enableCSRFGroovyScriptName:                enableCSRF,
@@ -188,8 +196,8 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		disableInsecureFeaturesGroovyScriptName:   disableInsecureFeatures,
 		configureKubernetesPluginGroovyScriptName: fmt.Sprintf(configureKubernetesPluginFmt,
 			jenkins.ObjectMeta.Namespace,
-			fmt.Sprintf("http://%s:%d", GetJenkinsHTTPServiceFQDN(jenkins), jenkins.Spec.Service.Port),
-			fmt.Sprintf("%s:%d", GetJenkinsSlavesServiceFQDN(jenkins), jenkins.Spec.SlaveService.Port),
+			fmt.Sprintf("http://%s:%d", jenkinsServiceFQDN, jenkins.Spec.Service.Port),
+			fmt.Sprintf("%s:%d", jenkinsSlavesServiceFQDN, jenkins.Spec.SlaveService.Port),
 		),
 		configureViewsGroovyScriptName:              configureViews,
 		disableJobDslScriptApprovalGroovyScriptName: disableJobDSLScriptApproval,
@@ -201,5 +209,5 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		TypeMeta:   buildConfigMapTypeMeta(),
 		ObjectMeta: meta,
 		Data:       groovyScriptsMap,
-	}
+	}, nil
 }

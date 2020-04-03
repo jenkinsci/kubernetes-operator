@@ -354,7 +354,10 @@ func (s SeedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cli
 		return err
 	}
 
-	deployment := agentDeployment(jenkinsManifest, namespace, agentName, secret)
+	deployment, err := agentDeployment(jenkinsManifest, namespace, agentName, secret)
+	if err != nil {
+		return err
+	}
 
 	err = k8sClient.Create(context.TODO(), deployment)
 	if apierrors.IsAlreadyExists(err) {
@@ -373,7 +376,15 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 	return fmt.Sprintf("%s-%s", agentName, jenkins.Name)
 }
 
-func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string) *appsv1.Deployment {
+func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string) (*appsv1.Deployment, error) {
+	jenkinsSlavesServiceFQDN, err := resources.GetJenkinsSlavesServiceFQDN(jenkins)
+	if err != nil {
+		return nil, err
+	}
+	jenkinsHttpServiceFQDN, err := resources.GetJenkinsHTTPServiceFQDN(jenkins)
+	if err != nil {
+		return nil, err
+	}
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      agentDeploymentName(*jenkins, agentName),
@@ -403,7 +414,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 								{
 									Name: "JENKINS_TUNNEL",
 									Value: fmt.Sprintf("%s:%d",
-										resources.GetJenkinsSlavesServiceFQDN(jenkins),
+										jenkinsSlavesServiceFQDN,
 										jenkins.Spec.SlaveService.Port),
 								},
 								{
@@ -417,7 +428,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 								{
 									Name: "JENKINS_URL",
 									Value: fmt.Sprintf("http://%s:%d",
-										resources.GetJenkinsHTTPServiceFQDN(jenkins),
+										jenkinsHttpServiceFQDN,
 										jenkins.Spec.Service.Port,
 									),
 								},
@@ -465,7 +476,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 func seedJobCreatingGroovyScript(seedJob v1alpha2.SeedJob) (string, error) {
