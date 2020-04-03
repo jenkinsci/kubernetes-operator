@@ -5,6 +5,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/constants"
 	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
+	stackerr "github.com/pkg/errors"
 
 	corev1 "k8s.io/api/core/v1"
 
@@ -76,7 +77,7 @@ func getClusterDomain() (string, error) {
 
 	cname, err := net.LookupCNAME(apiSvc)
 	if err != nil {
-		return "", err
+		return "", stackerr.WithStack(err)
 	}
 
 	clusterDomain = strings.TrimPrefix(cname, "kubernetes.default.svc")
@@ -94,5 +95,5 @@ func isRunningInCluster() (bool, error) {
 		}
 		return true, nil
 	}
-	return false, err
+	return false, stackerr.WithStack(err)
 }

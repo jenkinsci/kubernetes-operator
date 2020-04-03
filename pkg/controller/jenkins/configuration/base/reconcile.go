@@ -287,7 +287,7 @@ func (r *ReconcileJenkinsBaseConfiguration) createInitConfigurationConfigMap(met
 func (r *ReconcileJenkinsBaseConfiguration) createBaseConfigurationConfigMap(meta metav1.ObjectMeta) error {
 	configMap, err := resources.NewBaseConfigurationConfigMap(meta, r.Configuration.Jenkins)
 	if err != nil {
-		return stackerr.WithStack(err)
+		return err
 	}
 	return stackerr.WithStack(r.CreateOrUpdateResource(configMap))
 }
