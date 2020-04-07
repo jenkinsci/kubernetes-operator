@@ -648,6 +648,12 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 			len(currentJenkinsMasterPod.Spec.Containers), len(r.Configuration.Jenkins.Spec.Master.Containers)))
 	}
 
+	if r.Configuration.Jenkins.Spec.Master.PriorityClassName != currentJenkinsMasterPod.Spec.PriorityClassName {
+		messages = append(messages, "Jenkins priorityClassName has changed")
+		verbose = append(verbose, fmt.Sprintf("Jenkins priorityClassName has changed, actual '%+v' required '%+v'",
+			currentJenkinsMasterPod.Spec.PriorityClassName, r.Configuration.Jenkins.Spec.Master.PriorityClassName))
+	}
+
 	customResourceReplaced := (r.Configuration.Jenkins.Status.BaseConfigurationCompletedTime == nil ||
 		r.Configuration.Jenkins.Status.UserConfigurationCompletedTime == nil) &&
 		r.Configuration.Jenkins.Status.UserAndPasswordHash == ""

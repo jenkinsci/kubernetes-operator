@@ -328,6 +328,7 @@ func NewJenkinsMasterPod(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins
 			SecurityContext:    jenkins.Spec.Master.SecurityContext,
 			ImagePullSecrets:   jenkins.Spec.Master.ImagePullSecrets,
 			Tolerations:        jenkins.Spec.Master.Tolerations,
+			PriorityClassName:  jenkins.Spec.Master.PriorityClassName,
 		},
 	}
 }

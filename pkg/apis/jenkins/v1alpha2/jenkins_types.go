@@ -374,6 +374,10 @@ type JenkinsMaster struct {
 
 	// DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins
 	DisableCSRFProtection bool `json:"disableCSRFProtection"`
+
+	// PriorityClassName for Jenkins master pod
+	// +optional
+	PriorityClassName string `json:"priorityClassName,omitempty"`
 }
 
 // Service defines Kubernetes service attributes
