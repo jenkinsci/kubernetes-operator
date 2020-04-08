@@ -33,6 +33,7 @@ func TestConfiguration(t *testing.T) {
 	numberOfExecutorsEnvName := "NUMBER_OF_EXECUTORS"
 	systemMessage := "Configuration as Code integration works!!!"
 	systemMessageEnvName := "SYSTEM_MESSAGE"
+	priorityClassName := ""
 	mySeedJob := seedJobConfig{
 		SeedJob: v1alpha2.SeedJob{
 			ID:                    "jenkins-operator",
@@ -84,7 +85,7 @@ func TestConfiguration(t *testing.T) {
 	// base
 	createUserConfigurationSecret(t, namespace, stringData)
 	createUserConfigurationConfigMap(t, namespace, numberOfExecutorsEnvName, fmt.Sprintf("${%s}", systemMessageEnvName))
-	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc)
+	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
 	createDefaultLimitsForContainersInNamespace(t, namespace)
 	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
@@ -107,6 +108,7 @@ func TestPlugins(t *testing.T) {
 
 	jobID := "k8s-e2e"
 
+	priorityClassName := ""
 	seedJobs := &[]v1alpha2.SeedJob{
 		{
 			ID:                    "jenkins-operator",
@@ -119,7 +121,7 @@ func TestPlugins(t *testing.T) {
 		},
 	}
 
-	jenkins := createJenkinsCR(t, "k8s-e2e", namespace, seedJobs, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{})
+	jenkins := createJenkinsCR(t, "k8s-e2e", namespace, seedJobs, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, priorityClassName)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 
 	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
@@ -138,6 +140,22 @@ func TestPlugins(t *testing.T) {
 	build, err := job.GetLastBuild()
 	require.NoError(t, err)
 	assert.True(t, build.IsGood())
+}
+
+func TestPriorityClassNameSetExisting(t *testing.T) {
+	t.Parallel()
+	namespace, ctx := setupTest(t)
+	defer showLogsAndCleanup(t, ctx)
+
+	jenkinsCRName := "k8s-ete-priority-class-existing"
+	// One of the existing priority classes
+	priorityClassName := "system-cluster-critical"
+
+	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, nil, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, priorityClassName)
+	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
+	verifyJenkinsMasterPodAttributes(t, jenkins)
+	_, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
+	defer cleanUpFunc()
 }
 
 func createUserConfigurationSecret(t *testing.T, namespace string, stringData map[string]string) {
@@ -226,6 +244,7 @@ func verifyJenkinsMasterPodAttributes(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	assert.Equal(t, jenkins.Spec.Master.Containers[0].Command, jenkinsPod.Spec.Containers[0].Command)
 
 	assert.Equal(t, resources.GetJenkinsMasterPodLabels(*jenkins), jenkinsPod.Labels)
+	assert.Equal(t, jenkins.Spec.Master.PriorityClassName, jenkinsPod.Spec.PriorityClassName)
 
 	for _, actualContainer := range jenkinsPod.Spec.Containers {
 		if actualContainer.Name == resources.JenkinsMasterContainerName {

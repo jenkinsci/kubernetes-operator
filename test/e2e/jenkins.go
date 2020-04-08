@@ -51,7 +51,7 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.Pod {
 	return &podList.Items[0]
 }
 
-func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode) *v1alpha2.Jenkins {
+func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode, priorityClassName string) *v1alpha2.Jenkins {
 	var seedJobs []v1alpha2.SeedJob
 	if seedJob != nil {
 		seedJobs = append(seedJobs, *seedJob...)
@@ -119,7 +119,8 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 					{Name: "github", Version: "1.29.4"},
 					{Name: "devoptics", Version: "1.1863", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/1.1863/devoptics.hpi"},
 				},
-				NodeSelector: map[string]string{"kubernetes.io/os": "linux"},
+				PriorityClassName: priorityClassName,
+				NodeSelector:      map[string]string{"kubernetes.io/os": "linux"},
 				Volumes: []corev1.Volume{
 					{
 						Name: "plugins-cache",
