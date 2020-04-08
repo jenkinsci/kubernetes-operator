@@ -184,6 +184,16 @@ jenkins:
     # secretData creates new secret if secretRefName is empty and fills with data provided in secretData
     secretData: {}
 
+  services:
+    http:
+      port: 8080
+      type: ClusterIP
+      nodePort: ""
+    slave:
+      port: 5000
+      type: ClusterIP
+      nodePort: ""
+
 # operator is section for configuring operator deployment
 operator:
   replicaCount: 1

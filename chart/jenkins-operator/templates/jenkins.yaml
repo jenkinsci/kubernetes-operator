@@ -48,6 +48,18 @@ spec:
     recoveryOnce: {{ .Values.jenkins.backup.recoveryOnce }}
     {{- end }}
   {{- end }}
+  {{- with .Values.jenkins.services.http }}
+  service:
+    type: {{.type}}
+    port: {{.port}}
+    nodePort: {{.nodePort}}
+  {{- end }}
+  {{- with .Values.jenkins.services.slave }}
+  slaveService:
+    type: {{.type}}
+    port: {{.port}}
+    nodePort: {{.nodePort}}
+  {{- end }}
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
