@@ -110,7 +110,7 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 					},
 					{
 						Name:  "envoyproxy",
-						Image: "envoyproxy/envoy-alpine",
+						Image: "envoyproxy/envoy-alpine:v1.14.1",
 					},
 				},
 				Plugins: []v1alpha2.Plugin{
