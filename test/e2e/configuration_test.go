@@ -142,7 +142,10 @@ func TestPlugins(t *testing.T) {
 	assert.True(t, build.IsGood())
 }
 
-func TestPriorityClassNameSetExisting(t *testing.T) {
+func TestPriorityClass(t *testing.T) {
+	if skipTestPriorityClass {
+		t.Skip()
+	}
 	t.Parallel()
 	namespace, ctx := setupTest(t)
 	defer showLogsAndCleanup(t, ctx)

@@ -16,7 +16,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const skipTestSafeRestart = true
+const (
+	skipTestSafeRestart   = true
+	skipTestPriorityClass = true
+)
 
 func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Update Jenkins CR: OpenShiftOAuth")
@@ -92,4 +95,8 @@ func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
 			Value: resources.GetJenkinsSlavesServiceName(jenkins),
 		},
 	)
+
+	if len(jenkins.Spec.Master.Plugins) == 4 && jenkins.Spec.Master.Plugins[3].Name == "devoptics" {
+		jenkins.Spec.Master.Plugins = jenkins.Spec.Master.Plugins[0:3] // remove devoptics plugin
+	}
 }

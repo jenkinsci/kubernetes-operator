@@ -9,7 +9,10 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 )
 
-const skipTestSafeRestart = false
+const (
+	skipTestSafeRestart   = false
+	skipTestPriorityClass = false
+)
 
 func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Update Jenkins CR")
