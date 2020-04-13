@@ -9,18 +9,14 @@ require (
 	github.com/elazarl/goproxy/ext v0.0.0-20190711103511-473e67f1d7d2 // indirect
 	github.com/emersion/go-sasl v0.0.0-20190817083125-240c8404624e // indirect
 	github.com/emersion/go-smtp v0.11.2
-	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/go-logr/logr v0.1.0
 	github.com/go-logr/zapr v0.1.1
 	github.com/go-openapi/spec v0.19.4
-	github.com/gogo/protobuf v1.3.1
 	github.com/golang/mock v1.3.1
 	github.com/mailgun/mailgun-go/v3 v3.6.0
 	github.com/operator-framework/operator-sdk v0.15.1
-	github.com/pborman/uuid v1.2.0
 	github.com/pkg/errors v0.8.1
 	github.com/robfig/cron v1.2.0
-	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	go.uber.org/zap v1.10.0
@@ -29,7 +25,6 @@ require (
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	k8s.io/api v0.0.0
-	k8s.io/apiextensions-apiserver v0.0.0
 	k8s.io/apimachinery v0.0.0
 	k8s.io/cli-runtime v0.0.0
 	k8s.io/client-go v12.0.0+incompatible
