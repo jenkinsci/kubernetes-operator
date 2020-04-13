@@ -2,7 +2,7 @@
 title: "Schema"
 linkTitle: "Schema"
 weight: 40
-date: 2020-04-13
+date: 2019-12-20
 description: >
   API Schema definitions for Jenkins CRD
 ---
@@ -122,7 +122,6 @@ More info: <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>Notifications defines list of a services which are used to inform about Jenkins status
 Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun</p>
 </td>
@@ -219,47 +218,6 @@ ConfigurationAsCode
 <p>ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin</p>
 </td>
 </tr>
-<tr>
-<td>
-<code>roles</code></br>
-<em>
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#roleref-v1-rbac">
-[]Kubernetes rbac/v1.RoleRef
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Roles defines list of extra RBAC roles for the Jenkins Master pod service account</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>serviceAccount</code></br>
-<em>
-<a href="#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount">
-ServiceAccount
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>ServiceAccount defines Jenkins master service account attributes</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>jenkinsAPISettings</code></br>
-<em>
-<a href="#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings">
-JenkinsAPISettings
-</a>
-</em>
-</td>
-<td>
-<p>JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API</p>
-</td>
-</tr>
 </table>
 </td>
 </tr>
@@ -330,7 +288,7 @@ string
 </tr>
 <tr>
 <td>
-<code>hash</code></br>
+<code>Hash</code></br>
 <em>
 string
 </em>
@@ -341,15 +299,6 @@ string
 </tr>
 </tbody>
 </table>
-<h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy">AuthorizationStrategy
-(<code>string</code> alias)</p></h3>
-<p>
-(<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsAPISettings">JenkinsAPISettings</a>)
-</p>
-<p>
-<p>AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API</p>
-</p>
 <h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Backup">Backup
 </h3>
 <p>
@@ -472,9 +421,6 @@ Customization
 </em>
 </td>
 <td>
-<p>
-(Members of <code>Customization</code> are embedded into this type.)
-</p>
 </td>
 </tr>
 </tbody>
@@ -797,9 +743,6 @@ Customization
 </em>
 </td>
 <td>
-<p>
-(Members of <code>Customization</code> are embedded into this type.)
-</p>
 </td>
 </tr>
 </tbody>
@@ -833,37 +776,6 @@ Kubernetes core/v1.ExecAction
 </td>
 <td>
 <p>Exec specifies the action to take.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings">JenkinsAPISettings
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec">JenkinsSpec</a>)
-</p>
-<p>
-<p>JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>authorizationStrategy</code></br>
-<em>
-<a href="#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy">
-AuthorizationStrategy
-</a>
-</em>
-</td>
-<td>
 </td>
 </tr>
 </tbody>
@@ -984,7 +896,6 @@ fsGroup: 1000</p>
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>List of containers belonging to the pod.
 Containers cannot currently be added or removed.
 There must be at least one container in a Pod.
@@ -1077,7 +988,6 @@ More info: <a href="https://kubernetes.io/docs/concepts/storage/volumes">https:/
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>BasePlugins contains plugins required by operator
 Defaults to :
 - name: kubernetes
@@ -1121,18 +1031,6 @@ bool
 </td>
 <td>
 <p>DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>priorityClassName</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>PriorityClassName for Jenkins master pod</p>
 </td>
 </tr>
 </tbody>
@@ -1193,7 +1091,6 @@ More info: <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>Notifications defines list of a services which are used to inform about Jenkins status
 Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun</p>
 </td>
@@ -1288,47 +1185,6 @@ ConfigurationAsCode
 <td>
 <em>(Optional)</em>
 <p>ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>roles</code></br>
-<em>
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#roleref-v1-rbac">
-[]Kubernetes rbac/v1.RoleRef
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Roles defines list of extra RBAC roles for the Jenkins Master pod service account</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>serviceAccount</code></br>
-<em>
-<a href="#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount">
-ServiceAccount
-</a>
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>ServiceAccount defines Jenkins master service account attributes</p>
-</td>
-</tr>
-<tr>
-<td>
-<code>jenkinsAPISettings</code></br>
-<em>
-<a href="#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings">
-JenkinsAPISettings
-</a>
-</em>
-</td>
-<td>
-<p>JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API</p>
 </td>
 </tr>
 </tbody>
@@ -1732,17 +1588,6 @@ string
 <p>Version is the version of Jenkins plugin</p>
 </td>
 </tr>
-<tr>
-<td>
-<code>downloadURL</code></br>
-<em>
-string
-</em>
-</td>
-<td>
-<p>DownloadURL is the custom url from where plugin has to be downloaded.</p>
-</td>
-</tr>
 </tbody>
 </table>
 <h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Restore">Restore
@@ -2069,18 +1914,6 @@ JenkinsCredentialType
 </tr>
 <tr>
 <td>
-<code>bitbucketPushTrigger</code></br>
-<em>
-bool
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>BitbucketPushTrigger is used for Bitbucket web hooks</p>
-</td>
-</tr>
-<tr>
-<td>
 <code>githubPushTrigger</code></br>
 <em>
 bool
@@ -2205,7 +2038,6 @@ map[string]string
 </em>
 </td>
 <td>
-<em>(Optional)</em>
 <p>Route service traffic to pods with label keys and values matching this
 selector. If empty or not present, the service is assumed to have an
 external process managing its endpoints, which Kubernetes will not
@@ -2302,40 +2134,6 @@ This field will be ignored if the cloud-provider does not support the feature.</
 </tr>
 </tbody>
 </table>
-<h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount">ServiceAccount
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec">JenkinsSpec</a>)
-</p>
-<p>
-<p>ServiceAccount defines Kubernetes service account attributes</p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<code>annotations</code></br>
-<em>
-map[string]string
-</em>
-</td>
-<td>
-<em>(Optional)</em>
-<p>Annotations is an unstructured key value map stored with a resource that may be
-set by external tools to store and retrieve arbitrary metadata. They are not
-queryable and should be preserved when modifying objects.
-More info: <a href="http://kubernetes.io/docs/user-guide/annotations">http://kubernetes.io/docs/user-guide/annotations</a></p>
-</td>
-</tr>
-</tbody>
-</table>
 <h3 id="github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack">Slack
 </h3>
 <p>
@@ -2371,5 +2169,5 @@ SecretKeySelector
 <hr/>
 <p><em>
 Generated with <code>gen-crd-api-reference-docs</code>
-on git commit <code>8404b97</code>.
+on git commit <code>4b89360</code>.
 </em></p>

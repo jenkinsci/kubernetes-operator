@@ -1,14 +1,14 @@
 ---
-title: "Latest (v0.4.x)"
-linkTitle: "Latest (v0.4.x)"
+title: "v0.3.x"
+linkTitle: "v0.3.x"
 weight: 10
-date: 2020-04-13
+date: 2019-12-20
 description: >
-  How to work with jenkins-operator latest version
+  How to work with an older version of jenkins-operator. We recommend migration to a newer version.
 ---
 
 {{% pageinfo %}}
-This document describes a getting started guide for **Jenkins Operator** `v0.4.x` and an additional configuration.
+This document describes a getting started guide for **Jenkins Operator** `v0.3.x` and an additional configuration.
 {{% /pageinfo %}}
 
 ## First Steps
