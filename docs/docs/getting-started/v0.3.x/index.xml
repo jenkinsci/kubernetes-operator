@@ -1,17 +1,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Jenkins Operator – Latest (v0.4.x)</title>
-    <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
+    <title>Jenkins Operator – v0.3.x</title>
+    <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/</link>
     <description>Recent Hugo news from gohugo.io</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 13 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 20 Dec 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://jenkinsci.github.io/kubernetes-operator/img/hugo.png</url>
       <title>GoHugo.io</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/</link>
     </image>
     
-	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -21,10 +21,10 @@
     
     <item>
       <title>Docs: Deploy Jenkins</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/deploy-jenkins/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/deploy-jenkins/</guid>
       <description>
         
         
@@ -93,10 +93,10 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
     
     <item>
       <title>Docs: Configuration</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/configuration/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/configuration/</guid>
       <description>
         
         
@@ -395,10 +395,10 @@ stringData:
     
     <item>
       <title>Docs: Customization</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/customization/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/customization/</guid>
       <description>
         
         
@@ -560,11 +560,47 @@ spec:
     </item>
     
     <item>
-      <title>Docs: AKS</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <title>Docs: Migration from v0.2.x</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/migration/</link>
+      <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/migration/</guid>
+      <description>
+        
+        
+        
+
+&lt;h3 id=&#34;changes&#34;&gt;Changes&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;new Jenkins Custom Resource Definition version &lt;code&gt;jenkins.io/v1alpha2&lt;/code&gt;:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;spec.master.masterAnnotations&lt;/code&gt; was deprecated, use &lt;code&gt;spec.master.annotations&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;added &lt;code&gt;spec.notifications&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;added &lt;code&gt;spec.master.tolerations&lt;/code&gt; (in v0.3.1)&lt;/li&gt;
+&lt;li&gt;added &lt;code&gt;spec.master.disableCSRFProtection&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;migration&#34;&gt;Migration&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;adjust the operator image version, e.g. &lt;code&gt;image: virtuslab/jenkins-operator:v0.3.1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;migrate your Jenkins Custom Resources to &lt;code&gt;apiVersion: jenkins.io/v1alpha2&lt;/code&gt;, adjust content if necessary&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The v0.3.x should work fine with &lt;code&gt;jenkins.io/v1alpha1&lt;/code&gt;, but we recommend using &lt;code&gt;jenkins.io/v1alpha2&lt;/code&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: AKS</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/aks/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/aks/</guid>
       <description>
         
         
@@ -585,10 +621,10 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     
     <item>
       <title>Docs: Configure backup and restore</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/configure-backup-and-restore/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/configure-backup-and-restore/</guid>
       <description>
         
         
@@ -667,10 +703,10 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     
     <item>
       <title>Docs: Custom Backup and Restore Providers</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/custom-backup-and-restore/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/custom-backup-and-restore/</guid>
       <description>
         
         
@@ -850,10 +886,10 @@ the number of backups under control, e.g. Cloud Formation fragment:&lt;/p&gt;
     
     <item>
       <title>Docs: Notifications</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/notifications/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/notifications/</guid>
       <description>
         
         
@@ -964,10 +1000,10 @@ spec:
     
     <item>
       <title>Docs: Diagnostics</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/diagnostics/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/diagnostics/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/diagnostics/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/diagnostics/</guid>
       <description>
         
         
@@ -991,10 +1027,10 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
     
     <item>
       <title>Docs: Schema</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</link>
-      <pubDate>Mon, 13 Apr 2020 00:00:00 +0000</pubDate>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/schema/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/schema/</guid>
       <description>
         
         
@@ -1117,7 +1153,6 @@ More info: &lt;a href=&#34;https://github.com/jenkinsci/kubernetes-operator/blob
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;Notifications defines list of a services which are used to inform about Jenkins status
 Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun&lt;/p&gt;
 &lt;/td&gt;
@@ -1214,47 +1249,6 @@ ConfigurationAsCode
 &lt;p&gt;ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;roles&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#roleref-v1-rbac&#34;&gt;
-[]Kubernetes rbac/v1.RoleRef
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;Roles defines list of extra RBAC roles for the Jenkins Master pod service account&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;serviceAccount&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;
-ServiceAccount
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;ServiceAccount defines Jenkins master service account attributes&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;jenkinsAPISettings&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;
-JenkinsAPISettings
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;p&gt;JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
 &lt;/table&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
@@ -1325,7 +1319,7 @@ string
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
-&lt;code&gt;hash&lt;/code&gt;&lt;/br&gt;
+&lt;code&gt;Hash&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
 string
 &lt;/em&gt;
@@ -1336,15 +1330,6 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy&#34;&gt;AuthorizationStrategy
-(&lt;code&gt;string&lt;/code&gt; alias)&lt;/p&gt;&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API&lt;/p&gt;
-&lt;/p&gt;
 &lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Backup&#34;&gt;Backup
 &lt;/h3&gt;
 &lt;p&gt;
@@ -1467,9 +1452,6 @@ Customization
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;p&gt;
-(Members of &lt;code&gt;Customization&lt;/code&gt; are embedded into this type.)
-&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -1792,9 +1774,6 @@ Customization
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;p&gt;
-(Members of &lt;code&gt;Customization&lt;/code&gt; are embedded into this type.)
-&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -1828,37 +1807,6 @@ Kubernetes core/v1.ExecAction
 &lt;/td&gt;
 &lt;td&gt;
 &lt;p&gt;Exec specifies the action to take.&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;authorizationStrategy&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy&#34;&gt;
-AuthorizationStrategy
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -1979,7 +1927,6 @@ fsGroup: 1000&lt;/p&gt;
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;List of containers belonging to the pod.
 Containers cannot currently be added or removed.
 There must be at least one container in a Pod.
@@ -2072,7 +2019,6 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/volumes&#
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;BasePlugins contains plugins required by operator
 Defaults to :
 - name: kubernetes
@@ -2116,18 +2062,6 @@ bool
 &lt;/td&gt;
 &lt;td&gt;
 &lt;p&gt;DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;priorityClassName&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;PriorityClassName for Jenkins master pod&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -2188,7 +2122,6 @@ More info: &lt;a href=&#34;https://github.com/jenkinsci/kubernetes-operator/blob
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;Notifications defines list of a services which are used to inform about Jenkins status
 Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun&lt;/p&gt;
 &lt;/td&gt;
@@ -2283,47 +2216,6 @@ ConfigurationAsCode
 &lt;td&gt;
 &lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;roles&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.12/#roleref-v1-rbac&#34;&gt;
-[]Kubernetes rbac/v1.RoleRef
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;Roles defines list of extra RBAC roles for the Jenkins Master pod service account&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;serviceAccount&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;
-ServiceAccount
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;ServiceAccount defines Jenkins master service account attributes&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;jenkinsAPISettings&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;
-JenkinsAPISettings
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;p&gt;JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -2727,17 +2619,6 @@ string
 &lt;p&gt;Version is the version of Jenkins plugin&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;downloadURL&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;p&gt;DownloadURL is the custom url from where plugin has to be downloaded.&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Restore&#34;&gt;Restore
@@ -3064,18 +2945,6 @@ JenkinsCredentialType
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
-&lt;code&gt;bitbucketPushTrigger&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-bool
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;BitbucketPushTrigger is used for Bitbucket web hooks&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
 &lt;code&gt;githubPushTrigger&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
 bool
@@ -3200,7 +3069,6 @@ map[string]string
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;Route service traffic to pods with label keys and values matching this
 selector. If empty or not present, the service is assumed to have an
 external process managing its endpoints, which Kubernetes will not
@@ -3297,40 +3165,6 @@ This field will be ignored if the cloud-provider does not support the feature.&l
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;ServiceAccount
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;ServiceAccount defines Kubernetes service account attributes&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;annotations&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-map[string]string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;Annotations is an unstructured key value map stored with a resource that may be
-set by external tools to store and retrieve arbitrary metadata. They are not
-queryable and should be preserved when modifying objects.
-More info: &lt;a href=&#34;http://kubernetes.io/docs/user-guide/annotations&#34;&gt;http://kubernetes.io/docs/user-guide/annotations&lt;/a&gt;&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
 &lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack&#34;&gt;Slack
 &lt;/h3&gt;
 &lt;p&gt;
@@ -3366,7 +3200,7 @@ SecretKeySelector
 &lt;hr/&gt;
 &lt;p&gt;&lt;em&gt;
 Generated with &lt;code&gt;gen-crd-api-reference-docs&lt;/code&gt;
-on git commit &lt;code&gt;8404b97&lt;/code&gt;.
+on git commit &lt;code&gt;4b89360&lt;/code&gt;.
 &lt;/em&gt;&lt;/p&gt;
 
       </description>
