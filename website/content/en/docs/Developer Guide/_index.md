@@ -13,7 +13,7 @@ This document explains how to setup your development environment.
 
 ## Prerequisites
 
-- [operator_sdk][operator_sdk] version v0.10.0
+- [operator_sdk][operator_sdk] version v0.15.1
 - [git][git_tool]
 - [go][go_tool] version v1.13+
 - [goimports, golint, checkmake and staticcheck][install_dev_tools]
@@ -23,8 +23,6 @@ This document explains how to setup your development environment.
 ## Clone repository and download dependencies
 
 ```bash
-mkdir -p $GOPATH/src/github.com/jenkinsci
-cd $GOPATH/src/github.com/jenkinsci/
 git clone git@github.com:jenkinsci/kubernetes-operator.git
 cd kubernetes-operator
 make go-dependencies
@@ -35,7 +33,7 @@ make go-dependencies
 Build and run **Jenkins Operator** locally:
 
 ```bash
-make build minikube-run EXTRA_ARGS='--minikube --local'
+make build minikube-run
 ```
 
 Once minikube and **Jenkins Operator** are up and running, apply Jenkins custom resource:
@@ -54,7 +52,7 @@ You can also run the controller locally and make it listen to a remote Kubernete
 make run NAMESPACE=default KUBECTL_CONTEXT=remote-k8s EXTRA_ARGS='--kubeconfig ~/.kube/config'
 ```
 
-Once minikube and **Jenkins Operator** are up and running, apply Jenkins custom resource:
+Once **Jenkins Operator** are up and running, apply Jenkins custom resource:
 
 ```bash
 kubectl --context remote-k8s --namespace default apply -f deploy/crds/jenkins_v1alpha2_jenkins_cr.yaml
