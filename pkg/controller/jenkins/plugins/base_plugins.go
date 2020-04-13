@@ -2,7 +2,6 @@ package plugins
 
 const (
 	configurationAsCodePlugin           = "configuration-as-code:1.38"
-	configurationAsCodeSupportPlugin    = "configuration-as-code-support:1.19"
 	gitPlugin                           = "git:4.2.2"
 	jobDslPlugin                        = "job-dsl:1.77"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:0.13"
@@ -19,7 +18,6 @@ var basePluginsList = []Plugin{
 	Must(New(gitPlugin)),
 	Must(New(jobDslPlugin)),
 	Must(New(configurationAsCodePlugin)),
-	Must(New(configurationAsCodeSupportPlugin)),
 	Must(New(kubernetesCredentialsProviderPlugin)),
 }
 
