@@ -15,6 +15,7 @@ rules:
       - services
       - configmaps
       - secrets
+      - serviceaccounts
     verbs:
       - get
       - create
@@ -31,12 +32,6 @@ rules:
     verbs:
       - '*'
   - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-    verbs:
-      - create
-  - apiGroups:
       - rbac.authorization.k8s.io
     resources:
       - roles
@@ -44,6 +39,8 @@ rules:
     verbs:
       - create
       - update
+      - list
+      - watch
   - apiGroups:
       - ""
     resources:
@@ -126,7 +123,7 @@ spec:
       serviceAccountName: jenkins-operator
       containers:
         - name: jenkins-operator
-          image: virtuslab/jenkins-operator:v0.3.3
+          image: virtuslab/jenkins-operator:v0.4.0
           command:
           - jenkins-operator
           args: []
