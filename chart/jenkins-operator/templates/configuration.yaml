@@ -9,6 +9,7 @@ data: {{ toYaml . | nindent 2 }}
 {{- end }}
 {{ end }}
 {{ if .Values.jenkins.configuration.groovyScripts.content }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
