@@ -108,6 +108,13 @@ jenkins:
       persistentVolumeClaim:
         claimName: jenkins-backup
 
+  # http Jenkins service
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details
+  #service:
+  # slave Jenkins service
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details
+  #slaveService:
+
   # backup is section for configuring operator's backup feature
   # By default backup feature is enabled and pre-configured
   # This section simplifies the configuration described here: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/
