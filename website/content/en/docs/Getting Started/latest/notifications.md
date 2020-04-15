@@ -24,7 +24,7 @@ kind: Jenkins
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: <name>
       slack:
@@ -45,7 +45,7 @@ kind: Jenkins
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: <name>
       teams:
@@ -64,7 +64,7 @@ kind: Jenkins
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: <name>
       mailgun:
@@ -81,7 +81,7 @@ spec:
 
 As you see there is two debugging options: 
 
-* `loggingLevel` (warning/info) - Set level of messages to send.
+* `level` (warning/info) - Set level of messages to send.
 
 * `verbose` - Print stacktrace and additional error messages
 
@@ -95,7 +95,7 @@ kind: Jenkins
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: nslack
       slack:
@@ -103,7 +103,7 @@ spec:
           secret:
             name: <secret_name>
           key: <key>
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: nteams
       teams:
