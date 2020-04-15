@@ -673,7 +673,7 @@
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: &lt;name&gt;
       slack:
@@ -693,7 +693,7 @@ spec:
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: &lt;name&gt;
       teams:
@@ -711,7 +711,7 @@ spec:
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: &lt;name&gt;
       mailgun:
@@ -729,7 +729,7 @@ spec:
 <p>As you see there is two debugging options:</p>
 
 <ul>
-<li><p><code>loggingLevel</code> (warning/info) - Set level of messages to send.</p></li>
+<li><p><code>level</code> (warning/info) - Set level of messages to send.</p></li>
 
 <li><p><code>verbose</code> - Print stacktrace and additional error messages</p></li>
 </ul>
@@ -743,7 +743,7 @@ For example you will send notifications to Slack and Teams.</p>
 spec:
   master:
     notifications:
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: nslack
       slack:
@@ -751,7 +751,7 @@ spec:
           secret:
             name: &lt;secret_name&gt;
           key: &lt;key&gt;
-    - loggingLevel: info
+    - level: info
       verbose: true
       name: nteams
       teams:
