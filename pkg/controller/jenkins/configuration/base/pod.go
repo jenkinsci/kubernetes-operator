@@ -140,8 +140,6 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 	return reason.NewPodRestart(reason.OperatorSource, messages, verbose...)
 }
 
-
-
 func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.ObjectMeta) (reconcile.Result, error) {
 	userAndPasswordHash, err := r.calculateUserAndPasswordHash()
 	if err != nil {
@@ -179,7 +177,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 			PendingBackup:       r.Configuration.Jenkins.Status.LastBackup,
 			UserAndPasswordHash: userAndPasswordHash,
 		}
-		return reconcile.Result{Requeue: true}, r.Client.Update(context.TODO(), r.Configuration.Jenkins)
+		return reconcile.Result{Requeue: true}, r.Client.Status().Update(context.TODO(), r.Configuration.Jenkins)
 	} else if err != nil && !apierrors.IsNotFound(err) {
 		return reconcile.Result{}, stackerr.WithStack(err)
 	}
@@ -222,4 +220,3 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 
 	return reconcile.Result{}, nil
 }
-
