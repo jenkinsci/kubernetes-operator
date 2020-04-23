@@ -55,7 +55,7 @@ func waitForJob(t *testing.T, jenkinsClient client.Jenkins, jobID string) {
 	err := try.Until(func() (end bool, err error) {
 		_, err = jenkinsClient.GetJob(jobID)
 		return err == nil, err
-	}, time.Second*2, time.Minute*2)
+	}, time.Second*2, time.Minute*3)
 	require.NoErrorf(t, err, "Jenkins job '%s' not created by seed job", jobID)
 }
 

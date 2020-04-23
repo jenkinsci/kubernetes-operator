@@ -35,7 +35,15 @@ func New(configuration configuration.Configuration, jenkinsClient jenkinsclient.
 func (r *ReconcileUserConfiguration) Reconcile() (reconcile.Result, error) {
 	backupAndRestore := backuprestore.New(r.Configuration, r.logger)
 
-	result, err := r.ensureSeedJobs()
+	result, err := r.ensureUserConfiguration(r.jenkinsClient)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+	if result.Requeue {
+		return result, nil
+	}
+
+	result, err = r.ensureSeedJobs()
 	if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -45,14 +53,6 @@ func (r *ReconcileUserConfiguration) Reconcile() (reconcile.Result, error) {
 
 	if err := backupAndRestore.Restore(r.jenkinsClient); err != nil {
 		return reconcile.Result{}, err
-	}
-
-	result, err = r.ensureUserConfiguration(r.jenkinsClient)
-	if err != nil {
-		return reconcile.Result{}, err
-	}
-	if result.Requeue {
-		return result, nil
 	}
 
 	if err := backupAndRestore.Backup(); err != nil {
