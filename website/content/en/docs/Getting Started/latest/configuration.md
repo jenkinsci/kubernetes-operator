@@ -231,6 +231,9 @@ stringData:
   password: password_or_token
 ```
 
+### External authentication
+You can use `external` credential type if you want to configure authentication using Configuration As Code or Groovy Script.
+
 ## HTTP Proxy for downloading plugins
 
 To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:
