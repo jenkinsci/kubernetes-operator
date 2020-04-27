@@ -89,5 +89,3 @@ func getExtraRoleBindingName(serviceAccountName string, roleRef rbacv1.RoleRef) 
 	}
 	return fmt.Sprintf("%s-%s-%s", serviceAccountName, typeName, roleRef.Name)
 }
-
-

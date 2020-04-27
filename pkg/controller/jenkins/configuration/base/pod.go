@@ -1,8 +1,8 @@
 package base
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"reflect"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -140,8 +140,6 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 	return reason.NewPodRestart(reason.OperatorSource, messages, verbose...)
 }
 
-
-
 func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.ObjectMeta) (reconcile.Result, error) {
 	userAndPasswordHash, err := r.calculateUserAndPasswordHash()
 	if err != nil {
@@ -222,4 +220,3 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 
 	return reconcile.Result{}, nil
 }
-

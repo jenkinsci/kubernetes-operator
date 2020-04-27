@@ -527,6 +527,8 @@ const (
 	BasicSSHCredentialType JenkinsCredentialType = "basicSSHUserPrivateKey"
 	// UsernamePasswordCredentialType define username & password Jenkins credential type
 	UsernamePasswordCredentialType JenkinsCredentialType = "usernamePassword"
+	// ExternalCredentialType defines other credential type
+	ExternalCredentialType JenkinsCredentialType = "external"
 )
 
 // AllowedJenkinsCredentialMap contains all allowed Jenkins credentials types
@@ -534,6 +536,7 @@ var AllowedJenkinsCredentialMap = map[string]string{
 	string(NoJenkinsCredentialCredentialType): "",
 	string(BasicSSHCredentialType):            "",
 	string(UsernamePasswordCredentialType):    "",
+	string(ExternalCredentialType):            "",
 }
 
 // SeedJob defines configuration for seed job

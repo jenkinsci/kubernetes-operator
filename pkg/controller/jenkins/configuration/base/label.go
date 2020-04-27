@@ -57,4 +57,3 @@ func (r *ReconcileJenkinsBaseConfiguration) addLabelForWatchesResources(customiz
 	}
 	return nil
 }
-

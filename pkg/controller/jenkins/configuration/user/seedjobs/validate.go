@@ -54,7 +54,9 @@ func (s *SeedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 			messages = append(messages, fmt.Sprintf("seedJob `%s` Jenkins credential must be set while using ssh repository url", seedJob.ID))
 		}
 
-		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType || seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
+		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType ||
+			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType ||
+			seedJob.JenkinsCredentialType == v1alpha2.ExternalCredentialType {
 			secret := &v1.Secret{}
 			namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: seedJob.CredentialID}
 			err := s.Client.Get(context.TODO(), namespaceName, secret)

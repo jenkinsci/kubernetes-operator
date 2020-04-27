@@ -8,9 +8,8 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
-	stackerr "github.com/pkg/errors"
 	"github.com/bndr/gojenkins"
-
+	stackerr "github.com/pkg/errors"
 )
 
 func (r *ReconcileJenkinsBaseConfiguration) verifyPlugins(jenkinsClient jenkinsclient.Jenkins) (bool, error) {

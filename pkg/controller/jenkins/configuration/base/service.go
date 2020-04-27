@@ -38,4 +38,3 @@ func (r *ReconcileJenkinsBaseConfiguration) createService(meta metav1.ObjectMeta
 	service = resources.UpdateService(service, config)
 	return stackerr.WithStack(r.UpdateResource(&service))
 }
-

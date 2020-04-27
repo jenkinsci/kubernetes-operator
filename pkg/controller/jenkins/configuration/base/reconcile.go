@@ -229,8 +229,6 @@ func (r *ReconcileJenkinsBaseConfiguration) calculateUserAndPasswordHash() (stri
 	return base64.StdEncoding.EncodeToString(hash.Sum(nil)), nil
 }
 
-
-
 func compareImagePullSecrets(expected, actual []corev1.LocalObjectReference) bool {
 	for _, expected := range expected {
 		found := false
