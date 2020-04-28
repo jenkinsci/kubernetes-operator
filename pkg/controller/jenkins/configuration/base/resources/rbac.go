@@ -56,18 +56,21 @@ func NewRoleBinding(name, namespace, serviceAccountName string, roleRef v1.RoleR
 
 func NewDefaultPolicyRules() []v1.PolicyRule {
 	var rules []v1.PolicyRule
-	Default := []string{createVerb, deleteVerb, getVerb, listVerb, patchVerb, updateVerb, watchVerb}
 	ReadOnly := []string{getVerb, listVerb, watchVerb}
+	Default  := []string{createVerb, deleteVerb, getVerb, listVerb, patchVerb, updateVerb, watchVerb}
+	Create   := []string{createVerb}
 
-	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "configmaps", Default))
+	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "pods/portforward", Create))
 	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "pods", Default))
 	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "pods/exec", Default))
-	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "pods/portforward", Default))
+	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "configmaps", ReadOnly))
 	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "pods/log", ReadOnly))
 	rules = append(rules,  NewPolicyRule(EmptyApiGroups, "secrets", ReadOnly))
-	rules = append(rules,  NewPolicyRule(OpenshiftApiGroup, "imagestreams", ReadOnly))
-	rules = append(rules,  NewPolicyRule(BuildApiGroup, "buildconfigs", ReadOnly))
-	rules = append(rules,  NewPolicyRule(BuildApiGroup, "builds", ReadOnly))
+
+	rules = append(rules,  NewOpenShiftPolicyRule(OpenshiftApiGroup, "imagestreams", ReadOnly))
+	rules = append(rules,  NewOpenShiftPolicyRule(BuildApiGroup, "buildconfigs", ReadOnly))
+	rules = append(rules,  NewOpenShiftPolicyRule(BuildApiGroup, "builds", ReadOnly))
+
 	return rules
 }
 
@@ -80,3 +83,9 @@ func NewPolicyRule(apiGroup string, resource string, verbs []string) v1.PolicyRu
 	}
 	return rule
 }
+
+// NewPolicyRule returns a policyRule allowing verbs on resources
+func NewOpenShiftPolicyRule(apiGroup string, resource string, verbs []string) v1.PolicyRule {
+	return NewPolicyRule(apiGroup,resource,verbs)
+}
+

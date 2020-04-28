@@ -88,3 +88,20 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "image.openshift.io"
+    resources:
+      - imagestreams
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "build.openshift.io"
+    resources:
+      - builds
+      - buildconfigs
+    verbs:
+      - get
+      - list
+      - watch
