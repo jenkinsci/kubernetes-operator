@@ -4,9 +4,6 @@ kind: Jenkins
 metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
-  {{- with .Values.jenkins.labels }}
-  labels: {{ toYaml . | nindent 8 }}
-  {{- end }}
 spec:
   configurationAsCode:
     configurations:
@@ -61,6 +58,9 @@ spec:
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
+    {{- with .Values.jenkins.labels }}
+    labels: {{ toYaml . | nindent 8 }}
+    {{- end }}
     {{- with .Values.jenkins.basePlugins }}
     basePlugins: {{ toYaml . | nindent 4 }}
     {{- end }}
