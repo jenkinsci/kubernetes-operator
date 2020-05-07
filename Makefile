@@ -66,7 +66,7 @@ PACKAGES_FOR_UNIT_TESTS = $(shell go list -f '{{.ImportPath}}/' ./... | grep -v 
 E2E_TEST_SELECTOR ?= .*
 
 JENKINS_API_HOSTNAME := $(shell $(JENKINS_API_HOSTNAME_COMMAND) 2> /dev/null || echo "" )
-OPERATOR_ARGS ?= --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(OPERATOR_EXTRA_ARGS)
+OPERATOR_ARGS ?= --debug --zap-level=9 --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-port=$(JENKINS_API_PORT) --jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(OPERATOR_EXTRA_ARGS)
 
 .DEFAULT_GOAL := help
 
@@ -157,6 +157,16 @@ endif
 test: ## Runs the go tests
 	@echo "+ $@"
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
+
+.PHONY: e2e-local
+e2e-local: build ## Run e2e tests by using local deployment build
+	$(eval UUID := $(shell uuidgen | tr \[A-Z\] \[a-z\] ))
+	$(eval E2E_LOCAL_NAMESPACE := $(shell echo e2e-local-$(UUID) ))
+	kubectl create namespace $(E2E_LOCAL_NAMESPACE)
+	# kubectl -n $(E2E_LOCAL_NAMESPACE) create -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
+	GO111MODULE=on operator-sdk test local ./test/e2e --up-local --local-operator-flags "$(OPERATOR_ARGS) $(OPERATOR_EXTRA_ARGS)" \
+                                                          --operator-namespace $(E2E_LOCAL_NAMESPACE) \
+                                                          --watch-namespace $(E2E_LOCAL_NAMESPACE) --debug  --verbose
 
 .PHONY: e2e
 CURRENT_DIRECTORY := $(shell pwd)

@@ -146,7 +146,7 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 	}
 	updateJenkinsCR(t, jenkins)
 
-	t.Logf("Jenkins CR %+v", *jenkins)
+	t.Logf("Jenkins CR with name: %s in namespace: %s", jenkins.Name, jenkins.Namespace)
 	if err := framework.Global.Client.Create(context.TODO(), jenkins, nil); err != nil {
 		t.Fatal(err)
 	}

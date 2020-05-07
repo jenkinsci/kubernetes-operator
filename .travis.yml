@@ -50,14 +50,14 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install socat
         - travis_wait 10 make travis-prepare
-        - travis_wait 45 make build e2e
+        - travis_wait 45 make build e2e-local
     - stage: e2e
       name: "Jenkins Operator Helm Chart - e2e"
       script:
         - sudo apt-get update
         - sudo apt-get install socat
         - travis_wait 10 make travis-prepare
-        - travis_wait 45 make e2e BUILDTAGS=Helm E2E_TEST_SELECTOR='^.*Helm.*$'
+        - travis_wait 45 make e2e-local BUILDTAGS=Helm E2E_TEST_SELECTOR='^.*Helm.*$'
 
 cache:
   directories:

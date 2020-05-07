@@ -7,6 +7,8 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
+
 	framework "github.com/operator-framework/operator-sdk/pkg/test"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/api/events/v1beta1"
@@ -18,10 +20,10 @@ var (
 	podLogTailLimit       int64 = 15
 	kubernetesEventsLimit int64 = 15
 	// MUST match the labels in the deployment manifest: deploy/operator.yaml
-	operatorPodLabels = map[string]string{
-		"name": "jenkins-operator",
-	}
+	operatorPodLabels = map[string]string{"name": "jenkins-operator"}
 )
+
+const MaxLogMessageLength = 120
 
 func getOperatorPod(namespace string) (*v1.Pod, error) {
 	listOptions := metav1.ListOptions{
@@ -32,10 +34,13 @@ func getOperatorPod(namespace string) (*v1.Pod, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(podList.Items) != 1 {
+	if len(podList.Items) == 0 {
+		log.Log.WithValues("No jenkins-operator pod found: operator is running locally")
+		return &v1.Pod{}, nil
+	}
+	if len(podList.Items) > 1 {
 		return nil, fmt.Errorf("expected exactly one pod, got: '%+v'", podList)
 	}
-
 	return &podList.Items[0], nil
 }
 
@@ -45,7 +50,13 @@ func getOperatorLogs(namespace string) (string, error) {
 		return "", err
 	}
 
-	logOptions := v1.PodLogOptions{TailLines: &podLogTailLimit}
+	logOptions := v1.PodLogOptions{
+		TailLines: &podLogTailLimit,
+	}
+	log.Log.WithValues("Getting pods logs with options: %s\n", logOptions)
+	if len(pod.Name) == 0 {
+		return "Operator logs cannot be obtained from pod as it is running locally", nil
+	}
 	req := framework.Global.KubeClient.CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &logOptions)
 	podLogs, err := req.Stream()
 	if err != nil {
@@ -104,7 +115,11 @@ func printKubernetesEvents(t *testing.T, namespace string) {
 		t.Logf("Last %d events from kubernetes:\n", kubernetesEventsLimit)
 
 		for _, event := range events {
-			t.Logf("%+v\n\n", event)
+			message := fmt.Sprintf("event: %v : %v\n", event.Reason, event.Note)
+			if len(message) > MaxLogMessageLength {
+				message = message[:MaxLogMessageLength]
+			}
+			t.Logf(message)
 		}
 	}
 }
@@ -114,14 +129,13 @@ func getKubernetesPods(namespace string) (*v1.PodList, error) {
 }
 
 func printKubernetesPods(t *testing.T, namespace string) {
-	t.Logf("All pods in '%s' namespace:\n", namespace)
+	t.Logf("List of all pods in '%s' namespace:\n", namespace)
 	podList, err := getKubernetesPods(namespace)
 	if err != nil {
 		t.Errorf("Couldn't get kubernetes pods: %s", err)
 	}
-
 	for _, pod := range podList.Items {
-		t.Logf("%+v\n\n", pod)
+		t.Logf("Pod found: %s\n", pod.Name)
 	}
 }
 
@@ -133,7 +147,6 @@ func showLogsIfTestHasFailed(t *testing.T, ctx *framework.Context) {
 
 	if t.Failed() {
 		t.Log("Test failed. Bellow here you can check logs:")
-
 		printKubernetesEvents(t, namespace)
 		printKubernetesPods(t, namespace)
 		printOperatorLogs(t, namespace)

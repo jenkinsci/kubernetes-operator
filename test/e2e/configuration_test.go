@@ -22,7 +22,20 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const e2e = "e2e"
+const (
+	e2e = "e2e"
+	groovyExecutorTemplate = `
+import jenkins.model.Jenkins
+Jenkins.instance.setNumExecutors(new Integer(secrets['%s']))
+Jenkins.instance.save()`
+	cascYaml1Template = `
+jenkins:
+  systemMessage: "%s"`
+	cascYaml2 = `
+unclassified:
+  location:
+    url: http://external-jenkins-url:8080`
+)
 
 func TestConfiguration(t *testing.T) {
 	t.Parallel()
@@ -172,7 +185,7 @@ func createUserConfigurationSecret(t *testing.T, namespace string, stringData ma
 		StringData: stringData,
 	}
 
-	t.Logf("User configuration secret %+v", *userConfiguration)
+	t.Logf("User configuration secret: %s", userConfiguration.Name)
 	if err := framework.Global.Client.Create(context.TODO(), userConfiguration, nil); err != nil {
 		t.Fatal(err)
 	}
@@ -185,18 +198,9 @@ func createUserConfigurationConfigMap(t *testing.T, namespace string, numberOfEx
 			Namespace: namespace,
 		},
 		Data: map[string]string{
-			"1-set-executors.groovy": fmt.Sprintf(`
-import jenkins.model.Jenkins
-
-Jenkins.instance.setNumExecutors(new Integer(secrets['%s']))
-Jenkins.instance.save()`, numberOfExecutorsSecretKeyName),
-			"1-casc.yaml": fmt.Sprintf(`
-jenkins:
-  systemMessage: "%s"`, systemMessage),
-			"2-casc.yaml": `
-unclassified:
-  location:
-    url: http://external-jenkins-url:8080`,
+			"1-set-executors.groovy": fmt.Sprintf(groovyExecutorTemplate, numberOfExecutorsSecretKeyName),
+			"1-casc.yaml":            fmt.Sprintf(cascYaml1Template, systemMessage),
+			"2-casc.yaml":            cascYaml2,
 		},
 	}
 

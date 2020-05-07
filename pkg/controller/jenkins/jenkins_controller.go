@@ -243,7 +243,7 @@ func (r *ReconcileJenkins) reconcile(request reconcile.Request, logger logr.Logg
 		return reconcile.Result{}, jenkins, err
 	}
 	if len(baseMessages) > 0 {
-		message := "Validation of base configuration failed, please correct Jenkins CR."
+		message := "Validation of base configuration failed, please correct Jenkins CR:"
 		*r.notificationEvents <- event.Event{
 			Jenkins: *jenkins,
 			Phase:   event.PhaseBase,

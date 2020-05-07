@@ -58,14 +58,15 @@ func waitForJobToFinish(t *testing.T, job *gojenkins.Job, tick, timeout time.Dur
 
 func waitForJenkinsBaseConfigurationToComplete(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Waiting for Jenkins base configuration to complete")
-	_, err := WaitUntilJenkinsConditionSet(retryInterval, 170, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
-		t.Logf("Current Jenkins status: '%+v', error '%s'", jenkins.Status, err)
+	condition := func(jenkins *v1alpha2.Jenkins, err error) bool {
+		t.Logf("Current Jenkins BaseConfigurationCompletedTime: '%s', error '%s'", jenkins.Status.BaseConfigurationCompletedTime, err)
 		return err == nil && jenkins.Status.BaseConfigurationCompletedTime != nil
-	})
+	}
+	_, err := WaitUntilJenkinsConditionSet(retryInterval, 170, jenkins, condition)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log("Jenkins pod is running")
+	t.Log("Jenkins BaseConfigurationCompletedTime has been set: Jenkins pod is running")
 
 	// update jenkins CR because Operator sets default values
 	namespacedName := types.NamespacedName{Namespace: jenkins.Namespace, Name: jenkins.Name}
@@ -97,7 +98,7 @@ func waitForRecreateJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) {
 func waitForJenkinsUserConfigurationToComplete(t *testing.T, jenkins *v1alpha2.Jenkins) {
 	t.Log("Waiting for Jenkins user configuration to complete")
 	_, err := WaitUntilJenkinsConditionSet(retryInterval, 110, jenkins, func(jenkins *v1alpha2.Jenkins, err error) bool {
-		t.Logf("Current Jenkins status: '%+v', error '%s'", jenkins.Status, err)
+		t.Logf("Current Jenkins UserConfigurationCompletedTime: '%s', error '%s'", jenkins.Status.UserConfigurationCompletedTime, err)
 		return err == nil && jenkins.Status.UserConfigurationCompletedTime != nil
 	})
 	if err != nil {
