@@ -4,7 +4,9 @@ kind: Jenkins
 metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
-  labels: {{.Values.jenkins.labels}}
+  {{- with .Values.jenkins.labels }}
+  labels: {{ toYaml . | nindent 8 }}
+  {{- end }}
 spec:
   configurationAsCode:
     configurations:
