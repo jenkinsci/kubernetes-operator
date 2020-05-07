@@ -20,6 +20,9 @@ jenkins:
   # Create new namespace for jenkins (called e.g. jenkins)
   namespace: default
 
+  # labels are injected into metadata labels field
+  labels: {}
+
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version

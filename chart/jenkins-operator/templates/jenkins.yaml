@@ -4,6 +4,7 @@ kind: Jenkins
 metadata:
   name: {{ .Values.jenkins.name }}
   namespace: {{ .Values.jenkins.namespace }}
+  labels: {{.Values.jenkins.labels}}
 spec:
   configurationAsCode:
     configurations:
