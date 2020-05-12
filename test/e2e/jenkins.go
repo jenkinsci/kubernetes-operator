@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
@@ -33,7 +34,6 @@ func getJenkins(t *testing.T, namespace, name string) *v1alpha2.Jenkins {
 	if err := framework.Global.Client.Get(context.TODO(), namespaceName, jenkins); err != nil {
 		t.Fatal(err)
 	}
-
 	return jenkins
 }
 
@@ -51,12 +51,39 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.Pod {
 	return &podList.Items[0]
 }
 
+func getServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.ServiceAccount {
+	saName := fmt.Sprintf("jenkins-operator-%s", jenkins.Name)
+	sa, err := framework.Global.KubeClient.CoreV1().ServiceAccounts(jenkins.ObjectMeta.Namespace).Get(saName, metav1.GetOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return sa
+}
+
+type JenkinsE2EConfiguration struct {
+	name              string
+	namespace         string
+	priorityClassName string
+	plugins           []v1alpha2.Plugin
+	seedJob           *[]v1alpha2.SeedJob
+	groovyScripts     v1alpha2.GroovyScripts
+	casc              v1alpha2.ConfigurationAsCode
+}
+
+func createJenkinsCRFromSample(t *testing.T, sample JenkinsE2EConfiguration) *v1alpha2.Jenkins {
+	j := createJenkinsCR(t, sample.name, sample.namespace, sample.seedJob, sample.groovyScripts, sample.casc, sample.priorityClassName)
+	plugins := sample.plugins
+	if len(plugins) > 0 {
+		j.Spec.Master.Plugins = plugins
+	}
+	return j
+}
+
 func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode, priorityClassName string) *v1alpha2.Jenkins {
 	var seedJobs []v1alpha2.SeedJob
 	if seedJob != nil {
 		seedJobs = append(seedJobs, *seedJob...)
 	}
-
 	jenkins := &v1alpha2.Jenkins{
 		TypeMeta: v1alpha2.JenkinsTypeMeta(),
 		ObjectMeta: metav1.ObjectMeta{
