@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	podLogTailLimit       int64 = 15
-	kubernetesEventsLimit int64 = 15
+	podLogTailLimit       int64 = 5
+	kubernetesEventsLimit int64 = 5
 	// MUST match the labels in the deployment manifest: deploy/operator.yaml
 	operatorPodLabels = map[string]string{
 		"name": "jenkins-operator",
