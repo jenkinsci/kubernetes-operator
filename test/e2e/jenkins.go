@@ -33,7 +33,6 @@ func getJenkins(t *testing.T, namespace, name string) *v1alpha2.Jenkins {
 	if err := framework.Global.Client.Get(context.TODO(), namespaceName, jenkins); err != nil {
 		t.Fatal(err)
 	}
-
 	return jenkins
 }
 
@@ -49,6 +48,27 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.Pod {
 		t.Fatalf("Jenkins pod not found, pod list: %+v", podList)
 	}
 	return &podList.Items[0]
+}
+
+func getServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.ServiceAccount {
+	sa, err := framework.Global.KubeClient.CoreV1().ServiceAccounts(jenkins.ObjectMeta.Namespace).Get(jenkins.Name, metav1.GetOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return sa
+}
+
+type JenkinsSample struct {
+	name              string
+	namespace         string
+	priorityClassName string
+	seedJob           *[]v1alpha2.SeedJob
+	groovyScripts     v1alpha2.GroovyScripts
+	casc              v1alpha2.ConfigurationAsCode
+}
+
+func createJenkinsCRFromSample(t *testing.T, sample JenkinsSample) *v1alpha2.Jenkins {
+	return createJenkinsCR(t, sample.name, sample.namespace, sample.seedJob, sample.groovyScripts, sample.casc, sample.priorityClassName)
 }
 
 func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode, priorityClassName string) *v1alpha2.Jenkins {

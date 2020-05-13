@@ -2,8 +2,6 @@ package e2e
 
 import (
 	"flag"
-	"io/ioutil"
-	"log"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis"
@@ -26,7 +24,6 @@ var (
 
 func TestMain(m *testing.M) {
 	seedJobConfigurationFile = flag.String(seedJobConfigurationParameterName, "", "path to seed job config")
-	log.SetOutput(ioutil.Discard)
 	framework.MainEntry(m)
 }
 
