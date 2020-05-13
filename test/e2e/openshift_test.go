@@ -2,8 +2,9 @@ package e2e
 
 import (
 	"fmt"
-	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 	"testing"
+
+	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 
 	"github.com/stretchr/testify/assert"
 
@@ -69,16 +70,13 @@ func TestOpenShiftPlugins(t *testing.T) {
 	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
 	defer cleanUpFunc()
 	installedPlugins, err := jenkinsClient.GetPlugins(1)
-		if err != nil{
-			t.Fatal(err)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, openshiftPlugin := range plugins.OpenshiftPlugins() {
+		if found, ok := isPluginValid(installedPlugins, openshiftPlugin); !ok {
+			t.Fatalf("Invalid plugin '%s', actual '%v'", openshiftPlugin, found)
 		}
-
-
-		for _, openshiftPlugin := range plugins.OpenshiftPlugins(){
-			if found, ok := isPluginValid(installedPlugins, openshiftPlugin); !ok{
-				t.Fatalf("Invalid plugin '%s', actual '%v'",openshiftPlugin, found)
-			}
-		}
-
-
+	}
 }
