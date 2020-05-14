@@ -36,7 +36,7 @@ func TestBaseOpenShiftConfiguration(t *testing.T) {
 	createDefaultLimitsForContainersInNamespace(t, namespace)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	verifyJenkinsMasterPodAttributes(t, jenkins)
-	verifyServiceAccountAnnotations(t, jenkins)
+	//verifyServiceAccountAnnotations(t, jenkins)
 	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
 	defer cleanUpFunc()
 	verifyPlugins(t, jenkinsClient, jenkins)
