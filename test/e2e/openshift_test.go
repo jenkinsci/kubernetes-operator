@@ -39,6 +39,7 @@ func TestBaseOpenShiftConfiguration(t *testing.T) {
 	//verifyServiceAccountAnnotations(t, jenkins)
 	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
 	defer cleanUpFunc()
+	TestOpenShiftPlugins(t)
 	verifyPlugins(t, jenkinsClient, jenkins)
 }
 
