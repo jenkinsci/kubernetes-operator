@@ -6,8 +6,6 @@ import (
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/controller/jenkins/plugins"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 )
 
@@ -44,14 +42,14 @@ func TestBaseOpenShiftConfiguration(t *testing.T) {
 	verifyPlugins(t, jenkinsClient, jenkins)
 }
 
-func verifyServiceAccountAnnotations(t *testing.T, jenkins *v1alpha2.Jenkins) {
-	serviceaccount := getServiceAccount(t, jenkins)
-	assert.NotNil(t, serviceaccount)
-	routeAnnotation := "'{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"jenkins-route\"}}"
-	annotations := make(map[string]string)
-	annotations["serviceaccounts.openshift.io/oauth-redirectreference.jenkins"] = routeAnnotation
-	assertMapContainsElementsFromAnotherMap(t, serviceaccount.Annotations, annotations)
-}
+//func verifyServiceAccountAnnotations(t *testing.T, jenkins *v1alpha2.Jenkins) {
+//	serviceaccount := getServiceAccount(t, jenkins)
+//	assert.NotNil(t, serviceaccount)
+//	routeAnnotation := "'{\"kind\":\"OAuthRedirectReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"Route\",\"name\":\"jenkins-route\"}}"
+//	annotations := make(map[string]string)
+//	annotations["serviceaccounts.openshift.io/oauth-redirectreference.jenkins"] = routeAnnotation
+//	assertMapContainsElementsFromAnotherMap(t, serviceaccount.Annotations, annotations)
+//}
 
 func TestOpenShiftPlugins(t *testing.T) {
 	t.Parallel()
