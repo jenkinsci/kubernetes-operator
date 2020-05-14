@@ -50,13 +50,13 @@ func getJenkinsMasterPod(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.Pod {
 	return &podList.Items[0]
 }
 
-func getServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.ServiceAccount {
-	sa, err := framework.Global.KubeClient.CoreV1().ServiceAccounts(jenkins.ObjectMeta.Namespace).Get(jenkins.Name, metav1.GetOptions{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	return sa
-}
+//func getServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins) *corev1.ServiceAccount {
+//	sa, err := framework.Global.KubeClient.CoreV1().ServiceAccounts(jenkins.ObjectMeta.Namespace).Get(jenkins.Name, metav1.GetOptions{})
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	return sa
+//}
 
 type JenkinsSample struct {
 	name              string
