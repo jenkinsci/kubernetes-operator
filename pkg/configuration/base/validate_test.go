@@ -923,8 +923,7 @@ func TestValidateJenkinsMasterContainerCommand(t *testing.T) {
 							Command: []string{
 								"bash",
 								"-c",
-								fmt.Sprintf("%s/%s && my-extra-command.sh && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh",
-									resources.JenkinsScriptsVolumePath, resources.InitScriptName),
+								"export REF=${JENKINS_REF} && my-extra-command.sh && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh",
 							},
 						},
 					},
@@ -947,8 +946,7 @@ func TestValidateJenkinsMasterContainerCommand(t *testing.T) {
 							Command: []string{
 								"bash",
 								"-c",
-								fmt.Sprintf("%s/%s && my-extra-command.sh && /sbin/tini -s -- /usr/local/bin/jenkins.sh",
-									resources.JenkinsScriptsVolumePath, resources.InitScriptName),
+								"export REF=${JENKINS_REF} && my-extra-command.sh && /sbin/tini -s -- /usr/local/bin/jenkins.sh",
 							},
 						},
 					},

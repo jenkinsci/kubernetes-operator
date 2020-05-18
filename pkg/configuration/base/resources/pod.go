@@ -15,7 +15,9 @@ const (
 	JenkinsMasterContainerName = "jenkins-master"
 	// JenkinsHomeVolumeName is the Jenkins home volume name
 	JenkinsHomeVolumeName = "jenkins-home"
-	jenkinsPath           = "/var/jenkins"
+	// JenkinsRefVolumeName is the Jenkins ref volume name
+	JenkinsRefVolumeName = "jenkins-ref"
+	jenkinsPath          = "/var/jenkins"
 
 	jenkinsScriptsVolumeName = "scripts"
 	// JenkinsScriptsVolumePath is a path where are scripts used to configure Jenkins
@@ -52,8 +54,7 @@ func GetJenkinsMasterContainerBaseCommand() []string {
 	return []string{
 		"bash",
 		"-c",
-		fmt.Sprintf("%s/%s && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh",
-			JenkinsScriptsVolumePath, InitScriptName),
+		"export REF=${JENKINS_REF} && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh",
 	}
 }
 
@@ -87,6 +88,17 @@ func getJenkinsHomePath(jenkins *v1alpha2.Jenkins) string {
 	return defaultJenkinsHomePath
 }
 
+// getJenkinsRefPath fetches the Ref Path for Jenkins
+func getJenkinsRefPath(jenkins *v1alpha2.Jenkins) string {
+	defaultJenkinsRefPath := "/var/lib/jenkins-ref"
+	for _, envVar := range jenkins.Spec.Master.Containers[0].Env {
+		if envVar.Name == "JENKINS_REF" {
+			return envVar.Value
+		}
+	}
+	return defaultJenkinsRefPath
+}
+
 // GetJenkinsMasterPodBaseVolumes returns Jenkins master pod volumes required by operator
 func GetJenkinsMasterPodBaseVolumes(jenkins *v1alpha2.Jenkins) []corev1.Volume {
 	configMapVolumeSourceDefaultMode := corev1.ConfigMapVolumeSourceDefaultMode
@@ -95,6 +107,12 @@ func GetJenkinsMasterPodBaseVolumes(jenkins *v1alpha2.Jenkins) []corev1.Volume {
 	volumes := []corev1.Volume{
 		{
 			Name: JenkinsHomeVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
+		{
+			Name: JenkinsRefVolumeName,
 			VolumeSource: corev1.VolumeSource{
 				EmptyDir: &corev1.EmptyDirVolumeSource{},
 			},
@@ -175,6 +193,11 @@ func GetJenkinsMasterContainerBaseVolumeMounts(jenkins *v1alpha2.Jenkins) []core
 			ReadOnly:  false,
 		},
 		{
+			Name:      JenkinsRefVolumeName,
+			MountPath: getJenkinsRefPath(jenkins),
+			ReadOnly:  false,
+		},
+		{
 			Name:      jenkinsScriptsVolumeName,
 			MountPath: JenkinsScriptsVolumePath,
 			ReadOnly:  true,
@@ -231,6 +254,22 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 
 	if !jenkinsHomeEnvVarExists {
 		envs = append(envs, jenkinsHomeEnvVar)
+	}
+
+	jenkinsRefEnvVar := corev1.EnvVar{
+		Name:  "JENKINS_REF",
+		Value: getJenkinsRefPath(jenkins),
+	}
+	jenkinsRefEnvVarExists := false
+	for _, env := range jenkinsContainer.Env {
+		if env.Name == jenkinsRefEnvVar.Name {
+			jenkinsRefEnvVarExists = true
+			break
+		}
+	}
+
+	if !jenkinsRefEnvVarExists {
+		envs = append(envs, jenkinsRefEnvVar)
 	}
 
 	return corev1.Container{
@@ -290,6 +329,23 @@ func newContainers(jenkins *v1alpha2.Jenkins) (containers []corev1.Container) {
 	return
 }
 
+func newInitContainers(jenkins *v1alpha2.Jenkins) (containers []corev1.Container) {
+	initContainer := NewJenkinsMasterContainer(jenkins)
+	initContainer.Name = "jenkins-init"
+	initContainer.Ports = []corev1.ContainerPort{}
+	initContainer.ReadinessProbe = nil
+	initContainer.LivenessProbe = nil
+	initContainer.Command = []string{
+		"bash",
+		"-c",
+		fmt.Sprintf("%s/%s", JenkinsScriptsVolumePath, InitScriptName),
+	}
+
+	containers = append(containers, initContainer)
+
+	return
+}
+
 // GetJenkinsMasterPodName returns Jenkins pod name for given CR
 func GetJenkinsMasterPodName(jenkins *v1alpha2.Jenkins) string {
 	return fmt.Sprintf("jenkins-%s", jenkins.Name)
@@ -323,6 +379,7 @@ func NewJenkinsMasterPod(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins
 			ServiceAccountName: serviceAccountName,
 			RestartPolicy:      corev1.RestartPolicyNever,
 			NodeSelector:       jenkins.Spec.Master.NodeSelector,
+			InitContainers:     newInitContainers(jenkins),
 			Containers:         newContainers(jenkins),
 			Volumes:            append(GetJenkinsMasterPodBaseVolumes(jenkins), jenkins.Spec.Master.Volumes...),
 			SecurityContext:    jenkins.Spec.Master.SecurityContext,

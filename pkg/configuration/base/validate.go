@@ -76,7 +76,7 @@ func (r *ReconcileJenkinsBaseConfiguration) validateJenkinsMasterContainerComman
 		return []string{}
 	}
 
-	jenkinsOperatorInitScript := fmt.Sprintf("%s/%s && ", resources.JenkinsScriptsVolumePath, resources.InitScriptName)
+	jenkinsOperatorInitScript := "export REF=${JENKINS_REF} && "
 	correctCommand := []string{
 		"bash",
 		"-c",

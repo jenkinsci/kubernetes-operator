@@ -265,6 +265,12 @@ chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
 {{- $jenkinsHomePath := .JenkinsHomePath }}
 {{- $installPluginsCommand := .InstallPluginsCommand }}
 
+REF=${REF:-%s/plugins}
+OLD_REF=${REF}
+
+cp -r "${REF}"/* "${JENKINS_REF}"
+export REF="${JENKINS_REF}"
+
 echo "Installing plugins required by Operator - begin"
 cat > {{ .JenkinsHomePath }}/base-plugins << EOF
 {{ range $index, $plugin := .BasePlugins }}
@@ -291,6 +297,8 @@ else
   {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/user-plugins
 fi
 echo "Installing plugins required by user - end"
+
+export REF=${OLD_REF}
 `))
 
 func buildConfigMapTypeMeta() metav1.TypeMeta {
