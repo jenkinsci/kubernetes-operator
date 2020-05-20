@@ -14,8 +14,8 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
-	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
+	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 
 	"github.com/go-logr/logr"
 	stackerr "github.com/pkg/errors"

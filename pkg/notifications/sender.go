@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	k8sevent "github.com/jenkinsci/kubernetes-operator/pkg/event"
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/mailgun"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/msteams"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/slack"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/smtp"
-	k8sevent "github.com/jenkinsci/kubernetes-operator/pkg/event"
-	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
 	"github.com/pkg/errors"
 	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"

@@ -251,6 +251,7 @@ ifeq ($(KUBERNETES_PROVIDER),crc)
 	oc project $(CRC_OC_PROJECT)
 endif
 	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkins_crd.yaml
+	kubectl apply -f deploy/crds/jenkins_$(API_VERSION)_jenkinsimage_crd.yaml
 	@echo "Watching '$(WATCH_NAMESPACE)' namespace"
 	build/_output/bin/jenkins-operator $(OPERATOR_ARGS)
 

@@ -1,0 +1,24 @@
+apiVersion: jenkins.io/v1alpha2
+kind: JenkinsImage
+metadata:
+  name: simple-jenkinsimage
+spec:
+  image:
+    name: jenkins/jenkins
+    tag: lts
+  plugins:
+  - name: kubernetes
+    version: "1.15.7"
+  - name: workflow-job 
+    version: "2.32"
+  - name: workflow-aggregator
+    version: "2.6"
+  - name: git
+    version: "3.10.0"
+  - name: job-dsl
+    version: "1.74"
+  - name: configuration-as-code
+    version: "1.19"
+  - name: kubernetes-credentials-provider
+    version: "0.12.1"
+

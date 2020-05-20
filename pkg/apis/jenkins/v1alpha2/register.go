@@ -47,4 +47,5 @@ func JenkinsTypeMeta() metav1.TypeMeta {
 
 func init() {
 	SchemeBuilder.Register(&Jenkins{}, &JenkinsList{})
+	SchemeBuilder.Register(&JenkinsImage{}, &JenkinsImageList{})
 }
