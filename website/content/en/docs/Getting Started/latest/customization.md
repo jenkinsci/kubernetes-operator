@@ -13,6 +13,7 @@ Plugin's configuration is applied as groovy scripts or the [configuration as cod
 Any plugin working for Jenkins can be installed by the Jenkins Operator.
  
 Pre-installed plugins: 
+
 * configuration-as-code v1.38
 * git v4.2.2
 * job-dsl v1.77
