@@ -26,13 +26,13 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:lts
+  image:
+    repository: jenkins/jenkins
+    tag: lts
+    pullPolicy: IfNotPresent
 
   # env contains jenkins container environment variables
   env: []
-
-  # imagePullPolicy defines policy for pulling images
-  imagePullPolicy: Always
 
   # priorityClassName indicates the importance of a Pod relative to other Pods
   # See: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/

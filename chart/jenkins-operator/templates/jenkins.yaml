@@ -78,8 +78,8 @@ spec:
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
       - name:  jenkins-master
-        image: {{ .Values.jenkins.image }}
-        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
+        image: {{ .Values.jenkins.image.repository }}:{{ .Values.jenkins.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         {{- with .Values.jenkins.imagePullSecrets }}
         imagePullSecrets: {{ toYaml . | nindent 10 }}
         {{- end }}
