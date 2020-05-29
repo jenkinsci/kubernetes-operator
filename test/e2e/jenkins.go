@@ -70,20 +70,19 @@ type JenkinsE2EConfiguration struct {
 	casc              v1alpha2.ConfigurationAsCode
 }
 
-func createJenkinsCRFromSample(t *testing.T, sample JenkinsE2EConfiguration) *v1alpha2.Jenkins {
-	j := createJenkinsCR(t, sample.name, sample.namespace, sample.seedJob, sample.groovyScripts, sample.casc, sample.priorityClassName)
+func createJenkinsCRFromConfiguration(t *testing.T, sample JenkinsE2EConfiguration) *v1alpha2.Jenkins {
 	plugins := sample.plugins
-	if len(plugins) > 0 {
-		j.Spec.Master.Plugins = plugins
-	}
+	j := createJenkinsCR(t, sample.name, sample.namespace, sample.seedJob, sample.groovyScripts, sample.casc, sample.priorityClassName, plugins)
 	return j
 }
 
-func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode, priorityClassName string) *v1alpha2.Jenkins {
+func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.SeedJob, groovyScripts v1alpha2.GroovyScripts, casc v1alpha2.ConfigurationAsCode, priorityClassName string, plugins []v1alpha2.Plugin) *v1alpha2.Jenkins {
 	var seedJobs []v1alpha2.SeedJob
 	if seedJob != nil {
 		seedJobs = append(seedJobs, *seedJob...)
 	}
+	defaultedPlugins := getDefaultedPlugins(plugins)
+
 	jenkins := &v1alpha2.Jenkins{
 		TypeMeta: v1alpha2.JenkinsTypeMeta(),
 		ObjectMeta: metav1.ObjectMeta{
@@ -140,12 +139,7 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 						Image: "envoyproxy/envoy-alpine:v1.14.1",
 					},
 				},
-				Plugins: []v1alpha2.Plugin{
-					{Name: "audit-trail", Version: "2.4"},
-					{Name: "simple-theme-plugin", Version: "0.5.1"},
-					{Name: "github", Version: "1.29.4"},
-					{Name: "devoptics", Version: "1.1863", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/1.1863/devoptics.hpi"},
-				},
+				Plugins:           defaultedPlugins,
 				PriorityClassName: priorityClassName,
 				NodeSelector:      map[string]string{"kubernetes.io/os": "linux"},
 				Volumes: []corev1.Volume{
@@ -179,6 +173,19 @@ func createJenkinsCR(t *testing.T, name, namespace string, seedJob *[]v1alpha2.S
 	}
 
 	return jenkins
+}
+
+func getDefaultedPlugins(plugins []v1alpha2.Plugin) []v1alpha2.Plugin {
+	defaultedPlugins := []v1alpha2.Plugin{
+		{Name: "audit-trail", Version: "2.4"},
+		{Name: "simple-theme-plugin", Version: "0.5.1"},
+		{Name: "github", Version: "1.29.4"},
+		{Name: "devoptics", Version: "1.1863", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/1.1863/devoptics.hpi"},
+	}
+	if len(plugins) > 0 {
+		defaultedPlugins = plugins
+	}
+	return defaultedPlugins
 }
 
 func createJenkinsAPIClientFromServiceAccount(t *testing.T, jenkins *v1alpha2.Jenkins, jenkinsAPIURL string) (jenkinsclient.Jenkins, error) {

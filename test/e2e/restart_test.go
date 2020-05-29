@@ -20,7 +20,7 @@ func TestJenkinsMasterPodRestart(t *testing.T) {
 
 	defer showLogsAndCleanup(t, ctx)
 
-	jenkins := createJenkinsCR(t, "e2e", namespace, nil, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, "")
+	jenkins := createJenkinsCR(t, "e2e", namespace, nil, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, "", nil)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	restartJenkinsMasterPod(t, jenkins)
 	waitForRecreateJenkinsMasterPod(t, jenkins)
@@ -48,7 +48,7 @@ func TestSafeRestart(t *testing.T) {
 			},
 		},
 	}
-	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, nil, groovyScriptsConfig, v1alpha2.ConfigurationAsCode{}, "")
+	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, nil, groovyScriptsConfig, v1alpha2.ConfigurationAsCode{}, "", nil)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
 	waitForJenkinsUserConfigurationToComplete(t, jenkins)
 	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
