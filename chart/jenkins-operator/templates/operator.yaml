@@ -1,59 +1,133 @@
-apiVersion: apps/v1
-kind: Deployment
+{{ if .Values.jenkins.enabled }}
+apiVersion: {{ .Values.jenkins.apiVersion }}
+kind: Jenkins
 metadata:
-  name: {{ include "jenkins-operator.fullname" . }}
-  labels:
-{{ include "jenkins-operator.labels" . | indent 4 }}
+  name: {{ .Values.jenkins.name }}
+  namespace: {{ .Values.jenkins.namespace }}
+  {{- with .Values.jenkins.labels }}
+  labels: {{ toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  replicas: {{ .Values.operator.replicaCount }}
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ include "jenkins-operator.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: {{ include "jenkins-operator.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-    spec:
-      serviceAccountName: jenkins-operator
-    {{- with .Values.operator.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+  configurationAsCode:
+    configurations:
+    {{- range .Values.jenkins.configuration.configurationAsCode }}
+    - name: {{ .configMapName }}
     {{- end }}
-      containers:
-        - name: {{ .Chart.Name }}
-          image: {{ .Values.operator.image }}
-          imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          command:
-            - jenkins-operator
-          args: []
-          env:
-            - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: "jenkins-operator"
-          resources:
-            {{- toYaml .Values.operator.resources | nindent 12 }}
-      {{- with .Values.operator.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
+    {{- if .Values.jenkins.configuration.configurationAsCode }}
+    secret:
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{- else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
       {{- end }}
-    {{- with .Values.operator.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.operator.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
+  groovyScripts:
+    configurations:
+    {{- range .Values.jenkins.configuration.groovyScripts }}
+    - name: {{ .configMapName }}
     {{- end }}
+    {{- if .Values.jenkins.configuration.groovyScripts }}
+    secret:
+      {{- if .Values.jenkins.configuration.secretRefName }}
+      name: {{ .Values.jenkins.configuration.secretRefName }}
+      {{- else if .Values.jenkins.configuration.secretData }}
+      name: jenkins-{{ .Values.jenkins.name }}
+      {{- end }}
+    {{- end }}
+  {{- if .Values.jenkins.backup.enabled }}
+  backup:
+    containerName: {{ .Values.jenkins.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.jenkins.backup.backupCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    interval: {{ .Values.jenkins.backup.interval }}
+    makeBackupBeforePodDeletion: {{ .Values.jenkins.backup.makeBackupBeforePodDeletion }}
+  restore:
+    containerName: {{ .Values.jenkins.backup.containerName }}
+    action:
+      exec:
+        {{- with .Values.jenkins.backup.restoreCommand }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    {{- if .Values.jenkins.backup.recoveryOnce }}
+    recoveryOnce: {{ .Values.jenkins.backup.recoveryOnce }}
+    {{- end }}
+  {{- end }}
+  {{- with .Values.jenkins.service }}
+  service: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.jenkins.slaveService }}
+  slaveService: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.jenkins.notifications }}
+  notifications: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  master:
+    {{- with .Values.jenkins.labels }}
+    labels: {{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.jenkins.basePlugins }}
+    basePlugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.jenkins.plugins }}
+    plugins: {{ toYaml . | nindent 4 }}
+    {{- end }}
+    priorityClassName: {{ .Values.jenkins.priorityClassName }}
+    disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
+    containers:
+      - name:  jenkins-master
+        image: {{ .Values.jenkins.image.repository }}:{{ .Values.jenkins.image.tag }}
+        imagePullPolicy: {{ .Values.jenkins.image.pullPolicy }}
+        {{- with .Values.jenkins.imagePullSecrets }}
+        imagePullSecrets: {{ toYaml . | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 12
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 80
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /login
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        {{- with .Values.jenkins.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.jenkins.env }}
+        env: {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if .Values.jenkins.backup.enabled }}
+      - name: {{ .Values.jenkins.backup.containerName }}
+        image: {{ .Values.jenkins.backup.image.repository }}:{{ .Values.jenkins.backup.image.tag}}
+        imagePullPolicy: {{ .Values.jenkins.backup.image.pullPolicy }}
+        {{- with .Values.jenkins.backup.env }}
+        env: {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.jenkins.backup.volumeMounts }}
+        volumeMounts: {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    {{- with .Values.jenkins.volumes }}
+    volumes: {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.jenkins.securityContext}}
+    securityContext:
+    {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.jenkins.seedJobs }}
+  seedJobs: {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

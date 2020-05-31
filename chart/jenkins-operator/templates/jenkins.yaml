@@ -79,7 +79,7 @@ spec:
     containers:
       - name:  jenkins-master
         image: {{ .Values.jenkins.image.repository }}:{{ .Values.jenkins.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.jenkins.image.pullPolicy }}
         {{- with .Values.jenkins.imagePullSecrets }}
         imagePullSecrets: {{ toYaml . | nindent 10 }}
         {{- end }}
@@ -111,8 +111,8 @@ spec:
         {{- end }}
       {{- if .Values.jenkins.backup.enabled }}
       - name: {{ .Values.jenkins.backup.containerName }}
-        image: {{ .Values.jenkins.backup.image }}
-        imagePullPolicy: IfNotPresent
+        image: {{ .Values.jenkins.backup.image.repository }}:{{ .Values.jenkins.backup.image.tag}}
+        imagePullPolicy: {{ .Values.jenkins.backup.image.pullPolicy }}
         {{- with .Values.jenkins.backup.env }}
         env: {{- toYaml . | nindent 8 }}
         {{- end }}
