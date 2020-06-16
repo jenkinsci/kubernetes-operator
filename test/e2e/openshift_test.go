@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,10 +14,6 @@ func TestBaseOpenShiftConfiguration(t *testing.T) {
 	t.Parallel()
 	namespace, ctx := setupTest(t)
 	defer showLogsAndCleanup(t, ctx)
-	numberOfExecutors := 6
-	numberOfExecutorsEnvName := "NUMBER_OF_EXECUTORS"
-	stringData := make(map[string]string)
-	stringData[numberOfExecutorsEnvName] = fmt.Sprintf("%d", numberOfExecutors)
 	_, jenkinsConfig := createOpenShiftConfiguration(namespace, openshfitE2e)
 	jenkins := createJenkinsCRFromConfiguration(t, jenkinsConfig)
 	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
