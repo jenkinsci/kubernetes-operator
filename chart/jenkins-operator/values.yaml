@@ -116,6 +116,9 @@ jenkins:
       persistentVolumeClaim:
         claimName: jenkins-backup
 
+  # volumeMounts are mounts for Jenkins pod
+  volumeMounts: []
+
   # securityContext for pod
   securityContext:
     runAsUser: 1000
