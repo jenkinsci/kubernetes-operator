@@ -15,7 +15,7 @@ echo "Running backup"
 # branches/myorg/branches/myrepo/branches/master/config.xml should be retained while
 # branches/myorg/config.xml should not
 set +e
-tar -C ${JENKINS_HOME} -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/workspace* --no-wildcards-match-slash --anchored --exclude jobs/*/config.xml -c jobs && \
+tar -C ${JENKINS_HOME} -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/workspace* --no-wildcards-match-slash --anchored --exclude jobs/*/config.xml -c jobs
 exitcode=$?
 if [ "$exitcode" != "1" ] && [ "$exitcode" != "0" ]; then
     exit $exitcode
