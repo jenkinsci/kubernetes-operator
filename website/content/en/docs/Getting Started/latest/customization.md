@@ -19,7 +19,7 @@ Pre-installed plugins:
 * kubernetes-credentials-provider v0.13
 * kubernetes v1.25.2
 * workflow-aggregator v2.6
-* workflow-job v2.38
+* workflow-job v2.39
 
 Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
 
