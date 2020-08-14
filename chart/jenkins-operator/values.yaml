@@ -23,6 +23,9 @@ jenkins:
   # labels are injected into metadata labels field
   labels: {}
 
+  # annotations are injected into metadata annotations field
+  annotations: {}
+
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version

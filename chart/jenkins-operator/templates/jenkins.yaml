@@ -65,6 +65,9 @@ spec:
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
+    {{- with .Values.jenkins.annotations }}
+    annotations: {{ toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.jenkins.labels }}
     labels: {{ toYaml . | nindent 6 }}
     {{- end }}
