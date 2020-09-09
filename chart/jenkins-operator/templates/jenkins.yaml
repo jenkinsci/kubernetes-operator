@@ -83,26 +83,30 @@ spec:
         {{- with .Values.jenkins.imagePullSecrets }}
         imagePullSecrets: {{ toYaml . | nindent 10 }}
         {{- end }}
+        {{- if .Values.jenkins.livenessProbe.enabled }}
         livenessProbe:
-          failureThreshold: 12
+          failureThreshold: {{ .Values.jenkins.livenessProbe.failureThreshold }}
           httpGet:
-            path: /login
-            port: http
-            scheme: HTTP
-          initialDelaySeconds: 80
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
+            path: {{ .Values.jenkins.livenessProbe.httpGet.path }}
+            port: {{ .Values.jenkins.livenessProbe.httpGet.port }}
+            scheme: {{ .Values.jenkins.livenessProbe.httpGet.scheme }}
+          initialDelaySeconds: {{ .Values.jenkins.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.jenkins.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.jenkins.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.jenkins.livenessProbe.timeoutSeconds }}
+        {{- end }}
+        {{- if .Values.jenkins.readinessProbe.enabled }}
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: {{ .Values.jenkins.readinessProbe.failureThreshold }}
           httpGet:
-            path: /login
-            port: http
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+            path: {{ .Values.jenkins.readinessProbe.httpGet.path }}
+            port: {{ .Values.jenkins.readinessProbe.httpGet.port }}
+            scheme: {{ .Values.jenkins.readinessProbe.httpGet.scheme }}
+          initialDelaySeconds: {{ .Values.jenkins.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.jenkins.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.jenkins.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.jenkins.readinessProbe.timeoutSeconds }}
+        {{- end }}
         {{- with .Values.jenkins.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}

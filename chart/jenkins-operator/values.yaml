@@ -33,6 +33,32 @@ jenkins:
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: Always
+  
+  # livenessProbe of Jenkins instance
+  livenessProbe:
+    enabled: true
+    failureThreshold: 12
+    httpGet:
+      path: /login
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 80
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  # readinessProbe of Jenkins instance
+  readinessProbe:
+    enabled: true
+    failureThreshold: 3
+    httpGet:
+      path: /login
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
 
   # priorityClassName indicates the importance of a Pod relative to other Pods
   # See: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
