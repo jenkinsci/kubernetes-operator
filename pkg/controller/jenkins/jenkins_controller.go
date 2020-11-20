@@ -331,6 +331,7 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool,
 	logger := logx.WithValues("cr", jenkins.Name)
 
 	var jenkinsContainer v1alpha2.Container
+
 	if len(jenkins.Spec.Master.Containers) == 0 {
 		changed = true
 		jenkinsContainer = v1alpha2.Container{Name: resources.JenkinsMasterContainerName}
@@ -438,6 +439,12 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool,
 		logger.Info("Setting default Jenkins API settings authorization strategy")
 		changed = true
 		jenkins.Spec.JenkinsAPISettings.AuthorizationStrategy = v1alpha2.CreateUserAuthorizationStrategy
+	}
+
+	if len(jenkins.Spec.SeedJobs) > 0 && len(jenkins.Spec.SeedAgent.Image) == 0 {
+		logger.Info("Setting default Agent image: " + constants.DefaultJenkinsAgentImage)
+		changed = true
+		jenkins.Spec.SeedAgent.Image = constants.DefaultJenkinsAgentImage
 	}
 
 	if changed {

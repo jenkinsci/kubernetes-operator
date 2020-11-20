@@ -83,6 +83,8 @@ import javaposse.jobdsl.plugin.ExecuteDslScripts;
 import javaposse.jobdsl.plugin.LookupStrategy;
 import javaposse.jobdsl.plugin.RemovedJobAction;
 import javaposse.jobdsl.plugin.RemovedViewAction;
+import hudson.tasks.Shell
+import hudson.plugins.git.extensions.impl.CleanBeforeCheckout
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -92,7 +94,7 @@ def jobDslSeedName = "{{ .ID }}-{{ .SeedJobSuffix }}";
 def jobRef = jenkins.getItem(jobDslSeedName)
 
 def repoList = GitSCM.createRepoList("{{ .RepositoryURL }}", "{{ .CredentialID }}")
-def gitExtensions = [new CloneOption(true, true, ";", 10)]
+def gitExtensions = [new CloneOption(true, true, ";", 10), new CleanBeforeCheckout()]
 def scm = new GitSCM(
         repoList,
         newArrayList(new BranchSpec("{{ .RepositoryBranch }}")),
@@ -102,7 +104,9 @@ def scm = new GitSCM(
         null,
         gitExtensions
 )
-
+{{ if .ExecuteShell }}
+def excuteShell = new Shell("{{ .ExecuteShell }}")
+{{ end }}
 def executeDslScripts = new ExecuteDslScripts()
 executeDslScripts.setTargets("{{ .Targets }}")
 executeDslScripts.setSandbox(false)
@@ -119,9 +123,13 @@ if (jobRef == null) {
 }
 
 jobRef.getBuildersList().clear()
+{{ if .ExecuteShell }}
+jobRef.getBuildersList().add(excuteShell)
+{{ end }}
 jobRef.getBuildersList().add(executeDslScripts)
 jobRef.setDisplayName("Seed Job from {{ .ID }}")
 jobRef.setScm(scm)
+
 
 {{ if .PollSCM }}
 jobRef.addTrigger(new SCMTrigger("{{ .PollSCM }}"))
@@ -425,7 +433,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 					Containers: []corev1.Container{
 						{
 							Name:  "jnlp",
-							Image: "jenkins/inbound-agent:alpine",
+							Image: jenkins.Spec.SeedAgent.Image,
 							Env: []corev1.EnvVar{
 								{
 									Name: "JENKINS_TUNNEL",
@@ -500,6 +508,7 @@ func seedJobCreatingGroovyScript(seedJob v1alpha2.SeedJob) (string, error) {
 		ID                    string
 		CredentialID          string
 		Targets               string
+		ExecuteShell          string
 		RepositoryBranch      string
 		RepositoryURL         string
 		BitbucketPushTrigger  bool
@@ -516,6 +525,7 @@ func seedJobCreatingGroovyScript(seedJob v1alpha2.SeedJob) (string, error) {
 		ID:                    seedJob.ID,
 		CredentialID:          seedJob.CredentialID,
 		Targets:               seedJob.Targets,
+		ExecuteShell:          seedJob.ExecuteShell,
 		RepositoryBranch:      seedJob.RepositoryBranch,
 		RepositoryURL:         seedJob.RepositoryURL,
 		BitbucketPushTrigger:  seedJob.BitbucketPushTrigger,

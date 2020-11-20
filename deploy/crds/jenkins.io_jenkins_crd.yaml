@@ -2726,6 +2726,10 @@ spec:
                 - name
                 type: object
               type: array
+            seedAgent:
+              image:
+                description: 'Docker image name. More info: https://kubernetes.io/docs/concepts/containers/images'
+                type: string
             seedJobs:
               description: 'SeedJobs defines list of Jenkins Seed Job configurations
                 More info: https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-seed-jobs-and-pipelines'
@@ -2736,6 +2740,9 @@ spec:
                   additionalClasspath:
                     description: AdditionalClasspath is setting for Job DSL API plugin
                       to set Additional Classpath
+                    type: string
+                  executeShell:
+                    description: ExecuteShell is used to run shell command before DSL step
                     type: string
                   bitbucketPushTrigger:
                     description: BitbucketPushTrigger is used for Bitbucket web hooks

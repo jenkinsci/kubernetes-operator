@@ -15,4 +15,6 @@ const (
 	DefaultSlavePortInt32 = int32(50000)
 	// JavaOpsVariableName is the name of environment variable which consists Jenkins Java options
 	JavaOpsVariableName = "JAVA_OPTS"
+	// DefaultJenkinsAgentImage is the default Jenkins agent docker image
+	DefaultJenkinsAgentImage = "jenkins/inbound-agent:latest"
 )

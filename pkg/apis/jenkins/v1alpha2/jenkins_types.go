@@ -65,6 +65,9 @@ type JenkinsSpec struct {
 
 	// JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API
 	JenkinsAPISettings JenkinsAPISettings `json:"jenkinsAPISettings"`
+
+	// SeedAgent defines agent node configurations
+	SeedAgent SeedAgent `json:"seedAgent,omitempty"`
 }
 
 // AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API
@@ -537,6 +540,12 @@ var AllowedJenkinsCredentialMap = map[string]string{
 	string(ExternalCredentialType):            "",
 }
 
+// SeedAgent defines configuration for seed job agent configuration
+type SeedAgent struct {
+	// More info: https://kubernetes.io/docs/concepts/containers/images
+	Image string `json:"image"`
+}
+
 // SeedJob defines configuration for seed job
 // More info: https://github.com/jenkinsci/kubernetes-operator/blob/master/docs/getting-started.md#configure-seed-jobs-and-pipelines.
 type SeedJob struct {
@@ -562,6 +571,10 @@ type SeedJob struct {
 	// JenkinsCredentialType is the https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/ credential type
 	// +optional
 	JenkinsCredentialType JenkinsCredentialType `json:"credentialType,omitempty"`
+
+	// ExecuteShell is used to run shell command before DSL step
+	// +optional
+	ExecuteShell string `json:"executeShell"`
 
 	// BitbucketPushTrigger is used for Bitbucket web hooks
 	// +optional
