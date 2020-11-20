@@ -8,8 +8,6 @@ spec:
     - name: jenkins-master
       image: jenkins/jenkins:lts
       imagePullPolicy: Always
-      imagePullSecrets:
-        - name: p21d13401013001
       livenessProbe:
         failureThreshold: 12
         httpGet:
@@ -38,7 +36,7 @@ spec:
           cpu: "1"
           memory: 500Mi
   seedAgent:
-    image: p21d13401013001.azurecr.io/jenkins/inbound-agent:latest
+    image: jenkins/inbound-agent:latest
   seedJobs:
   - id: jenkins-operator
     targets: "cicd/jobs/*.jenkins"
