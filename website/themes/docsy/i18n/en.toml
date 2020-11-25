@@ -19,8 +19,8 @@ other = "Search this site…"
 other = "in"
 
 # Footer text
-[footer_all_rights_reserved]
-other = "All Rights Reserved"
+[footer_rights]
+other = "Jenkins Operator is created by VirtusLab. Source and website content is available under Apache License Version 2. Jenkins® is a registered trademark of Software in the Public Interest, Inc."
 
 [footer_privacy_policy]
 other = "Privacy Policy"
