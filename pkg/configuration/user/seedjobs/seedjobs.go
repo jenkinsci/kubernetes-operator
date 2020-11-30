@@ -104,9 +104,6 @@ def scm = new GitSCM(
         null,
         gitExtensions
 )
-{{ if .ExecuteShell }}
-def excuteShell = new Shell("{{ .ExecuteShell }}")
-{{ end }}
 def executeDslScripts = new ExecuteDslScripts()
 executeDslScripts.setTargets("{{ .Targets }}")
 executeDslScripts.setSandbox(false)
@@ -124,7 +121,7 @@ if (jobRef == null) {
 
 jobRef.getBuildersList().clear()
 {{ if .ExecuteShell }}
-jobRef.getBuildersList().add(excuteShell)
+jobRef.getBuildersList().add(new Shell("{{ .ExecuteShell }}"))
 {{ end }}
 jobRef.getBuildersList().add(executeDslScripts)
 jobRef.setDisplayName("Seed Job from {{ .ID }}")

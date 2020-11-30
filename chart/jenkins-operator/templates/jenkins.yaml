@@ -130,6 +130,9 @@ spec:
     securityContext:
     {{- toYaml . | nindent 6 }}
     {{- end }}
+  {{- with .Values.jenkins.seedAgent }}
+  seedAgent: {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}
