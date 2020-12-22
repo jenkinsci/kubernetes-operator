@@ -94,6 +94,16 @@ rules:
       - list
       - watch
   - apiGroups:
+      - "route.openshift.io"
+    resources:
+      - routes
+    verbs:
+      - get
+      - list
+      - watch
+      - create 
+      - update
+  - apiGroups:
       - "image.openshift.io"
     resources:
       - imagestreams
@@ -140,7 +150,7 @@ spec:
       serviceAccountName: jenkins-operator
       containers:
         - name: jenkins-operator
-          image: virtuslab/jenkins-operator:v0.4.0
+          image: virtuslab/jenkins-operator:v0.5.0
           command:
           - jenkins-operator
           args: []

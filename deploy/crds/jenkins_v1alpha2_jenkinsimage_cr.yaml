@@ -5,16 +5,16 @@ metadata:
 spec:
   image:
     name: jenkins/jenkins
-    tag: 2.249.3-lts-alpine
+    tag: 2.263.1-lts-alpine
   plugins:
   - name: kubernetes
-    version: "1.27.6"
+    version: "1.28.6"
   - name: workflow-job
     version: "2.40"
   - name: workflow-aggregator
     version: "2.6"
   - name: git
-    version: "4.4.5"
+    version: "4.5.0"
   - name: job-dsl
     version: "1.77"
   - name: configuration-as-code

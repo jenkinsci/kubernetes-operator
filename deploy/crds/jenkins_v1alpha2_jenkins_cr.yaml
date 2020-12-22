@@ -6,35 +6,7 @@ spec:
   master:
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:2.249.3-lts-alpine
-      imagePullPolicy: Always
-      livenessProbe:
-        failureThreshold: 12
-        httpGet:
-          path: /login
-          port: http
-          scheme: HTTP
-        initialDelaySeconds: 80
-        periodSeconds: 10
-        successThreshold: 1
-        timeoutSeconds: 5
-      readinessProbe:
-        failureThreshold: 3
-        httpGet:
-          path: /login
-          port: http
-          scheme: HTTP
-        initialDelaySeconds: 30
-        periodSeconds: 10
-        successThreshold: 1
-        timeoutSeconds: 1
-      resources:
-        limits:
-          cpu: 1500m
-          memory: 3Gi
-        requests:
-          cpu: "1"
-          memory: 500Mi
+      image: jenkins/jenkins:2.263.2-lts-alpine
   seedJobs:
   - id: jenkins-operator
     targets: "cicd/jobs/*.jenkins"

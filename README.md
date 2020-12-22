@@ -1,6 +1,6 @@
 # Jenkins Operator
 
-[![Version](https://img.shields.io/badge/version-v0.4.0-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.4.0)
+[![Version](https://img.shields.io/badge/version-v0.5.0-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.5.0)
 [![Build Status](https://travis-ci.org/jenkinsci/kubernetes-operator.svg?branch=master)](https://travis-ci.org/jenkinsci/kubernetes-operator)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
 [![Docker Pulls](https://img.shields.io/docker/pulls/virtuslab/jenkins-operator.svg)](https://hub.docker.com/r/virtuslab/jenkins-operator/tags)

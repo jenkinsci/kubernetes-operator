@@ -112,6 +112,7 @@ func (bar *BackupAndRestore) Validate() []string {
 
 	return messages
 }
+
 // helper value indicating no saved backup
 const noBackup = "-1"
 
