@@ -79,6 +79,7 @@ import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.extensions.impl.CloneOption;
+import hudson.plugins.git.extensions.impl.GitLFSPull;
 import javaposse.jobdsl.plugin.ExecuteDslScripts;
 import javaposse.jobdsl.plugin.LookupStrategy;
 import javaposse.jobdsl.plugin.RemovedJobAction;
@@ -92,7 +93,10 @@ def jobDslSeedName = "{{ .ID }}-{{ .SeedJobSuffix }}";
 def jobRef = jenkins.getItem(jobDslSeedName)
 
 def repoList = GitSCM.createRepoList("{{ .RepositoryURL }}", "{{ .CredentialID }}")
-def gitExtensions = [new CloneOption(true, true, ";", 10)]
+def gitExtensions = [
+	new CloneOption(true, true, ";", 10),
+	new GitLFSPull()
+]
 def scm = new GitSCM(
         repoList,
         newArrayList(new BranchSpec("{{ .RepositoryBranch }}")),
