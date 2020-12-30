@@ -1,0 +1,77 @@
+name: auto-generate-docs
+
+# Run this workflow every time a new commit pushed to your repository
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  docs:
+    # Name the Job
+    name: auto-generate-docs
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive  # Fetch the Docsy theme
+          fetch-depth: 0
+
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Check for changes
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*"; then
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*"
+            echo "IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*")" >> $GITHUB_ENV
+          else
+            echo "IS_CHANGED=empty" >> $GITHUB_ENV
+          fi
+      # Sets up the appropriate version of Hugo
+      - name: Setup Hugo
+        if: env.IS_CHANGED != 'empty'
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.62.2'
+          extended: true
+
+      # Sets up node - required by Hugo
+      - name: Setup Node
+        if: env.IS_CHANGED != 'empty'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      # Installs dependencies required by docsy theme
+      - name: Install docsy dependencies
+        if: env.IS_CHANGED != 'empty'
+        run: |
+          cd website
+          npm install
+          npm build
+          sudo npm install -D --save autoprefixer
+          sudo npm install -D --save postcss-cli
+          cd ../
+      # Runs makefile goal - checks changes to /website folder and generates docs
+      - name: Run Makefile goal
+        if: env.IS_CHANGED != 'empty'
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make generate-docs
+
+      # Create push request with generated docs
+      - name: Create Pull Request
+        if: env.IS_CHANGED != 'empty'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Auto-updated docs
+          branch: docs-generator
+          title: Auto-generated docs update
+          body: |
+            Auto generated docs from master commit ${{ github.sha }}
