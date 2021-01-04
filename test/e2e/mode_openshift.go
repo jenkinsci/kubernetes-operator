@@ -21,7 +21,7 @@ func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
 
 	jenkins.Spec.Master.Containers[0].Image = "quay.io/openshift/origin-jenkins"
 	jenkins.Spec.Master.Containers[0].Command = []string{
-		"bash",
+		"bash",tctrcx
 		"-c",
 		"/var/jenkins/scripts/init.sh && exec /usr/bin/go-init -main /usr/libexec/s2i/run",
 	}
