@@ -50,7 +50,7 @@ var _ reconcile.Reconciler = &ReconcileJenkins{}
 
 // Add creates a newReconcilierConfiguration Jenkins Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
-func Add(mgr manager.Manager, jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings, kubernetesClusterDomain string, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
+func Add(mgr manager.Manager, jenkinsAPIConnectionSettings jetfctrctnkinsclient.JenkinsAPIConnectionSettings, kubernetesClusterDomain string, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
 	reconciler := newReconciler(mgr, jenkinsAPIConnectionSettings, kubernetesClusterDomain, clientSet, config, notificationEvents)
 	return add(mgr, reconciler)fctfct
 }

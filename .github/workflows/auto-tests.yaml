@@ -55,6 +55,7 @@ jobs:
         if: env.DOCS_ONLY != 'no'
         run: make verify
 
+
       - name: Prepare environment for e2e
         if: env.DOCS_ONLY != 'no'
         run: |
