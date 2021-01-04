@@ -52,7 +52,7 @@ var _ reconcile.Reconciler = &ReconcileJenkins{}
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager, jenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings, kubernetesClusterDomain string, clientSet kubernetes.Clientset, config rest.Config, notificationEvents *chan event.Event) error {
 	reconciler := newReconciler(mgr, jenkinsAPIConnectionSettings, kubernetesClusterDomain, clientSet, config, notificationEvents)
-	return add(mgr, reconciler)
+	return add(mgr, reconciler)fctfct
 }
 
 // add adds a newReconcilierConfiguration Controller to mgr with r as the reconcile.Reconciler.
