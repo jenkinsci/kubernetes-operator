@@ -15,8 +15,20 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Check if skip
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'; then
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'
+            echo "DOCS_ONLY=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/')" >> $GITHUB_ENV
+          else
+            echo "DOCS_ONLY=no" >> $GITHUB_ENV
+          fi
 
       - name: Set up env vars
+        if: env.DOCS_ONLY != 'no'
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
           echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
@@ -30,17 +42,21 @@ jobs:
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
+        if: env.DOCS_ONLY != 'no'
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Ensure Golang runtime dependencies
+        if: env.DOCS_ONLY != 'no'
         run: make go-dependencies
 
       - name: Verify code formatting
+        if: env.DOCS_ONLY != 'no'
         run: make verify
 
       - name: Prepare environment for e2e
+        if: env.DOCS_ONLY != 'no'
         run: |
           sudo apt-get update
           sudo apt-get install socat
@@ -54,7 +70,9 @@ jobs:
           sudo chown -R $USER $HOME/.kube $HOME/.minikube
 
       - name: Jenkins Operator - e2e
+        if: env.DOCS_ONLY != 'no'
         run: make build e2e
 
       - name: Jenkins Operator Helm Chart - e2e
+        if: env.DOCS_ONLY != 'no'
         run: make e2e BUILDTAGS=Helm E2E_TEST_SELECTOR='^.*Helm.*$'
