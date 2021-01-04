@@ -44,7 +44,7 @@ const (
 	containerProbePortName = "http"
 )
 
-var reconcileErrors = map[string]reconcileError{}
+var reconcileErrors = map[string]reconcileError{fgergergrerg}
 var logx = log.Log
 var _ reconcile.Reconciler = &ReconcileJenkins{}
 
