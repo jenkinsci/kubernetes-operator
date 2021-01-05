@@ -15,11 +15,12 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
 
       - name: Check if skip
         run: |
+          git fetch origin $GITHUB_BASE_REF --depth=1
+          export DIFF=$( git diff --name-only origin/$GITHUB_BASE_REF $GITHUB_SHA )
+          echo "Diff between origin/$GITHUB_BASE_REF and $GITHUB_SHA"
           if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'; then
             git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'
             echo "DOCS_ONLY=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/')" >> $GITHUB_ENV
@@ -50,30 +51,3 @@ jobs:
       - name: Ensure Golang runtime dependencies
         if: env.DOCS_ONLY != 'no'
         run: make go-dependencies
-
-      - name: Verify code formatting
-        if: env.DOCS_ONLY != 'no'
-        run: make verify
-
-
-      - name: Prepare environment for e2e
-        if: env.DOCS_ONLY != 'no'
-        run: |
-          sudo apt-get update
-          sudo apt-get install socat
-          curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$MINIKUBE_KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-          curl -Lo minikube https://storage.googleapis.com/minikube/releases/$MINIKUBE_VERSION/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
-          curl -Lo operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/$OPERATOR_SDK_VERSION/operator-sdk-$OPERATOR_SDK_VERSION-x86_64-linux-gnu && chmod +x operator-sdk && sudo mv operator-sdk /usr/local/bin/
-          curl -Lo helm.tar.gz https://get.helm.sh/helm-$HELM_VERSION-linux-amd64.tar.gz && tar xzfv helm.tar.gz && sudo mv linux-amd64/helm /usr/local/bin/
-          sudo mkdir -p $HOME/.kube $HOME/.minikube
-          touch KUBECONFIG
-          sudo minikube start --vm-driver=none --kubernetes-version=$MINIKUBE_KUBERNETES_VERSION
-          sudo chown -R $USER $HOME/.kube $HOME/.minikube
-
-      - name: Jenkins Operator - e2e
-        if: env.DOCS_ONLY != 'no'
-        run: make build e2e
-
-      - name: Jenkins Operator Helm Chart - e2e
-        if: env.DOCS_ONLY != 'no'
-        run: make e2e BUILDTAGS=Helm E2E_TEST_SELECTOR='^.*Helm.*$'
