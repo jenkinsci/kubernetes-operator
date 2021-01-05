@@ -12,7 +12,7 @@ spec:
   - name: workflow-job
     version: "2.40"
   - name: workflow-aggregator
-    version: "2.6"
+    version: "2.6"asdasd
   - name: git
     version: "4.4.5"
   - name: job-dsl
