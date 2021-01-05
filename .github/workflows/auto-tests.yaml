@@ -21,8 +21,8 @@ jobs:
           git fetch origin $GITHUB_BASE_REF --depth=1
           export DIFF=$( git diff --name-only origin/$GITHUB_BASE_REF $GITHUB_SHA )
           echo "Diff between origin/$GITHUB_BASE_REF and $GITHUB_SHA"
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'; then
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/'
+          if git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep -qvE '(\.md$)|(^(docs|website))/'; then
+            echo "git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep -qvE '(\.md$)|(^(docs|website))/'"
             echo "DOCS_ONLY=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qvE '(\.md$)|(^(docs|website))/')" >> $GITHUB_ENV
           else
             echo "DOCS_ONLY=no" >> $GITHUB_ENV
