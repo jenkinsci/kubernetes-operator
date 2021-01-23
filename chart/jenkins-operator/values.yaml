@@ -147,6 +147,29 @@ jenkins:
   # slave Jenkins service
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details
   #slaveService:
+  
+  # LivenessProbe for Jenkins Master pod
+  livenessProbe:
+    failureThreshold: 12
+    httpGet:
+      path: /login
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 80
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  # ReadinessProbe for Jenkins Master pod
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /login
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
 
   # backup is section for configuring operator's backup feature
   # By default backup feature is enabled and pre-configured
