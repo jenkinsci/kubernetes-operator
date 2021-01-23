@@ -385,6 +385,50 @@ SecurityContext for pod.
 </tr>
 <tr>
 <td>
+<code>livenessProbe</code>
+</td>
+<td>
+<pre>
+livenessProbe:
+  failureThreshold: 12
+  httpGet:
+    path: /login
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 80
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+</pre>
+</td>
+<td>
+livenessProbe for Pod
+</td>
+</tr>
+<tr>
+<td>
+<code>readinessProbe</code>
+</td>
+<td>
+<pre>
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /login
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+</pre>
+</td>
+<td>
+readinessProbe for Pod
+</td>
+</tr>
+<tr>
+<td>
 <code>
 backup
 </code>
