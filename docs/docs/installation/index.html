@@ -38,8 +38,8 @@
 
 
 
-<link rel="preload" href="/kubernetes-operator/scss/main.min.fd69987024ae657af26227407273d5b4d1046115af0e0182839a91bb3e30e830.css" as="style">
-<link href="/kubernetes-operator/scss/main.min.fd69987024ae657af26227407273d5b4d1046115af0e0182839a91bb3e30e830.css" rel="stylesheet" integrity="">
+<link rel="preload" href="/kubernetes-operator/scss/main.min.6c58fba96b88d035ce071c346f084a9dc4dedee4e80eb3724fe530520541a4ec.css" as="style">
+<link href="/kubernetes-operator/scss/main.min.6c58fba96b88d035ce071c346f084a9dc4dedee4e80eb3724fe530520541a4ec.css" rel="stylesheet" integrity="">
 
 <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -1081,6 +1081,50 @@ SecurityContext for pod.
 <td><code>slaveService</code></td>
 <td>not implemented</td>
 <td>Slave Jenkins service. See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details.</td>
+</tr>
+<tr>
+<td>
+<code>livenessProbe</code>
+</td>
+<td>
+<pre>
+livenessProbe:
+  failureThreshold: 12
+  httpGet:
+    path: /login
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 80
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+</pre>
+</td>
+<td>
+livenessProbe for Pod
+</td>
+</tr>
+<tr>
+<td>
+<code>readinessProbe</code>
+</td>
+<td>
+<pre>
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /login
+    port: http
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+</pre>
+</td>
+<td>
+readinessProbe for Pod
+</td>
 </tr>
 <tr>
 <td>
