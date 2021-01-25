@@ -2,7 +2,7 @@
 title: "Deploy Jenkins"
 linkTitle: "Deploy Jenkins"
 weight: 1
-date: 2021-01-18
+date: 2021-01-25
 description: >
   Deploy production ready Jenkins Operator manifest
 ---
@@ -19,7 +19,7 @@ spec:
   master:
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:lts
+      image: jenkins/jenkins:2.263.2-lts-alpine
       imagePullPolicy: Always
       livenessProbe:
         failureThreshold: 12

@@ -2,7 +2,7 @@
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 2
-date: 2021-01-18
+date: 2021-01-25
 description: >
   How to configure Jenkins with Operator
 ---
@@ -19,18 +19,29 @@ First you have to prepare pipelines and job definition in your GitHub repository
 ```
 cicd/
 ├── jobs
-│   └── build.jenkins
+│   └── k8s.jenkins
 └── pipelines
-    └── build.jenkins
+    └── k8s.jenkins
 ```
 
-**`cicd/jobs/build.jenkins`** is a job definition:
+**`cicd/jobs/k8s.jenkins`** is a job definition:
 
 ```
 #!/usr/bin/env groovy
 
-pipelineJob('build-jenkins-operator') {
-    displayName('Build jenkins-operator')
+pipelineJob('k8s-e2e') {
+    displayName('Kubernetes Plugin E2E Test')
+
+    logRotator {
+        numToKeep(10)
+        daysToKeep(30)
+    }
+
+    configure { project ->
+        project / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty' {
+            hint('PERFORMANCE_OPTIMIZED')
+        }
+    }
 
     definition {
         cpsScm {
@@ -43,59 +54,31 @@ pipelineJob('build-jenkins-operator') {
                     branches('*/master')
                 }
             }
-            scriptPath('cicd/pipelines/build.jenkins')
+            scriptPath('cicd/pipelines/k8s.jenkins')
         }
     }
 }
 ```
 
-**`cicd/pipelines/build.jenkins`** is an actual Jenkins pipeline:
+**`cicd/pipelines/k8s.jenkins`** is an actual Jenkins pipeline:
 
 ```
 #!/usr/bin/env groovy
 
-def label = "build-jenkins-operator-${UUID.randomUUID().toString()}"
+def label = "k8s-${UUID.randomUUID().toString()}"
 def home = "/home/jenkins"
 def workspace = "${home}/workspace/build-jenkins-operator"
 def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent:alpine'),
-                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
-        ],
-        envVars: [
-                envVar(key: 'GOPATH', value: workspace),
+                containerTemplate(name: 'alpine', image: 'alpine:3.11', ttyEnabled: true, command: 'cat'),
         ],
         ) {
-
     node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
-                    checkout scm
-                }
-                container('go') {
-                    sh 'apk --no-cache --update add make git gcc libc-dev'
-                }
-            }
-
-            stage('Dep') {
-                container('go') {
-                    sh 'make dep'
-                }
-            }
-
-            stage('Test') {
-                container('go') {
-                    sh 'make test'
-                }
-            }
-
-            stage('Build') {
-                container('go') {
-                    sh 'make build'
-                }
+        stage('Run shell') {
+            container('alpine') {
+                sh 'echo "hello world"'
             }
         }
     }

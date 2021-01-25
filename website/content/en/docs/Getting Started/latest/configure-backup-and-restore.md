@@ -2,7 +2,7 @@
 title: "Configure backup and restore"
 linkTitle: "Configure backup and restore"
 weight: 10
-date: 2021-01-18
+date: 2021-01-25
 description: >
   Prevent loss of job history
 ---
@@ -48,7 +48,7 @@ spec:
       fsGroup: 1000
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:lts
+      image: jenkins/jenkins:2.263.2-lts-alpine
     - name: backup # container responsible for the backup and restore
       env:
       - name: BACKUP_DIR
@@ -57,7 +57,7 @@ spec:
         value: /jenkins-home
       - name: BACKUP_COUNT
         value: "3" # keep only the 2 most recent backups
-      image: virtuslab/jenkins-operator-backup-pvc:v0.0.8 # look at backup/pvc directory
+      image: virtuslab/jenkins-operator-backup-pvc:v0.1.0 # look at backup/pvc directory
       imagePullPolicy: IfNotPresent
       volumeMounts:
       - mountPath: /jenkins-home # Jenkins home volume
@@ -74,6 +74,10 @@ spec:
       exec:
         command:
         - /home/user/bin/backup.sh # this command is invoked on "backup" container to make backup, for example /home/user/bin/backup.sh <backup_number>, <backup_number> is passed by operator
+    getLatestAction:
+      exec:
+        command:
+        - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion. If you don't omit it in CR, you can lose data
     interval: 30 # how often make backup in seconds
     makeBackupBeforePodDeletion: true # make a backup before pod deletion
   restore:
