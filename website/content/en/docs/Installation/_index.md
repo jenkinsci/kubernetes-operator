@@ -65,6 +65,12 @@ $ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-o
 $ helm install <name> jenkins/jenkins-operator -n <your-namespace>
 ```
 
+In case you want to use released Chart **v0.4.1**, before installing/upgrading please install additional CRD into the cluster:
+
+```bash
+$ kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/crds/jenkinsimage-crd.yaml
+```
+
 To add custom labels and annotations, you can use `values.yaml` file or pass them into `helm install` command, e.g.:
 
 ```bash
