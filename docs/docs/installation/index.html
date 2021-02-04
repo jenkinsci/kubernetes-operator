@@ -223,13 +223,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
-      
-      
-      
-      
-      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-configure-backup-and-restore" href="/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
       
       
       
@@ -767,6 +767,8 @@ All container images can be found at <a href="https://hub.docker.com/r/virtuslab
 <p>To install, you need only to type these commands:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
 $ helm install &lt;name&gt; jenkins/jenkins-operator -n &lt;your-namespace&gt;</code></pre></div>
+<p>In case you want to use released Chart <strong>v0.4.1</strong>, before installing/upgrading please install additional CRD into the cluster:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/crds/jenkinsimage-crd.yaml</code></pre></div>
 <p>To add custom labels and annotations, you can use <code>values.yaml</code> file or pass them into <code>helm install</code> command, e.g.:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ helm install &lt;name&gt; jenkins/jenkins-operator -n &lt;your-namespace&gt; --set jenkins.labels.LabelKey<span style="color:#ce5c00;font-weight:bold">=</span>LabelValue,jenkins.annotations.AnnotationKey<span style="color:#ce5c00;font-weight:bold">=</span>AnnotationValue</code></pre></div>
 <p>You can further customize Jenkins using <code>values.yaml</code>:

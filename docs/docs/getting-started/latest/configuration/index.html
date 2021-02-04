@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/" />
-<meta property="article:published_time" content="2021-01-18T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-18T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-01-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-01-25T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="How to configure Jenkins with Operator
 ">
-<meta itemprop="datePublished" content="2021-01-18T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-01-18T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="755">
+<meta itemprop="datePublished" content="2021-01-25T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-01-25T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="722">
 
 
 
@@ -230,13 +230,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
-      
-      
-      
-      
-      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-configure-backup-and-restore" href="/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
       
       
       
@@ -770,14 +770,25 @@ and deploy keys.</p>
 <p>First you have to prepare pipelines and job definition in your GitHub repository using the following structure:</p>
 <pre><code>cicd/
 ├── jobs
-│   └── build.jenkins
+│   └── k8s.jenkins
 └── pipelines
-    └── build.jenkins</code></pre>
-<p><strong><code>cicd/jobs/build.jenkins</code></strong> is a job definition:</p>
+    └── k8s.jenkins</code></pre>
+<p><strong><code>cicd/jobs/k8s.jenkins</code></strong> is a job definition:</p>
 <pre><code>#!/usr/bin/env groovy
 
-pipelineJob('build-jenkins-operator') {
-    displayName('Build jenkins-operator')
+pipelineJob('k8s-e2e') {
+    displayName('Kubernetes Plugin E2E Test')
+
+    logRotator {
+        numToKeep(10)
+        daysToKeep(30)
+    }
+
+    configure { project ->
+        project / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty' {
+            hint('PERFORMANCE_OPTIMIZED')
+        }
+    }
 
     definition {
         cpsScm {
@@ -790,55 +801,27 @@ pipelineJob('build-jenkins-operator') {
                     branches('*/master')
                 }
             }
-            scriptPath('cicd/pipelines/build.jenkins')
+            scriptPath('cicd/pipelines/k8s.jenkins')
         }
     }
 }</code></pre>
-<p><strong><code>cicd/pipelines/build.jenkins</code></strong> is an actual Jenkins pipeline:</p>
+<p><strong><code>cicd/pipelines/k8s.jenkins</code></strong> is an actual Jenkins pipeline:</p>
 <pre><code>#!/usr/bin/env groovy
 
-def label = "build-jenkins-operator-${UUID.randomUUID().toString()}"
+def label = "k8s-${UUID.randomUUID().toString()}"
 def home = "/home/jenkins"
 def workspace = "${home}/workspace/build-jenkins-operator"
 def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent:alpine'),
-                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
-        ],
-        envVars: [
-                envVar(key: 'GOPATH', value: workspace),
+                containerTemplate(name: 'alpine', image: 'alpine:3.11', ttyEnabled: true, command: 'cat'),
         ],
         ) {
-
     node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
-                    checkout scm
-                }
-                container('go') {
-                    sh 'apk --no-cache --update add make git gcc libc-dev'
-                }
-            }
-
-            stage('Dep') {
-                container('go') {
-                    sh 'make dep'
-                }
-            }
-
-            stage('Test') {
-                container('go') {
-                    sh 'make test'
-                }
-            }
-
-            stage('Build') {
-                container('go') {
-                    sh 'make build'
-                }
+        stage('Run shell') {
+            container('alpine') {
+                sh 'echo "hello world"'
             }
         }
     }
@@ -1031,7 +1014,7 @@ stringData:
 }</code></pre>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 18, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified January 25, 2021
 </div>
 </div>
 

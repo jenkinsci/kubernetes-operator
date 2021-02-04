@@ -25,13 +25,13 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/" />
-<meta property="article:published_time" content="2021-01-18T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-18T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-01-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-01-25T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Deploy Jenkins">
 <meta itemprop="description" content="Deploy production ready Jenkins Operator manifest
 ">
-<meta itemprop="datePublished" content="2021-01-18T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-01-18T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2021-01-25T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-01-25T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="171">
 
 
@@ -230,13 +230,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
-      
-      
-      
-      
-      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-configure-backup-and-restore" href="/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
       
       
       
@@ -740,7 +740,7 @@ spec:
   master:
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:lts
+      image: jenkins/jenkins:2.263.2-lts-alpine
       imagePullPolicy: Always
       livenessProbe:
         failureThreshold: <span style="color:#0000cf;font-weight:bold">12</span>
@@ -792,7 +792,7 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 18, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified January 25, 2021
 </div>
 </div>
 
