@@ -81,7 +81,7 @@ func main() {
 
 	isRunningInCluster, err := resources.IsRunningInCluster()
 	if err != nil {
-		fatal(errors.Wrap(err, "failed to get watch namespace"), true)
+		fatal(errors.Wrap(err, "failed to determine if operator is running in cluster"), true)
 	}
 
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
@@ -133,7 +133,7 @@ func main() {
 		fatal(errors.Wrap(err, "failed to setup events"), *debug)
 	}
 
-	//Setup controller
+	// setup controller
 	clientSet, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
 		fatal(errors.Wrap(err, "failed to create Kubernetes client set"), *debug)
