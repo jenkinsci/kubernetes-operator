@@ -46,6 +46,11 @@ spec:
     makeBackupBeforePodDeletion: {{ .Values.jenkins.backup.makeBackupBeforePodDeletion }}
   restore:
     containerName: {{ .Values.jenkins.backup.containerName }}
+    getLatestAction:
+      exec:
+        {{- with .Values.jenkins.backup.getLatestAction }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
     action:
       exec:
         {{- with .Values.jenkins.backup.restoreCommand }}

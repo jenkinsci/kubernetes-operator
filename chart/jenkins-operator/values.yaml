@@ -63,22 +63,22 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 1.28.6
+  #   version: "1.29.0"
   # - name: workflow-job
   #   version: "2.40"
   # - name: workflow-aggregator
   #   version: "2.6"
   # - name: git
-  #   version: 4.5.0
+  #   version: "4.5.0"
   # - name: job-dsl
   #   version: "1.77"
   # - name: configuration-as-code
-  #   version: "1.46"
+  #   version: "1.47"
   # - name: kubernetes-credentials-provider
-  #   version: 0.15
+  #   version: "0.15"
   basePlugins:
     - name: kubernetes
-      version: "1.28.6"
+      version: "1.29.0"
     - name: workflow-job
       version: "2.40"
     - name: workflow-aggregator
@@ -88,7 +88,7 @@ jenkins:
     - name: job-dsl
       version: "1.77"
     - name: configuration-as-code
-      version: "1.46"
+      version: "1.47"
     - name: kubernetes-credentials-provider
       version: "0.15"
 
