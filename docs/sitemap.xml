@@ -8,7 +8,17 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/deploy-jenkins/</loc>
+    <lastmod>2021-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/installation/</loc>
+    <lastmod>2020-10-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/installation/preview/</loc>
     <lastmod>2020-10-05T00:00:00+00:00</lastmod>
   </url>
   
@@ -43,6 +53,11 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/configuration/</loc>
+    <lastmod>2021-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.4.x/configuration/</loc>
     <lastmod>2020-04-13T00:00:00+00:00</lastmod>
   </url>
@@ -64,6 +79,11 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/</loc>
+    <lastmod>2021-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/customization/</loc>
     <lastmod>2021-01-25T00:00:00+00:00</lastmod>
   </url>
   
@@ -98,12 +118,27 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/configure-backup-and-restore/</loc>
+    <lastmod>2021-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/aks/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/custom-backup-and-restore/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -114,6 +149,16 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/notifications/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -228,6 +273,11 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/openshift/</loc>
+    <lastmod>2020-04-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.4.x/openshift/</loc>
     <lastmod>2020-04-29T00:00:00+00:00</lastmod>
   </url>
@@ -258,7 +308,17 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/diagnostics/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</loc>
+    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/preview/schema/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -310,6 +370,11 @@
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/security/</loc>
     <lastmod>2019-08-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/preview/</loc>
+    <lastmod>2020-02-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>

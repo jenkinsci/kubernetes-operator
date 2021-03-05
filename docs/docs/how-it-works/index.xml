@@ -77,7 +77,9 @@
       <description>
         
         
-        &lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; is fully compatible with &lt;strong&gt;&lt;code&gt;jenkins:lts&lt;/code&gt;&lt;/strong&gt; Docker image and does not introduce any hidden changes to the upstream Jenkins.&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; is fully compatible with &lt;strong&gt;&lt;code&gt;jenkins:lts&lt;/code&gt;&lt;/strong&gt; Docker image and does not introduce any hidden changes
+to the upstream Jenkins. However due to problems with plugins and images version compatibility we are using specific tags
+in the exemplary Custom Resource, so you know a working configuration.&lt;/p&gt;
 
 &lt;p&gt;If needed, the Docker image can be easily changed in custom resource manifest as long as it supports standard Jenkins file system structure.&lt;/p&gt;
 

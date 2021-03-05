@@ -394,16 +394,19 @@ helm-deploy: helm-package
 	helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
 	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
 
-# Download hugo locally if necessary
-HUGO = $(shell pwd)/bin/hugo
+# Download and build hugo extended locally if necessary
+HUGO_PATH = $(shell pwd)/bin/hugo
+HUGO_VERSION = v0.62.2
 hugo:
-	$(call go-get-tool,$(HUGO),github.com/gohugoio/hugo@v0.62.2)
+	$(HUGO_PATH)/hugo version | grep $(HUGO_VERSION) || (rm -rf $(HUGO_PATH) && git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH))
+	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
 
 .PHONY: generate-docs
 generate-docs: hugo ## Re-generate docs directory from the website directory
 	@echo "+ $@"
 	rm -rf docs || echo "Cannot remove docs dir, ignoring"
-	bin/hugo -s website -d ../docs
+	cd website && npm install
+	$(HUGO_PATH)/hugo -s website -d ../docs
 
 .PHONY: all-in-one-build
 FILENAME := config/all_in_one_$(API_VERSION).yaml
