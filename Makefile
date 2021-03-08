@@ -400,7 +400,7 @@ HUGO_VERSION = v0.62.2
 HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
 hugo:
 ifeq ($(HAS_HUGO), )
-	@echo "Intalling Hugo $(HUGO_VERSION)"
+	@echo "Installing Hugo $(HUGO_VERSION)"
 	rm -rf $(HUGO_PATH)
 	git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH)
 	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
