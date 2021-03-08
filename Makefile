@@ -397,9 +397,14 @@ helm-deploy: helm-package
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
 HUGO_VERSION = v0.62.2
+HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
 hugo:
-	$(HUGO_PATH)/hugo version | grep $(HUGO_VERSION) || (rm -rf $(HUGO_PATH) && git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH))
+ifeq ($(HAS_HUGO), )
+	@echo "Intalling Hugo $(HUGO_VERSION)"
+	rm -rf $(HUGO_PATH)
+	git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH)
 	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
+endif
 
 .PHONY: generate-docs
 generate-docs: hugo ## Re-generate docs directory from the website directory
