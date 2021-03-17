@@ -80,6 +80,7 @@ type jenkinsDecorator struct {
 }
 
 func (e *jenkinsDecorator) Create(evt event.CreateEvent, q workqueue.RateLimitingInterface) {
+	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was created", evt.Object, evt.Object.GetName()))
 	e.handler.Create(evt, q)
 }
 
@@ -92,6 +93,7 @@ func (e *jenkinsDecorator) Update(evt event.UpdateEvent, q workqueue.RateLimitin
 }
 
 func (e *jenkinsDecorator) Delete(evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
+	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was deleted", evt.Object, evt.Object.GetName()))
 	e.handler.Delete(evt, q)
 }
 
