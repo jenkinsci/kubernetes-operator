@@ -14,7 +14,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
-var fakePrivateKey = `-----BEGIN RSA PRIVATE KEY-----
+var fakeRSAPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArK4ld6i2iqW6L3jaTZaKD/v7PjDn+Ik9MXp+kvLcUw/+wEGm
 285UwqLnDDlBhSi9nDgJ+m1XU87VCpz/DXW23R/CQcMX2xunib4wWLQqoR3CWbk3
 SwiLd8TWAvXkxdXm8fDOGAZbYK2alMV+M+9E2OpZsBUCxmb/3FAofF6JccKoJOH8
@@ -42,10 +42,27 @@ WrrU6fSRsE6lSsBd83pOAQ46tv+vntQ+0EihD9/0INhkQM99lBw1TFdFTgGSAs1e
 ns4JGP6f5uIuwqu/nbqPqMyDovjkGbX2znuGBcvki90Pi97XL7MMWw==
 -----END RSA PRIVATE KEY-----`
 
-var fakeInvalidPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
+var fakeRSAInvalidPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArK4ld6i2iqW6L3jaTZaKD/v7PjDn+Ik9MXp+kvLcUw/+wEGm
 285UwqLnDDlBhSi9nDgJ+m1XU87VCpz/DXW23R/CQcMX2xunib4wWLQqoR3CWbk3
 SwiLd8TWAvXkxdXm8fDOGAZbYK2alMV+M+9E2OpZsBUCxmb/3FAofF6JccKoJOH8
+`
+
+var fakeEd25519PrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACBXTVD0xWTOJhzVeznd3KUtJ4bSFwpHdk38qUwjfW4VxQAAAJiprsLlqa7C
+5QAAAAtzc2gtZWQyNTUxOQAAACBXTVD0xWTOJhzVeznd3KUtJ4bSFwpHdk38qUwjfW4VxQ
+AAAECiziLDuLDl5Xt+/WII77eTkUuOhRZreN6ZIqdUFqfokldNUPTFZM4mHNV7Od3cpS0n
+htIXCkd2TfypTCN9bhXFAAAAD3ByeWJhQFZMLUQtMDg5MAECAwQFBg==
+-----END OPENSSH PRIVATE KEY-----
+`
+
+var fakeEd25519InvalidPrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+QyNTUxOQAAACBXTVD0xWTOJhzVeznd3KUtJ4bSFwpHdk38qUwjfW4VxQAAAJiprsLlqa7C
+5QAAAAtzc2gtZWQyNTUxOQAAACBXTVD0xWTOJhzVeznd3KUtJ4bSFwpHdk38qUwjfW4VxQ
+AAAECiziLDuLDl5Xt+/WII77eTkUuOhRZreN6ZIqdUFqfokldNUPTFZM4mHNV7Od3cpS0n
+-----END OPENSSH PRIVATE KEY-----
 `
 
 func TestValidateSeedJobs(t *testing.T) {
@@ -122,7 +139,7 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.Equal(t, result, []string{"seedJob `` id can't be empty"})
 	})
-	t.Run("Valid with private key and secret", func(t *testing.T) {
+	t.Run("Valid with ed25519 private key and secret", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
 			ObjectMeta: jenkinsObjectMeta,
 			Spec: v1alpha2.JenkinsSpec{
@@ -143,7 +160,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			ObjectMeta: secretObjectMeta,
 			Data: map[string][]byte{
 				UsernameSecretKey:   []byte("username"),
-				PrivateKeySecretKey: []byte(fakePrivateKey),
+				PrivateKeySecretKey: []byte(fakeEd25519PrivateKey),
 			},
 		}
 		fakeClient := fake.NewClientBuilder().Build()
@@ -163,7 +180,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Nil(t, result)
 	})
-	t.Run("Invalid private key in secret", func(t *testing.T) {
+	t.Run("Invalid ed25519 private key in secret", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
 			ObjectMeta: jenkinsObjectMeta,
 			Spec: v1alpha2.JenkinsSpec{
@@ -184,7 +201,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			ObjectMeta: secretObjectMeta,
 			Data: map[string][]byte{
 				UsernameSecretKey:   []byte("username"),
-				PrivateKeySecretKey: []byte(fakeInvalidPrivateKey),
+				PrivateKeySecretKey: []byte(fakeEd25519InvalidPrivateKey),
 			},
 		}
 		fakeClient := fake.NewClientBuilder().Build()
@@ -203,7 +220,90 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, result, []string{"seedJob `example` private key 'privateKey' invalid in secret 'deploy-keys': failed to decode PEM block"})
+		assert.Equal(t, result, []string{"seedJob `example` private key 'privateKey' invalid in secret 'deploy-keys': failed to decode key: ssh: short read"})
+	})
+	t.Run("Valid with RSA private key and secret", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.BasicSSHCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				UsernameSecretKey:   []byte("username"),
+				PrivateKeySecretKey: []byte(fakeRSAPrivateKey),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+	t.Run("Invalid RSA private key in secret", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.BasicSSHCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				UsernameSecretKey:   []byte("username"),
+				PrivateKeySecretKey: []byte(fakeRSAInvalidPrivateKey),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, result, []string{"seedJob `example` private key 'privateKey' invalid in secret 'deploy-keys': failed to decode key: ssh: no key found"})
 	})
 	t.Run("Invalid with PrivateKey and empty Secret data", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -245,7 +345,7 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' not found in secret 'deploy-keys'", "seedJob `example` private key 'privateKey' invalid in secret 'deploy-keys': failed to decode PEM block"})
+		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' not found in secret 'deploy-keys'", "seedJob `example` private key 'privateKey' invalid in secret 'deploy-keys': failed to decode key: ssh: no key found"})
 	})
 	t.Run("Invalid with ssh RepositoryURL and empty PrivateKey", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -277,7 +377,7 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, result, []string{"seedJob `example` required secret 'jenkins-operator-e2e' with Jenkins credential not found", "seedJob `example` required data 'username' not found in secret ''", "seedJob `example` required data 'username' is empty in secret ''", "seedJob `example` required data 'privateKey' not found in secret ''", "seedJob `example` required data 'privateKey' not found in secret ''", "seedJob `example` private key 'privateKey' invalid in secret '': failed to decode PEM block"})
+		assert.Equal(t, result, []string{"seedJob `example` required secret 'jenkins-operator-e2e' with Jenkins credential not found", "seedJob `example` required data 'username' not found in secret ''", "seedJob `example` required data 'username' is empty in secret ''", "seedJob `example` required data 'privateKey' not found in secret ''", "seedJob `example` required data 'privateKey' not found in secret ''", "seedJob `example` private key 'privateKey' invalid in secret '': failed to decode key: ssh: no key found"})
 	})
 	t.Run("Invalid without targets", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{

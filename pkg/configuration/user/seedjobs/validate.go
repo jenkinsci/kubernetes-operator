@@ -2,8 +2,6 @@ package seedjobs
 
 import (
 	"context"
-	"crypto/x509"
-	"encoding/pem"
 	"fmt"
 	"strings"
 
@@ -11,6 +9,7 @@ import (
 
 	stackerr "github.com/pkg/errors"
 	"github.com/robfig/cron"
+	"golang.org/x/crypto/ssh"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -222,19 +221,9 @@ func validateUsernamePasswordSecret(secret v1.Secret) []string {
 }
 
 func validatePrivateKey(privateKey string) error {
-	block, _ := pem.Decode([]byte(privateKey))
-	if block == nil {
-		return stackerr.New("failed to decode PEM block")
-	}
-
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	_, err := ssh.ParseRawPrivateKey([]byte(privateKey))
 	if err != nil {
-		return stackerr.WithStack(err)
-	}
-
-	err = priv.Validate()
-	if err != nil {
-		return stackerr.WithStack(err)
+		return stackerr.Wrap(err, "failed to decode key")
 	}
 
 	return nil
