@@ -3,10 +3,28 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: jenkins-operator
+  namespace: {{ .Release.Namespace }}
 subjects:
-- kind: ServiceAccount
-  name: jenkins-operator
+  - kind: ServiceAccount
+    name: jenkins-operator
+    namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: jenkins-operator
   apiGroup: rbac.authorization.k8s.io
+{{ if ne .Release.Namespace .Values.jenkins.namespace }}
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jenkins-operator
+  namespace: {{ .Values.jenkins.namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-operator
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: jenkins-operator
+  apiGroup: rbac.authorization.k8s.io
+  {{ end }}
