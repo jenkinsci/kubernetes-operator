@@ -9,7 +9,7 @@ subjects:
     name: jenkins-operator
     namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: ClusterRole
+  kind: Role
   name: jenkins-operator
   apiGroup: rbac.authorization.k8s.io
 {{ if ne .Release.Namespace .Values.jenkins.namespace }}
@@ -24,7 +24,7 @@ subjects:
     name: jenkins-operator
     namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: ClusterRole
+  kind: Role
   name: jenkins-operator
   apiGroup: rbac.authorization.k8s.io
-  {{ end }}
+{{ end }}
