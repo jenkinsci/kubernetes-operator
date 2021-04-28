@@ -1,12 +1,9 @@
 package e2e
 
 import (
-	"context"
 	"flag"
-	"fmt"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/controllers"
@@ -18,28 +15,14 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	// +kubebuilder:scaffold:imports
-)
-
-var (
-	cfg       *rest.Config
-	k8sClient client.Client
-	testEnv   *envtest.Environment
-
-	hostname    *string
-	port        *int
-	useNodePort *bool
 )
 
 func init() {
@@ -68,9 +51,9 @@ var _ = BeforeSuite(func(done Done) {
 	}
 
 	var err error
-	cfg, err = testEnv.Start()
+	Cfg, err = testEnv.Start()
 	Expect(err).NotTo(HaveOccurred())
-	Expect(cfg).NotTo(BeNil())
+	Expect(Cfg).NotTo(BeNil())
 
 	err = v1alpha2.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
@@ -78,20 +61,20 @@ var _ = BeforeSuite(func(done Done) {
 	// +kubebuilder:scaffold:scheme
 
 	// setup manager
-	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
+	k8sManager, err := ctrl.NewManager(Cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
 	})
 	Expect(err).NotTo(HaveOccurred())
 
 	// setup controller
-	clientSet, err := kubernetes.NewForConfig(cfg)
+	clientSet, err := kubernetes.NewForConfig(Cfg)
 	Expect(err).NotTo(HaveOccurred())
 
 	// setup events
-	events, err := event.New(cfg, constants.OperatorName)
+	events, err := event.New(Cfg, constants.OperatorName)
 	Expect(err).NotTo(HaveOccurred())
 	notificationEvents := make(chan e.Event)
-	go notifications.Listen(notificationEvents, events, k8sClient)
+	go notifications.Listen(notificationEvents, events, K8sClient)
 
 	jenkinsAPIConnectionSettings := jenkinsClient.JenkinsAPIConnectionSettings{
 		Hostname:    *hostname,
@@ -104,7 +87,7 @@ var _ = BeforeSuite(func(done Done) {
 		Scheme:                       k8sManager.GetScheme(),
 		JenkinsAPIConnectionSettings: jenkinsAPIConnectionSettings,
 		ClientSet:                    *clientSet,
-		Config:                       *cfg,
+		Config:                       *Cfg,
 		NotificationEvents:           &notificationEvents,
 		KubernetesClusterDomain:      "cluster.local",
 	}).SetupWithManager(k8sManager)
@@ -115,8 +98,8 @@ var _ = BeforeSuite(func(done Done) {
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
-	k8sClient = k8sManager.GetClient()
-	Expect(k8sClient).NotTo(BeNil())
+	K8sClient = k8sManager.GetClient()
+	Expect(K8sClient).NotTo(BeNil())
 	close(done)
 }, 60)
 
@@ -125,39 +108,3 @@ var _ = AfterSuite(func() {
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
 })
-
-func createNamespace() *corev1.Namespace {
-	By("creating temporary namespace")
-
-	namespace := &corev1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: fmt.Sprintf("%d", time.Now().Unix()),
-		},
-	}
-	Expect(k8sClient.Create(context.TODO(), namespace)).Should(Succeed())
-	return namespace
-}
-
-func destroyNamespace(namespace *corev1.Namespace) {
-	By("deleting temporary namespace")
-
-	Expect(k8sClient.Delete(context.TODO(), namespace)).Should(Succeed())
-
-	Eventually(func() (bool, error) {
-		namespaces := &corev1.NamespaceList{}
-		err := k8sClient.List(context.TODO(), namespaces)
-		if err != nil {
-			return false, err
-		}
-
-		exists := false
-		for _, namespaceItem := range namespaces.Items {
-			if namespaceItem.Name == namespace.Name {
-				exists = true
-				break
-			}
-		}
-
-		return !exists, nil
-	}, time.Second*120, time.Second).Should(BeTrue())
-}

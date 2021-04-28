@@ -35,7 +35,7 @@ func createUserConfigurationSecret(namespace string, stringData map[string]strin
 	}
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "User configuration secret %+v\n", *userConfiguration)
-	Expect(k8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
 }
 
 func createUserConfigurationConfigMap(namespace string, numberOfExecutorsSecretKeyName string, systemMessage string) {
@@ -63,7 +63,7 @@ unclassified:
 	}
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "User configuration %+v\n", *userConfiguration)
-	Expect(k8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
 }
 
 func createDefaultLimitsForContainersInNamespace(namespace string) {
@@ -92,7 +92,7 @@ func createDefaultLimitsForContainersInNamespace(namespace string) {
 	}
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "LimitRange %+v\n", *limitRange)
-	Expect(k8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
 }
 
 func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {

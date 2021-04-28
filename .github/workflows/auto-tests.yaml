@@ -46,7 +46,10 @@ jobs:
           make minikube-start MINIKUBE_DRIVER='docker' CPUS_NUMBER=2
 
       - name: Jenkins Operator - e2e
-        run: |
-          make e2e E2E_TEST_ARGS='-ginkgo.v'
+        run: make e2e E2E_TEST_ARGS='-ginkgo.v'
 
-#TODO Helm e2e test
+      - name: Jenkins Operator - Helm Chart tests
+        run: |
+          make helm-lint
+          eval $(bin/minikube docker-env)
+          make helm-e2e E2E_TEST_ARGS='-ginkgo.v'

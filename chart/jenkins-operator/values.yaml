@@ -63,7 +63,7 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 1.28.6
+  #   version: 1.29.2
   # - name: workflow-job
   #   version: "2.40"
   # - name: workflow-aggregator
@@ -135,6 +135,9 @@ jenkins:
 
   # volumeMounts are mounts for Jenkins pod
   volumeMounts: []
+
+  # defines authorization strategy of the operator for the Jenkins API
+  authorizationStrategy: createUser
 
   # securityContext for pod
   securityContext:
@@ -215,6 +218,15 @@ jenkins:
       # className is storageClassName for PVC
       # See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1 for more details
       className: ""
+
+    # resources used by backup container
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
 
     # env contains container environment variables
     # PVC backup provider handles these variables:

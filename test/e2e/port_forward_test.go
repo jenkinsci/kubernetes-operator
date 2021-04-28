@@ -66,7 +66,7 @@ func setupPortForwardToPod(namespace, podName string, podPort int) (port int, cl
 	readyCh := make(chan struct{})
 
 	req := portForwardToPodRequest{
-		config: cfg,
+		config: Cfg,
 		pod: v1.Pod{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      podName,

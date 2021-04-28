@@ -33,7 +33,7 @@ jenkins.save()
 		},
 	}
 
-	Expect(k8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
 }
 
 func checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient jenkinsclient.Jenkins) {
@@ -56,7 +56,7 @@ func checkBaseConfigurationCompleteTimeIsNotSet(jenkins *v1alpha2.Jenkins) {
 
 	Eventually(func() (bool, error) {
 		actualJenkins := &v1alpha2.Jenkins{}
-		err := k8sClient.Get(context.TODO(), types.NamespacedName{Name: jenkins.Name, Namespace: jenkins.Namespace}, actualJenkins)
+		err := K8sClient.Get(context.TODO(), types.NamespacedName{Name: jenkins.Name, Namespace: jenkins.Namespace}, actualJenkins)
 		if err != nil {
 			return false, err
 		}

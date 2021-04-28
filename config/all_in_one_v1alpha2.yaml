@@ -1,4 +1,9 @@
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-operator
+---
 # permissions to do leader election.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -37,45 +42,95 @@ roleRef:
   name: leader-election-role
 subjects:
 - kind: ServiceAccount
-  name: default
-  namespace: default
+  name: jenkins-operator
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   creationTimestamp: null
-  name: manager-role
+  name: jenkins-operator
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - configmaps
-  - secrets
-  - serviceaccounts
-  verbs:
-  - get
-  - create
-  - update
-  - list
-  - watch
 - apiGroups:
   - apps
   resources:
-  - deployments
   - daemonsets
+  - deployments
   - replicasets
   - statefulsets
   verbs:
-    - '*'
+  - '*'
 - apiGroups:
-    - rbac.authorization.k8s.io
+  - apps
+  - jenkins-operator
   resources:
-  - roles
-  - rolebindings
+  - deployments/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - build.openshift.io
+  resources:
+  - buildconfigs
+  - builds
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  - services
   verbs:
   - create
+  - get
+  - list
   - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - '*'
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
   - list
   - watch
 - apiGroups:
@@ -83,100 +138,100 @@ rules:
   resources:
   - pods/portforward
   verbs:
-    - create
+  - create
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - pods/log
+  - serviceaccounts
   verbs:
-    - get
-    - list
-    - watch
+  - create
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - image.openshift.io
   resources:
-    - pods
-    - pods/exec
+  - imagestreams
   verbs:
-    - "*"
+  - get
+  - list
+  - watch
 - apiGroups:
-    - ""
+  - jenkins.io
   resources:
-    - events
+  - jenkins/finalizers
   verbs:
-    - get
-    - watch
-    - list
-    - create
-    - patch
+  - update
 - apiGroups:
-    - apps
-  resourceNames:
-    - jenkins-operator
+  - jenkins.io
   resources:
-    - deployments/finalizers
+  - jenkins/status
   verbs:
-    - update
+  - get
+  - patch
+  - update
 - apiGroups:
-    - jenkins.io
+  - jenkins.io
   resources:
-    - '*'
+  - '*'
   verbs:
-    - '*'
+  - '*'
 - apiGroups:
-    - ""
+  - rbac.authorization.k8s.io
   resources:
-    - persistentvolumeclaims
+  - rolebindings
+  - roles
   verbs:
-    - get
-    - list
-    - watch
+  - create
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - "route.openshift.io"
+  - "route.openshift.io"
   resources:
-    - routes
+  - routes
   verbs:
-    - get
-    - list
-    - watch
-    - create
-    - update
+  - create
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - "image.openshift.io"
+  - "image.openshift.io"
   resources:
-    - imagestreams
+  - imagestreams
   verbs:
-    - get
-    - list
-    - watch
+  - get
+  - list
+  - watch
 - apiGroups:
-    - "build.openshift.io"
+  - "build.openshift.io"
   resources:
-    - builds
-    - buildconfigs
+  - builds
+  - buildconfigs
   verbs:
-    - get
-    - list
-    - watch
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
-  name: manager-rolebinding
+  name: jenkins-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: manager-role
+  kind: Role
+  name: jenkins-operator
 subjects:
 - kind: ServiceAccount
-  name: default
-  namespace: default
+  name: jenkins-operator
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins-operator
-  namespace: default
   labels:
     control-plane: controller-manager
 spec:
@@ -189,6 +244,7 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      serviceAccountName: jenkins-operator
       securityContext:
         runAsUser: 65532
       containers:

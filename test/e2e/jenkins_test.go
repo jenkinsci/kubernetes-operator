@@ -31,7 +31,7 @@ const (
 func getJenkins(namespace, name string) *v1alpha2.Jenkins {
 	jenkins := &v1alpha2.Jenkins{}
 	namespaceName := types.NamespacedName{Namespace: namespace, Name: name}
-	Expect(k8sClient.Get(context.TODO(), namespaceName, jenkins)).Should(Succeed())
+	Expect(K8sClient.Get(context.TODO(), namespaceName, jenkins)).Should(Succeed())
 	return jenkins
 }
 
@@ -41,7 +41,7 @@ func getJenkinsMasterPod(jenkins *v1alpha2.Jenkins) *corev1.Pod {
 		Namespace:     jenkins.Namespace,
 	}
 	pods := &corev1.PodList{}
-	Expect(k8sClient.List(context.TODO(), pods, lo)).Should(Succeed())
+	Expect(K8sClient.List(context.TODO(), pods, lo)).Should(Succeed())
 	Expect(pods.Items).Should(HaveLen(1), fmt.Sprintf("Jenkins pod not found, pod list: %+v", pods.Items))
 	return &pods.Items[0]
 }
@@ -147,7 +147,7 @@ func createJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins CR %+v\n", *jenkins)
 
-	Expect(k8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 
 	return jenkins
 }
@@ -253,7 +253,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins CR %+v\n", *jenkins)
 
-	Expect(k8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 
 	return jenkins
 }
@@ -261,11 +261,11 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 func createJenkinsAPIClientFromServiceAccount(jenkins *v1alpha2.Jenkins, jenkinsAPIURL string) (jenkinsclient.Jenkins, error) {
 	podName := resources.GetJenkinsMasterPodName(jenkins)
 
-	clientSet, err := kubernetes.NewForConfig(cfg)
+	clientSet, err := kubernetes.NewForConfig(Cfg)
 	if err != nil {
 		return nil, err
 	}
-	config := configuration.Configuration{Jenkins: jenkins, ClientSet: *clientSet, Config: cfg}
+	config := configuration.Configuration{Jenkins: jenkins, ClientSet: *clientSet, Config: Cfg}
 	r := base.New(config, jenkinsclient.JenkinsAPIConnectionSettings{})
 
 	token, _, err := r.Configuration.Exec(podName, resources.JenkinsMasterContainerName, []string{"cat", "/var/run/secrets/kubernetes.io/serviceaccount/token"})
@@ -281,7 +281,7 @@ func createJenkinsAPIClientFromSecret(jenkins *v1alpha2.Jenkins, jenkinsAPIURL s
 
 	adminSecret := &corev1.Secret{}
 	namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: resources.GetOperatorCredentialsSecretName(jenkins)}
-	if err := k8sClient.Get(context.TODO(), namespaceName, adminSecret); err != nil {
+	if err := K8sClient.Get(context.TODO(), namespaceName, adminSecret); err != nil {
 		return nil, err
 	}
 
@@ -296,7 +296,7 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 	By("establishing Jenkins API connection")
 
 	var service corev1.Service
-	err := k8sClient.Get(context.TODO(), types.NamespacedName{
+	err := K8sClient.Get(context.TODO(), types.NamespacedName{
 		Namespace: jenkins.Namespace,
 		Name:      resources.GetJenkinsHTTPServiceName(jenkins),
 	}, &service)
@@ -333,7 +333,7 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
-	Expect(k8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
+	Expect(K8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
 
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
@@ -346,7 +346,7 @@ func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 func getJenkinsService(jenkins *v1alpha2.Jenkins, serviceKind string) *corev1.Service {
 	service := &corev1.Service{}
 	serviceName := constants.OperatorName + "-" + serviceKind + "-" + jenkins.ObjectMeta.Name
-	Expect(k8sClient.Get(context.TODO(), client.ObjectKey{Name: serviceName, Namespace: jenkins.Namespace}, service)).Should(Succeed())
+	Expect(K8sClient.Get(context.TODO(), client.ObjectKey{Name: serviceName, Namespace: jenkins.Namespace}, service)).Should(Succeed())
 
 	return service
 }

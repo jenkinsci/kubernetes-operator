@@ -9,31 +9,41 @@ metadata:
   {{- end }}
 spec:
   configurationAsCode:
-    configurations:
-    {{- range .Values.jenkins.configuration.configurationAsCode }}
-    - name: {{ .configMapName }}
-    {{- end }}
     {{- if .Values.jenkins.configuration.configurationAsCode }}
+    configurations:
+      {{ range .Values.jenkins.configuration.configurationAsCode }}
+      - name: {{ .configMapName }}
+      {{- end }}
     secret:
       {{- if .Values.jenkins.configuration.secretRefName }}
       name: {{ .Values.jenkins.configuration.secretRefName }}
       {{- else if .Values.jenkins.configuration.secretData }}
       name: jenkins-{{ .Values.jenkins.name }}
       {{- end }}
+    {{- else }}
+    configurations: []
+    secret:
+      name: ""
     {{- end }}
   groovyScripts:
-    configurations:
-    {{- range .Values.jenkins.configuration.groovyScripts }}
-    - name: {{ .configMapName }}
-    {{- end }}
     {{- if .Values.jenkins.configuration.groovyScripts }}
+    configurations:
+      {{- range .Values.jenkins.configuration.groovyScripts }}
+      - name: {{ .configMapName }}
+      {{- end }}
     secret:
       {{- if .Values.jenkins.configuration.secretRefName }}
       name: {{ .Values.jenkins.configuration.secretRefName }}
       {{- else if .Values.jenkins.configuration.secretData }}
       name: jenkins-{{ .Values.jenkins.name }}
       {{- end }}
+    {{- else }}
+    configurations: []
+    secret:
+      name: ""
     {{- end }}
+  jenkinsAPISettings:
+    authorizationStrategy: {{ .Values.jenkins.authorizationStrategy }}
   {{- if .Values.jenkins.backup.enabled }}
   backup:
     containerName: {{ .Values.jenkins.backup.containerName }}
@@ -84,7 +94,11 @@ spec:
     {{- with .Values.jenkins.plugins }}
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}
-    priorityClassName: {{ .Values.jenkins.priorityClassName }}
+    {{- if .Values.jenkins.priorityClassName }}
+    priorityClassName: {{- .Values.jenkins.priorityClassName }}
+    {{- else }}
+    priorityClassName: ""
+    {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
       - name:  jenkins-master
@@ -112,6 +126,9 @@ spec:
       - name: {{ .Values.jenkins.backup.containerName }}
         image: {{ .Values.jenkins.backup.image }}
         imagePullPolicy: IfNotPresent
+        {{- with .Values.jenkins.backup.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }}
         {{- with .Values.jenkins.backup.env }}
         env: {{- toYaml . | nindent 8 }}
         {{- end }}

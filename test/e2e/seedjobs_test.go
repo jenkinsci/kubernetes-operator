@@ -104,7 +104,7 @@ func createKubernetesCredentialsProviderSecret(namespace string, config seedJobC
 		},
 	}
 
-	Expect(k8sClient.Create(context.TODO(), secret)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), secret)).Should(Succeed())
 }
 
 func verifyJenkinsSeedJobs(jenkinsClient jenkinsclient.Jenkins, seedJobs []seedJobConfig) {

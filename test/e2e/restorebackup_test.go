@@ -61,7 +61,7 @@ func createPVC(namespace string) {
 		},
 	}
 
-	Expect(k8sClient.Create(context.TODO(), pvc)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), pvc)).Should(Succeed())
 }
 
 func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alpha2.Jenkins {
@@ -180,7 +180,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins CR %+v\n", *jenkins)
 
-	Expect(k8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
+	Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 
 	return jenkins
 }
@@ -190,5 +190,5 @@ func resetJenkinsStatus(jenkins *v1alpha2.Jenkins) {
 
 	jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 	jenkins.Status = v1alpha2.JenkinsStatus{}
-	Expect(k8sClient.Status().Update(context.TODO(), jenkins)).Should(Succeed())
+	Expect(K8sClient.Status().Update(context.TODO(), jenkins)).Should(Succeed())
 }

@@ -89,10 +89,16 @@ test: ## Runs the go tests
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
 
 .PHONY: e2e
-e2e: deepcopy-gen ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
-	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
+	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+.PHONY: helm-e2e
+IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)
+helm-e2e: helm container-runtime-build ## Runs helm e2e tests, you can use EXTRA_ARGS
+	@echo "+ $@"
+	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
 
 .PHONY: vet
 vet: ## Verifies `go vet` passes
@@ -136,7 +142,7 @@ install: ## Installs the executable
 .PHONY: run
 run: export WATCH_NAMESPACE = $(NAMESPACE)
 run: export OPERATOR_NAME = $(NAME)
-run: fmt vet manifests install-crds build ## Run the executable, you can use EXTRA_ARGS
+run: fmt vet install-crds build ## Run the executable, you can use EXTRA_ARGS
 	@echo "+ $@"
 ifeq ($(KUBERNETES_PROVIDER),minikube)
 	kubectl config use-context $(KUBECTL_CONTEXT)
@@ -301,6 +307,18 @@ ifneq ($(KUBERNETES_PROVIDER),crc)
 	$(error KUBERNETES_PROVIDER not set to 'crc')
 endif
 
+.PHONY: helm
+HAS_HELM := $(shell which $(PROJECT_DIR)/bin/helm)
+helm: ## Download helm if it's not present
+	@echo "+ $@"
+ifndef HAS_HELM
+	mkdir -p $(PROJECT_DIR)/bin
+	curl -Lo bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv bin/helm.tar.gz -C $(PROJECT_DIR)/bin
+	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
+	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
+	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
+endif
+
 .PHONY: minikube
 HAS_MINIKUBE := $(shell which $(PROJECT_DIR)/bin/minikube)
 minikube: ## Download minikube if it's not present
@@ -342,11 +360,13 @@ bump-version: sembump ## Bump the version in the version file. Set BUMP to [ pat
 	sed -i s/$(VERSION)/$(NEW_VERSION)/g README.md
 	sed -i s/$(VERSION)/$(NEW_VERSION)/g deploy/operator.yaml
 	sed -i s/$(VERSION)/$(NEW_VERSION)/g deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
-	cp deploy/service_account.yaml deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
-	cat deploy/role.yaml >> deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
-	cat deploy/role_binding.yaml >> deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
-	cat deploy/operator.yaml >> deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
-	git add VERSION.txt README.md deploy/operator.yaml deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	cp config/service_account.yaml deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	cat config/rbac/leader_election_role.yaml >> config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	cat config/rbac/leader_election_role_binding.yaml >> config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)=$(API_VERSION).yaml
+	cat config/rbac/role.yaml >> config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)=$(API_VERSION).yaml
+	cat config/rbac/role_binding.yaml >> config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	cat config/manager/manager.yaml >> config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	git add VERSION.txt README.md config/manager/manager.yaml config/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
 	git commit -vaem "Bump version to $(NEW_VERSION)"
 	@echo "Run make tag to create and push the tag for new version $(NEW_VERSION)"
 
@@ -379,19 +399,24 @@ endif
 	go mod vendor -v
 	@echo
 
+.PHONY: helm-lint
+helm-lint: helm
+	@echo "+ $@"
+	bin/helm lint chart/jenkins-operator
+
 .PHONY: helm-package
-helm-package:
+helm-package: helm
 	@echo "+ $@"
 	mkdir -p /tmp/jenkins-operator-charts
 	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
-	cd chart && helm package jenkins-operator
+	cd chart && bin/helm package jenkins-operator
 	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
 	rm -rf /tmp/jenkins-operator-charts/
 
 .PHONY: helm-deploy
 helm-deploy: helm-package
 	@echo "+ $@"
-	helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
+	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
 	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
 
 # Download and build hugo extended locally if necessary
@@ -418,6 +443,7 @@ FILENAME := config/all_in_one_$(API_VERSION).yaml
 all-in-one-build: ## Re-generate all-in-one yaml
 	@echo "+ $@"
 	> $(FILENAME)
+	cat config/service_account.yaml >> $(FILENAME)
 	cat config/rbac/leader_election_role.yaml >> $(FILENAME)
 	cat config/rbac/leader_election_role_binding.yaml >> $(FILENAME)
 	cat config/rbac/role.yaml >> $(FILENAME)

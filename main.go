@@ -122,6 +122,7 @@ func main() {
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "c674355f.jenkins.io",
+		Namespace:              namespace,
 	})
 	if err != nil {
 		fatal(errors.Wrap(err, "unable to start manager"), *debug)

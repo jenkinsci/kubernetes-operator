@@ -21,19 +21,19 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 	)
 
 	BeforeEach(func() {
-		namespace = createNamespace()
+		namespace = CreateNamespace()
 
 		createPVC(namespace.Name)
 		jenkins = createJenkinsWithBackupAndRestoreConfigured(jenkinsCRName, namespace.Name)
 	})
 
 	AfterEach(func() {
-		destroyNamespace(namespace)
+		DestroyNamespace(namespace)
 	})
 
 	Context("when deploying CR with backup enabled to cluster", func() {
 		It("performs backups before pod deletion and restores them even Jenkins status is restarted", func() {
-			waitForJenkinsUserConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()
 			waitForJobCreation(jenkinsClient, jobID)
@@ -42,7 +42,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
-			waitForJenkinsUserConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient2, cleanUpFunc2 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc2()
 			waitForJobCreation(jenkinsClient2, jobID)
@@ -51,7 +51,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			resetJenkinsStatus(jenkins)
 			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 			checkBaseConfigurationCompleteTimeIsNotSet(jenkins)
-			waitForJenkinsUserConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient3, cleanUpFunc3 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc3()
 			waitForJobCreation(jenkinsClient3, jobID)

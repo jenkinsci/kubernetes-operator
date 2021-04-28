@@ -16,6 +16,7 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      serviceAccountName: jenkins-operator
       securityContext:
         runAsUser: 65532
       containers:
