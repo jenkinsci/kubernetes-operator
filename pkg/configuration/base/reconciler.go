@@ -297,8 +297,8 @@ func (r *JenkinsBaseConfigurationReconciler) compareVolumes(actualPod corev1.Pod
 		}
 
 		// hotfix for k8s 1.21 - filter out kube-api-access-<random-suffix>
-		const kubeApiAccessPrefix = "kube-api-access-"
-		if strings.HasPrefix(volume.Name, kubeApiAccessPrefix) {
+		const kubeAPIAccessPrefix = "kube-api-access-"
+		if strings.HasPrefix(volume.Name, kubeAPIAccessPrefix) {
 			continue
 		}
 
