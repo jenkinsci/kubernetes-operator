@@ -107,6 +107,7 @@ func (r *JenkinsReconciler) newJenkinsReconcilier(jenkins *v1alpha2.Jenkins) con
 	return config
 }
 
+// +kubebuilder:rbac:groups=jenkins.io,resources=jenkins,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=jenkins.io,resources=jenkins/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=jenkins.io,resources=jenkins/finalizers,verbs=update
 // +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete
