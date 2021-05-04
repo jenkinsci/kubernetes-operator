@@ -55,8 +55,7 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 		}
 
 		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType ||
-			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType ||
-			seedJob.JenkinsCredentialType == v1alpha2.ExternalCredentialType {
+			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
 			secret := &v1.Secret{}
 			namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: seedJob.CredentialID}
 			err := s.Client.Get(context.TODO(), namespaceName, secret)
