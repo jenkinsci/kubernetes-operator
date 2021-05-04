@@ -221,6 +221,26 @@ stringData:
 ### External authentication
 You can use `external` credential type if you want to configure authentication using Configuration As Code or Groovy Script.
 
+Example:
+```yaml
+apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-external
+    credentialType: external
+    credentialID: k8s-external
+    targets: "cicd/jobs/*.jenkins"
+    description: "Jenkins Operator repository"
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+```
+
+Remember that `credentialID` must match the id of the credentials configured in Jenkins. Consult the
+[Jenkins docs for using credentials][jenkins-using-credentials] for details.
+
 ## HTTP Proxy for downloading plugins
 
 To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:
@@ -313,3 +333,4 @@ Example config file to modify and use:
 
 [job-dsl]:https://github.com/jenkinsci/job-dsl-plugin
 [kubernetes-credentials-provider]:https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/
+[jenkins-using-credentials]:https://www.jenkins.io/doc/book/using/using-credentials/
