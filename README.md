@@ -66,6 +66,12 @@ Selected content:
 We have a dedicated channel called `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com)
 Fill out ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7)) and come say hi !
 
+## Snapshots between releases
+
+We are trying our best to resolve issues quickly, but they have to wait to be released. If you can't wait for an official docker image,
+you can try our unofficial images, which are built nightly. Look for the images with tag "nightly-{hash}" , where {hash} is the hash of the
+master commit that interests you.
+
 ## Contribution
 
 Feel free to file [issues](https://github.com/jenkinsci/kubernetes-operator/issues) or [pull requests](https://github.com/jenkinsci/kubernetes-operator/pulls).
