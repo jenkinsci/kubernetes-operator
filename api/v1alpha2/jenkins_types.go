@@ -343,19 +343,19 @@ type JenkinsMaster struct {
 	// +optional
 	// Defaults to :
 	// - name: kubernetes
-	// version: "1.28.6"
+	// version: "1.29.4"
 	// - name: workflow-job
 	// version: "2.40"
 	// - name: workflow-aggregator
 	// version: "2.6"
 	// - name: git
-	// version: "4.5.0"
+	// version: "4.6.0"
 	// - name: job-dsl
 	// version: "1.77"
 	// - name: configuration-as-code
-	// version: "1.46"
+	// version: "1.51"
 	// - name: kubernetes-credentials-provider
-	// version: "0.15"
+	// version: "0.18-1"
 	BasePlugins []Plugin `json:"basePlugins,omitempty"`
 
 	// Plugins contains plugins required by user
