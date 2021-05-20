@@ -44,6 +44,7 @@ jobs:
 
       - name: Jenkins Operator - Helm Chart tests
         run: |
+          git reset --hard
           make helm-lint
           eval $(bin/minikube docker-env)
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
@@ -55,4 +56,6 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Release Container Runtime
-        run: make container-runtime-snapshot-push
+        run: |
+          git reset --hard
+          make container-runtime-snapshot-push
