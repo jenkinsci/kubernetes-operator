@@ -227,7 +227,6 @@ container-runtime-push: ## Push the container
 	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-snapshot-push
-GITCOMMIT = $(shell git rev-parse --short HEAD)
 container-runtime-snapshot-push: container-runtime-build
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
