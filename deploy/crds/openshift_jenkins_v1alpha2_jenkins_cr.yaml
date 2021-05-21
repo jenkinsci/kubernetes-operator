@@ -33,8 +33,7 @@ spec:
         value: /var/lib/jenkins
       - name: JAVA_OPTS
         value: >-
-          -XX:+UnlockExperimentalVMOptions -XX:+UnlockExperimentalVMOptions
-          -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
+          -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=80.0
           -Djenkins.install.runSetupWizard=false -Djava.awt.headless=true
       image: 'quay.io/openshift/origin-jenkins:latest'
       imagePullPolicy: Always
