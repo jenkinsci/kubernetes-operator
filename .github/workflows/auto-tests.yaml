@@ -3,10 +3,12 @@ on:
   push:
     branches:
       - master
+      - security-validator
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
     branches:
       - master
+      - security-validator
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
