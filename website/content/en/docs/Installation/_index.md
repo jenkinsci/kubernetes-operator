@@ -23,7 +23,7 @@ To run **Jenkins Operator**, you will need:
 Install Jenkins Custom Resource Definition:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/crds/jenkins_v1alpha2_jenkins_crd.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml 
 ```
 
 ## Deploy Jenkins Operator
@@ -35,7 +35,7 @@ There are two ways to deploy the Jenkins Operator.
 Apply Service Account and RBAC roles:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/all-in-one-v1alpha2.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml
 ```
 
 Watch **Jenkins Operator** instance being created:
