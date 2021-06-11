@@ -29,7 +29,7 @@ First, install Jenkins Custom Resource Definition:
 kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml 
 ```
 
-Then, apply Service Account and RBAC roles:
+Then, apply the operator and other required resources:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml
@@ -42,10 +42,11 @@ kubectl get pods -w
 ```
 
 Now **Jenkins Operator** should be up and running in the `default` namespace.
+For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/installation/latest/deploy-jenkins/).
 
 ## Deploy Jenkins Operator using Helm Chart
 
-Alternatively, you can also use Helm to install the Operator. It requires the Helm 3+ for deployment.
+Alternatively, you can also use Helm to install the Operator (and optionally, by default, Jenkins). It requires the Helm 3+ for deployment.
 
 Create a namespace for the operator:
 
