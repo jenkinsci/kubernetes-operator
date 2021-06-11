@@ -761,11 +761,9 @@
 <li>
 <ul>
 <li><a href="#requirements">Requirements</a></li>
-<li><a href="#configure-custom-resource-definition">Configure Custom Resource Definition</a></li>
-<li><a href="#deploy-jenkins-operator">Deploy Jenkins Operator</a>
+<li><a href="#deploy-jenkins-operator-using-yaml-s">Deploy Jenkins Operator using YAML&rsquo;s</a></li>
+<li><a href="#deploy-jenkins-operator-using-helm-chart">Deploy Jenkins Operator using Helm Chart</a>
 <ul>
-<li><a href="#using-yaml-s">Using YAML&rsquo;s</a></li>
-<li><a href="#using-helm-chart">Using Helm Chart</a></li>
 <li><a href="#configuring-operator-deployment">Configuring operator deployment</a></li>
 </ul></li>
 </ul></li>
@@ -821,25 +819,22 @@ All container images can be found at <a href="https://hub.docker.com/r/virtuslab
 - access to a Kubernetes cluster version <code>1.17+</code>
 - <code>kubectl</code> version <code>1.17+</code></p>
 
-<h2 id="configure-custom-resource-definition">Configure Custom Resource Definition</h2>
+<p>Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to <a href="/kubernetes-operator/docs/installation/">Getting Started</a></p>
 
-<p>Install Jenkins Custom Resource Definition:</p>
+<h2 id="deploy-jenkins-operator-using-yaml-s">Deploy Jenkins Operator using YAML&rsquo;s</h2>
+
+<p>First, install Jenkins Custom Resource Definition:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml </code></pre></div>
-<h2 id="deploy-jenkins-operator">Deploy Jenkins Operator</h2>
-
-<p>There are two ways to deploy the Jenkins Operator.</p>
-
-<h3 id="using-yaml-s">Using YAML&rsquo;s</h3>
-
-<p>Apply Service Account and RBAC roles:</p>
+<p>Then, apply the operator and other required resources:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml</code></pre></div>
 <p>Watch <strong>Jenkins Operator</strong> instance being created:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get pods -w</code></pre></div>
-<p>Now <strong>Jenkins Operator</strong> should be up and running in the <code>default</code> namespace.</p>
+<p>Now <strong>Jenkins Operator</strong> should be up and running in the <code>default</code> namespace.
+For deploying Jenkins, refer to <a href="/kubernetes-operator/docs/installation/latest/deploy-jenkins/">Deploy Jenkins section</a>.</p>
 
-<h3 id="using-helm-chart">Using Helm Chart</h3>
+<h2 id="deploy-jenkins-operator-using-helm-chart">Deploy Jenkins Operator using Helm Chart</h2>
 
-<p>There is an option to use Helm to install the operator. It requires the Helm 3+ for deployment.</p>
+<p>Alternatively, you can also use Helm to install the Operator (and optionally, by default, Jenkins). It requires the Helm 3+ for deployment.</p>
 
 <p>Create a namespace for the operator:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl create namespace &lt;your-namespace&gt;</code></pre></div>
