@@ -442,6 +442,11 @@ generate-docs: hugo ## Re-generate docs directory from the website directory
 	cd website && npm install
 	$(HUGO_PATH)/hugo -s website -d ../docs
 
+.PHONY: run-docs
+run-docs: 
+	@echo "+ $@"
+	cd website && $(HUGO_PATH)/hugo server -D
+
 ##################### FROM OPERATOR SDK ########################
 # Install CRDs into a cluster
 install-crds: manifests kustomize
