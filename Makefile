@@ -443,7 +443,7 @@ generate-docs: hugo ## Re-generate docs directory from the website directory
 	$(HUGO_PATH)/hugo -s website -d ../docs
 
 .PHONY: run-docs
-run-docs: 
+run-docs: hugo
 	@echo "+ $@"
 	cd website && $(HUGO_PATH)/hugo server -D
 
