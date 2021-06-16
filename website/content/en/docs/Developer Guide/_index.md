@@ -17,7 +17,7 @@ This document explains how to setup your development environment.
 - [git][git_tool]
 - [go][go_tool] version 1.15.6
 - [goimports, golint, checkmake and staticcheck][install_dev_tools]
-- [minikube][minikube] version 1.17.1 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
+- [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
 - [docker][docker_tool] version 17.03+
 
 ## Clone repository and download dependencies
