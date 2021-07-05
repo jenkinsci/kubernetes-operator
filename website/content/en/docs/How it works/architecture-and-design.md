@@ -23,7 +23,7 @@ The **Jenkins Operator** design incorporates the following concepts:
 
 **User** reconciliation loop takes care of reconciling user provided configuration, which consists of:
 
-- Ensure Restore Job - creates Restore job and ensures that restore has been successfully performed  
+- Ensure Restore Job - creates Restore job and ensures that restore has been successfully performed  123123
 - Ensure Seed Jobs - creates Seed Jobs and ensures that all of them have been successfully executed
 - Ensure User Configuration - executed user provided configuration, like groovy scripts, configuration as code or plugins
 - Ensure Backup Job -  creates a Backup job and ensures that backup has been successfully performed

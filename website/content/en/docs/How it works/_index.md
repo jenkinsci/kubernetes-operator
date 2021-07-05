@@ -8,6 +8,6 @@ description: >
 ---
 
 {{% pageinfo %}}
-This document describes a high level overview of how jenkins-operator works.123123
+This document describes a high level overview of how jenkins-operator works.
 {{% /pageinfo %}}
 
