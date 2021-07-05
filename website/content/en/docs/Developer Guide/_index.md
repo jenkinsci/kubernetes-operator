@@ -34,7 +34,7 @@ Start minikube instance configured for **Jenkins Operator**. Appropriate minikub
 ```bash
 make minikube-start
 ```
-Next run **Jenkins Operator**
+Next run **Jenkins Operator** locally. 
 ```bash
 make run
 ```
