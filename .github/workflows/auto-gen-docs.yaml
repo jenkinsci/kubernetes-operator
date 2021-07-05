@@ -4,7 +4,7 @@ name: auto-generate-docs
 on:
   push:
     branches:
-      - fix-autogenerating-docs
+      - master
 
 jobs:
   # Set the job key. The key is displayed as the job name
@@ -29,59 +29,47 @@ jobs:
           IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || true)
           [[ $IS_CHANGED -gt 0 ]] && echo "IS_CHANGED=true" >> $GITHUB_ENV || echo "IS_CHANGED=false" >> $GITHUB_ENV
 
-      - name: Echo is_changed
-        run: echo $IS_CHANGED
+      # Sets up the appropriate version of Hugo
+      - name: Setup Hugo
+        if: env.IS_CHANGED != 'true'
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.62.2'
+          extended: true
 
-      - name: If changes were made
-        if: env.IS_CHANGED == 'true'
-        run: echo "Changes were made"
+      # Sets up node - required by Hugo
+      - name: Setup Node
+        if: env.IS_CHANGED != 'true'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
 
-      - name: If no changes were made
-        if: env.IS_CHANGED == 'false'
-        run: echo "No changes were made"
+      # Installs dependencies required by docsy theme
+      - name: Install docsy dependencies
+        if: env.IS_CHANGED != 'true'
+        run: |
+          cd website
+          npm install
+          npm build
+          sudo npm install -D --save autoprefixer
+          sudo npm install -D --save postcss-cli
+          cd ../
 
-#      # Sets up the appropriate version of Hugo
-#      - name: Setup Hugo
-#        if: env.IS_CHANGED != 'true'
-#        uses: peaceiris/actions-hugo@v2
-#        with:
-#          hugo-version: '0.62.2'
-#          extended: true
-#
-#      # Sets up node - required by Hugo
-#      - name: Setup Node
-#        if: env.IS_CHANGED != 'true'
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: '12.x'
-#
-#      # Installs dependencies required by docsy theme
-#      - name: Install docsy dependencies
-#        if: env.IS_CHANGED != 'true'
-#        run: |
-#          cd website
-#          npm install
-#          npm build
-#          sudo npm install -D --save autoprefixer
-#          sudo npm install -D --save postcss-cli
-#          cd ../
-#
-#      # Runs makefile goal - checks changes to /website folder and generates docs
-#      - name: Run Makefile goal
-#        if: env.IS_CHANGED != 'true'
-#        env:
-#          DEFAULT_BRANCH: master
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: make generate-docs
-#
-#      # Create push request with generated docs
-#      - name: Create Pull Request
-#        if: env.IS_CHANGED != 'true'
-#        uses: peter-evans/create-pull-request@v3
-#        with:
-#          commit-message: Auto-updated docs
-#          branch: docs-generator
-#          title: Auto-generated docs update
-#          body: |
-#            Auto generated docs from master commit ${{ github.sha }}
-##
+      # Runs makefile goal - checks changes to /website folder and generates docs
+      - name: Run Makefile goal
+        if: env.IS_CHANGED != 'true'
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make generate-docs
+
+      # Creates pull request with generated docs
+      - name: Create Pull Request
+        if: env.IS_CHANGED != 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Auto-updated docs
+          branch: docs-generator
+          title: Auto-generated docs update
+          body: |
+            Auto generated docs from master commit ${{ github.sha }}
