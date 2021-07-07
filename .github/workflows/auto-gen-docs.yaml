@@ -26,7 +26,7 @@ jobs:
       # Checks if the previous commit introduced any changes to website files
       - name: Check for changes
         run: |
-          IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || true)
+          IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || :)
           [[ $IS_CHANGED -gt 0 ]] && echo "IS_CHANGED=true" >> $GITHUB_ENV || echo "IS_CHANGED=false" >> $GITHUB_ENV
 
       # Sets up the appropriate version of Hugo
