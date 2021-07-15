@@ -1,2 +1,4 @@
+# Configuration for devbots-needs-triage - https://devbots.xyz/documentation/needs-triage/
+
 enabled: true
 label: "needs triage"
