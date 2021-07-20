@@ -32,7 +32,7 @@
 ">
 <meta itemprop="datePublished" content="2021-01-25T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2021-01-25T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="182">
+<meta itemprop="wordCount" content="230">
 
 
 
@@ -832,6 +832,12 @@
 	<h1>Configure backup and restore</h1>
 	<div class="lead">Prevent loss of job history</div>
 	
+
+<blockquote>
+<p>Because of Jenkins Operator&rsquo;s architecture, the configuration of Jenkins should be done using ConfigurationAsCode
+or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
+up. Therefore, the backup script makes a copy of jobs history only.</p>
+</blockquote>
 
 <p>Backup and restore is done by a container sidecar.</p>
 

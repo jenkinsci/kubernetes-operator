@@ -576,6 +576,12 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
         
         
 
+&lt;blockquote&gt;
+&lt;p&gt;Because of Jenkins Operator&amp;rsquo;s architecture, the configuration of Jenkins should be done using ConfigurationAsCode
+or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
+up. Therefore, the backup script makes a copy of jobs history only.&lt;/p&gt;
+&lt;/blockquote&gt;
+
 &lt;p&gt;Backup and restore is done by a container sidecar.&lt;/p&gt;
 
 &lt;h3 id=&#34;pvc&#34;&gt;PVC&lt;/h3&gt;
