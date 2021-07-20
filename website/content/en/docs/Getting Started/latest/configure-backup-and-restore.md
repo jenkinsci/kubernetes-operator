@@ -9,7 +9,7 @@ description: >
 
 > Because of Jenkins Operator's architecture, the configuration of Jenkins should be done using ConfigurationAsCode 
 > or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration 
-> up. Therefore, the backup script takes (makes) a copy of jobs history only.
+> up. Therefore, the backup script makes a copy of jobs history only.
 
 Backup and restore is done by a container sidecar.
 
