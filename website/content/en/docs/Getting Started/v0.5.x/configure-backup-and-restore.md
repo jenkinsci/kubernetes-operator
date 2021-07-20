@@ -85,6 +85,6 @@ spec:
     getLatestAction:
       exec:
         command:
-        - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion. If you don't omit it in CR, you can lose data
+        - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion; not having it in the CR may cause loss of data
     #recoveryOnce: <backup_number> # if want to restore specific backup configure this field and then Jenkins will be restarted and desired backup will be restored
 ```
