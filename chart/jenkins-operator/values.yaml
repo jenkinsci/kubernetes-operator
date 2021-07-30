@@ -120,6 +120,8 @@ jenkins:
         claimName: jenkins-backup
 
   # volumeMounts are mounts for Jenkins pod
+  # Note that attempting to overwrite default mount settings for Jenkins home directory will result in Operator error
+  # See https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-jenkins-home-volume
   volumeMounts: []
 
   # defines authorization strategy of the operator for the Jenkins API

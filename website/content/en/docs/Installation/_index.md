@@ -12,11 +12,6 @@ This document describes installation procedure for **Jenkins Operator**.
 All container images can be found at [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository.
 {{% /pageinfo %}}
 
-### Note on Operator's nightly built images
-If you wish to use the newest, not yet released version of the Operator, you can use nightly built snapshot, however the maintainers of this project cannot guarantee its stability.
-
-You can find nightly built imags by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of "{git-hash}", {git-hash} being the hash of master branch commit that you want to use snapshot of.
-
 ## Requirements
  
 To run **Jenkins Operator**, you will need:
@@ -883,3 +878,12 @@ Example:<br />
      </tbody>
  </table>
 
+## Note on Operator's nightly built images
+If you wish to use the newest, not yet released version of the Operator, you can use one of nightly built snapshot images, however the maintainers of this project cannot guarantee their stability.
+
+You can find nightly built images by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of "{git-hash}", {git-hash} being the hash of master branch commit that you want to use snapshot of.
+
+## Note on Jenkins home Volume
+Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users. One of the key points of this design is maintaining an immutable state of Jenkins. 
+
+One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume as Jenkins home directory. It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory, as attempting to do so will result in Operator error.
