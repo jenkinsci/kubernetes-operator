@@ -2,7 +2,7 @@
 title: "Developer Guide"
 linkTitle: "Developer Guide"
 weight: 60
-date: 2021-06-10
+date: 2021-07-30
 description: >
   Jenkins Operator for developers
 ---
@@ -211,6 +211,16 @@ seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0 
 make run OPERATOR_EXTRA_ARGS="--debug"
 ```
 
+### Stop or delete minikube cluster
+To stop Kubernetes cluster running locally on minikube:
+```bash
+minikube stop
+```
+To delete the cluster altogether:
+```bash
+minikube delete
+```
+
 ## Build and run with a remote Kubernetes cluster
 
 You can also run the controller locally and make it listen to a remote Kubernetes server.
@@ -282,6 +292,18 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.us
 kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.password}' | base64 -d
 ```
 
+
+
+
+## Self-learning
+
+* [Tutorial: Deep Dive into the Operator Framework for... Melvin Hillsman, Michael Hrivnak, & Matt Dorn
+](https://www.youtube.com/watch?v=8_DaCcRMp5I)
+
+* [Operator Framework Training By OpenShift](https://www.katacoda.com/openshift/courses/operatorframework)
+
+* [Operator SDK Tutorial for Go](https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/)
+
 [dep_tool]:https://golang.github.io/dep/docs/installation.html
 [git_tool]:https://git-scm.com/downloads
 [go_tool]:https://golang.org/dl/
@@ -293,9 +315,3 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.pa
 [virtualbox]:https://www.virtualbox.org/wiki/Downloads
 [install_dev_tools]:https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/tools/
 
-## Self-learning
-
-* [Tutorial: Deep Dive into the Operator Framework for... Melvin Hillsman, Michael Hrivnak, & Matt Dorn
-](https://www.youtube.com/watch?v=8_DaCcRMp5I)
-
-* [Operator Framework Training By OpenShift](https://www.katacoda.com/openshift/courses/operatorframework)
