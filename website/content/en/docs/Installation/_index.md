@@ -2,24 +2,30 @@
 title: "Installation"
 linkTitle: "Installation"
 weight: 1
-date: 2020-10-05
+date: 2021-07-30
 description: >
   How to install Jenkins Operator
 ---
 
 {{% pageinfo %}}
 This document describes installation procedure for **Jenkins Operator**. 
-All container images can be found at [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator)
+All container images can be found at [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository.
 {{% /pageinfo %}}
+
+### Note on Operator's nightly built images
+If you wish to use the newest, not yet released version of the Operator, you can use nightly built snapshot, however the maintainers of this project cannot guarantee its stability.
+
+You can find nightly built imags by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of "{git-hash}", {git-hash} being the hash of master branch commit that you want to use snapshot of.
 
 ## Requirements
  
 To run **Jenkins Operator**, you will need:
+
 - access to a Kubernetes cluster version `1.17+`
 - `kubectl` version `1.17+`
 
 
-Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to [Getting Started](/kubernetes-operator/docs/installation/)
+Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to [Getting Started](/kubernetes-operator/docs/installation/).
 
 ## Deploy Jenkins Operator using YAML's
 
