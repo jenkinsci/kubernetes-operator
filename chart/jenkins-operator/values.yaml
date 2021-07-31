@@ -18,6 +18,7 @@ jenkins:
   # namespace is the namespace where the resources will be deployed
   # It's not recommended to use default namespace
   # Create new namespace for jenkins (called e.g. jenkins)
+  # Note: this affects roles and rolebindings for jenkins operator itself
   namespace: default
 
   # labels are injected into metadata labels field
@@ -136,7 +137,7 @@ jenkins:
   # slave Jenkins service
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details
   #slaveService:
-  
+
   # LivenessProbe for Jenkins Master pod
   livenessProbe:
     failureThreshold: 12
