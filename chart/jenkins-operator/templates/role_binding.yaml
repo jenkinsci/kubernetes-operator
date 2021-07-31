@@ -12,7 +12,28 @@ roleRef:
   kind: Role
   name: jenkins-operator
   apiGroup: rbac.authorization.k8s.io
-{{ if ne .Release.Namespace .Values.jenkins.namespace }}
+{{ if eq .Values.jenkins.namespace "" }}
+{{- /*
+# This is a special case when .Values.jenkins.namespace is equal to empty
+# string which leads to WATCH_NAMESPACE env of jenkins-operator to be set of
+# empty string and leads to operator actually watching all namespaces. In this
+# case we need to create clusterrole and clusterrolebinding instead of role and
+# rolebinding
+*/}}
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jenkins-operator
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-operator
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: jenkins-operator
+  apiGroup: rbac.authorization.k8s.io
+{{ else if ne .Release.Namespace .Values.jenkins.namespace }}
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
