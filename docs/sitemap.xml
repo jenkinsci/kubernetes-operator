@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/installation/</loc>
+    <lastmod>2021-07-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/</loc>
     <lastmod>2021-01-25T00:00:00+00:00</lastmod>
   </url>
@@ -10,11 +15,6 @@
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.5.x/deploy-jenkins/</loc>
     <lastmod>2021-01-25T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/installation/</loc>
-    <lastmod>2020-10-05T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -369,7 +369,7 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/</loc>
-    <lastmod>2021-06-10T00:00:00+00:00</lastmod>
+    <lastmod>2021-07-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>

@@ -26,7 +26,7 @@
 " />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/" />
-<meta property="og:updated_time" content="2021-06-10T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="og:updated_time" content="2021-07-30T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Developer Guide">
 <meta itemprop="description" content="Jenkins Operator for developers
 "><meta name="twitter:card" content="summary"/>
@@ -765,6 +765,7 @@
 <li><a href="#build-and-run-with-a-minikube">Build and run with a minikube</a>
 <ul>
 <li><a href="#debug-jenkins-operator">Debug Jenkins Operator</a></li>
+<li><a href="#stop-or-delete-minikube-cluster">Stop or delete minikube cluster</a></li>
 </ul></li>
 <li><a href="#build-and-run-with-a-remote-kubernetes-cluster">Build and run with a remote Kubernetes cluster</a></li>
 <li><a href="#testing">Testing</a>
@@ -996,6 +997,12 @@ jenkins-jenkins-example                           1/1     Running             <s
 seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             <span style="color:#0000cf;font-weight:bold">0</span>          21m</code></pre></div>
 <h3 id="debug-jenkins-operator">Debug Jenkins Operator</h3>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make run <span style="color:#000">OPERATOR_EXTRA_ARGS</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;--debug&#34;</span></code></pre></div>
+<h3 id="stop-or-delete-minikube-cluster">Stop or delete minikube cluster</h3>
+
+<p>To stop Kubernetes cluster running locally on minikube:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">minikube stop</code></pre></div>
+<p>To delete the cluster altogether:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">minikube delete</code></pre></div>
 <h2 id="build-and-run-with-a-remote-kubernetes-cluster">Build and run with a remote Kubernetes cluster</h2>
 
 <p>You can also run the controller locally and make it listen to a remote Kubernetes server.</p>
@@ -1038,6 +1045,8 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
 </a></p></li>
 
 <li><p><a href="https://www.katacoda.com/openshift/courses/operatorframework">Operator Framework Training By OpenShift</a></p></li>
+
+<li><p><a href="https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/">Operator SDK Tutorial for Go</a></p></li>
 </ul>
 
         <div class="section-index">
@@ -1204,7 +1213,7 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified June 10, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified July 30, 2021
 </div>
 </div>
 

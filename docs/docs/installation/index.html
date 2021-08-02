@@ -26,7 +26,7 @@
 " />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/installation/" />
-<meta property="og:updated_time" content="2020-10-05T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="og:updated_time" content="2021-07-30T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Installation">
 <meta itemprop="description" content="How to install Jenkins Operator
 "><meta name="twitter:card" content="summary"/>
@@ -766,6 +766,8 @@
 <ul>
 <li><a href="#configuring-operator-deployment">Configuring operator deployment</a></li>
 </ul></li>
+<li><a href="#note-on-operator-s-nightly-built-images">Note on Operator&rsquo;s nightly built images</a></li>
+<li><a href="#note-on-jenkins-home-volume">Note on Jenkins home Volume</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -808,18 +810,21 @@
 
 <div class="pageinfo pageinfo-primary">
 <p>This document describes installation procedure for <strong>Jenkins Operator</strong>.
-All container images can be found at <a href="https://hub.docker.com/r/virtuslab/jenkins-operator">virtuslab/jenkins-operator</a></p>
+All container images can be found at <a href="https://hub.docker.com/r/virtuslab/jenkins-operator">virtuslab/jenkins-operator</a> Docker Hub repository.</p>
 
 </div>
 
 
 <h2 id="requirements">Requirements</h2>
 
-<p>To run <strong>Jenkins Operator</strong>, you will need:
-- access to a Kubernetes cluster version <code>1.17+</code>
-- <code>kubectl</code> version <code>1.17+</code></p>
+<p>To run <strong>Jenkins Operator</strong>, you will need:</p>
 
-<p>Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to <a href="/kubernetes-operator/docs/installation/">Getting Started</a></p>
+<ul>
+<li>access to a Kubernetes cluster version <code>1.17+</code></li>
+<li><code>kubectl</code> version <code>1.17+</code></li>
+</ul>
+
+<p>Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to <a href="/kubernetes-operator/docs/installation/">Getting Started</a>.</p>
 
 <h2 id="deploy-jenkins-operator-using-yaml-s">Deploy Jenkins Operator using YAML&rsquo;s</h2>
 
@@ -1649,6 +1654,18 @@ Example:<br />
      </tbody>
  </table></p>
 
+<h2 id="note-on-operator-s-nightly-built-images">Note on Operator&rsquo;s nightly built images</h2>
+
+<p>If you wish to use the newest, not yet released version of the Operator, you can use one of nightly built snapshot images, however the maintainers of this project cannot guarantee their stability.</p>
+
+<p>You can find nightly built images by heading to <a href="https://hub.docker.com/r/virtuslab/jenkins-operator">virtuslab/jenkins-operator</a> Docker Hub repository and looking for images with tag in the form of &ldquo;{git-hash}&rdquo;, {git-hash} being the hash of master branch commit that you want to use snapshot of.</p>
+
+<h2 id="note-on-jenkins-home-volume">Note on Jenkins home Volume</h2>
+
+<p>Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users. One of the key points of this design is maintaining an immutable state of Jenkins.</p>
+
+<p>One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume as Jenkins home directory. It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory, as attempting to do so will result in Operator error.</p>
+
         <div class="section-index">
     
     
@@ -1805,7 +1822,7 @@ Example:<br />
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified October 5, 2020
+	<div class="text-muted mt-5 pt-3 border-top">Last modified July 30, 2021
 </div>
 </div>
 
