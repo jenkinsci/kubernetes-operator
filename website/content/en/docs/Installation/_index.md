@@ -889,7 +889,7 @@ One of the key points of this design is maintaining an immutable state of Jenkin
 
 One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume
 (jenkins-home) as Jenkins home directory.
-It is not possible to overwrite volumeMount and specify any other Volume forJenkins home directory,
+It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory,
 as attempting to do so will result in Operator error.
 
 jenkins-home is not the only Jenkins controller pod volumeMount that is non-configurable and managed by Operator,
