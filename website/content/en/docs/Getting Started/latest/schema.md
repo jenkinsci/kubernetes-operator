@@ -661,7 +661,12 @@ Values defined by an Env with a duplicate key will take precedence.</p>
 </td>
 <td>
 <em>(Optional)</em>
-<p>Pod volumes to mount into the container&rsquo;s filesystem. More info: https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts</p>
+<p>
+Pod volumes to mount into the container&rsquo;s filesystem. More info:
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts">
+https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts
+</a>
+</p>
 </td>
 </tr>
 <tr>
