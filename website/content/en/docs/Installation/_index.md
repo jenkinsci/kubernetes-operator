@@ -883,7 +883,19 @@ If you wish to use the newest, not yet released version of the Operator, you can
 
 You can find nightly built images by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of "{git-hash}", {git-hash} being the hash of master branch commit that you want to use snapshot of.
 
-## Note on Jenkins home Volume
-Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users. One of the key points of this design is maintaining an immutable state of Jenkins. 
+## Note on restricted Jenkins controller pod volumeMounts
+Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
+One of the key points of this design is maintaining an immutable state of Jenkins. 
 
-One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume as Jenkins home directory. It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory, as attempting to do so will result in Operator error.
+One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume
+(jenkins-home) as Jenkins home directory.
+It is not possible to overwrite volumeMount and specify any other Volume forJenkins home directory,
+as attempting to do so will result in Operator error.
+
+jenkins-home is not the only Jenkins controller pod volumeMount that is non-configurable and managed by Operator,
+below is the full list of those volumeMounts:
+
+* jenkins-home
+* scripts
+* init-configuration
+* operator-credentials
