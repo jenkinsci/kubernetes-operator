@@ -55,7 +55,8 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 		}
 
 		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType ||
-			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
+			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType ||
+			seedJob.JenkinsCredentialType == v1alpha2.GithubAppCredentialType {
 			secret := &v1.Secret{}
 			namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: seedJob.CredentialID}
 			err := s.Client.Get(context.TODO(), namespaceName, secret)
@@ -74,6 +75,13 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 			}
 			if seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
 				if msg := validateUsernamePasswordSecret(*secret); len(msg) > 0 {
+					for _, m := range msg {
+						messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
+					}
+				}
+			}
+			if seedJob.JenkinsCredentialType == v1alpha2.GithubAppCredentialType {
+				if msg := validateGithubAppSecret(*secret); len(msg) > 0 {
 					for _, m := range msg {
 						messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
 					}
@@ -213,6 +221,26 @@ func validateUsernamePasswordSecret(secret v1.Secret) []string {
 		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
 	}
 	if len(password) == 0 {
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+	}
+
+	return messages
+}
+
+func validateGithubAppSecret(secret v1.Secret) []string {
+	var messages []string
+	appid, exists := secret.Data[AppIdSecretKey]
+	if !exists {
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+	}
+	if len(appid) == 0 {
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+	}
+	pkey, exists := secret.Data[PrivateKeySecretKey]
+	if !exists {
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+	}
+	if len(pkey) == 0 {
 		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
 	}
 

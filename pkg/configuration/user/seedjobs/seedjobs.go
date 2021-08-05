@@ -36,6 +36,8 @@ const (
 	// PrivateKeySecretKey is private key data key in Kubernetes secret used to create Jenkins SSH credential
 	PrivateKeySecretKey = "privateKey"
 
+	AppIdSecretKey = "appId"
+
 	// JenkinsCredentialTypeLabelName is label for kubernetes-credentials-provider-plugin which determine Jenkins
 	// credential type
 	JenkinsCredentialTypeLabelName = "jenkins.io/credentials-type"
