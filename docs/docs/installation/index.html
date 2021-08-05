@@ -767,7 +767,7 @@
 <li><a href="#configuring-operator-deployment">Configuring operator deployment</a></li>
 </ul></li>
 <li><a href="#note-on-operator-s-nightly-built-images">Note on Operator&rsquo;s nightly built images</a></li>
-<li><a href="#note-on-jenkins-home-volume">Note on Jenkins home Volume</a></li>
+<li><a href="#note-on-restricted-jenkins-controller-pod-volumemounts">Note on restricted Jenkins controller pod volumeMounts</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -1660,11 +1660,25 @@ Example:<br />
 
 <p>You can find nightly built images by heading to <a href="https://hub.docker.com/r/virtuslab/jenkins-operator">virtuslab/jenkins-operator</a> Docker Hub repository and looking for images with tag in the form of &ldquo;{git-hash}&rdquo;, {git-hash} being the hash of master branch commit that you want to use snapshot of.</p>
 
-<h2 id="note-on-jenkins-home-volume">Note on Jenkins home Volume</h2>
+<h2 id="note-on-restricted-jenkins-controller-pod-volumemounts">Note on restricted Jenkins controller pod volumeMounts</h2>
 
-<p>Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users. One of the key points of this design is maintaining an immutable state of Jenkins.</p>
+<p>Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
+One of the key points of this design is maintaining an immutable state of Jenkins.</p>
 
-<p>One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume as Jenkins home directory. It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory, as attempting to do so will result in Operator error.</p>
+<p>One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume
+(jenkins-home) as Jenkins home directory.
+It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory,
+as attempting to do so will result in Operator error.</p>
+
+<p>jenkins-home is not the only Jenkins controller pod volumeMount that is non-configurable and managed by Operator,
+below is the full list of those volumeMounts:</p>
+
+<ul>
+<li>jenkins-home</li>
+<li>scripts</li>
+<li>init-configuration</li>
+<li>operator-credentials</li>
+</ul>
 
         <div class="section-index">
     
