@@ -100,8 +100,6 @@ spec:
     {{- end }}
     {{- if .Values.jenkins.priorityClassName }}
     priorityClassName: {{- .Values.jenkins.priorityClassName }}
-    {{- else }}
-    priorityClassName: ""
     {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
