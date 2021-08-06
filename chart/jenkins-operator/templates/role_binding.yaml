@@ -15,7 +15,7 @@ roleRef:
 {{ if eq .Values.jenkins.namespace "" }}
 {{- /*
 # This is a special case when .Values.jenkins.namespace is equal to empty
-# string which leads to WATCH_NAMESPACE env of jenkins-operator to be set of
+# string which leads to WATCH_NAMESPACE env of jenkins-operator to be set to
 # empty string and leads to operator actually watching all namespaces. In this
 # case we need to create clusterrole and clusterrolebinding instead of role and
 # rolebinding
