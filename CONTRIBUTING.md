@@ -47,4 +47,4 @@ When issuing a PR that modifies the project's Helm Chart, please do not include 
 
 Specifically, please do not update `chart/index.yaml` and `chart/jenkins-operator/Chart.yaml` files and do not build chart archive package.
 
-For the sake of PR's brevity and security, Project's maintainers will issue a new PR that releases new version of the Chart after your PR has been merged.
+For the sake of PR's brevity and security, Project's maintainers will issue a separate PR that releases new version of the Chart after your PR has been merged.

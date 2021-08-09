@@ -62,8 +62,11 @@ Selected content:
 - Multibranch Pipelines and Backup Issues: https://github.com/jenkinsci/kubernetes-operator/issues/104#issuecomment-554289768
 
 ## Community
+Main channel of communication on topics related to Jenkins Operator is [Jenkins Operator Category](https://community.jenkins.io/c/contributing/jenkins-operator/20) on [Jenkins Community Discourse](https://community.jenkins.io/).
 
-We have a dedicated channel called `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com)
+Here you can ask questions about the project, discuss best practices on using it, and talk to other users of the Operator, contributors and project's maintainers.
+
+We also have a dedicated channel called `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com).
 Fill out ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7)) and come say hi!
 
 ## Snapshots between releases
@@ -77,7 +80,8 @@ Look for the images with tag "{git-hash}", where {git-hash} is the hash of the m
 
 ## Contribution
 
-Feel free to file [issues](https://github.com/jenkinsci/kubernetes-operator/issues) or [pull requests](https://github.com/jenkinsci/kubernetes-operator/pulls).
+Feel free to file [issues](https://github.com/jenkinsci/kubernetes-operator/issues) or [pull requests](https://github.com/jenkinsci/kubernetes-operator/pulls),
+but please consult [CONTRIBUTING](https://github.com/jenkinsci/kubernetes-operator/CONTRIBUTING.md) document beforehand.
 
 Before any big pull request please consult the maintainers to ensure a common direction.
 
@@ -85,6 +89,7 @@ Before any big pull request please consult the maintainers to ensure a common di
 
 - [Jenkins World 2019 Lisbon](assets/Jenkins_World_Lisbon_2019%20-Jenkins_Kubernetes_Operator.pdf)
 - [Jenkins Online Meetup 2020](assets/Jenkins_Online_Meetup-Jenkins_Kubernetes_Operator.pdf)
+- [Jenkins Online Meetup 2021](https://www.youtube.com/watch?v=BsYYVkophsk)
 
 ## About the authors
 
