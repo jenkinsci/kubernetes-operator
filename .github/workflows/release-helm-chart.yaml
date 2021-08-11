@@ -1,0 +1,20 @@
+name: Release Helm chart
+
+# Run this workflow manually
+on: workflow_dispatch
+
+jobs:
+  release-helm-chart:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy helm chart
+        run: |
+# sed version in chart/jenkins-operator/Chart.yaml
+# run makefile target
+
+
+# slap a PR

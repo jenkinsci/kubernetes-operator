@@ -423,6 +423,16 @@ helm-deploy: helm-package
 	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
 	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
 
+.PHONY: helm-release-latest
+helm-release-latest: helm
+	@echo "+ $@"
+	mkdir -p /tmp/jenkins-operator-charts
+	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
+	cd chart && ../bin/helm package jenkins-operator
+	mv chart/jenkins-operator-*.tgz chart/jenkins-operator/
+	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/ --merge chart/index.yaml
+	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
+
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
 HUGO_VERSION = v0.62.2
