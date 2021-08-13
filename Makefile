@@ -407,22 +407,6 @@ helm-lint: helm
 	@echo "+ $@"
 	bin/helm lint chart/jenkins-operator
 
-.PHONY: helm-package
-helm-package: helm
-	@echo "+ $@"
-	mkdir -p /tmp/jenkins-operator-charts
-	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
-	cd chart && ../bin/helm package jenkins-operator
-	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
-	rm -rf /tmp/jenkins-operator-charts/
-	git add chart/jenkins-operator-*.tgz
-
-.PHONY: helm-deploy
-helm-deploy: helm-package
-	@echo "+ $@"
-	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
-	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
-
 .PHONY: helm-release-latest
 helm-release-latest: helm
 	@echo "+ $@"
