@@ -34,7 +34,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Release Helm chart ${{ github.event.inputs.chartVersion }}
-          branch: helm-chart-release
-          title: Release ${{ github.events.inputs.chartVersion }} Helm Chart
+          branch: helm-chart-release-${{ github.event.inputs.chartVersion }}
+          title: Release ${{ github.event.inputs.chartVersion }} Helm Chart
           body: |
-            Release ${{ github.events.inputs.chartVersion }} Helm Chart
+            Release ${{ github.event.inputs.chartVersion }} Helm Chart
