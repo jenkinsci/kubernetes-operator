@@ -7,7 +7,7 @@
 {{ if .Site.IsMultiLingual }}
 {{ $editURL = printf "%s/edit/master/content/%s/%s" $gh_repo ($.Site.Language.Lang) .Path }}
 {{ end }}
-{{ $issuesURL := printf "%s/issues/new?title=%s" $gh_repo (htmlEscape $.Title )}}
+{{ $issuesURL := printf "%s/issues/new?labels=documentation&template=documentation.md&title=%s" $gh_repo (htmlEscape $.Title )}}
 <a href="{{ $editURL }}" target="_blank"><i class="fa fa-edit fa-fw"></i> {{ T "post_edit_this" }}</a>
 <a href="{{ $issuesURL }}" target="_blank"><i class="fab fa-github fa-fw"></i> {{ T "post_create_issue" }}</a>
 {{ if $gh_project_repo }}
