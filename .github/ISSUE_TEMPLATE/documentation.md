@@ -7,7 +7,7 @@ projects: ''
 assignees: ''
 ---
 
-**Relevant links*
+**Relevant links**
 Link(s) to the section(s) of documentation that are outdated or otherwise wrong
 
 **Description**
