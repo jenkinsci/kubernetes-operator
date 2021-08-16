@@ -9,7 +9,7 @@ entries:
     icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
     name: jenkins-operator
     urls:
-    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator/jenkins-operator-0.5.3.tgz
+    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.5.3.tgz
     version: 0.5.3
   - apiVersion: v2
     appVersion: 0.6.0
