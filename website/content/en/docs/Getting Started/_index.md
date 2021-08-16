@@ -1,7 +1,7 @@
 ---
 title: "Getting Started"
 linkTitle: "Getting Started"
-weight: 10
+weight: 3
 date: 2019-08-05
 description: >
   How to work with jenkins-operator

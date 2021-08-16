@@ -1,7 +1,7 @@
 ---
 title: "Installation"
 linkTitle: "Installation"
-weight: 1
+weight: 2
 date: 2021-08-16
 description: >
   How to install Jenkins Operator

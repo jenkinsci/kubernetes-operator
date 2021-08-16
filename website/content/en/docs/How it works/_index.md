@@ -1,7 +1,7 @@
 ---
 title: "How it works"
 linkTitle: "How it works"
-weight: 8
+weight: 1
 date: 2019-08-05
 description: >
   How Jenkins Operator works
