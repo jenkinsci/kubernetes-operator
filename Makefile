@@ -414,7 +414,7 @@ helm-release-latest: helm
 	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
 	cd chart && ../bin/helm package jenkins-operator
 	mv chart/jenkins-operator-*.tgz chart/jenkins-operator/
-	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/ --merge chart/index.yaml
+	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/ --merge chart/index.yaml
 	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
 
 # Download and build hugo extended locally if necessary
