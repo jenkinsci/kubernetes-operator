@@ -20,7 +20,7 @@ To run **Jenkins Operator**, you will need:
 - `kubectl` version `1.17+`
 
 
-Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to [Getting Started](/kubernetes-operator/docs/installation/).
+Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to [Getting Started](/kubernetes-operator/docs/getting-started/).
 
 ## Deploy Jenkins Operator using YAML's
 
@@ -43,7 +43,7 @@ kubectl get pods -w
 ```
 
 Now **Jenkins Operator** should be up and running in the `default` namespace.
-For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/installation/latest/deploy-jenkins/).
+For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/).
 
 ## Deploy Jenkins Operator using Helm Chart
 
