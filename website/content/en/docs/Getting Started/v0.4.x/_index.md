@@ -4,7 +4,7 @@ linkTitle: "v0.4.x"
 weight: 10
 date: 2020-04-13
 description: >
-  How to work with jenkins-operator latest version
+  How to work with jenkins-operator 0.4.x version. We recommend migration to a newer version.
 ---
 
 {{% pageinfo %}}
