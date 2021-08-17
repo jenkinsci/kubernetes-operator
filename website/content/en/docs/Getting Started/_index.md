@@ -4,7 +4,7 @@ linkTitle: "Getting Started"
 weight: 3
 date: 2019-08-05
 description: >
-  How to work with jenkins-operator
+  How to work with Jenkins Operator
 ---
 
 {{% pageinfo %}}
