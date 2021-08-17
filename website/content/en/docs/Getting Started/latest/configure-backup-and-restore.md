@@ -1,7 +1,7 @@
 ---
 title: "Configure backup and restore"
 linkTitle: "Configure backup and restore"
-weight: 10
+weight: 5
 date: 2021-01-25
 description: >
   Prevent loss of job history

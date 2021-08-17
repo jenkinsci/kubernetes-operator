@@ -1,7 +1,7 @@
 ---
 title: "Installation"
 linkTitle: "Installation"
-weight: 2
+weight: 1
 date: 2021-08-16
 description: >
   How to install Jenkins Operator
@@ -20,7 +20,7 @@ To run **Jenkins Operator**, you will need:
 - `kubectl` version `1.17+`
 
 
-Listed below are the two ways to deploy Jenkins Operator. For details on how to customize your Jenkins instance, refer to [Getting Started](/kubernetes-operator/docs/getting-started/).
+Listed below are the two ways to deploy Jenkins Operator.
 
 ## Deploy Jenkins Operator using YAML's
 

@@ -1,7 +1,7 @@
 ---
 title: "Notifications"
 linkTitle: "Notifications"
-weight: 10
+weight: 7
 date: 2021-01-18
 description: >
     How to setup operator notifications.

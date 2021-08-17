@@ -1,7 +1,7 @@
 ---
 title: "Security"
 linkTitle: "Security"
-weight: 50
+weight: 8
 date: 2019-08-05
 description: >
   Jenkins security and hardening out of the box
@@ -57,7 +57,7 @@ possible permissions to any subject which can create a Pod in that namespace.
 To mitigate this issue **Jenkins Operator** should be deployed in one namespace and the Jenkins CR should be created in separate namespace. 
 To achieve it change watch namespace in [https://github.com/jenkinsci/kubernetes-operator/blob/master/deploy/operator.yaml#L25](https://github.com/jenkinsci/kubernetes-operator/blob/master/deploy/operator.yaml#L25)
 
-## Setup Jenkins Operator and Jenkins in separated namespaces
+## Setup Jenkins Operator and Jenkins in separate namespaces
 
 You need to create two namespaces, for example we'll call them **jenkins** for Jenkins and **Jenkins Operator** for Jenkins Operator.
 ```bash
