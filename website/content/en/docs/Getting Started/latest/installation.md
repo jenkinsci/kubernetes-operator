@@ -62,12 +62,6 @@ $ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-o
 $ helm install <name> jenkins/jenkins-operator -n <your-namespace>
 ```
 
-In case you want to use released Chart **v0.4.1**, before installing/upgrading please install additional CRD into the cluster:
-
-```bash
-$ kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/crds/jenkinsimage-crd.yaml
-```
-
 To add custom labels and annotations, you can use `values.yaml` file or pass them into `helm install` command, e.g.:
 
 ```bash
@@ -881,7 +875,7 @@ Example:<br />
 ## Note on Operator's nightly built images
 If you wish to use the newest, not yet released version of the Operator, you can use one of nightly built snapshot images, however the maintainers of this project cannot guarantee their stability.
 
-You can find nightly built images by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of "{git-hash}", {git-hash} being the hash of master branch commit that you want to use snapshot of.
+You can find nightly built images by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of `{git-hash}`, {git-hash} being the hash of master branch commit that you want to use snapshot of.
 
 ## Note on restricted Jenkins controller pod volumeMounts
 Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
