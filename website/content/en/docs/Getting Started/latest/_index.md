@@ -1,7 +1,7 @@
 ---
 title: "Latest (v0.6.x)"
 linkTitle: "Latest (v0.6.x)"
-weight: 10
+weight: 1
 date: 2021-01-18
 description: >
   How to work with the latest, currently supported Jenkins Operator version.
