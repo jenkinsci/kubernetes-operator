@@ -30,7 +30,7 @@ First, install Jenkins Custom Resource Definition:
 kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml 
 ```
 
-Then, apply the operator and other required resources:
+Then, install the Operator and other required resources:
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml
