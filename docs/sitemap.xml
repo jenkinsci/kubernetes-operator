@@ -108,6 +108,36 @@
   </url>
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.4.x/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.5.x/</loc>
+    <lastmod>2021-08-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</loc>
     <lastmod>2021-01-25T00:00:00+00:00</lastmod>
   </url>
@@ -138,22 +168,12 @@
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</loc>
-    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.5.x/notifications/</loc>
-    <lastmod>2021-01-18T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.5.x/</loc>
     <lastmod>2021-01-18T00:00:00+00:00</lastmod>
   </url>
   
@@ -174,11 +194,6 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.4.x/notifications/</loc>
-    <lastmod>2020-04-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.4.x/</loc>
     <lastmod>2020-04-13T00:00:00+00:00</lastmod>
   </url>
   
@@ -204,11 +219,6 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/notifications/</loc>
-    <lastmod>2019-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.3.x/</loc>
     <lastmod>2019-12-20T00:00:00+00:00</lastmod>
   </url>
   
@@ -249,16 +259,6 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/migration/</loc>
-    <lastmod>2019-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/</loc>
-    <lastmod>2019-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/</loc>
     <lastmod>2019-08-05T00:00:00+00:00</lastmod>
   </url>
   
