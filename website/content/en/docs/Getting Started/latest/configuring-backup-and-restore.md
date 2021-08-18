@@ -1,6 +1,6 @@
 ---
-title: "Configure backup and restore"
-linkTitle: "Configure backup and restore"
+title: "Configuring backup and restore"
+linkTitle: "Configuring backup and restore"
 weight: 5
 date: 2021-01-25
 description: >

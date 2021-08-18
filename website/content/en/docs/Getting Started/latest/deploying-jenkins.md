@@ -1,6 +1,6 @@
 ---
-title: "Deploy Jenkins"
-linkTitle: "Deploy Jenkins"
+title: "Deploying Jenkins"
+linkTitle: "Deploying Jenkins"
 weight: 2
 date: 2021-01-25
 description: >

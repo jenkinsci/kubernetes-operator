@@ -1,6 +1,6 @@
 ---
-title: "Installation"
-linkTitle: "Installation"
+title: "Installing the Operator"
+linkTitle: "Installing the Operator"
 weight: 1
 date: 2021-08-16
 description: >
