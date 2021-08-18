@@ -2,7 +2,7 @@
 title: "FAQ"
 linkTitle: "FAQ"
 date: 2021-07-01
-weight: 99
+weight: 6
 description: >
     Frequently Asked Questions about running Jenkins Operator
 ---
