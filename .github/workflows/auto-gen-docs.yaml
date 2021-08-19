@@ -58,7 +58,7 @@ jobs:
       - name: Update last modified date in modified docs
         if: env.IS_CHANGED == 'true'
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*" \
+          git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*" \
           | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
 
       # Runs makefile goal - checks changes to /website folder and generates docs
