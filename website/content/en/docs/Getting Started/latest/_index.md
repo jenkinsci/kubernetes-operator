@@ -1,6 +1,6 @@
 ---
-title: "Latest (v0.6.x)"
-linkTitle: "Latest (v0.6.x)"
+title: "Latest (v0.7.x)"
+linkTitle: "Latest (v0.7.x)"
 weight: 1
 date: 2021-08-19
 description: >
@@ -8,7 +8,7 @@ description: >
 ---
 
 {{% pageinfo %}}
-This document describes a getting started guide for **Jenkins Operator** `v0.6.x` and also additional configuration.
+This document describes a getting started guide for **Jenkins Operator** `v0.7.x` and also additional configuration.
 {{% /pageinfo %}}
 
 ## First Steps
