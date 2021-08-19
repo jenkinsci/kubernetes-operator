@@ -2,7 +2,7 @@
 title: "Troubleshooting"
 linkTitle: "Troubleshooting"
 weight: 3
-date: 2019-08-05
+date: 2021-08-19
 description: >
     Jenkins security and hardening out of the box
 ---

@@ -2,7 +2,7 @@
 title: "Customization with Groovy Scripts and CasC"
 linkTitle: "Customization with Groovy Scripts and CasC"
 weight: 3
-date: 2021-01-25
+date: 2021-08-19
 description: >
   How to customize Jenkins
 ---
