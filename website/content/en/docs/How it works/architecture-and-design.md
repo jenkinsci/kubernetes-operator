@@ -7,28 +7,37 @@ description: >
   Jenkins Operator fundamentals
 ---
 
-The **Jenkins Operator** design incorporates the following concepts:
+**Jenkins Operator** design incorporates the following concepts:
 
-- watches any changes of manifests and maintain the desired state according to deployed custom resource manifest
-- implements the main reconciliation loop which consists of two smaller reconciliation loops - base and user 
+- watching any changes to manifests and maintaining the desired state according to deployed custom resource manifests
+- implementing multiple reconciliation loops that ensure state of particular resources match the desired state defined in the manifests.
 
-![reconcile](/kubernetes-operator/img/reconcile.png)
+**Jenkins Operator** supports the following manifests:
 
-**Base** reconciliation loop takes care of reconciling base Jenkins configuration, which consists of:
+* Jenkins
+  * allows you to control options specific to the Jenkins Controller (Jenkins Master) as well as Kubernetes-specific options such as Roles or PodSpec,
+  * it uses an InitContainer to ensure initial configuration,
+  * it provides a mechanism for caching plugins, so when the pod restarts, it won't have to download them again.
 
-- Ensure Manifests - monitors any changes in manifests 
-- Ensure Jenkins Pod - creates and verifies the status of Jenkins master Pod
-- Ensure Jenkins Configuration - configures Jenkins instance including hardening, initial configuration for plugins, etc.
-- Ensure Jenkins API token - generates Jenkins API token and initialized Jenkins client
+- JenkinsKubernetesAgent
+  - allows you to control options specific to the Jenkins Agents as well as Kubernetes-specific options such as Roles or PodSpec,
+  - allows you to define agents using custom images,
+  - a seedJob agent is required when using JenkinsSeedJobs, if it isn't present, one will be created by the operator.
 
-**User** reconciliation loop takes care of reconciling user provided configuration, which consists of:
 
-- Ensure Restore Job - creates Restore job and ensures that restore has been successfully performed  
-- Ensure Seed Jobs - creates Seed Jobs and ensures that all of them have been successfully executed
-- Ensure User Configuration - executed user provided configuration, like groovy scripts, configuration as code or plugins
-- Ensure Backup Job -  creates a Backup job and ensures that backup has been successfully performed
+- JenkinsSeedJob
+  - uses Jenkins [Job DSL](https://plugins.jenkins.io/job-dsl/) plugin,
+  - it is a recommended way to define your jobs,
+  - jobs defined as JenkinsSeedJobs will be recreated on Jenkins restart.
 
-![reconcile](/kubernetes-operator/img/phases.png)
+- JenkinsConfigurationAsCode
+  - uses Jenkins [Configuration as Code](https://plugins.jenkins.io/configuration-as-code/) plugin,
+  - allows you to control the Jenkins' state directly, they will be re-applied on Jenkins restart.
+
+- JenkinsGroovyScript
+  - allows you to control the Jenkins' state directly, they will be re-applied on Jenkins restart,
+  - if your scripts require to be executed in a particular order, you can use the DependsOn field in Custom Resource,
+  - JenkinsGroovyScripts are executed after JenkinsConfigurationAsCode.
 
 ## Operator State
 
