@@ -1,6 +1,6 @@
 ---
-title: "Customization"
-linkTitle: "Customization"
+title: "Customization with Groovy Scripts and CasC"
+linkTitle: "Customization with Groovy Scripts and CasC"
 weight: 3
 date: 2021-01-25
 description: >

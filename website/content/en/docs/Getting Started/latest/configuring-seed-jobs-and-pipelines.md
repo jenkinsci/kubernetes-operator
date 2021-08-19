@@ -1,6 +1,6 @@
 ---
-title: "Configuration"
-linkTitle: "Configuration"
+title: "Configuring Seed Jobs and Pipelines"
+linkTitle: "Configuring Seed Jobs and Pipelines"
 weight: 4
 date: 2021-01-25
 description: >
