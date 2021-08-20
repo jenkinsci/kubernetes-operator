@@ -22,7 +22,7 @@
     <item>
       <title>Docs: Installing the Operator</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</guid>
       <description>
@@ -59,7 +59,7 @@ All container images can be found at &lt;a href=&#34;https://hub.docker.com/r/vi
 &lt;p&gt;Watch &lt;strong&gt;Jenkins Operator&lt;/strong&gt; instance being created:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pods -w&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Now &lt;strong&gt;Jenkins Operator&lt;/strong&gt; should be up and running in the &lt;code&gt;default&lt;/code&gt; namespace.
-For deploying Jenkins, refer to &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/&#34;&gt;Deploy Jenkins section&lt;/a&gt;.&lt;/p&gt;
+For deploying Jenkins, refer to &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/&#34;&gt;Deploy Jenkins section&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&#34;deploy-jenkins-operator-using-helm-chart&#34;&gt;Deploy Jenkins Operator using Helm Chart&lt;/h2&gt;
 
@@ -301,8 +301,8 @@ plugins:
 &lt;/td&gt;
 &lt;td&gt;
 Placeholder for jenkins seed jobs
-For seed job creation tutorial, check:&lt;br /&gt; &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines&#34;&gt;Prepare seed jobs&lt;/a&gt;
-&lt;br /&gt;&lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs&#34;&gt;Configure seed jobs&lt;/a&gt;
+For seed job creation tutorial, check:&lt;br /&gt; &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#prepare-job-definitions-and-pipelines&#34;&gt;Prepare seed jobs&lt;/a&gt;
+&lt;br /&gt;&lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#configure-seed-jobs&#34;&gt;Configure seed jobs&lt;/a&gt;
 &lt;br /&gt;Example:
 &lt;code&gt;
 &lt;pre&gt;
@@ -447,8 +447,8 @@ Backup
 &lt;td&gt;
 Backup is section for configuring operator&#39;s backup feature
 By default backup feature is enabled and pre-configured
-This section simplifies the configuration described here: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/&#34;&gt;Configure backup and restore&lt;/a&gt;
-For customization tips see &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/&#34;&gt;Custom backup and restore&lt;/a&gt;
+This section simplifies the configuration described here: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/&#34;&gt;Configuring backup and restore&lt;/a&gt;
+For customization tips see &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore&#34;&gt;Custom backup and restore&lt;/a&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -465,7 +465,7 @@ Configuration
 &lt;td&gt;&lt;/td&gt;
 &lt;td&gt;
 Section where we can configure Jenkins instance. 
-See &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/&#34;&gt;Customization&lt;/a&gt; for details
+See &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/&#34;&gt;Customizing Jenkins&lt;/a&gt; for details
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/table&gt;
@@ -990,11 +990,11 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
     </item>
     
     <item>
-      <title>Docs: Customization with Groovy Scripts and CasC</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization-with-groovy-scripts-and-casc/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <title>Docs: Customizing Jenkins</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/</link>
+      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization-with-groovy-scripts-and-casc/</guid>
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/</guid>
       <description>
         
         
@@ -1834,7 +1834,7 @@ For example you will send notifications to Slack and Teams.&lt;/p&gt;
     <item>
       <title>Docs: Security</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/</guid>
       <description>
@@ -1849,7 +1849,7 @@ via groovy scripts to prevent any security gaps.&lt;/p&gt;
 
 &lt;p&gt;Currently &lt;strong&gt;Jenkins Operator&lt;/strong&gt; generates a username and random password and stores them in a Kubernetes Secret.
 However any other authorization mechanisms are possible and can be done via groovy scripts or configuration as code plugin.
-For more information take a look at &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/getting-started/latest/customization/&#34;&gt;getting-started#jenkins-customization&lt;/a&gt;.&lt;/p&gt;
+For more information take a look at &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/&#34;&gt;getting-started#jenkins-customization&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Any change to Security Realm or Authorization requires that user called &lt;code&gt;jenkins-operator&lt;/code&gt; must have admin rights
 because &lt;strong&gt;Jenkins Operator&lt;/strong&gt; calls Jenkins API.&lt;/p&gt;
@@ -1880,8 +1880,8 @@ and stores it in a Kubernetes Secret.&lt;/p&gt;
 &lt;p&gt;Kubernetes API permissions are limited by the following roles:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml&#34;&gt;jenkins-operator role&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go&#34;&gt;Jenkins Master role&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml&#34;&gt;jenkins-operator role&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go&#34;&gt;Jenkins Master role&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Since &lt;strong&gt;Jenkins Operator&lt;/strong&gt; must be able to grant permission for its deployed Jenkins masters
@@ -2482,7 +2482,7 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     <item>
       <title>Docs: Schema</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</guid>
       <description>
@@ -2594,7 +2594,7 @@ Every single change here requires a pod restart.&lt;/p&gt;
 &lt;td&gt;
 &lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;SeedJobs defines list of Jenkins Seed Job configurations
-More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&#34;&gt;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&lt;/a&gt;&lt;/p&gt;
+More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines#configure-seed-jobs-and-pipelines&#34;&gt;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&lt;/a&gt;&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;

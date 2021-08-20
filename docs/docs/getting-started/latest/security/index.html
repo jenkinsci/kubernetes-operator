@@ -25,13 +25,13 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/" />
-<meta property="article:published_time" content="2021-08-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-08-19T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-08-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-08-20T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Security">
 <meta itemprop="description" content="Jenkins security and hardening out of the box
 ">
-<meta itemprop="datePublished" content="2021-08-19T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-08-19T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2021-08-20T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-08-20T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="770">
 
 
@@ -201,7 +201,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-customization-with-groovy-scripts-and-casc" href="/kubernetes-operator/docs/getting-started/latest/customization-with-groovy-scripts-and-casc/">Customization with Groovy Scripts and CasC</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-customizing-jenkins" href="/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a>
       
       
       
@@ -844,7 +844,7 @@ via groovy scripts to prevent any security gaps.</p>
 
 <p>Currently <strong>Jenkins Operator</strong> generates a username and random password and stores them in a Kubernetes Secret.
 However any other authorization mechanisms are possible and can be done via groovy scripts or configuration as code plugin.
-For more information take a look at <a href="/kubernetes-operator/docs/getting-started/latest/customization/">getting-started#jenkins-customization</a>.</p>
+For more information take a look at <a href="/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">getting-started#jenkins-customization</a>.</p>
 
 <p>Any change to Security Realm or Authorization requires that user called <code>jenkins-operator</code> must have admin rights
 because <strong>Jenkins Operator</strong> calls Jenkins API.</p>
@@ -875,8 +875,8 @@ and stores it in a Kubernetes Secret.</p>
 <p>Kubernetes API permissions are limited by the following roles:</p>
 
 <ul>
-<li><a href="kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml">jenkins-operator role</a><br /></li>
-<li><a href="kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go">Jenkins Master role</a></li>
+<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml">jenkins-operator role</a><br /></li>
+<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go">Jenkins Master role</a></li>
 </ul>
 
 <p>Since <strong>Jenkins Operator</strong> must be able to grant permission for its deployed Jenkins masters
@@ -1433,7 +1433,7 @@ its own namespace (<code>jenkins-operator</code>), watch for CRs in <code>jenkin
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 19, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 20, 2021
 </div>
 </div>
 

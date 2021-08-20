@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/" />
-<meta property="article:published_time" content="2021-08-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-08-19T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-08-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-08-20T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Installing the Operator">
 <meta itemprop="description" content="How to install Jenkins Operator
 ">
-<meta itemprop="datePublished" content="2021-08-19T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-08-19T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1208">
+<meta itemprop="datePublished" content="2021-08-20T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-08-20T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1209">
 
 
 
@@ -201,7 +201,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-customization-with-groovy-scripts-and-casc" href="/kubernetes-operator/docs/getting-started/latest/customization-with-groovy-scripts-and-casc/">Customization with Groovy Scripts and CasC</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-customizing-jenkins" href="/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a>
       
       
       
@@ -868,7 +868,7 @@ All container images can be found at <a href="https://hub.docker.com/r/virtuslab
 <p>Watch <strong>Jenkins Operator</strong> instance being created:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get pods -w</code></pre></div>
 <p>Now <strong>Jenkins Operator</strong> should be up and running in the <code>default</code> namespace.
-For deploying Jenkins, refer to <a href="/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/">Deploy Jenkins section</a>.</p>
+For deploying Jenkins, refer to <a href="/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/">Deploy Jenkins section</a>.</p>
 
 <h2 id="deploy-jenkins-operator-using-helm-chart">Deploy Jenkins Operator using Helm Chart</h2>
 
@@ -1110,8 +1110,8 @@ plugins:
 </td>
 <td>
 Placeholder for jenkins seed jobs
-For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
-<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs">Configure seed jobs</a>
+For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
+<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#configure-seed-jobs">Configure seed jobs</a>
 <br />Example:
 <code>
 <pre>
@@ -1256,8 +1256,8 @@ Backup
 <td>
 Backup is section for configuring operator's backup feature
 By default backup feature is enabled and pre-configured
-This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
-For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore</a>
+This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/">Configuring backup and restore</a>
+For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore">Custom backup and restore</a>
 </td>
 </tr>
 <tr>
@@ -1274,7 +1274,7 @@ Configuration
 <td></td>
 <td>
 Section where we can configure Jenkins instance. 
-See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/">Customization</a> for details
+See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a> for details
 </td>
 </tr>
 </table>
@@ -1713,7 +1713,7 @@ below is the full list of those volumeMounts:</p>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 19, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified August 20, 2021
 </div>
 </div>
 
