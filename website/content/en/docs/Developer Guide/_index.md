@@ -1,7 +1,7 @@
 ---
 title: "Developer Guide"
 linkTitle: "Developer Guide"
-weight: 4
+weight: 5
 date: 2021-08-19
 description: >
   Jenkins Operator for developers
