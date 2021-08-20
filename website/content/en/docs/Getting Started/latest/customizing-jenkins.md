@@ -9,18 +9,10 @@ description: >
 
 ## How to customize Jenkins
 Jenkins can be customized with plugins.
-Plugin's configuration is applied as groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin).
+Plugins configuration is applied as groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin).
 Any plugin working for Jenkins can be installed by the Jenkins Operator.
  
-Pre-installed plugins: 
-
-* configuration-as-code v1.51
-* git v4.7.2
-* job-dsl v1.77
-* kubernetes-credentials-provider v0.18-1
-* kubernetes v1.30.0
-* workflow-aggregator v2.6
-* workflow-job v2.41
+Pre-installed plugins and their versions can be found [here](https://github.com/jenkinsci/kubernetes-operator/blob/v0.7.0/pkg/plugins/base_plugins.go).
 
 Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
 

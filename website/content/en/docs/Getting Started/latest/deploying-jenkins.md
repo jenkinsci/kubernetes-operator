@@ -51,7 +51,7 @@ minikube service <cr_name>-http --url
 Connect to the Jenkins instance (actual Kubernetes cluster):
 
 ```bash
-kubectl port-forward jenkins-<cr_name> 8080:8080
+kubectl port-forward <cr_name> 8080:8080
 ```
 Then open browser with address `http://localhost:8080`.
 
