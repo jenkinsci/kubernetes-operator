@@ -7,10 +7,6 @@ description: >
   How to install Jenkins and Jenkins Operator in separate namespaces
 ---
 
-{{% pageinfo %}}
-This document explains how to install Jenkins Operator and Jenkins in separate namespaces.
-{{% /pageinfo %}}
-
 You need to create two namespaces, for example we'll call them **jenkins** for Jenkins and **jenkins-operator** for Jenkins Operator.
 ```bash
 $ kubectl create ns jenkins-operator
