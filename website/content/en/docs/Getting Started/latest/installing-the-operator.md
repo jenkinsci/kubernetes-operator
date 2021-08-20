@@ -43,7 +43,7 @@ kubectl get pods -w
 ```
 
 Now **Jenkins Operator** should be up and running in the `default` namespace.
-For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/).
+For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
 
 ## Deploy Jenkins Operator using Helm Chart
 
@@ -296,8 +296,8 @@ plugins:
 </td>
 <td>
 Placeholder for jenkins seed jobs
-For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
-<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs">Configure seed jobs</a>
+For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
+<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#configure-seed-jobs">Configure seed jobs</a>
 <br />Example:
 <code>
 <pre>
@@ -442,8 +442,8 @@ Backup
 <td>
 Backup is section for configuring operator's backup feature
 By default backup feature is enabled and pre-configured
-This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
-For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore</a>
+This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/">Configuring backup and restore</a>
+For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore">Custom backup and restore</a>
 </td>
 </tr>
 <tr>
@@ -460,7 +460,7 @@ Configuration
 <td></td>
 <td>
 Section where we can configure Jenkins instance. 
-See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/">Customization</a> for details
+See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a> for details
 </td>
 </tr>
 </table>

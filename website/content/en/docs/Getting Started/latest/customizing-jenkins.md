@@ -1,6 +1,6 @@
 ---
-title: "Customization with Groovy Scripts and CasC"
-linkTitle: "Customization with Groovy Scripts and CasC"
+title: "Customizing Jenkins"
+linkTitle: "Customizing Jenkins"
 weight: 3
 date: 2021-08-19
 description: >

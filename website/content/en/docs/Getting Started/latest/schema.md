@@ -109,7 +109,7 @@ Every single change here requires a pod restart.</p>
 <td>
 <em>(Optional)</em>
 <p>SeedJobs defines list of Jenkins Seed Job configurations
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
 </td>
 </tr>
 <tr>

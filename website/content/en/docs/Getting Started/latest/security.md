@@ -14,7 +14,7 @@ via groovy scripts to prevent any security gaps.
 
 Currently **Jenkins Operator** generates a username and random password and stores them in a Kubernetes Secret.
 However any other authorization mechanisms are possible and can be done via groovy scripts or configuration as code plugin.
-For more information take a look at [getting-started#jenkins-customization](/kubernetes-operator/docs/getting-started/latest/customization/).
+For more information take a look at [getting-started#jenkins-customization](/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/).
 
 Any change to Security Realm or Authorization requires that user called `jenkins-operator` must have admin rights 
 because **Jenkins Operator** calls Jenkins API.
@@ -42,8 +42,8 @@ and stores it in a Kubernetes Secret.
 
 Kubernetes API permissions are limited by the following roles:
 
-- [jenkins-operator role](kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml)  
-- [Jenkins Master role](kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go)
+- [jenkins-operator role](https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml)  
+- [Jenkins Master role](https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go)
 
 Since **Jenkins Operator** must be able to grant permission for its deployed Jenkins masters 
 to spawn pods (the `Jenkins Master role` above), 
