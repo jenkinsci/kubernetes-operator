@@ -4,7 +4,7 @@ linkTitle: "Security"
 weight: 3
 date: 2019-08-05
 description: >
-Jenkins security and hardening out of the box
+    Jenkins security and hardening out of the box
 ---
 
 By default **Jenkins Operator** performs an initial security hardening of Jenkins instance
