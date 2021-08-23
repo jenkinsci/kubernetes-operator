@@ -4,7 +4,7 @@ linkTitle: "Configuring Seed Jobs and Pipelines"
 weight: 4
 date: 2021-08-19
 description: >
-  How to configure Jenkins with Operator
+  How to configure Seed Jobs and Pipelines
 ---
 
 ## Configure Seed Jobs and Pipelines
@@ -210,11 +210,11 @@ Now copy the content of the **public** key file (the one with `.pub` in the file
 In your project repository enter Settings > Deploy keys and click “Add deploy key”. Give it some title and paste the key
 you just copied there.
 
-![jenkins](/kubernetes-operator/img/key-deployment.png)
+![jenkins](/kubernetes-operator/img/v0.7.x/key-deployment.png)
 
 You should see that the key was added.
 
-![jenkins](/kubernetes-operator/img/deployed-key.png)
+![jenkins](/kubernetes-operator/img/v0.7.x/deployed-key.png)
 
 #### Configure SSH authentication
 First, create a Secret file with your GitHub username and generated SSH private key.
