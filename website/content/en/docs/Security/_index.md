@@ -31,7 +31,7 @@ The list below describes all the default security setting configured by the **Je
 - disable CLI - CLI access of `/cli` URL is disabled
 - configure kubernetes-plugin - secure configuration for Kubernetes plugin
 
-If you would like to dig a little bit into the code, take a look [here](https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/resources/base_configuration_configmap.go).
+If you would like to dig a little bit into the code, take a look [here][base-configuration].
 
 ## Jenkins API
 
@@ -63,3 +63,7 @@ guide.
 ## Report a Security Vulnerability
 
 If you find a vulnerability or any misconfiguration in Jenkins, please report it in the [issues](https://github.com/jenkinsci/kubernetes-operator/issues).
+
+
+[base-configuration]:https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/resources/base_configuration_configmap.go
+[issues]:https://github.com/jenkinsci/kubernetes-operator/issues

@@ -9,8 +9,11 @@ description: >
 
 ## Configure Seed Jobs and Pipelines
 
-Jenkins operator uses [job-dsl][job-dsl] and [kubernetes-credentials-provider][kubernetes-credentials-provider] plugins for configuring jobs
-and deploy keys.
+Jenkins operator uses [job-dsl][job-dsl] and [kubernetes-credentials-provider][kubernetes-credentials-provider] plugins
+for configuring jobs and deploy keys.
+
+To preserve your Jenkins pipelines automate their recreation in case of instance failures, we strongly recommend using
+Configuration as Code files to set up pipelines.
 
 ## Prepare job definitions and pipelines
 
@@ -19,318 +22,317 @@ First you have to prepare pipelines and job definition in your GitHub repository
 ```
 cicd/
 ├── jobs
-│   └── k8s.jenkins
+│   └── build.jenkins
 └── pipelines
-    └── k8s.jenkins
+    └── build.jenkins
 ```
 
-**`cicd/jobs/k8s.jenkins`** is a job definition:
+Jenkins will always check the configurations directly from those files in your repository, so you don’t have to update
+the configuration every time you change the pipeline code itself.
 
-```
+### Seed Job definition
+A seed job represents Jenkins job that creates one or more pipelines in Jenkins. It uses pipeline configuration files
+from your GitHub cicd folder. Let’s create a job configuration file and store it at
+`https://github.com/your-project-repo/cicd/jobs/build.jenkins`:
+
+```groovy
 #!/usr/bin/env groovy
 
-pipelineJob('k8s-e2e') {
-    displayName('Kubernetes Plugin E2E Test')
-
-    logRotator {
-        numToKeep(10)
-        daysToKeep(30)
-    }
-
-    configure { project ->
-        project / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty' {
-            hint('PERFORMANCE_OPTIMIZED')
-        }
-    }
+pipelineJob('build-jenkins-operator') {
+    displayName('Build Jenkins Operator')
 
     definition {
         cpsScm {
             scm {
                 git {
                     remote {
-                        url('https://github.com/jenkinsci/kubernetes-operator.git')
-                        credentials('jenkins-operator')
+                        url('https://github.com/your-account/your-repo.git')
                     }
                     branches('*/master')
                 }
             }
-            scriptPath('cicd/pipelines/k8s.jenkins')
+            scriptPath('cicd/pipelines/build.jenkins')
         }
     }
 }
 ```
 
-**`cicd/pipelines/k8s.jenkins`** is an actual Jenkins pipeline:
+* **_pipelineJob_** – name of the pipeline resource that we will create
+* **_displayName_** – name of the seed job that will be displayed in Jenkins UI
+* **_remote_** – here you specify the url of GitHub repository of your project
+* **_branches_** – branches from which you want to access the repo
+* **_scriptPath_** – the path in the above repo in which you store pipeline files from which you want to create Jenkins
+  pipelines during this job run
 
-```
+### Pipeline definition
+Now we can create the pipeline configuration file and store it at https://github.com/your-project-repo/cicd/pipelines/build.jenkins.
+This file will create pod with containers to run commands on each step (stage) in your pipeline.
+
+```groovy
 #!/usr/bin/env groovy
 
-def label = "k8s-${UUID.randomUUID().toString()}"
-def home = "/home/jenkins"
-def workspace = "${home}/workspace/build-jenkins-operator"
-def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
+def label = "jenkins-example-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'alpine', image: 'alpine:3.11', ttyEnabled: true, command: 'cat'),
+                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent:alpine'),
         ],
         ) {
     node(label) {
-        stage('Run shell') {
-            container('alpine') {
-                sh 'echo "hello world"'
+        stage('Init') {
+            timeout(time: 3, unit: 'MINUTES') {
+                checkout scm
             }
+        }
+        stage('Dep') {
+            echo 'Hello from Dep stage'
+        }
+        stage('Test') {
+            echo 'Hello from Test stage'
+        }
+        stage('Build') {
+            echo 'Hello from Build stage'
         }
     }
 }
 ```
 
-## Configure Seed Jobs
+* **_label_** – the name of the pipeline
+* **_podTemplate_** – a pod that will be created during this pipeline run, to execute necessary steps
+* **_containers_** – containers in a pod that will be used to run necessary steps. One jnlp container is always needed. 
+  All the others need to use the images of programs needed for the pipeline’s stages. Full list of possible functionalities
+  can be found here. If you need to run kubectl commands you need to use container with an image that incorporates kubectl,
+  because it is not provided by default.
+* **_stage_** – at each stage you specify stage name, scripts, commands and container which needs to run them
 
-Jenkins Seed Jobs are configured using `Jenkins.spec.seedJobs` section from your custom resource manifest:
+## Update JenkinsSeedJob Custom Resource
+When you create a seed job and pipeline files, you need to reference it and specify its details in the JenkinsSeedJob
+Custom Resource. Jenkins Operator will create a default JenkinsKubernetesAgent “operator-agent” and seed job will be
+processed by default agent. Jenkins will then create Jenkins jobs from seed job files from your git repository and if
+you run it in the Jenkins UI, they will create the necessary pipelines.
 
-```
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
+```yaml
+apiVersion: jenkins.io.com/v1beta1
+kind: JenkinsSeedJob
 metadata:
-  name: example
+  name: example-jenkins-seedjob
+  namespace: default
+  labels:
+    jenkins.io/jenkins: example
 spec:
-  seedJobs:
-  - id: jenkins-operator
+  repository:
+    url: https://github.com/jenkinsci/kubernetes-operator.git
+    branch: master
     targets: "cicd/jobs/*.jenkins"
-    description: "Jenkins Operator repository"
-    repositoryBranch: master
-    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
 ```
 
-**Jenkins Operator** will automatically discover and configure all the seed jobs.
+*Note: you have to specify the Jenkins Custom Resource name in the label jenkins.io/jenkins to connect the
+Seed Job with your Jenkins instance.*
 
-You can verify if deploy keys were successfully configured in the Jenkins **Credentials** tab.
+If you want to use your own Kubernetes Agent for seed job, you need to add AgentRef to JenkinsSeedJob:
 
-![jenkins](/kubernetes-operator/img/jenkins-credentials.png)
+```yaml
+apiVersion: jenkins.io/v1beta1
+kind: JenkinsSeedJob
+metadata:
+  name: example-jenkins-seedjob
+  namespace: default
+  labels:
+    operator-service.com/jenkins: example
+spec:
+  repository:
+    url: https://github.com/jenkinsci/kubernetes-operator.git
+    branch: master
+    targets: "cicd/jobs/*.jenkins"
+  agentRef:
+    name: agent-name
+    namespace: default
+```
 
-You can verify if your pipelines were successfully configured in the Jenkins Seed Job console output.
+Jenkins Operator will then automatically discover and configure all the seed jobs. You can verify if deploy keys were
+successfully configured in the Jenkins Credentials tab.
 
-![jenkins](/kubernetes-operator/img/jenkins-seed.png)
 
-If your GitHub repository is **private** you have to configure SSH or username/password authentication.
+## Authentication
+If your GitHub repository is private or you need to authenticate to any other applications, you have to configure SSH
+or username/password authentication.
 
-### SSH authentication
+Using SSH Keys is a more secure option, while username/password method is good enough with solutions incorporating
+central location redirecting users for authentication or with multistep authentication.
 
+### Basic SSH authentication
 #### Generate SSH Keys
-
-There are two methods of SSH private key generation:
-
-```bash
-$ openssl genrsa -out <filename> 2048
-```
-
-or
+To generate a private/public pair of keys, run ssh-keygen:
 
 ```bash
-$ ssh-keygen -t rsa -b 2048
-$ ssh-keygen -p -f <filename> -m pem
+$ ssh-keygen -t rsa -b 2048 -C "johndoe@email.com"
+Generating public/private rsa key pair.
 ```
 
-Then copy content from generated file. 
-
-#### Public key
-
-If you want to upload your public key to your Git server you need to extract it.
-
-If key was generated by `openssl` then you need to type this to extract public key:
+Next, you will be asked for a file name. Use the default path:
 
 ```bash
-$ openssl rsa -in <filename> -pubout > <filename>.pub
+Enter file in which to save the key (/Users/johndoe/.ssh/id_rsa):
 ```
 
-If key was generated by `ssh-keygen` the public key content is located in <filename>.pub and there is no need to extract public key
+Now you can optionally set a password.
+```bash
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /Users/johndoe/.ssh/id_rsa.
+Your public key has been saved in /Users/johndoe/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:M0HppoJgPAhw2NYS0SVuYpyllpA7MbFfu+U0F0y8EDA johndoe@email.com
+The key's randomart image is:
++---[RSA 2048]----+
+|      o. .   o   |
+|     o .o + +    |
+|   ...+o . + .   |
+|  E .ooo .. .    |
+|   o  + S . .o   |
+|  .  o   . o. +  |
+| .    .   .o.=   |
+|  . .... .o.@..  |
+| .oo.o .o+=@*=   |
++----[SHA256]-----+
+```
+
+Operator needs the key in PEM format:
+```bash
+$ ssh-keygen -p -f /Users/johndoe/.ssh/id_rsa -m pem
+Key has comment 'johndoe@email.com'
+Enter new passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved with the new passphrase.
+```
+
+Now copy the content of the **public** key file (the one with `.pub` in the file name) and add it to your GitHub repository.
+In your project repository enter Settings > Deploy keys and click “Add deploy key”. Give it some title and paste the key
+you just copied there.
+
+![jenkins](/kubernetes-operator/img/key-deployment.png)
+
+You should see that the key was added.
+
+![jenkins](/kubernetes-operator/img/deployed-key.png)
 
 #### Configure SSH authentication
+First, create a Secret file with your GitHub username and generated SSH private key.
 
-Configure a seed job like this:
-
-```
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator-ssh
-    credentialType: basicSSHUserPrivateKey
-    credentialID: k8s-ssh
-    targets: "cicd/jobs/*.jenkins"
-    description: "Jenkins Operator repository"
-    repositoryBranch: master
-    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git
-```
-
-and create a Kubernetes Secret (name of secret should be the same from `credentialID` field):
-
-```
+Copy the content of the **id_rsa** file (not **id_rsa.pub**) and paste it into privateKey field like this:
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
   name: k8s-ssh
   labels:
-    "jenkins.io/credentials-type": "basicSSHUserPrivateKey"
-  annotations:
-    "jenkins.io/credentials-description" : "ssh github.com:jenkinsci/kubernetes-operator"
+    "operator-service.com/jenkinsseedjob": "example-jenkins-seedjob"
+    "operator-service.com/credentials-type": "basicSSHUserPrivateKey"
 stringData:
   privateKey: |
-    -----BEGIN RSA PRIVATE KEY-----
+   -----BEGIN PRIVATE KEY-----
     MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
     oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
-    ...
+    ...   
   username: github_user_name
 ```
 
-### Username & password authentication
+*Note: you have to specify the name of the JenkinsSeedJob Custom Resource in the labels to connect the secret with respective Seed Job.*
 
-Configure the seed job like:
+Second, create a Kubernetes Secret resource from this Secret config file.
 
-```
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator-user-pass
-    credentialType: usernamePassword
-    credentialID: k8s-user-pass
-    targets: "cicd/jobs/*.jenkins"
-    description: "Jenkins Operator repository"
-    repositoryBranch: master
-    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
-```
-
-and create a Kubernetes Secret (name of secret should be the same from `credentialID` field):
-
-```
-apiVersion: v1
-kind: Secret
-metadata:
-  name: k8s-user-pass
-stringData:
-  username: github_user_name
-  password: password_or_token
-```
-
-### External authentication
-You can use `external` credential type if you want to configure authentication using Configuration As Code or Groovy Script.
-
-Example:
-```yaml
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator-external
-    credentialType: external
-    credentialID: k8s-external
-    targets: "cicd/jobs/*.jenkins"
-    description: "Jenkins Operator repository"
-    repositoryBranch: master
-    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
-```
-
-Remember that `credentialID` must match the id of the credentials configured in Jenkins. Consult the
-[Jenkins docs for using credentials][jenkins-using-credentials] for details.
-
-## HTTP Proxy for downloading plugins
-
-To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins Custom Resource (CR), e.g.:
-
-```yaml
-spec:
-  master:
-    containers:
-      - name: jenkins-master
-        env:
-          - name: CURL_OPTIONS
-            value: -L -x <proxy_url>
-```
-
-In `CURL_OPTIONS` var you can set additional arguments to `curl` command.
-
-## Pulling Docker images from private repositories
-
-To pull a Docker Image from private repository you can use `imagePullSecrets`.
-
-Please follow the instructions on [creating a secret with a docker config](https://kubernetes.io/docs/concepts/containers/images/?origin_team=T42NTAGHM#creating-a-secret-with-a-docker-config).
-
-### Docker Hub Configuration
-To use Docker Hub additional steps are required.
-
-Edit the previously created secret:
 ```bash
-kubectl -n <namespace> edit secret <name>
+kubectl-n jenkins apply -f mySecret.yaml
 ```
 
-The `.dockerconfigjson` key's value needs to be replaced with a modified version.
+In the seedJob you added to your JenkinsSeedJob Custom Resource file you can specify basicSSHUserPrivateKey as
+credentialType and add the name of the Secret, with your GitHub username and SSH key, in credentialID field’s value.
 
-After modifications, it needs to be encoded as a Base64 value before setting the `.dockerconfigjson` key.
-
-Example config file to modify and use:
+```yaml
+apiVersion: jenkins.io/v1beta1
+kind: JenkinsSeedJob
+metadata:
+  name: example-jenkins-seedjob
+  namespace: default
+  labels:
+    jenkins.io/jenkins: example
+spec:
+  repository:
+    url: git@github.com:your-account/your-repository.git
+    branch: master
+    targets: "cicd/jobs/*.jenkins"
+    credentialType: basicSSHUserPrivateKey
+    credentialID: k8s-ssh
 ```
-{
-    "auths":{
-        "https://index.docker.io/v1/":{
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "auth.docker.io":{
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "registry.docker.io":{
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "docker.io":{
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "https://registry-1.docker.io/v2/": {
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "registry-1.docker.io/v2/": {
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "registry-1.docker.io": {
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
-        },
-        "https://registry-1.docker.io": {
-            "username":"user",
-            "password":"password",
-            "email":"yourdockeremail@gmail.com",
-            "auth":"base64 of string user:password"
+
+Now we need to specify newly created credentials in your Seed Job definition file. They will be used to connect to
+the specified GitHub repository. Don’t forget to also change the url for SSH:
+
+```groovy
+#!/usr/bin/env groovy
+
+pipelineJob('build-operator-service-for-jenkins') {
+    displayName('Build Operator Service for Jenkins')
+
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url('git@github.com:your-account/your-repo.git')
+                        credentials('k8s-sh')
+                    }
+                    branches('*/master')
+                }
+            }
+            scriptPath('cicd/pipelines/build.jenkins')
         }
     }
 }
 ```
 
+### Username and password authentication
+First, create a Secret file with your GitHub credentials.
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-user-pass
+  labels:
+    "jenkins.io/jenkinsseedjob": "example-jenkins-seedjob"
+stringData:
+  username: github_user_name
+  password: password_or_token
+```
+
+Second, create a Kubernetes Secret resource from this file.
+
+```bash
+kubectl -n jenkins apply -f mySecret.yaml
+```
+
+In the seedJob you added to your Jenkins Custom Resource file you can specify usernamePassword as credentialType and
+add the name of the Secret, with your GitHub credentials, in the credentialID field’s value.
+
+```yaml
+apiVersion: jenkins.io/v1beta1
+kind: JenkinsSeedJob
+metadata:
+  name: example-jenkins-seedjob
+  namespace: default
+  labels:
+    jenkins.io/jenkins: example
+spec:
+  repository:
+    url: https://github.com/your-github-account/your-github-repository.git
+    branch: master
+    targets: "cicd/jobs/*.jenkins"
+    credentialType: usernamePassword
+    credentialID: k8s-user-pass
+```
+
 [job-dsl]:https://github.com/jenkinsci/job-dsl-plugin
 [kubernetes-credentials-provider]:https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/
 [jenkins-using-credentials]:https://www.jenkins.io/doc/book/using/using-credentials/
+[kubernetes-plugin]:https://www.jenkins.io/doc/pipeline/steps/kubernetes/

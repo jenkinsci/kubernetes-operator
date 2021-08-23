@@ -76,7 +76,7 @@ will automatically install plugins after the Jenkins Controller pod restart.
 Jenkins instance can be customized using Groovy scripts or Configuration as Code (thanks to pre-installed Configuration 
 as Code plugin). CasC scripts are more readable and simpler to write, so they should be your default choice. However,
 when something is not supported by the CasC plugin or for more complex and low-level configuration, Groovy scripts are better.
-They allow you to use [jenkins-internal-api](https://javadoc.jenkins.io/).
+They allow you to use [Jenkins internal API].
 
 You can find examples of configuring Jenkins in both of those ways below. The examples assume Operator and Jenkins are
 both running, and Jenkins is deployed in the `jenkins` namespace.
@@ -174,10 +174,10 @@ field value we can use yaml syntax to add fields with configuration code. Since 
 Cluster before JekinsConfigurationAsCode we can safely reference its value.
 
 ```yaml
-apiVersion: operator-service.com/v1beta1
+apiVersion: jenkins.io/v1beta1
 kind: JenkinsConfigurationAsCode
 metadata:
-  name: op-svc-jenkins-user-configuration
+  name: jenkins-user-configuration
   namespace: jenkins
   labels:
     operator-service.com/jenkins: jenkins
@@ -197,5 +197,7 @@ kubectl -n jenkins apply -f jenkins-casc.yaml
 ```
 
 Jenkins instance will see it and be able to bind it to previously created Secret, thanks to the reference in secretRef.
-This event will trigger CasC reconcile loop and our configuration will be applied. You will see a tiny "Hello World"
+This event will trigger CasC reconcile loop, and our configuration will be applied. You will see a tiny "Hello World"
 on the main page.
+
+[Jenkins internal API]:https://javadoc.jenkins.io/
