@@ -67,4 +67,4 @@ spec:
           - name: CURL_OPTIONS
             value: -L -x <proxy_url>
 ```
-In CURL_OPTIONS var you can set additional arguments to curl command.
+In `CURL_OPTIONS` var you can set additional arguments to curl command.

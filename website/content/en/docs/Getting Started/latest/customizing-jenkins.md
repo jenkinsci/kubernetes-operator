@@ -13,11 +13,12 @@ This document contains instructions on how to customize Jenkins instance with pl
 
 ## How Jenkins Customization works
 Current configuration mechanism is based on Kubernetes Custom Resource which is automatically created during the
-installation phase and then used as a customization file by the Operator. Every time you want to customize Jenkins, you
-need to do that in code by modifying existing Custom Resource file. Any manual changes from the web interface will
-be overridden by automation or after the Jenkins restart.
+installation phase and then used as a customization file by the Operator.
 
-Sections below explain you how to configure Jenkins using plugins, Groovy Scripts and Configuration as Code (CasC).
+Every time you want to customize Jenkins, you need to do that in code by modifying existing Custom Resource file.
+Any manual changes from the web interface will be overridden by automation or after the Jenkins restart.
+
+Sections below explain how to configure Jenkins using plugins, Groovy Scripts and Configuration as Code (CasC).
 
 ## How to customize Jenkins with plugins
 Plugins configuration is applied as groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin).
