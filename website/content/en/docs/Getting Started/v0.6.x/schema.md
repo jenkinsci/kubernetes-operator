@@ -109,7 +109,7 @@ Every single change here requires a pod restart.</p>
 <td>
 <em>(Optional)</em>
 <p>SeedJobs defines list of Jenkins Seed Job configurations
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/</a></p>
 </td>
 </tr>
 <tr>
@@ -173,7 +173,7 @@ Backup
 <td>
 <em>(Optional)</em>
 <p>Backup defines configuration of Jenkins backup
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/</a></p>
 </td>
 </tr>
 <tr>
@@ -188,7 +188,7 @@ Restore
 <td>
 <em>(Optional)</em>
 <p>Backup defines configuration of Jenkins backup restore
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/</a></p>
 </td>
 </tr>
 <tr>
@@ -663,8 +663,8 @@ Values defined by an Env with a duplicate key will take precedence.</p>
 <em>(Optional)</em>
 <p>
 Pod volumes to mount into the container&rsquo;s filesystem. More info:
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts">
-https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/installing-the-operator/#note-on-restricted-jenkins-controller-pod-volumemounts">
+https://jenkinsci.github.io/kubernetes-operator/getting-started/v0.6.x/installing-the-operator/#note-on-restricted-jenkins-controller-pod-volumemounts
 </a>
 </p>
 </td>
@@ -1437,7 +1437,7 @@ Every single change here requires a pod restart.</p>
 <td>
 <em>(Optional)</em>
 <p>SeedJobs defines list of Jenkins Seed Job configurations
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/</a></p>
 </td>
 </tr>
 <tr>
@@ -1501,7 +1501,7 @@ Backup
 <td>
 <em>(Optional)</em>
 <p>Backup defines configuration of Jenkins backup
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/</a></p>
 </td>
 </tr>
 <tr>
@@ -1516,7 +1516,7 @@ Restore
 <td>
 <em>(Optional)</em>
 <p>Backup defines configuration of Jenkins backup restore
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/</a></p>
 </td>
 </tr>
 <tr>
@@ -2248,7 +2248,7 @@ string
 </p>
 <p>
 <p>SeedJob defines configuration for seed job
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs-and-pipelines</a>.</p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/v0.6.x/configuring-seed-jobs-and-pipelines/">https://jenkinsci.github.io/kubernetes-operator/docs/v0.6.x/configuring-seed-jobs-and-pipelines/</a>.
 </p>
 <table>
 <thead>

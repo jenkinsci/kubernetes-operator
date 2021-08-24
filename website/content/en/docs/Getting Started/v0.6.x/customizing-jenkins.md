@@ -16,7 +16,6 @@ Pre-installed plugins and their versions can be found [here](https://github.com/
 
 Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
 
-asdasda
 #### Install plugins
 
 Edit Custom Resource under `spec.master.plugins`:

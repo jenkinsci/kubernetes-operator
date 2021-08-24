@@ -43,7 +43,7 @@ kubectl get pods -w
 ```
 
 Now **Jenkins Operator** should be up and running in the `default` namespace.
-For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/latest/deploy-jenkins/).
+For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/v0.6.x/deploying-jenkins/).
 
 ## Deploy Jenkins Operator using Helm Chart
 
@@ -224,7 +224,6 @@ Set it to true if you are using OpenShift Jenkins Plugin.
 </td>
 <td>
 Used if you want to pull images from private repository
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories">More info</a>
 </td>
 </tr>
 <tr>
@@ -236,7 +235,7 @@ Used if you want to pull images from private repository
 </td>
 <td>
 Notifications is feature that notify user about Jenkins reconcilation status
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/">More info</a>  
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/notifications/">More info</a>  
 </td>
 </tr>
 <tr>
@@ -266,7 +265,7 @@ Notifications is feature that notify user about Jenkins reconcilation status
 Plugins installed and required by the operator
 shouldn't contain plugins defined by user
 You can change their versions here
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins">More info</a>
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/customizing-jenkins/#install-plugins">More info</a>
 </td>
 </tr>
 <tr>
@@ -278,7 +277,7 @@ You can change their versions here
 </td>
 <td>
 Plugins required by the user. You can define plugins here.
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins">More info</a>
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/customizing-jenkins/#install-plugins">More info</a>
 Example:
 <pre>
 plugins:
@@ -296,8 +295,7 @@ plugins:
 </td>
 <td>
 Placeholder for jenkins seed jobs
-For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
-<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs">Configure seed jobs</a>
+For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/">Configure seed jobs and pipelines</a>
 <br />Example:
 <code>
 <pre>
@@ -442,8 +440,8 @@ Backup
 <td>
 Backup is section for configuring operator's backup feature
 By default backup feature is enabled and pre-configured
-This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/">Configure backup and restore</a>
-For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore</a>
+This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">Configure backup and restore</a>
+For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/">Custom backup and restore</a>
 </td>
 </tr>
 <tr>
@@ -460,7 +458,7 @@ Configuration
 <td></td>
 <td>
 Section where we can configure Jenkins instance. 
-See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/">Customization</a> for details
+See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/customizing-jenkins/">Customizing Jenkins</a> for details
 </td>
 </tr>
 </table>
