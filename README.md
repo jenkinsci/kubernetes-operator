@@ -22,7 +22,7 @@ it is important to understand what
 
 Jenkins Pipelines use Scripts written in [Groovy](https://groovy-lang.org/) which aid in the CasC aspect of Jenkins.
 
-Jenkins uses [plugins](https://plugins.jenkins.io/) like CasC to extend it's solution space by carrying out Jobs of different kinds and providing a composable infrastructure for your CI/CD.
+Jenkins uses [plugins](https://plugins.jenkins.io/) like CasC to extend its solution space by carrying out Jobs of different kinds and providing a composable infrastructure for your CI/CD.
 
 ### Out of the box it provides:
 - Integration with Kubernetes ([Jenkins kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin))
@@ -36,13 +36,13 @@ The main reason why we decided to implement the **Jenkins Operator** is the fact
 We want to make Jenkins more robust, suitable for dynamic and multi-tenant environments.
 
 Some of the problems we want to solve:
-- [installing plugins with incompatible versions or security vulnerabilities](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/#install-plugins/)
-- [better configuration as code](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/)
-- [security and hardening out of the box](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/)
+- [installing plugins with incompatible versions or security vulnerabilities](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/#how-to-customize-jenkins-with-plugins)
+- [better configuration as code](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/#customization-via-groovy-scripts-and-casc-yamls)
+- [security and hardening out of the box](https://jenkinsci.github.io/kubernetes-operator/docs/security/)
 - [make errors more visible for end users](https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/)
 - orphaned jobs with no JNLP connection
 - handle graceful shutdown properly
-- proper end to end tests for Jenkins lifecycle
+- proper end-to-end tests for Jenkins lifecycle
 
 ## Documentation
 
