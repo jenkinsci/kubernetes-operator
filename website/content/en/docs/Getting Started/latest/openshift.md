@@ -1,7 +1,7 @@
 ---
 title: "OpenShift"
 linkTitle: "OpenShift"
-weight: 9
+weight: 8
 date: 2021-08-19
 description: >
     Running Jenkins Operator on OpenShift
