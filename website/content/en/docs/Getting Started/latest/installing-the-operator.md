@@ -954,8 +954,8 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 200m
-            memory: 100Mi
+            <span style="color:#36c5f0">cpu: 200m
+            memory: 100Mi</span>
           requests:
             cpu: 100m
             memory: 20Mi
@@ -964,7 +964,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-        <span style="color:orange">volumeMounts:
+        <span style="color:#36c5f0">volumeMounts:
           - mountPath: /tmp/k8s-webhook-server/serving-certs
             name: webhook-certs
             readOnly: true       

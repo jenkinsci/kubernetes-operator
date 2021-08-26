@@ -36,6 +36,6 @@ Operator state is kept in the custom resource status section, which is used for 
 
 It helps to maintain or recover the desired state even after the operator or Jenkins restarts.
 
-## Webhook 
+## Validating Webhook 
 
 It rejects/accepts admission requests based on potential security warnings in plugins present in the jenkins custom resource. 
