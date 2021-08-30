@@ -71,7 +71,7 @@ spec:
 ```
 
 After applying modifications to Jenkins Custom Resource `spec.basePlugins` or `plugins` section, **Jenkins Operator**
-will automatically install plugins after the Jenkins Controller pod restart.
+will automatically install plugins after the Jenkins Controller pod restarts.
 
 ## Customization via Groovy Scripts and CaSC yamls
 Jenkins instance can be customized using Groovy scripts or Configuration as Code (thanks to pre-installed Configuration 
@@ -85,13 +85,13 @@ both running, and Jenkins is deployed in the `jenkins` namespace.
 ## Customization of Jenkins with Groovy Scripts
 The overall process of configuration can be divided into:
 
-* Creating a Custom Resource JenkinsGroovyScript, which contains Groovy script you want to execute.
+* Creating a `JenkinsGroovyScript` Custom Resource, which contains Groovy script you want to execute.
 * Optionally creating a Kubernetes Secret if you need to store secrets like password or certificates.
 
 
 ### 1. Creating a Secret
 In case we want to use confidential data, we have to start by creating a Secret resource to wrap it in.
-Since it’s a secret, it would be a good idea to encode it. Running:
+Kubernetes stores secrets in base64 format, so we have to encode it. Running:
 
 ```bash
 echo -n "Hello World" | base64
@@ -161,7 +161,7 @@ You will see a tiny “Hello World” on the main page.
 ## Customization of Jenkins with Configuration as Code (CasC)
 The overall process of customization can be divided into:
 
-* Creating a JenkinsConfigurationAsCode Custom Resource, which contains configuration code in data section.
+* Creating a `JenkinsConfigurationAsCode` Custom Resource, which contains configuration code in data section.
 * Optionally creating a Kubernetes Secret if you need to store secrets like passoword or certificates.
   
 ### 1. Creating a Secret
