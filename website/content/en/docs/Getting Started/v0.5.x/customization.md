@@ -13,13 +13,14 @@ Plugin's configuration is applied as groovy scripts or the [configuration as cod
 Any plugin working for Jenkins can be installed by the Jenkins Operator.
  
 Pre-installed plugins: 
-* configuration-as-code v1.47
-* git v4.5.0
+
+* configuration-as-code v1.51
+* git v4.7.2
 * job-dsl v1.77
-* kubernetes-credentials-provider v0.15
-* kubernetes v1.29.2
+* kubernetes-credentials-provider v0.18-1
+* kubernetes v1.30.0
 * workflow-aggregator v2.6
-* workflow-job v2.40
+* workflow-job v2.41
 
 Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
 
@@ -28,7 +29,7 @@ Rest of the plugins can be found in [plugins repository](https://plugins.jenkins
 
 Edit Custom Resource under `spec.master.plugins`:
 
-```
+```yaml
 apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
@@ -51,19 +52,19 @@ spec:
   master:
     basePlugins:
     - name: kubernetes
-      version: "1.29.2"
+      version: "1.30.0"
     - name: workflow-job
       version: "2.40"
     - name: workflow-aggregator
       version: "2.6"
     - name: git
-      version: "4.5.0"
+      version: "4.7.2"
     - name: job-dsl
       version: "1.77"
     - name: configuration-as-code
-      version: "1.47"
+      version: "1.51"
     - name: kubernetes-credentials-provider
-      version: "0.15"
+      version: "0.18-1"
 ```
 
 You can change their versions.
