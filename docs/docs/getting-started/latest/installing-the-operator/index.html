@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/" />
-<meta property="article:published_time" content="2021-08-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-08-20T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-09-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-02T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Installing the Operator">
 <meta itemprop="description" content="How to install Jenkins Operator
 ">
-<meta itemprop="datePublished" content="2021-08-20T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-08-20T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1209">
+<meta itemprop="datePublished" content="2021-09-02T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-02T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1456">
 
 
 
@@ -781,6 +781,7 @@
 </ul></li>
 <li><a href="#note-on-operator-s-nightly-built-images">Note on Operator&rsquo;s nightly built images</a></li>
 <li><a href="#note-on-restricted-jenkins-controller-pod-volumemounts">Note on restricted Jenkins controller pod volumeMounts</a></li>
+<li><a href="#validating-webhook">Validating Webhook</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -1711,9 +1712,96 @@ below is the full list of those volumeMounts:</p>
 <li>operator-credentials</li>
 </ul>
 
+<h2 id="validating-webhook">Validating Webhook</h2>
+
+<p>Validating webhook can be used in order to increase the Operator&rsquo;s capabilities to monitor security issues. It will look for security vulnerabilities in the base and requested plugins. It can be easily installed via Helm charts by setting webhook.enabled in values.yaml.</p>
+
+<p><strong>Note</strong>: The webhook takes some time to get up and running. It&rsquo;s recommended to first deploy the Operator and later Jenkins Custom Resource by using toggles in <code>values.yaml</code>.
+For the installation with yaml manifests (without using Helm chart), first, install cert-manager:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml </code></pre></div>
+<p>It takes some time to get cert-manager up and running.
+Then, install the webhook and other required resources:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-webhook.yaml</code></pre></div>
+<p>Now, download the manifests for the operator and other resources from <a href="https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml">here</a> and provide these additional fields in the Operator manifest:</p>
+
+<pre>
+<code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-operator
+  labels:
+    control-plane: controller-manager
+spec:
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        control-plane: controller-manager
+    spec:
+      serviceAccountName: jenkins-operator
+      securityContext:
+        runAsUser: 65532
+      containers:
+      - command:
+        - /manager
+        args:
+        - --leader-elect
+        <b>- --validate-security-warnings</b>
+        image: jenkins-operator:54231733-dirty 
+        name: jenkins-operator
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 200m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        env:
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        <b>volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: webhook-certs
+            readOnly: true       
+      volumes:
+      - name: webhook-certs
+        secret:
+          defaultMode: 420
+          secretName: jenkins-webhook-certificate
+      terminationGracePeriodSeconds: 10</b>
+</code>
+</pre>
+
+<p>To enable security validation in the Jenkins Custom Resource, set</p>
+
+<blockquote>
+<p>jenkins.ValidateSecurityWarnings=true</p>
+</blockquote>
+
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 20, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 2, 2021
 </div>
 </div>
 

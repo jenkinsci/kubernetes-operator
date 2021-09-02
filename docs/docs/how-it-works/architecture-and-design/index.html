@@ -25,14 +25,14 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/" />
-<meta property="article:published_time" content="2019-08-05T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-08-05T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-09-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-02T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Architecture and design">
 <meta itemprop="description" content="Jenkins Operator fundamentals
 ">
-<meta itemprop="datePublished" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2019-08-05T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="221">
+<meta itemprop="datePublished" content="2021-09-02T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-02T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="239">
 
 
 
@@ -848,9 +848,13 @@
 
 <p>It helps to maintain or recover the desired state even after the operator or Jenkins restarts.</p>
 
+<h2 id="webhook">Webhook</h2>
+
+<p>It rejects/accepts admission requests based on potential security warnings in plugins present in the Jenkins Custom Resource.</p>
+
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 5, 2019
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 2, 2021
 </div>
 </div>
 

@@ -22,7 +22,7 @@
     <item>
       <title>Docs: Architecture and design</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/</link>
-      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 02 Sep 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/</guid>
       <description>
@@ -64,6 +64,10 @@
 &lt;p&gt;Operator state is kept in the custom resource status section, which is used for storing any configuration events or job statuses managed by the operator.&lt;/p&gt;
 
 &lt;p&gt;It helps to maintain or recover the desired state even after the operator or Jenkins restarts.&lt;/p&gt;
+
+&lt;h2 id=&#34;webhook&#34;&gt;Webhook&lt;/h2&gt;
+
+&lt;p&gt;It rejects/accepts admission requests based on potential security warnings in plugins present in the Jenkins Custom Resource.&lt;/p&gt;
 
       </description>
     </item>

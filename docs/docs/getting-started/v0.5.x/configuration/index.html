@@ -25,13 +25,13 @@
 " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.5.x/configuration/" />
-<meta property="article:published_time" content="2021-01-25T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-25T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="article:published_time" content="2021-09-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-02T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Configuration">
 <meta itemprop="description" content="How to configure Jenkins with Operator
 ">
-<meta itemprop="datePublished" content="2021-01-25T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-01-25T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2021-09-02T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-09-02T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="651">
 
 
@@ -975,7 +975,7 @@ $ ssh-keygen -p -f &lt;filename&gt; -m pem</code></pre></div>
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>targets<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;cicd/jobs/*.jenkins&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>description<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;Jenkins Operator repository&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline">    </span>repositoryBranch<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>master<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>repositoryUrl<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>ssh<span style="color:#000;font-weight:bold">:</span>//git@github.com<span style="color:#000;font-weight:bold">:</span>jenkinsci/kubernetes-operator.git</code></pre></div>
+</span><span style="color:#f8f8f8;text-decoration:underline">    </span>repositoryUrl<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>git@github.com<span style="color:#000;font-weight:bold">:</span>jenkinsci/kubernetes-operator.git</code></pre></div>
 <p>and create a Kubernetes Secret (name of secret should be the same from <code>credentialID</code> field):</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Secret<span style="color:#f8f8f8;text-decoration:underline">
@@ -1120,7 +1120,7 @@ $ ssh-keygen -p -f &lt;filename&gt; -m pem</code></pre></div>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified January 25, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 2, 2021
 </div>
 </div>
 

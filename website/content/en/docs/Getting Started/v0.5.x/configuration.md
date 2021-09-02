@@ -2,7 +2,7 @@
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 2
-date: 2021-01-25
+date: 2021-09-02
 description: >
   How to configure Jenkins with Operator
 ---

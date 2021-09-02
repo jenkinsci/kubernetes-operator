@@ -26,7 +26,7 @@
 " />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/" />
-<meta property="og:updated_time" content="2021-08-19T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="og:updated_time" content="2021-09-02T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Developer Guide">
 <meta itemprop="description" content="Jenkins Operator for developers
 "><meta name="twitter:card" content="summary"/>
@@ -225,23 +225,23 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-security" href="/kubernetes-operator/docs/getting-started/latest/security/">Security</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-aks" href="/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-openshift" href="/kubernetes-operator/docs/getting-started/latest/openshift/">OpenShift</a>
       
       
       
       
-
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-schema" href="/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
       
       
@@ -493,7 +493,7 @@
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-3-x-schema" href="/kubernetes-operator/docs/getting-started/v0.3.x/schema/">Schema</a>
       
-
+      
     </li>
   </ul>
 </ul>
@@ -577,8 +577,8 @@
 
       
       
-
-
+      
+      
 
 
 
@@ -591,63 +591,63 @@
   </li>
   <ul>
     <li class="collapse " id="kubernetes-operator-docs-getting-started-v0-1-x">
-
-
-
-
-
-
+      
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-deploy-jenkins" href="/kubernetes-operator/docs/getting-started/v0.1.x/deploy-jenkins/">Deploy Jenkins</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-configuration" href="/kubernetes-operator/docs/getting-started/v0.1.x/configuration/">Configuration</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-customization" href="/kubernetes-operator/docs/getting-started/v0.1.x/customization/">Customization</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-aks" href="/kubernetes-operator/docs/getting-started/v0.1.x/aks/">AKS</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-configure-backup-and-restore" href="/kubernetes-operator/docs/getting-started/v0.1.x/configure-backup-and-restore/">Configure backup and restore</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-diagnostics" href="/kubernetes-operator/docs/getting-started/v0.1.x/diagnostics/">Diagnostics</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-scheme" href="/kubernetes-operator/docs/getting-started/v0.1.x/scheme/">Scheme</a>
-
-
-
-
-
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-v0-1-x-migration-guide-v1alpha1-to-v1alpha2" href="/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/">Migration guide from v1alpha1 to v1alpha2</a>
-
-
+      
+      
     </li>
   </ul>
 </ul>
 
-
-
+      
+      
     </li>
   </ul>
 </ul>
@@ -704,10 +704,10 @@
   </ul>
 </ul>
 
-
-
-
-
+      
+      
+      
+      
 
 
 
@@ -720,9 +720,9 @@
   </li>
   <ul>
     <li class="collapse " id="kubernetes-operator-docs-faq">
-
-
-
+      
+      
+      
     </li>
   </ul>
 </ul>
@@ -780,6 +780,7 @@
 <li><a href="#building-docker-image-on-minikube">Building docker image on minikube</a></li>
 <li><a href="#when-api-v1alpha2-jenkins-types-go-has-changed">When <code>api/v1alpha2/jenkins_types.go</code> has changed</a></li>
 <li><a href="#getting-the-jenkins-url-and-basic-credentials">Getting the Jenkins URL and basic credentials</a></li>
+<li><a href="#webhook">Webhook</a></li>
 </ul></li>
 <li><a href="#self-learning">Self-learning</a></li>
 </ul></li>
@@ -1021,7 +1022,7 @@ kubectl --context remote-k8s --namespace default get po</code></pre></div>
 
 <p>Tests are written using <a href="https://onsi.github.io/ginkgo/">Ginkgo</a> with <a href="https://onsi.github.io/gomega/">Gomega</a>.</p>
 
-<p>Run unit tests with go fmt, lint, statickcheck, vet:</p>
+<p>Run unit tests with go fmt, lint, staticcheck, vet:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make verify</code></pre></div>
 <p>Run unit tests only:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make test</code></pre></div>
@@ -1030,6 +1031,9 @@ kubectl --context remote-k8s --namespace default get po</code></pre></div>
 <p>Run e2e tests with minikube:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make minikube-start
 make e2e</code></pre></div>
+<p>Run Helm e2e tests:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">eval</span> <span style="color:#204a87;font-weight:bold">$(</span>bin/minikube docker-env<span style="color:#204a87;font-weight:bold">)</span>
+make helm-e2e</code></pre></div>
 <p>Run the specific e2e test:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make e2e <span style="color:#000">E2E_TEST_SELECTOR</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#39;^TestConfiguration$&#39;</span></code></pre></div>
 <h3 id="building-docker-image-on-minikube">Building docker image on minikube</h3>
@@ -1044,6 +1048,13 @@ make e2e</code></pre></div>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">minikube service jenkins-operator-http-&lt;cr_name&gt; --url
 kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="color:#4e9a06">&#39;jsonpath={.data.user}&#39;</span> <span style="color:#000;font-weight:bold">|</span> base64 -d
 kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="color:#4e9a06">&#39;jsonpath={.data.password}&#39;</span> <span style="color:#000;font-weight:bold">|</span> base64 -d</code></pre></div>
+<h3 id="webhook">Webhook</h3>
+
+<p>To deploy the operator along with webhook, run :</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#204a87">eval</span> <span style="color:#204a87;font-weight:bold">$(</span>minikube docker-env<span style="color:#204a87;font-weight:bold">)</span>
+make deploy-webhook</code></pre></div>
+<p>It uses <a href="https://cert-manager.io/">cert-manager</a> as an external dependency.</p>
+
 <h2 id="self-learning">Self-learning</h2>
 
 <ul>
@@ -1053,6 +1064,8 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
 <li><p><a href="https://www.katacoda.com/openshift/courses/operatorframework">Operator Framework Training By OpenShift</a></p></li>
 
 <li><p><a href="https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/">Operator SDK Tutorial for Go</a></p></li>
+
+<li><p><a href="https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html">Kubebuilder Validating Webhook Implementation</a></p></li>
 </ul>
 
         <div class="section-index">
@@ -1175,16 +1188,16 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
             
         
             
-
-
-
-
-
-
-
-
-
-
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
                 <div class="entry">
                     <h5>
                         <a href="https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/tools/">Tools</a>
@@ -1215,13 +1228,13 @@ kubectl get secret jenkins-operator-credentials-&lt;cr_name&gt; -o <span style="
             
         
             
-
+        
     
 </div>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 19, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified September 2, 2021
 </div>
 </div>
 

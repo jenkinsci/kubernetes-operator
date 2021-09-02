@@ -2,7 +2,7 @@
 title: "Architecture and design"
 linkTitle: "Architecture and design"
 weight: 1
-date: 2019-08-05
+date: 2021-09-02
 description: >
   Jenkins Operator fundamentals
 ---
