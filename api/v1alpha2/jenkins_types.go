@@ -368,6 +368,10 @@ type JenkinsMaster struct {
 	// PriorityClassName for Jenkins master pod
 	// +optional
 	PriorityClassName string `json:"priorityClassName,omitempty"`
+
+	// HostAliases for Jenkins master pod and SeedJob agent
+	// +optional
+	HostAliases []corev1.HostAlias `json:"hostAliases,omitempty"`
 }
 
 // Service defines Kubernetes service attributes

@@ -435,6 +435,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 					NodeSelector:     jenkins.Spec.Master.NodeSelector,
 					Tolerations:      jenkins.Spec.Master.Tolerations,
 					ImagePullSecrets: jenkins.Spec.Master.ImagePullSecrets,
+					HostAliases:      jenkins.Spec.Master.HostAliases,
 					Containers: []corev1.Container{
 						{
 							Name:  "jnlp",
