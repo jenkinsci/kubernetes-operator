@@ -37,7 +37,7 @@ func NewJenkinsDeployment(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkin
 					ImagePullSecrets:   jenkins.Spec.Master.ImagePullSecrets,
 					Tolerations:        jenkins.Spec.Master.Tolerations,
 					PriorityClassName:  jenkins.Spec.Master.PriorityClassName,
-					HostAliases: 		jenkins.Spec.Master.HostAliases,
+					HostAliases: 	    jenkins.Spec.Master.HostAliases,
 				},
 			},
 			Selector: selector,
