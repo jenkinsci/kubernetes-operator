@@ -1,10 +1,10 @@
 ---
 title: "Troubleshooting"
 linkTitle: "Troubleshooting"
-weight: 3
+weight: 4
 date: 2021-08-19
 description: >
-    Jenkins security and hardening out of the box
+    Troubleshooting Jenkins Operator
 ---
 
 This document helps you to state the reason for an error in the Jenkins Operator, which is the first step in solving it.
