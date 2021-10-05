@@ -15,7 +15,7 @@ Jenkins Operator can provide some useful logs. To get them, run:
 $ kubectl logs <controller-manager-pod-name> -f 
 ```
 
-In the logs look for WARNING, ERROR and SEVERE keywords.
+In the logs look for `WARNING`, `ERROR` and `SEVERE` keywords.
 
 ## Jenkins logs
 
@@ -55,5 +55,5 @@ $ kubectl delete pod <jenkins-pod>
 ```
 
 ## Operator debug mode
-If you need to access additional logs from the Operator, you can run it in debug mode. To do that, add ``"--debug""``
+If you need to access additional logs from the Operator, you can run it in debug mode. To do that, add ``"--debug"``
 argument to jenkins-operator container args in your Operator deployment.
