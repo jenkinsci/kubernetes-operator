@@ -16,7 +16,7 @@ This document explains how to setup your development environment.
 - [operator_sdk][operator_sdk] version 1.3.0
 - [git][git_tool]
 - [go][go_tool] version 1.15.6
-- [goimports, golint, checkmake and staticcheck]
+- goimports, golint, checkmake and staticcheck
 - [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
 - [docker][docker_tool] version 17.03+
 

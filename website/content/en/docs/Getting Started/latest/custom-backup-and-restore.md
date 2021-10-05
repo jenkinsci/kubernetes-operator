@@ -1,7 +1,7 @@
 ---
 title: "Custom backup and restore providers"
 linkTitle: "Custom backup and restore providers"
-weight: 6
+weight: 7
 date: 2021-08-19
 description: >
   Custom backup and restore provider

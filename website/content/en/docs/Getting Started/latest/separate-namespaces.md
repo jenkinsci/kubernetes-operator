@@ -1,7 +1,7 @@
 ---
 title: "Separate namespaces for Jenkins and Operator"
 linkTitle: "Separate namespaces for Jenkins and Operator"
-weight: 7
+weight: 6
 date: 2021-08-20
 description: >
     How to install Jenkins and Jenkins Operator in separate namespaces
@@ -251,7 +251,7 @@ kubectl apply -n jenkins-operator -f jenkins-operator-rbac.yaml
 ```
 
 There's only one thing left to install in `jenkins-operator` namespace, and that is the Operator itself. The manifest
-below contains the Operator as defined in all-in-one manifest found in [Installating the Operator](/kubernetes-operator/docs/getting-started/latest/installing-the-operator/)
+below contains the Operator as defined in all-in-one manifest found in [Installing the Operator](/kubernetes-operator/docs/getting-started/latest/installing-the-operator/)
 page, the only difference is that the one here sets `WATCH_NAMESPACE` to the `jenkins` namespace we created.
 
 Copy its content to `jenkins-operator.yaml` file.
