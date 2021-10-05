@@ -16,7 +16,7 @@ This document explains how to setup your development environment.
 - [operator_sdk][operator_sdk] version 1.3.0
 - [git][git_tool]
 - [go][go_tool] version 1.15.6
-- [goimports, golint, checkmake and staticcheck][install_dev_tools]
+- [goimports, golint, checkmake and staticcheck]
 - [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
 - [docker][docker_tool] version 17.03+
 
@@ -326,4 +326,3 @@ It uses [cert-manager](https://cert-manager.io/) as an external dependency.
 [kubectl_tool]:https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [minikube]:https://kubernetes.io/docs/tasks/tools/install-minikube/
 [virtualbox]:https://www.virtualbox.org/wiki/Downloads
-[install_dev_tools]:https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/tools/
