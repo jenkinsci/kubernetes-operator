@@ -323,7 +323,7 @@ deploying actual Jenkins instance there.
 
 ## Create necessary resources in Jenkins namespace
 
-Below you can find manifest with RBAC that need to be created in `jenkins` namespace. Copy its content to `jenkins-ns-rbac.yaml` file.
+Below you can find manifest with RBAC that needs to be created in `jenkins` namespace. Copy its content to `jenkins-ns-rbac.yaml` file.
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1

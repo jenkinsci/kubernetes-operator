@@ -42,8 +42,8 @@ and stores it in a Kubernetes Secret.
 
 Kubernetes API permissions are limited by the following roles:
 
-- [jenkins-operator role](kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml)
-- [Jenkins Controller (Master) role](kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go)
+- [jenkins-operator role][jenkins-operator-role]
+- [Jenkins Controller (Master) role][jenkins-controller-role]
 
 Since **Jenkins Operator** must be able to grant permission for its deployed Jenkins masters
 to spawn pods (the `Jenkins Master role` above),
@@ -56,7 +56,7 @@ possible permissions to any subject which can create a Pod in that namespace.
 
 To mitigate this issue, **Jenkins Operator** should be deployed in one namespace, and the Jenkins CR should be created in
 a separate namespace. For instructions on how to deploy Jenkins Operator and Jenkins in separate namespaces, head over
-to the [Separate namespaces](kubernetes-operator/docs/getting-started/latest/separate-namespaces) section of Getting Started
+to the [Separate namespaces](/kubernetes-operator/docs/getting-started/latest/separate-namespaces) section of Getting Started
 guide.
 
 
@@ -64,6 +64,7 @@ guide.
 
 If you find a vulnerability or any misconfiguration in Jenkins, please report it in the [issues](https://github.com/jenkinsci/kubernetes-operator/issues).
 
-
+[jenkins-operator-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml
+[jenkins-controller-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go
 [base-configuration]:https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/resources/base_configuration_configmap.go
 [issues]:https://github.com/jenkinsci/kubernetes-operator/issues
