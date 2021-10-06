@@ -21,7 +21,7 @@ The plugin we will use is: <https://plugins.jenkins.io/ldap/>
 - LDAP server accessible from the Kubernetes cluster where your Jenkins
   instance will live.
 
-- Credentials to a manager account in your AD. The Jenkins operator will use
+- Credentials to a manager account in your AD. Jenkins Operator will use
   this account to authenticate with Jenkins for health checks, seed jobs, etc.
 
 ## Steps
