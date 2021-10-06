@@ -7,7 +7,6 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -21,17 +20,25 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>Latest (v0.6.x) | Jenkins Operator</title><meta property="og:title" content="Latest (v0.6.x)" />
-<meta property="og:description" content="How to work with the latest, currently supported Jenkins Operator version.
+<title>LDAP | Jenkins Operator</title><meta property="og:title" content="LDAP" />
+<meta property="og:description" content="Additional configuration for LDAP
 " />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/" />
-<meta property="og:updated_time" content="2021-08-19T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
-<meta itemprop="name" content="Latest (v0.6.x)">
-<meta itemprop="description" content="How to work with the latest, currently supported Jenkins Operator version.
-"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Latest (v0.6.x)"/>
-<meta name="twitter:description" content="How to work with the latest, currently supported Jenkins Operator version.
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/" />
+<meta property="article:published_time" content="2021-10-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-10-06T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta itemprop="name" content="LDAP">
+<meta itemprop="description" content="Additional configuration for LDAP
+">
+<meta itemprop="datePublished" content="2021-10-06T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-10-06T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="273">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="LDAP"/>
+<meta name="twitter:description" content="Additional configuration for LDAP
 "/>
 
 
@@ -47,9 +54,9 @@
   crossorigin="anonymous"></script>
 
 
-    <title>Latest (v0.6.x) | Jenkins Operator</title>
+    <title>LDAP | Jenkins Operator</title>
   </head>
-  <body class="td-section">
+  <body class="td-page">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -230,7 +237,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-ldap" href="/kubernetes-operator/docs/getting-started/latest/ldap/">LDAP</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-latest-ldap" href="/kubernetes-operator/docs/getting-started/latest/ldap/">LDAP</a>
       
       
       
@@ -766,8 +773,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=Latest%20%28v0.6.x%29" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/ldap.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=LDAP" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new/choose" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -796,6 +803,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/">Documentation</a>
 </li>
@@ -810,8 +820,15 @@
 
 
 
-<li class="breadcrumb-item active" aria-current="page">
+<li class="breadcrumb-item" >
 	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/">Latest (v0.6.x)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/">LDAP</a>
 </li>
 
 	</ol>
@@ -819,274 +836,130 @@
 
             
 <div class="td-content">
-	<h1>Latest (v0.6.x)</h1>
-	<div class="lead">How to work with the latest, currently supported Jenkins Operator version.</div>
+	<h1>LDAP</h1>
+	<div class="lead">Additional configuration for LDAP</div>
 	
 
+<p>Configuring LDAP is not supported out of the box, but can be achieved through
+plugins and some well tuned configurations.</p>
 
+<p>The plugin we will use is: <a href="https://plugins.jenkins.io/ldap/">https://plugins.jenkins.io/ldap/</a></p>
 
-<div class="pageinfo pageinfo-primary">
-<p>This document describes a getting started guide for <strong>Jenkins Operator</strong> <code>v0.6.x</code> and also additional configuration.</p>
+<blockquote>
+<p>Note: This is an example of how LDAP authentication can be achieved. The LDAP
+plugin is from a third-party, and there may be other alternatives that suits
+your use case better. Use this guide with a grain of salt.</p>
+</blockquote>
 
-</div>
+<h2 id="requirements">Requirements</h2>
 
+<ul>
+<li><p>LDAP server accessible from the Kubernetes cluster where your Jenkins
+instance will live.</p></li>
 
-<h2 id="first-steps">First Steps</h2>
+<li><p>Credentials to a manager account in your AD. Jenkins Operator will use
+this account to authenticate with Jenkins for health checks, seed jobs, etc.</p></li>
+</ul>
 
-<p>Prepare your Kubernetes cluster and set up your <code>kubectl</code> access.</p>
+<h2 id="steps">Steps</h2>
 
-<p>Once you have a running Kubernetes cluster you can focus on installing <strong>Jenkins Operator</strong> according to the
-<a href="/kubernetes-operator/docs/getting-started/latest/installing-the-operator/">Installation</a> guide.</p>
+<p>In your Jenkins configuration, add the following plugin:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">plugins<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">    </span><span style="color:#8f5902;font-style:italic"># Check https://plugins.jenkins.io/ldap/ to find the latest version.</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>ldap<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">    </span>version<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;2.7&#34;</span></code></pre></div>
+<p>Easiest step is to then start up Jenkins then navigate to your instance&rsquo;s
+&ldquo;Configure Global Security&rdquo; page and configure it accordingly.</p>
 
-        <div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/">Installing the Operator</a>
-                    </h5>
-                    <p>How to install Jenkins Operator
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/">Deploying Jenkins</a>
-                    </h5>
-                    <p>Deploy production ready Jenkins manifest
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a>
-                    </h5>
-                    <p>How to customize Jenkins
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/">Configuring Seed Jobs and Pipelines</a>
-                    </h5>
-                    <p>How to configure Jenkins with Operator
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/">Configuring backup and restore</a>
-                    </h5>
-                    <p>Prevent loss of job history
-</p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/">Separate namespaces for Jenkins and Operator</a>
-                    </h5>
-                    <p>How to install Jenkins and Jenkins Operator in separate namespaces
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore providers</a>
-                    </h5>
-                    <p>Custom backup and restore provider
-</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/">AKS</a>
-                    </h5>
-                    <p>Additional configuration for Azure Kubernetes Service
-</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/">LDAP</a>
-                    </h5>
-                    <p>Additional configuration for LDAP
-</p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/openshift/">OpenShift</a>
-                    </h5>
-                    <p>Additional configuration for OpenShift
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/">Schema</a>
-                    </h5>
-                    <p>API Schema definitions for Jenkins CRD
-</p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
-</div>
+<p><code>http://jenkins.example.com/configureSecurity/</code></p>
+
+<p>Once it&rsquo;s set up and tested, you can navigate to your JCasC page and export
+the LDAP settings.</p>
+
+<p><code>https://jenkins.example.com/configuration-as-code/</code></p>
+
+<p>Feed the relevant new settings into your Kubernetes ConfigMap for your JCasC
+settings.</p>
+
+<p>Here&rsquo;s a snippet of the LDAP-related configurations:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>ConfigMap<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>jenkins-casc<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>data<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">  </span>ldap.yaml<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#8f5902;font-style:italic">|
+</span><span style="color:#8f5902;font-style:italic">   </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">jenkins:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">      </span>securityRealm<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">        </span>ldap<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>configurations<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">            </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>displayNameAttributeName<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;name&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>groupSearchBase<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;OU=Groups,OU=MyCompany&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>groupSearchFilter<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;(&amp; (cn={0}) (objectclass=group) )&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>inhibitInferRootDN<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">false</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>managerDN<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;CN=Jenkins Admin,OU=UsersSystem,OU=UsersOther,OU=MyCompany,DC=mycompany,DC=local&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>managerPasswordSecret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;${LDAP_MANAGER_PASSWORD}&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>rootDN<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;DC=mycompany,DC=local&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>server<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;MyCompany.local&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>userSearch<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;SamAccountName={0}&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">              </span>userSearchBase<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;OU=MyCompany&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>disableMailAddressResolver<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">false</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>disableRolePrefixing<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>groupIdStrategy<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;caseInsensitive&#34;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">          </span>userIdStrategy<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#4e9a06">&#34;caseInsensitive&#34;</span></code></pre></div>
+<blockquote>
+<p>Note the use of <code>${LDAP_MANAGER_PASSWORD}</code> above. You can reference
+Kubernetes secrets in your JCasC ConfigMaps by adding the following to your
+Jenkins object:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;  </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">configurationAsCode:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;    </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">configurations:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;      </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">- name: jenkins-casc</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;    </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">secret:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;      </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic"># This here</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;      </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">name: jenkins-casc-secrets</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>```<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>```yaml<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>v1<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Secret<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;  </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">name: jenkins-cred-conf-secrets</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>stringData<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span><span style="color:#8f5902;font-style:italic">&gt;  </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">LDAP_MANAGER_PASSWORD: &lt;password-for-manager-created-in-ldap&gt;</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>```<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>&gt;<span style="color:#f8f8f8;text-decoration:underline"> </span>Schema<span style="color:#f8f8f8;text-decoration:underline"> </span>reference<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#000;font-weight:bold">[</span>v1alpha2.ConfigurationAsCode<span style="color:#000;font-weight:bold">]</span>(./schema/<span style="color:#8f5902;font-style:italic">#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode)</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>Finally<span style="color:#f8f8f8;text-decoration:underline"> </span>you<span style="color:#f8f8f8;text-decoration:underline"> </span>must<span style="color:#f8f8f8;text-decoration:underline"> </span>configure<span style="color:#f8f8f8;text-decoration:underline"> </span>the<span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline"> </span>operator<span style="color:#f8f8f8;text-decoration:underline"> </span>to<span style="color:#f8f8f8;text-decoration:underline"> </span>use<span style="color:#f8f8f8;text-decoration:underline"> </span>the<span style="color:#f8f8f8;text-decoration:underline"> </span>manager<span style="color:#4e9a06">&#39;s
+</span><span style="color:#4e9a06">credentials from the AD.
+</span><span style="color:#4e9a06">
+</span><span style="color:#4e9a06">This is because this procedure will disable Jenkins&#39;</span><span style="color:#f8f8f8;text-decoration:underline"> </span>own<span style="color:#f8f8f8;text-decoration:underline"> </span>user<span style="color:#f8f8f8;text-decoration:underline"> </span>database<span style="color:#000;font-weight:bold">,</span><span style="color:#f8f8f8;text-decoration:underline"> </span>and<span style="color:#f8f8f8;text-decoration:underline"> </span>the<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>Jenkins<span style="color:#f8f8f8;text-decoration:underline"> </span>operator<span style="color:#f8f8f8;text-decoration:underline"> </span>still<span style="color:#f8f8f8;text-decoration:underline"> </span>needs<span style="color:#f8f8f8;text-decoration:underline"> </span>to<span style="color:#f8f8f8;text-decoration:underline"> </span>be<span style="color:#f8f8f8;text-decoration:underline"> </span>able<span style="color:#f8f8f8;text-decoration:underline"> </span>to<span style="color:#f8f8f8;text-decoration:underline"> </span>talk<span style="color:#f8f8f8;text-decoration:underline"> </span>to<span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline"> </span>in<span style="color:#f8f8f8;text-decoration:underline"> </span>an<span style="color:#f8f8f8;text-decoration:underline"> </span>authorized<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>manner.<span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline">
+</span><span style="color:#f8f8f8;text-decoration:underline"></span>Create<span style="color:#f8f8f8;text-decoration:underline"> </span>the<span style="color:#f8f8f8;text-decoration:underline"> </span>following<span style="color:#f8f8f8;text-decoration:underline"> </span>Kubernetes<span style="color:#f8f8f8;text-decoration:underline"> </span>secret<span style="color:#000;font-weight:bold">:</span></code></pre></div>
+<p>yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jenkins-operator-credentials-<jenkins-cr-name>
+  namespace: <jenkins-cr-namespace>
+stringData:
+  user: <username-for-manager-created-in-ldap>
+  password: <password-for-manager-created-in-ldap>
+```</p>
+
+<p>Note: Values in stringData do not need to be base64 encoded. They are
+encoded by Kubernetes when the manifest is applied.</p>
+</blockquote>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 19, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 6, 2021
 </div>
 </div>
+
 
           </main>
         </div>
