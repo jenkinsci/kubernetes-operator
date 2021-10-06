@@ -123,6 +123,6 @@ stringData:
   password: <password-for-manager-created-in-ldap>
 ```
 
-> Note: Values in stringData does not need to be base64 encoded. They are
+> Note: Values in stringData do not need to be base64 encoded. They are
 > encoded by Kubernetes when the manifest is applied.
 
