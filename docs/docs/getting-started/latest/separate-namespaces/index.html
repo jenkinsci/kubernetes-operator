@@ -20,25 +20,25 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>Security | Jenkins Operator</title><meta property="og:title" content="Security" />
-<meta property="og:description" content="Jenkins security and hardening out of the box
+<title>Separate namespaces for Jenkins and Operator | Jenkins Operator</title><meta property="og:title" content="Separate namespaces for Jenkins and Operator" />
+<meta property="og:description" content="How to install Jenkins and Jenkins Operator in separate namespaces
 " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/" />
-<meta property="article:published_time" content="2021-08-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-08-20T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
-<meta itemprop="name" content="Security">
-<meta itemprop="description" content="Jenkins security and hardening out of the box
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/" />
+<meta property="article:published_time" content="2021-10-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-10-06T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta itemprop="name" content="Separate namespaces for Jenkins and Operator">
+<meta itemprop="description" content="How to install Jenkins and Jenkins Operator in separate namespaces
 ">
-<meta itemprop="datePublished" content="2021-08-20T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-08-20T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="770">
+<meta itemprop="datePublished" content="2021-10-06T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-10-06T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="395">
 
 
 
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Security"/>
-<meta name="twitter:description" content="Jenkins security and hardening out of the box
+<meta name="twitter:title" content="Separate namespaces for Jenkins and Operator"/>
+<meta name="twitter:description" content="How to install Jenkins and Jenkins Operator in separate namespaces
 "/>
 
 
@@ -54,7 +54,7 @@
   crossorigin="anonymous"></script>
 
 
-    <title>Security | Jenkins Operator</title>
+    <title>Separate namespaces for Jenkins and Operator | Jenkins Operator</title>
   </head>
   <body class="td-page">
     <header>
@@ -219,19 +219,13 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-latest-separate-namespaces" href="/kubernetes-operator/docs/getting-started/latest/separate-namespaces/">Separate namespaces for Jenkins and Operator</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-custom-backup-and-restore" href="/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore providers</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-notifications" href="/kubernetes-operator/docs/getting-started/latest/notifications/">Notifications</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-latest-security" href="/kubernetes-operator/docs/getting-started/latest/security/">Security</a>
       
       
       
@@ -671,6 +665,29 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
+    <a  href="/kubernetes-operator/docs/security/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Security</a>
+  </li>
+  <ul>
+    <li class="collapse " id="kubernetes-operator-docs-security">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
     <a  href="/kubernetes-operator/docs/troubleshooting/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Troubleshooting</a>
   </li>
   <ul>
@@ -699,12 +716,6 @@
   <ul>
     <li class="collapse " id="kubernetes-operator-docs-developer-guide">
       
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-developer-guide-tools" href="/kubernetes-operator/docs/developer-guide/tools/">Tools</a>
       
       
     </li>
@@ -756,8 +767,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/security.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=Security" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/separate-namespaces.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=Separate%20namespaces%20for%20Jenkins%20and%20Operator" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new/choose" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -773,12 +784,9 @@
 <ul>
 <li>
 <ul>
-<li><a href="#jenkins-access-control">Jenkins Access Control</a></li>
-<li><a href="#jenkins-hardening">Jenkins Hardening</a></li>
-<li><a href="#jenkins-api">Jenkins API</a></li>
-<li><a href="#kubernetes">Kubernetes</a></li>
-<li><a href="#setup-jenkins-operator-and-jenkins-in-separate-namespaces">Setup Jenkins Operator and Jenkins in separate namespaces</a></li>
-<li><a href="#report-a-security-vulnerability">Report a Security Vulnerability</a></li>
+<li><a href="#create-namespaces">Create namespaces</a></li>
+<li><a href="#create-necessary-resources-in-jenkins-operator-namespace">Create necessary resources in Jenkins Operator namespace</a></li>
+<li><a href="#create-necessary-resources-in-jenkins-namespace">Create necessary resources in Jenkins namespace</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -825,7 +833,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/">Security</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/">Separate namespaces for Jenkins and Operator</a>
 </li>
 
 	</ol>
@@ -833,69 +841,17 @@
 
             
 <div class="td-content">
-	<h1>Security</h1>
-	<div class="lead">Jenkins security and hardening out of the box</div>
+	<h1>Separate namespaces for Jenkins and Operator</h1>
+	<div class="lead">How to install Jenkins and Jenkins Operator in separate namespaces</div>
 	
 
-<p>By default <strong>Jenkins Operator</strong> performs an initial security hardening of Jenkins instance
-via groovy scripts to prevent any security gaps.</p>
-
-<h2 id="jenkins-access-control">Jenkins Access Control</h2>
-
-<p>Currently <strong>Jenkins Operator</strong> generates a username and random password and stores them in a Kubernetes Secret.
-However any other authorization mechanisms are possible and can be done via groovy scripts or configuration as code plugin.
-For more information take a look at <a href="/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">getting-started#jenkins-customization</a>.</p>
-
-<p>Any change to Security Realm or Authorization requires that user called <code>jenkins-operator</code> must have admin rights
-because <strong>Jenkins Operator</strong> calls Jenkins API.</p>
-
-<h2 id="jenkins-hardening">Jenkins Hardening</h2>
-
-<p>The list below describes all the default security setting configured by the <strong>Jenkins Operator</strong>:</p>
-
-<ul>
-<li>basic settings - use <code>Mode.EXCLUSIVE</code> - Jobs must specify that they want to run on master node</li>
-<li>enable CSRF - Cross Site Request Forgery Protection is enabled</li>
-<li>disable usage stats - Jenkins usage stats submitting is disabled</li>
-<li>enable master access control - Slave to Master Access Control is enabled</li>
-<li>disable old JNLP protocols - <code>JNLP3-connect</code>, <code>JNLP2-connect</code> and <code>JNLP-connect</code> are disabled</li>
-<li>disable CLI - CLI access of <code>/cli</code> URL is disabled</li>
-<li>configure kubernetes-plugin - secure configuration for Kubernetes plugin</li>
-</ul>
-
-<p>If you would like to dig a little bit into the code, take a look <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/resources/base_configuration_configmap.go">here</a>.</p>
-
-<h2 id="jenkins-api">Jenkins API</h2>
-
-<p>The <strong>Jenkins Operator</strong> generates and configures Basic Authentication token for Jenkins Go client
-and stores it in a Kubernetes Secret.</p>
-
-<h2 id="kubernetes">Kubernetes</h2>
-
-<p>Kubernetes API permissions are limited by the following roles:</p>
-
-<ul>
-<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml">jenkins-operator role</a><br /></li>
-<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go">Jenkins Master role</a></li>
-</ul>
-
-<p>Since <strong>Jenkins Operator</strong> must be able to grant permission for its deployed Jenkins masters
-to spawn pods (the <code>Jenkins Master role</code> above),
-the operator itself requires permission to create RBAC resources (the <code>jenkins-operator role</code> above).</p>
-
-<p>Deployed this way, any subject which may create a Pod (including a Jenkins job) may
-assume the <code>jenkins-operator</code> role by using its&rsquo; ServiceAccount, create RBAC rules, and thus escape its granted permissions.
-Any namespace to which the <code>jenkins-operator</code> is deployed must be considered to implicitly grant all
-possible permissions to any subject which can create a Pod in that namespace.</p>
-
-<p>To mitigate this issue <strong>Jenkins Operator</strong> should be deployed in one namespace, and the Jenkins CR should be created in a separate namespace.
-Section below contains instructions on how to do it.</p>
-
-<h2 id="setup-jenkins-operator-and-jenkins-in-separate-namespaces">Setup Jenkins Operator and Jenkins in separate namespaces</h2>
+<h2 id="create-namespaces">Create namespaces</h2>
 
 <p>You need to create two namespaces, for example we&rsquo;ll call them <strong>jenkins</strong> for Jenkins and <strong>jenkins-operator</strong> for Jenkins Operator.</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl create ns jenkins-operator
 $ kubectl create ns jenkins</code></pre></div>
+<h2 id="create-necessary-resources-in-jenkins-operator-namespace">Create necessary resources in Jenkins Operator namespace</h2>
+
 <p>Next, you need to install resources necessary for the Operator to work in the <code>jenkins-operator</code> namespace. To do that,
 copy the manifest you see below to <code>jenkins-operator-rbac.yaml</code>file.</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">---<span style="color:#f8f8f8;text-decoration:underline">
@@ -1123,7 +1079,7 @@ copy the manifest you see below to <code>jenkins-operator-rbac.yaml</code>file.<
 <p>Now install the required resources in <code>jenkins-operator</code> namespace with:</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl apply -n jenkins-operator -f jenkins-operator-rbac.yaml</code></pre></div>
 <p>There&rsquo;s only one thing left to install in <code>jenkins-operator</code> namespace, and that is the Operator itself. The manifest
-below contains the Operator as defined in all-in-one manifest found in <a href="/kubernetes-operator/docs/getting-started/latest/installing-the-operator/">Installating the Operator</a>
+below contains the Operator as defined in all-in-one manifest found in <a href="/kubernetes-operator/docs/getting-started/latest/installing-the-operator/">Installing the Operator</a>
 page, the only difference is that the one here sets <code>WATCH_NAMESPACE</code> to the <code>jenkins</code> namespace we created.</p>
 
 <p>Copy its content to <code>jenkins-operator.yaml</code> file.</p>
@@ -1185,7 +1141,9 @@ spec:
 there are two things left to do: creating necessary Role and RoleBinding for the Operator in <code>jenkins</code> namespace, and
 deploying actual Jenkins instance there.</p>
 
-<p>Below you can find manifest with RBAC that need to be created in <code>jenkins</code> namespace. Copy its content to <code>jenkins-ns-rbac.yaml</code> file.</p>
+<h2 id="create-necessary-resources-in-jenkins-namespace">Create necessary resources in Jenkins namespace</h2>
+
+<p>Below you can find manifest with RBAC that needs to be created in <code>jenkins</code> namespace. Copy its content to <code>jenkins-ns-rbac.yaml</code> file.</p>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">apiVersion<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>rbac.authorization.k8s.io/v1<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Role<span style="color:#f8f8f8;text-decoration:underline">
 </span><span style="color:#f8f8f8;text-decoration:underline"></span>metadata<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
@@ -1427,13 +1385,9 @@ Copy it to <code>jenkins-instance.yaml</code></p>
 <p>With this, you have just set up Jenkins Operator and Jenkins in separate namespaces. Now the Operator will run in
 its own namespace (<code>jenkins-operator</code>), watch for CRs in <code>jenkins</code> namespace, and deploy Jenkins there.</p>
 
-<h2 id="report-a-security-vulnerability">Report a Security Vulnerability</h2>
-
-<p>If you find a vulnerability or any misconfiguration in Jenkins, please report it in the <a href="https://github.com/jenkinsci/kubernetes-operator/issues">issues</a>.</p>
-
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 20, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 6, 2021
 </div>
 </div>
 

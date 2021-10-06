@@ -2,7 +2,7 @@
 title: "AKS"
 linkTitle: "AKS"
 weight: 8
-date: 2021-08-19
+date: 2021-10-06
 description: >
     Additional configuration for Azure Kubernetes Service
 ---

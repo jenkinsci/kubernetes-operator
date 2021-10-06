@@ -7,6 +7,7 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
+<link rel="alternate" type="application/rss&#43;xml" href="https://jenkinsci.github.io/kubernetes-operator/docs/security/index.xml">
 
 
 <link rel="shortcut icon" href="/favicons/favicon.ico" >
@@ -20,25 +21,17 @@
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-144x144.png" sizes="144x144">
 <link rel="icon" type="image/png" href="/kubernetes-operator/favicons/android-192x192.png"sizes="192x192">
 
-<title>Notifications | Jenkins Operator</title><meta property="og:title" content="Notifications" />
-<meta property="og:description" content="How to setup operator notifications.
+<title>Security | Jenkins Operator</title><meta property="og:title" content="Security" />
+<meta property="og:description" content="Jenkins security and hardening out of the box
 " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/" />
-<meta property="article:published_time" content="2021-08-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-08-19T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
-<meta itemprop="name" content="Notifications">
-<meta itemprop="description" content="How to setup operator notifications.
-">
-<meta itemprop="datePublished" content="2021-08-19T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2021-08-19T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="132">
-
-
-
-<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Notifications"/>
-<meta name="twitter:description" content="How to setup operator notifications.
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/security/" />
+<meta property="og:updated_time" content="2021-10-06T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta itemprop="name" content="Security">
+<meta itemprop="description" content="Jenkins security and hardening out of the box
+"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Security"/>
+<meta name="twitter:description" content="Jenkins security and hardening out of the box
 "/>
 
 
@@ -54,9 +47,9 @@
   crossorigin="anonymous"></script>
 
 
-    <title>Notifications | Jenkins Operator</title>
+    <title>Security | Jenkins Operator</title>
   </head>
-  <body class="td-page">
+  <body class="td-section">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
@@ -162,10 +155,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Getting Started</a>
+    <a  href="/kubernetes-operator/docs/getting-started/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Getting Started</a>
   </li>
   <ul>
-    <li class="collapse show" id="kubernetes-operator-docs-getting-started">
+    <li class="collapse " id="kubernetes-operator-docs-getting-started">
       
       
       
@@ -179,10 +172,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/kubernetes-operator/docs/getting-started/latest/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Latest (v0.6.x)</a>
+    <a  href="/kubernetes-operator/docs/getting-started/latest/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Latest (v0.6.x)</a>
   </li>
   <ul>
-    <li class="collapse show" id="kubernetes-operator-docs-getting-started-latest">
+    <li class="collapse " id="kubernetes-operator-docs-getting-started-latest">
       
       
       
@@ -219,19 +212,13 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-separate-namespaces" href="/kubernetes-operator/docs/getting-started/latest/separate-namespaces/">Separate namespaces for Jenkins and Operator</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-custom-backup-and-restore" href="/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/">Custom backup and restore providers</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-kubernetes-operator-docs-getting-started-latest-notifications" href="/kubernetes-operator/docs/getting-started/latest/notifications/">Notifications</a>
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-getting-started-latest-security" href="/kubernetes-operator/docs/getting-started/latest/security/">Security</a>
       
       
       
@@ -671,6 +658,29 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
+    <a  href="/kubernetes-operator/docs/security/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Security</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="kubernetes-operator-docs-security">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
     <a  href="/kubernetes-operator/docs/troubleshooting/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Troubleshooting</a>
   </li>
   <ul>
@@ -699,12 +709,6 @@
   <ul>
     <li class="collapse " id="kubernetes-operator-docs-developer-guide">
       
-      
-      
-      
-      
-      
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-kubernetes-operator-docs-developer-guide-tools" href="/kubernetes-operator/docs/developer-guide/tools/">Tools</a>
       
       
     </li>
@@ -756,8 +760,8 @@
           
           
           
-        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Getting%20Started/latest/notifications.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
-        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=Notifications" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/edit/master/website/content/en/docs/Security/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+        <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new?labels=documentation&amp;template=documentation.md&amp;title=Security" target="_blank"><i class="fab fa-github fa-fw"></i> Create documentation issue</a>
           
               
               <a href="https://github.com/jenkinsci/kubernetes-operator/issues/new/choose" target="_blank"><i class="fas fa-tasks fa-fw"></i> Create project issue</a>
@@ -773,11 +777,11 @@
 <ul>
 <li>
 <ul>
-<li><a href="#slack">Slack</a></li>
-<li><a href="#microsoft-teams">Microsoft Teams</a></li>
-<li><a href="#mailgun">Mailgun</a></li>
-<li><a href="#debug-options">Debug options</a></li>
-<li><a href="#multiple-providers">Multiple providers</a></li>
+<li><a href="#jenkins-access-control">Jenkins Access Control</a></li>
+<li><a href="#jenkins-hardening">Jenkins Hardening</a></li>
+<li><a href="#jenkins-api">Jenkins API</a></li>
+<li><a href="#kubernetes">Kubernetes</a></li>
+<li><a href="#report-a-security-vulnerability">Report a Security Vulnerability</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -796,12 +800,6 @@
 
 
 
-
-
-
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/">Documentation</a>
 </li>
@@ -809,22 +807,8 @@
 
 
 
-<li class="breadcrumb-item" >
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/">Getting Started</a>
-</li>
-
-
-
-
-<li class="breadcrumb-item" >
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/">Latest (v0.6.x)</a>
-</li>
-
-
-
-
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/">Notifications</a>
+	<a href="https://jenkinsci.github.io/kubernetes-operator/docs/security/">Security</a>
 </li>
 
 	</ol>
@@ -832,104 +816,229 @@
 
             
 <div class="td-content">
-	<h1>Notifications</h1>
-	<div class="lead">How to setup operator notifications.</div>
+	<h1>Security</h1>
+	<div class="lead">Jenkins security and hardening out of the box</div>
 	
 
-<h2 id="slack">Slack</h2>
+<p>By default <strong>Jenkins Operator</strong> performs an initial security hardening of Jenkins instance
+via groovy scripts to prevent any security gaps.</p>
 
-<p>Please follow <a href="https://api.slack.com/incoming-webhooks">this</a> instructions to get web hook URL.</p>
+<h2 id="jenkins-access-control">Jenkins Access Control</h2>
 
-<p>Create web hook secret with name <code>jenkins-operator-notification-data</code>. Contains key <code>url</code> with provided web hook URL.</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl create secret generic jenkins-operator-notification-data --from-literal<span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">url</span><span style="color:#ce5c00;font-weight:bold">=</span>&lt;webhook_url&gt;</code></pre></div>
-<p>Example configuration for Slack:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>notifications<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>level<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>info<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>verbose<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">     </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">slack:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>webHookURLSecretKeySelector<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">          </span>secret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">            </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;secret_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">         </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">key: &lt;key&gt;</span></code></pre></div>
-<h2 id="microsoft-teams">Microsoft Teams</h2>
+<p>Currently <strong>Jenkins Operator</strong> generates a username and random password and stores them in a Kubernetes Secret.
+However any other authorization mechanisms are possible and can be done via groovy scripts or configuration as code plugin.
+For more information take a look at the section on <a href="/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">customizing Jenkins</a>.</p>
 
-<p>Please follow <a href="https://docs.microsoft.com/en-gb/outlook/actionable-messages/send-via-connectors">this</a> instructions to get web hook URL.</p>
+<p>Any change to Security Realm or Authorization requires that user called <code>jenkins-operator</code> must have admin rights
+because <strong>Jenkins Operator</strong> calls Jenkins API.</p>
 
-<p>Example configuration for Microsoft Teams:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>notifications<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>level<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>info<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>verbose<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">     </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">teams:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>webHookURLSecretKeySelector<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">          </span>secret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">            </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;secret_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">         </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">key: &lt;key&gt;</span></code></pre></div>
-<h2 id="mailgun">Mailgun</h2>
+<h2 id="jenkins-hardening">Jenkins Hardening</h2>
 
-<p>Example configuration for Mailgun:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>notifications<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>level<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>info<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>verbose<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">     </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">mailgun:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>domain<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;domain<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">       </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">apiKeySecretKeySelector:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">          </span>secret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">            </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;secret_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">         </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">key: &lt;key&gt;</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>recipient<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;your_email<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">       </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">from: &lt;mailgun_email&gt;</span></code></pre></div>
-<h2 id="debug-options">Debug options</h2>
-
-<p>As you see there is two debugging options:</p>
+<p>The list below describes all the default security setting configured by the <strong>Jenkins Operator</strong>:</p>
 
 <ul>
-<li><p><code>level</code> (warning/info) - Set level of messages to send.</p></li>
-
-<li><p><code>verbose</code> - Print stacktrace and additional error messages</p></li>
+<li>basic settings - use <code>Mode.EXCLUSIVE</code> - Jobs must specify that they want to run on master node</li>
+<li>enable CSRF - Cross Site Request Forgery Protection is enabled</li>
+<li>disable usage stats - Jenkins usage stats submitting is disabled</li>
+<li>enable master access control - Slave to Master Access Control is enabled</li>
+<li>disable old JNLP protocols - <code>JNLP3-connect</code>, <code>JNLP2-connect</code> and <code>JNLP-connect</code> are disabled</li>
+<li>disable CLI - CLI access of <code>/cli</code> URL is disabled</li>
+<li>configure kubernetes-plugin - secure configuration for Kubernetes plugin</li>
 </ul>
 
-<h2 id="multiple-providers">Multiple providers</h2>
+<p>If you would like to dig a little bit into the code, take a look <a href="https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/resources/base_configuration_configmap.go">here</a>.</p>
 
-<p>You can use multiple providers to send notification to another communication channels at the same time.
-For example you will send notifications to Slack and Teams.</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">kind<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>Jenkins<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline"></span>spec<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">  </span>master<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>notifications<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>level<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>info<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>verbose<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>nslack<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>slack<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>webHookURLSecretKeySelector<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">          </span>secret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">            </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;secret_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">         </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">key: &lt;key&gt;</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">    </span>-<span style="color:#f8f8f8;text-decoration:underline"> </span>level<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>info<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>verbose<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>nteams<span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">      </span>teams<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">        </span>webHookURLSecretKeySelector<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">          </span>secret<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline">
-</span><span style="color:#f8f8f8;text-decoration:underline">            </span>name<span style="color:#000;font-weight:bold">:</span><span style="color:#f8f8f8;text-decoration:underline"> </span>&lt;secret_name<span style="color:#8f5902;font-style:italic">&gt;
-</span><span style="color:#8f5902;font-style:italic">         </span><span style="color:#8f5902;font-style:italic"> </span><span style="color:#8f5902;font-style:italic">key: &lt;key&gt;</span></code></pre></div>
+<h2 id="jenkins-api">Jenkins API</h2>
+
+<p>The <strong>Jenkins Operator</strong> generates and configures Basic Authentication token for Jenkins Go client
+and stores it in a Kubernetes Secret.</p>
+
+<h2 id="kubernetes">Kubernetes</h2>
+
+<p>Kubernetes API permissions are limited by the following roles:</p>
+
+<ul>
+<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/deploy/all-in-one-v1alpha2.yaml">jenkins-operator role</a></li>
+<li><a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.6.0/pkg/configuration/base/resources/rbac.go">Jenkins Controller (Master) role</a></li>
+</ul>
+
+<p>Since <strong>Jenkins Operator</strong> must be able to grant permission for its deployed Jenkins masters
+to spawn pods (the <code>Jenkins Master role</code> above),
+the operator itself requires permission to create RBAC resources (the <code>jenkins-operator role</code> above).</p>
+
+<p>Deployed this way, any subject which may create a Pod (including a Jenkins job) may
+assume the <code>jenkins-operator</code> role by using its&rsquo; ServiceAccount, create RBAC rules, and thus escape its granted permissions.
+Any namespace to which the <code>jenkins-operator</code> is deployed must be considered to implicitly grant all
+possible permissions to any subject which can create a Pod in that namespace.</p>
+
+<p>To mitigate this issue, <strong>Jenkins Operator</strong> should be deployed in one namespace, and the Jenkins CR should be created in
+a separate namespace. For instructions on how to deploy Jenkins Operator and Jenkins in separate namespaces, head over
+to the <a href="/kubernetes-operator/docs/getting-started/latest/separate-namespaces">Separate namespaces</a> section of Getting Started
+guide.</p>
+
+<h2 id="report-a-security-vulnerability">Report a Security Vulnerability</h2>
+
+<p>If you find a vulnerability or any misconfiguration in Jenkins, please report it in the <a href="https://github.com/jenkinsci/kubernetes-operator/issues">issues</a>.</p>
+
+        <div class="section-index">
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    
+</div>
+
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified August 19, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 6, 2021
 </div>
 </div>
-
 
           </main>
         </div>

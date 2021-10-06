@@ -1,17 +1,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Jenkins Operator – Troubleshooting</title>
-    <link>https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/</link>
+    <title>Jenkins Operator – Security</title>
+    <link>https://jenkinsci.github.io/kubernetes-operator/docs/security/</link>
     <description>Recent Hugo news from gohugo.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 06 Oct 2021 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://jenkinsci.github.io/kubernetes-operator/img/hugo.png</url>
       <title>GoHugo.io</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/</link>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/security/</link>
     </image>
     
-	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/security/index.xml" rel="self" type="application/rss+xml" />
     
     
       
