@@ -2,7 +2,7 @@
 title: "LDAP"
 linkTitle: "LDAP"
 weight: 9
-date: 2021-10-06
+date: 2021-10-08
 description: >
     Additional configuration for LDAP
 ---
