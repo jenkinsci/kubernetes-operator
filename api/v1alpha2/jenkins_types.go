@@ -18,6 +18,10 @@ type JenkinsSpec struct {
 	// +optional
 	SeedJobs []SeedJob `json:"seedJobs,omitempty"`
 
+	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
+	//+optional
+	ValidateSecurityWarnings bool `json:"ValidateSecurityWarnings,omitempty"`
+
 	// Notifications defines list of a services which are used to inform about Jenkins status
 	// Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun
 	// +optional
@@ -368,6 +372,10 @@ type JenkinsMaster struct {
 	// PriorityClassName for Jenkins master pod
 	// +optional
 	PriorityClassName string `json:"priorityClassName,omitempty"`
+
+	// HostAliases for Jenkins master pod and SeedJob agent
+	// +optional
+	HostAliases []corev1.HostAlias `json:"hostAliases,omitempty"`
 }
 
 // Service defines Kubernetes service attributes

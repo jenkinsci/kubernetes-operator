@@ -1,8 +1,8 @@
 ---
 title: "OpenShift"
 linkTitle: "OpenShift"
-weight: 20
-date: 2020-04-29
+weight: 10
+date: 2021-08-19
 description: >
     Additional configuration for OpenShift
 ---

@@ -2,7 +2,7 @@
 title: "Configuration"
 linkTitle: "Configuration"
 weight: 2
-date: 2021-01-25
+date: 2021-10-01
 description: >
   How to configure Jenkins with Operator
 ---
@@ -163,7 +163,7 @@ spec:
     targets: "cicd/jobs/*.jenkins"
     description: "Jenkins Operator repository"
     repositoryBranch: master
-    repositoryUrl: ssh://git@github.com:jenkinsci/kubernetes-operator.git
+    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git
 ```
 
 and create a Kubernetes Secret (name of secret should be the same from `credentialID` field):

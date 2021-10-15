@@ -4,7 +4,7 @@ Thanks for taking the time to contribute!
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Atom Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
+This project and everyone participating in it is governed by the [Jenkins Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
 
 ## We Develop with GitHub
 We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
@@ -41,3 +41,10 @@ Design proposal is simply a document that states what you propose to do includin
 - Breaking changes
 
 Keep in mind that a proposal is not a pitch, it needs to be technical.
+
+### Proposing changes to Helm Chart
+When issuing a PR that modifies the project's Helm Chart, please do not include in your PR changes that would release a new package version when merged.
+
+Specifically, please do not update `chart/index.yaml` and `chart/jenkins-operator/Chart.yaml` files and do not build chart archive package.
+
+For the sake of PR's brevity and security, Project's maintainers will issue a separate PR that releases new version of the Chart after your PR has been merged.

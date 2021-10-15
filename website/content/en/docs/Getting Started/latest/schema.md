@@ -1,8 +1,8 @@
 ---
 title: "Schema"
 linkTitle: "Schema"
-weight: 40
-date: 2021-01-18
+weight: 11
+date: 2021-08-20
 description: >
   API Schema definitions for Jenkins CRD
 ---
@@ -109,7 +109,7 @@ Every single change here requires a pod restart.</p>
 <td>
 <em>(Optional)</em>
 <p>SeedJobs defines list of Jenkins Seed Job configurations
-More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
+More info: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines#configure-seed-jobs-and-pipelines">https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines</a></p>
 </td>
 </tr>
 <tr>
@@ -661,7 +661,12 @@ Values defined by an Env with a duplicate key will take precedence.</p>
 </td>
 <td>
 <em>(Optional)</em>
-<p>Pod volumes to mount into the container&rsquo;s filesystem.</p>
+<p>
+Pod volumes to mount into the container&rsquo;s filesystem. More info:
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts">
+https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts
+</a>
+</p>
 </td>
 </tr>
 <tr>

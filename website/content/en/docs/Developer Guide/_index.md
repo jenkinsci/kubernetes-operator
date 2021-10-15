@@ -1,8 +1,8 @@
 ---
 title: "Developer Guide"
 linkTitle: "Developer Guide"
-weight: 60
-date: 2021-07-30
+weight: 5
+date: 2021-10-06
 description: >
   Jenkins Operator for developers
 ---
@@ -16,7 +16,7 @@ This document explains how to setup your development environment.
 - [operator_sdk][operator_sdk] version 1.3.0
 - [git][git_tool]
 - [go][go_tool] version 1.15.6
-- [goimports, golint, checkmake and staticcheck][install_dev_tools]
+- goimports, golint, checkmake and staticcheck
 - [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
 - [docker][docker_tool] version 17.03+
 
@@ -241,7 +241,7 @@ kubectl --context remote-k8s --namespace default get po
 
 Tests are written using [Ginkgo](https://onsi.github.io/ginkgo/) with [Gomega](https://onsi.github.io/gomega/). 
 
-Run unit tests with go fmt, lint, statickcheck, vet:
+Run unit tests with go fmt, lint, staticcheck, vet:
 
 ```bash
 make verify
@@ -260,6 +260,12 @@ Run e2e tests with minikube:
 ```bash
 make minikube-start
 make e2e
+```
+
+Run Helm e2e tests:
+```bash
+eval $(bin/minikube docker-env)
+make helm-e2e
 ```
 
 Run the specific e2e test:
@@ -292,8 +298,13 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.us
 kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.password}' | base64 -d
 ```
 
-
-
+### Webhook
+To deploy the operator along with webhook, run :
+```bash
+eval $(minikube docker-env)
+make deploy-webhook
+```
+It uses [cert-manager](https://cert-manager.io/) as an external dependency.
 
 ## Self-learning
 
@@ -304,6 +315,8 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.pa
 
 * [Operator SDK Tutorial for Go](https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/)
 
+* [Kubebuilder Validating Webhook Implementation](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html)
+
 [dep_tool]:https://golang.github.io/dep/docs/installation.html
 [git_tool]:https://git-scm.com/downloads
 [go_tool]:https://golang.org/dl/
@@ -313,5 +326,3 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.pa
 [kubectl_tool]:https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [minikube]:https://kubernetes.io/docs/tasks/tools/install-minikube/
 [virtualbox]:https://www.virtualbox.org/wiki/Downloads
-[install_dev_tools]:https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/tools/
-

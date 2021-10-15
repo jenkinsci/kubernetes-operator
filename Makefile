@@ -96,6 +96,7 @@ e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 
 .PHONY: helm-e2e
 IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)
+
 helm-e2e: helm container-runtime-build ## Runs helm e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
@@ -407,21 +408,15 @@ helm-lint: helm
 	@echo "+ $@"
 	bin/helm lint chart/jenkins-operator
 
-.PHONY: helm-package
-helm-package: helm
+.PHONY: helm-release-latest
+helm-release-latest: helm
 	@echo "+ $@"
 	mkdir -p /tmp/jenkins-operator-charts
 	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
 	cd chart && ../bin/helm package jenkins-operator
+	mv chart/jenkins-operator-*.tgz chart/jenkins-operator/
+	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/ --merge chart/index.yaml
 	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
-	rm -rf /tmp/jenkins-operator-charts/
-	git add chart/jenkins-operator-*.tgz
-
-.PHONY: helm-deploy
-helm-deploy: helm-package
-	@echo "+ $@"
-	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/
-	cd chart/ && mv jenkins-operator-*.tgz jenkins-operator
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
@@ -523,3 +518,15 @@ kubebuilder:
 	mkdir -p ${ENVTEST_ASSETS_DIR}
 	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.7.0/hack/setup-envtest.sh
 	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR);
+
+# install cert-manager v1.5.1
+install-cert-manager: minikube-start
+	kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
+
+uninstall-cert-manager: minikube-start
+	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
+	
+# Deploy the operator locally along with webhook using helm charts
+deploy-webhook: container-runtime-build  
+	@echo "+ $@"
+	bin/helm upgrade jenkins chart/jenkins-operator --install --set-string operator.image=${IMAGE_NAME} --set webhook.enabled=true --set jenkins.enabled=false

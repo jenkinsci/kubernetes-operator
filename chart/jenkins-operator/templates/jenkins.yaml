@@ -100,8 +100,6 @@ spec:
     {{- end }}
     {{- if .Values.jenkins.priorityClassName }}
     priorityClassName: {{- .Values.jenkins.priorityClassName }}
-    {{- else }}
-    priorityClassName: ""
     {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
@@ -147,6 +145,7 @@ spec:
     securityContext:
     {{- toYaml . | nindent 6 }}
     {{- end }}
+  ValidateSecurityWarnings: {{ .Values.jenkins.ValidateSecurityWarnings }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

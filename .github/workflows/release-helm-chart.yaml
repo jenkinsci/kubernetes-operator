@@ -1,0 +1,40 @@
+name: Release Helm chart
+
+# Run this workflow manually
+on:
+  workflow_dispatch:
+    inputs:
+      chartVersion:
+        description: "Helm chart version to release. eg. 0.4.1"
+        required: true
+      appVersion:
+        description: "Operator app version without quotes, eg. 0.5.1 . If not provided, the one in Chart.yaml won't be overwritten."
+        required: false
+
+jobs:
+  release-helm-chart:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy Helm chart
+        run: |
+          sed -i "/version:/c\version: ${{ github.event.inputs.chartVersion }}" chart/jenkins-operator/Chart.yaml
+
+          if [ ${{ github.event.inputs.appVersion }} ] ; then
+            sed -i "/appVersion:/c\appVersion: \"${{ github.event.inputs.appVersion }}\"" chart/jenkins-operator/Chart.yaml
+          fi
+
+          make helm-release-latest
+
+      # Creates pull request with new chart version
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Release Helm chart ${{ github.event.inputs.chartVersion }}
+          branch: helm-chart-release-${{ github.event.inputs.chartVersion }}
+          title: Release ${{ github.event.inputs.chartVersion }} Helm Chart
+          body: |
+            Release ${{ github.event.inputs.chartVersion }} Helm Chart

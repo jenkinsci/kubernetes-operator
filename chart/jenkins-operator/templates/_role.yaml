@@ -1,11 +1,13 @@
 {{ define "jenkins-operator.role" }}
 {{ $namespace := . }}
 ---
-kind: Role
+kind: {{ if eq $namespace "" }}ClusterRole{{ else }}Role{{ end }}
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: jenkins-operator
+{{- if ne $namespace "" }}
   namespace: {{ $namespace }}
+{{- end }}
 rules:
   - apiGroups:
       - apps
