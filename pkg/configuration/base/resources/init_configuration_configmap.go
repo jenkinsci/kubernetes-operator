@@ -6,7 +6,6 @@ import (
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/internal/render"
-	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -63,7 +62,7 @@ func buildCreateJenkinsOperatorUserGroovyScript(jenkins *v1alpha2.Jenkins) (*str
 
 // GetInitConfigurationConfigMapName returns name of Kubernetes config map used to init configuration
 func GetInitConfigurationConfigMapName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-init-configuration-%s", constants.OperatorName, jenkins.ObjectMeta.Name)
+	return fmt.Sprintf("%s-init-configuration", jenkins.ObjectMeta.Name)
 }
 
 // NewInitConfigurationConfigMap builds Kubernetes config map used to init configuration
