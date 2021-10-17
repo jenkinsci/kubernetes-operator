@@ -45,7 +45,7 @@ func GetJenkinsHTTPServiceName(jenkins *v1alpha2.Jenkins) string {
 
 // GetJenkinsSlavesServiceName returns Kubernetes service name used for expose Jenkins slave endpoint
 func GetJenkinsSlavesServiceName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-slave-%s", constants.OperatorName, jenkins.ObjectMeta.Name)
+	return fmt.Sprintf("%s-slave", jenkins.ObjectMeta.Name)
 }
 
 // GetJenkinsHTTPServiceFQDN returns Kubernetes service FQDN used for expose Jenkins HTTP endpoint
@@ -65,7 +65,7 @@ func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins, kubernetesClusterDom
 		return "", err
 	}
 
-	return fmt.Sprintf("%s-slave-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
+	return fmt.Sprintf("%s-slave.%s.svc.%s", jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
 }
 
 // GetClusterDomain returns Kubernetes cluster domain, default to "cluster.local"
