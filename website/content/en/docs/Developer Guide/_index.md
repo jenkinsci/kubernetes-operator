@@ -293,7 +293,7 @@ make manifests
 ### Getting the Jenkins URL and basic credentials
 
 ```bash
-minikube service jenkins-operator-http-<cr_name> --url
+minikube service <cr_name>-http --url
 kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.user}' | base64 -d
 kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.password}' | base64 -d
 ```

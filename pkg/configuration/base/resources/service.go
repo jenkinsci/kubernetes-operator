@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
-	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	stackerr "github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -40,7 +39,7 @@ func UpdateService(actual corev1.Service, config v1alpha2.Service, targetPort in
 
 // GetJenkinsHTTPServiceName returns Kubernetes service name used for expose Jenkins HTTP endpoint
 func GetJenkinsHTTPServiceName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-http-%s", constants.OperatorName, jenkins.ObjectMeta.Name)
+	return fmt.Sprintf("%s-http", jenkins.ObjectMeta.Name)
 }
 
 // GetJenkinsSlavesServiceName returns Kubernetes service name used for expose Jenkins slave endpoint
@@ -55,7 +54,7 @@ func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins, kubernetesClusterDomai
 		return "", err
 	}
 
-	return fmt.Sprintf("%s-http-%s.%s.svc.%s", constants.OperatorName, jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
+	return fmt.Sprintf("%s-http.%s.svc.%s", jenkins.ObjectMeta.Name, jenkins.ObjectMeta.Namespace, clusterDomain), nil
 }
 
 // GetJenkinsSlavesServiceFQDN returns Kubernetes service FQDN used for expose Jenkins slave endpoint

@@ -101,7 +101,7 @@ kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.pa
 Connect to the Jenkins instance (minikube):
 
 ```bash
-minikube service jenkins-operator-http-<cr_name> --url
+minikube service <cr_name>-http --url
 ```
 
 Connect to the Jenkins instance (actual Kubernetes cluster):
