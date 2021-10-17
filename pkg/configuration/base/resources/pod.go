@@ -343,7 +343,7 @@ func newContainers(jenkins *v1alpha2.Jenkins) (containers []corev1.Container) {
 
 // GetJenkinsMasterPodName returns Jenkins pod name for given CR
 func GetJenkinsMasterPodName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("jenkins-%s", jenkins.Name)
+	return jenkins.Name
 }
 
 // GetJenkinsMasterPodLabels returns Jenkins pod labels for given CR

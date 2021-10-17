@@ -2,7 +2,6 @@ package base
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
@@ -18,7 +17,7 @@ import (
 // createRoute takes the ServiceName and Creates the Route based on it
 func (r *JenkinsBaseConfigurationReconciler) createRoute(meta metav1.ObjectMeta, serviceName string, config *v1alpha2.Jenkins) error {
 	route := routev1.Route{}
-	name := fmt.Sprintf("jenkins-%s", config.ObjectMeta.Name)
+	name := config.ObjectMeta.Name
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: meta.Namespace}, &route)
 	if err != nil && apierrors.IsNotFound(err) {
 		port := &routev1.RoutePort{
