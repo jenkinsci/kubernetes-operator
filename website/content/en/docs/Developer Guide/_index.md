@@ -294,8 +294,8 @@ make manifests
 
 ```bash
 minikube service <cr_name>-http --url
-kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.user}' | base64 -d
-kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.password}' | base64 -d
+kubectl get secret <cr_name>-credentials -o 'jsonpath={.data.user}' | base64 -d
+kubectl get secret <cr_name>-credentials -o 'jsonpath={.data.password}' | base64 -d
 ```
 
 ### Webhook

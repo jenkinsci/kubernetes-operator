@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
-	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -33,7 +32,7 @@ func buildSecretTypeMeta() metav1.TypeMeta {
 // GetOperatorCredentialsSecretName returns name of Kubernetes secret used to store jenkins operator credentials
 // to allow calls to Jenkins API
 func GetOperatorCredentialsSecretName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-credentials-%s", constants.OperatorName, jenkins.Name)
+	return fmt.Sprintf("%s-credentials", jenkins.Name)
 }
 
 // NewOperatorCredentialsSecret builds the Kubernetes secret used to store jenkins operator credentials

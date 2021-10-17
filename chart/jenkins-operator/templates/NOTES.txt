@@ -2,8 +2,8 @@
 $ kubectl --namespace {{ .Release.Namespace }} get pods -w
 
 2. Get Jenkins credentials:
-$ kubectl --namespace {{ .Release.Namespace }} get secret jenkins-operator-credentials-{{ .Values.jenkins.name }} -o 'jsonpath={.data.user}' | base64 -d
-$ kubectl --namespace {{ .Release.Namespace }} get secret jenkins-operator-credentials-{{ .Values.jenkins.name }} -o 'jsonpath={.data.password}' | base64 -d
+$ kubectl --namespace {{ .Release.Namespace }} get secret {{ .Values.jenkins.name }}-credentials -o 'jsonpath={.data.user}' | base64 -d
+$ kubectl --namespace {{ .Release.Namespace }} get secret {{ .Values.jenkins.name }}-credentials -o 'jsonpath={.data.password}' | base64 -d
 
 3. Connect to Jenkins (actual Kubernetes cluster):
 $ kubectl --namespace {{ .Release.Namespace }} port-forward jenkins-{{ .Values.jenkins.name }} 8080:8080

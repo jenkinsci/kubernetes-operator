@@ -116,7 +116,7 @@ Create the following Kubernetes secret:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: jenkins-operator-credentials-<jenkins-cr-name>
+  name: <jenkins-cr-name>-credentials
   namespace: <jenkins-cr-namespace>
 stringData:
   user: <username-for-manager-created-in-ldap>
