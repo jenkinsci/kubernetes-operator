@@ -76,7 +76,7 @@ The **Jenkins Operator** will then automatically install plugins after the Jenki
 By using a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) you can create your own **Jenkins** customized configuration.
 Then you must reference the **`ConfigMap`** in the **Jenkins** pod customization file in `spec.groovyScripts` or `spec.configurationAsCode`
 
-Create a **`ConfigMap`** with specific name (eg. `jenkins-operator-user-configuration`). Then, modify the **Jenkins** manifest:
+Create a **`ConfigMap`** with specific name (eg. `jenkins-example-user-configuration`). Then, modify the **Jenkins** manifest:
 
 ```yaml
 apiVersion: jenkins.io/v1alpha2
@@ -86,18 +86,18 @@ metadata:
 spec:
   configurationAsCode:
     configurations: 
-    - name: jenkins-operator-user-configuration
+    - name: jenkins-example-user-configuration
   groovyScripts:
     configurations:
-    - name: jenkins-operator-user-configuration
+    - name: jenkins-example-user-configuration
 ```
 
-Here is an example of `jenkins-operator-user-configuration`:
+Here is an example of `jenkins-example-user-configuration`:
 ```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: jenkins-operator-user-configuration
+  name: jenkins-example-user-configuration
 data:
   1-configure-theme.groovy: | 
     import jenkins.*
@@ -158,12 +158,12 @@ metadata:
 spec:
   configurationAsCode:
     configurations: 
-    - name: jenkins-operator-user-configuration
+    - name: jenkins-example-user-configuration
     secret:
       name: jenkins-conf-secrets
   groovyScripts:
     configurations:
-    - name: jenkins-operator-user-configuration
+    - name: jenkins-example-user-configuration
     secret:
       name: jenkins-conf-secrets
 ```
@@ -174,7 +174,7 @@ Now you can test that the secret is mounted by applying this `ConfigMap` for Gro
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: jenkins-operator-user-configuration
+  name: jenkins-example-user-configuration
 data:
   1-system-message.groovy: | 
     import jenkins.*
@@ -192,7 +192,7 @@ Or by applying this configuration as code:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: jenkins-operator-user-configuration
+  name: jenkins-example-user-configuration
 data:
   1-system-message.yaml: |
     jenkins:
