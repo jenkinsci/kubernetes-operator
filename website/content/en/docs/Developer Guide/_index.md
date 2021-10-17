@@ -82,9 +82,9 @@ kubectl apply -f config/samples/jenkins.io_v1alpha2_jenkins.yaml
 {"level":"info","ts":1612790695.8789551,"logger":"controller-jenkins","msg":"Creating a new Jenkins Master Pod default/jenkins-jenkins-example","cr":"jenkins-example"}
 {"level":"warn","ts":1612790817.9423082,"logger":"controller-jenkins","msg":"Reconcile loop failed: couldn't init Jenkins API client: Get \"http://192.168.99.254:31998/api/json\": dial tcp 192.168.99.254:31998: connect: connection refused","cr":"jenkins-example"}
 {"level":"warn","ts":1612790817.9998221,"logger":"controller-jenkins","msg":"Reconcile loop failed: couldn't init Jenkins API client: Get \"http://192.168.99.254:31998/api/json\": dial tcp 192.168.99.254:31998: connect: connection refused","cr":"jenkins-example"}
-{"level":"info","ts":1612790818.581316,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-operator-base-configuration-jenkins-example' name '1-basic-settings.groovy' running groovy script","cr":"jenkins-example"}
+{"level":"info","ts":1612790818.581316,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-example-base-configuration' name '1-basic-settings.groovy' running groovy script","cr":"jenkins-example"}
 ...
-{"level":"info","ts":1612790820.9473379,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-operator-base-configuration-jenkins-example' name '8-disable-job-dsl-script-approval.groovy' running groovy script","cr":"jenkins-example"}
+{"level":"info","ts":1612790820.9473379,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-example-base-configuration' name '8-disable-job-dsl-script-approval.groovy' running groovy script","cr":"jenkins-example"}
 {"level":"info","ts":1612790821.244055,"logger":"controller-jenkins","msg":"Base configuration phase is complete, took 2m6s","cr":"jenkins-example"}
 {"level":"info","ts":1612790821.7953842,"logger":"controller-jenkins","msg":"Waiting for Seed Job Agent `seed-job-agent`...","cr":"jenkins-example"}
 ...
@@ -181,7 +181,7 @@ items:
     - configurationType: base-groovy
       hash: 2ownqpRyBjQYmzTRttUx7axok3CKe2E45frI5iRwH0w=
       name: 1-basic-settings.groovy
-      source: jenkins-operator-base-configuration-jenkins-example
+      source: jenkins-example-base-configuration
     ...
     baseConfigurationCompletedTime: "2021-02-08T13:27:01Z"
     createdSeedJobs:
