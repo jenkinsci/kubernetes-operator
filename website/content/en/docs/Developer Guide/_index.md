@@ -205,6 +205,17 @@ seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0 
 
 ```
 
+## Build and run with Docker Desktop
+
+Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.
+
+Run **Jenkins Operator** locally. 
+```bash
+make config="config.docker-desktop.env" run
+```
+
+From this point on, Docker Desktop usage is identical to minikube usage.
+
 ### Debug Jenkins Operator
 
 ```bash
