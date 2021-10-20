@@ -14,13 +14,13 @@ Any plugin working for Jenkins can be installed by the Jenkins Operator.
  
 Pre-installed plugins: 
 
-* configuration-as-code v1.51
-* git v4.7.2
+* configuration-as-code v1.54
+* git v4.9.0
 * job-dsl v1.77
-* kubernetes-credentials-provider v0.18-1
-* kubernetes v1.30.0
+* kubernetes-credentials-provider v0.20
+* kubernetes v1.30.04
 * workflow-aggregator v2.6
-* workflow-job v2.41
+* workflow-job v2.42
 
 Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
 
@@ -52,19 +52,19 @@ spec:
   master:
     basePlugins:
     - name: kubernetes
-      version: "1.30.0"
+      version: "1.30.04"
     - name: workflow-job
-      version: "2.40"
+      version: "2.42"
     - name: workflow-aggregator
       version: "2.6"
     - name: git
-      version: "4.7.2"
+      version: "4.9.0"
     - name: job-dsl
       version: "1.77"
     - name: configuration-as-code
-      version: "1.51"
+      version: "1.54"
     - name: kubernetes-credentials-provider
-      version: "0.18-1"
+      version: "0.20"
 ```
 
 You can change their versions.
