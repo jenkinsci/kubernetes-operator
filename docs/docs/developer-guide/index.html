@@ -26,7 +26,7 @@
 " />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/" />
-<meta property="og:updated_time" content="2021-10-06T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="og:updated_time" content="2021-10-20T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Developer Guide">
 <meta itemprop="description" content="Jenkins Operator for developers
 "><meta name="twitter:card" content="summary"/>
@@ -785,7 +785,8 @@
 <ul>
 <li><a href="#prerequisites">Prerequisites</a></li>
 <li><a href="#clone-repository-and-download-dependencies">Clone repository and download dependencies</a></li>
-<li><a href="#build-and-run-with-a-minikube">Build and run with a minikube</a>
+<li><a href="#build-and-run-with-a-minikube">Build and run with a minikube</a></li>
+<li><a href="#build-and-run-with-docker-desktop">Build and run with Docker Desktop</a>
 <ul>
 <li><a href="#debug-jenkins-operator">Debug Jenkins Operator</a></li>
 <li><a href="#stop-or-delete-minikube-cluster">Stop or delete minikube cluster</a></li>
@@ -1019,6 +1020,14 @@ metadata:
 NAME                                              READY   STATUS              RESTARTS   AGE
 jenkins-jenkins-example                           1/1     Running             <span style="color:#0000cf;font-weight:bold">0</span>          23m
 seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             <span style="color:#0000cf;font-weight:bold">0</span>          21m</code></pre></div>
+<h2 id="build-and-run-with-docker-desktop">Build and run with Docker Desktop</h2>
+
+<p>Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.</p>
+
+<p>Run <strong>Jenkins Operator</strong> locally.</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make <span style="color:#000">config</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;config.docker-desktop.env&#34;</span> run</code></pre></div>
+<p>From this point on, Docker Desktop usage is identical to minikube usage.</p>
+
 <h3 id="debug-jenkins-operator">Debug Jenkins Operator</h3>
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">make run <span style="color:#000">OPERATOR_EXTRA_ARGS</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;--debug&#34;</span></code></pre></div>
 <h3 id="stop-or-delete-minikube-cluster">Stop or delete minikube cluster</h3>
@@ -1243,7 +1252,7 @@ make deploy-webhook</code></pre></div>
 
 	
 	
-	<div class="text-muted mt-5 pt-3 border-top">Last modified October 6, 2021
+	<div class="text-muted mt-5 pt-3 border-top">Last modified October 20, 2021
 </div>
 </div>
 
