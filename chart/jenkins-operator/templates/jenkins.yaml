@@ -106,9 +106,6 @@ spec:
       - name:  jenkins-master
         image: {{ .Values.jenkins.image }}
         imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
-        {{- with .Values.jenkins.imagePullSecrets }}
-        imagePullSecrets: {{ toYaml . | nindent 10 }}
-        {{- end }}
         {{- with .Values.jenkins.livenessProbe }}
         livenessProbe: {{ toYaml . | nindent 10 }}
         {{- end }}
@@ -140,6 +137,9 @@ spec:
       {{- end }}
     {{- with .Values.jenkins.volumes }}
     volumes: {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.jenkins.imagePullSecrets }}
+    imagePullSecrets: {{ toYaml . | nindent 10 }}
     {{- end }}
     {{- with .Values.jenkins.securityContext}}
     securityContext:
