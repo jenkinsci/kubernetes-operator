@@ -139,7 +139,7 @@ spec:
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- with .Values.jenkins.imagePullSecrets }}
-    imagePullSecrets: {{ toYaml . | nindent 10 }}
+    imagePullSecrets: {{ toYaml . | nindent 4 }}
     {{- end }}
     {{- with .Values.jenkins.securityContext}}
     securityContext:
