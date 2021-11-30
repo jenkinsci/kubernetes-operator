@@ -36,10 +36,6 @@ spec:
           spec:
             description: Spec defines the desired state of the Jenkins
             properties:
-              ValidateSecurityWarnings:
-                description: ValidateSecurityWarnings enables or disables validating
-                  potential security warnings in Jenkins plugins via admission webhooks.
-                type: boolean
               backup:
                 description: 'Backup defines configuration of Jenkins backup More
                   info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/'
@@ -3336,6 +3332,10 @@ spec:
                       More info: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types'
                     type: string
                 type: object
+              validateSecurityWarnings:
+                description: ValidateSecurityWarnings enables or disables validating
+                  potential security warnings in Jenkins plugins via admission webhooks.
+                type: boolean
             required:
             - jenkinsAPISettings
             - master

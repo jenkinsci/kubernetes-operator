@@ -78,7 +78,7 @@ func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
-	var ValidateSecurityWarnings bool
+	var validateSecurityWarnings bool
 
 	isRunningInCluster, err := resources.IsRunningInCluster()
 	if err != nil {
@@ -89,7 +89,7 @@ func main() {
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", isRunningInCluster, "Enable leader election for controller manager. "+
 		"Enabling this will ensure there is only one active controller manager.")
-	flag.BoolVar(&ValidateSecurityWarnings, "validate-security-warnings", false, "Enable validation for potential security warnings in jenkins custom resource plugins")
+	flag.BoolVar(&validateSecurityWarnings, "validate-security-warnings", false, "Enable validation for potential security warnings in jenkins custom resource plugins")
 	hostname := flag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins API. It can be service name, node IP or localhost.")
 	port := flag.Int("jenkins-api-port", 0, "The port on which Jenkins API is running. Note: If you want to use nodePort don't set this setting and --jenkins-api-use-nodeport must be true.")
 	useNodePort := flag.Bool("jenkins-api-use-nodeport", false, "Connect to Jenkins API using the service nodePort instead of service port. If you want to set this as true - don't set --jenkins-api-port.")
@@ -111,7 +111,7 @@ func main() {
 	}
 	logger.Info(fmt.Sprintf("Watch namespace: %v", namespace))
 
-	if ValidateSecurityWarnings {
+	if validateSecurityWarnings {
 		isInitialized := make(chan bool)
 		go v1alpha2.PluginsMgr.ManagePluginData(isInitialized)
 
@@ -180,7 +180,7 @@ func main() {
 		fatal(errors.Wrap(err, "unable to create Jenkins controller"), *debug)
 	}
 
-	if ValidateSecurityWarnings {
+	if validateSecurityWarnings {
 		if err = (&v1alpha2.Jenkins{}).SetupWebhookWithManager(mgr); err != nil {
 			fatal(errors.Wrap(err, "unable to create Webhook"), *debug)
 		}

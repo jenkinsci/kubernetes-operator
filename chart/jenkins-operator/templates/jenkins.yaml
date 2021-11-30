@@ -145,7 +145,7 @@ spec:
     securityContext:
     {{- toYaml . | nindent 6 }}
     {{- end }}
-  ValidateSecurityWarnings: {{ .Values.jenkins.ValidateSecurityWarnings }}
+  validateSecurityWarnings: {{ .Values.jenkins.validateSecurityWarnings }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

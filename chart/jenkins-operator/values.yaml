@@ -48,8 +48,8 @@ jenkins:
   disableCSRFProtection: false
 
 
-  # ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
-  ValidateSecurityWarnings: false
+  # validateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
+  validateSecurityWarnings: false
   
   # imagePullSecrets is used if you want to pull images from private repository
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories for more info
@@ -147,26 +147,26 @@ jenkins:
 
   # LivenessProbe for Jenkins Master pod
   livenessProbe:
-    failureThreshold: 12
+    failureThreshold: 20
     httpGet:
       path: /login
       port: http
       scheme: HTTP
-    initialDelaySeconds: 80
+    initialDelaySeconds: 100
     periodSeconds: 10
     successThreshold: 1
-    timeoutSeconds: 5
+    timeoutSeconds: 8
   # ReadinessProbe for Jenkins Master pod
   readinessProbe:
-    failureThreshold: 3
+    failureThreshold: 60
     httpGet:
       path: /login
       port: http
       scheme: HTTP
-    initialDelaySeconds: 30
+    initialDelaySeconds: 120
     periodSeconds: 10
     successThreshold: 1
-    timeoutSeconds: 1
+    timeoutSeconds: 8
 
   # backup is section for configuring operator's backup feature
   # By default backup feature is enabled and pre-configured

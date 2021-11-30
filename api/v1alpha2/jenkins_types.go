@@ -20,7 +20,7 @@ type JenkinsSpec struct {
 
 	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
 	//+optional
-	ValidateSecurityWarnings bool `json:"ValidateSecurityWarnings,omitempty"`
+	ValidateSecurityWarnings bool `json:"validateSecurityWarnings,omitempty"`
 
 	// Notifications defines list of a services which are used to inform about Jenkins status
 	// Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun
