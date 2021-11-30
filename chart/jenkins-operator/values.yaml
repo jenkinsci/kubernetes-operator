@@ -111,7 +111,7 @@ jenkins:
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
     limits:
-      cpu: 1500m
+      cpu: 1000m
       memory: 3Gi
     requests:
       cpu: 1
@@ -216,11 +216,11 @@ jenkins:
     # resources used by backup container
     resources:
       limits:
-        cpu: 1500m
-        memory: 1Gi
+        cpu: 1000m
+        memory: 2Gi
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 600m
+        memory: 500Mi
 
     # env contains container environment variables
     # PVC backup provider handles these variables:

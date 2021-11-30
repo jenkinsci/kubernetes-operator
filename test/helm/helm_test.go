@@ -10,14 +10,17 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 	"github.com/jenkinsci/kubernetes-operator/test/e2e"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	// +kubebuilder:scaffold:imports
 )
+
+const JenkinsTestImage = "jenkins/jenkins:2.303.2-lts"
 
 var _ = Describe("Jenkins Controller with webhook", func() {
 
@@ -49,7 +52,8 @@ var _ = Describe("Jenkins Controller with webhook", func() {
 
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
-				"--set-string", fmt.Sprintf("operator.image=%s", *imageName), "--install", "--wait")
+				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.303.2-lts"),
+				"--set-string", fmt.Sprintf("operator.image=%s", *imageName), "--install")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
 
@@ -65,6 +69,7 @@ var _ = Describe("Jenkins Controller with webhook", func() {
 			By("Deploying the operator along with webhook and cert-manager")
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name), "--set-string", fmt.Sprintf("operator.image=%s", *imageName),
+				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.303.3-lts"),
 				"--set", fmt.Sprintf("webhook.enabled=%t", true), "--set", fmt.Sprintf("jenkins.enabled=%t", false), "--install", "--wait")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
@@ -98,6 +103,7 @@ var _ = Describe("Jenkins Controller with webhook", func() {
 			By("Deploying the operator along with webhook and cert-manager")
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name), "--set-string", fmt.Sprintf("operator.image=%s", *imageName),
+				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.303.3-lts"),
 				"--set", fmt.Sprintf("webhook.enabled=%t", true), "--set", fmt.Sprintf("jenkins.enabled=%t", false), "--install", "--wait")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
@@ -132,7 +138,6 @@ var _ = Describe("Jenkins Controller with webhook", func() {
 
 		})
 	})
-
 })
 
 func CreateJenkinsCR(name string, namespace string, userPlugins []v1alpha2.Plugin, validateSecurityWarnings bool) *v1alpha2.Jenkins {
@@ -162,7 +167,8 @@ func CreateJenkinsCR(name string, namespace string, userPlugins []v1alpha2.Plugi
 			Master: v1alpha2.JenkinsMaster{
 				Containers: []v1alpha2.Container{
 					{
-						Name: resources.JenkinsMasterContainerName,
+						Name:  resources.JenkinsMasterContainerName,
+						Image: JenkinsTestImage,
 						Env: []corev1.EnvVar{
 							{
 								Name:  "TEST_ENV",
@@ -178,7 +184,7 @@ func CreateJenkinsCR(name string, namespace string, userPlugins []v1alpha2.Plugi
 								},
 							},
 							InitialDelaySeconds: int32(100),
-							TimeoutSeconds:      int32(4),
+							TimeoutSeconds:      int32(10),
 							FailureThreshold:    int32(40),
 							SuccessThreshold:    int32(1),
 							PeriodSeconds:       int32(10),
@@ -197,6 +203,16 @@ func CreateJenkinsCR(name string, namespace string, userPlugins []v1alpha2.Plugi
 							SuccessThreshold:    int32(1),
 							PeriodSeconds:       int32(5),
 						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1"),
+								corev1.ResourceMemory: resource.MustParse("500Mi"),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1000m"),
+								corev1.ResourceMemory: resource.MustParse("3Gi"),
+							},
+						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "plugins-cache",
@@ -206,7 +222,7 @@ func CreateJenkinsCR(name string, namespace string, userPlugins []v1alpha2.Plugi
 					},
 					{
 						Name:  "envoyproxy",
-						Image: "envoyproxy/envoy-alpine:v1.14.1",
+						Image: "envoyproxy/envoy:v1.20.0",
 					},
 				},
 				Plugins:               userPlugins,
