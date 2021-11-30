@@ -8,7 +8,6 @@ import (
 	"sort"
 
 	"github.com/onsi/ginkgo"
-
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/api/events/v1beta1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -109,17 +108,18 @@ func printKubernetesEvents(namespace string) {
 		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Last %d events from kubernetes:\n", kubernetesEventsLimit)
 
 		for _, event := range events {
-			_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "%+v\n\n", event)
+			_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Event CreationTime: %s, Type: %s, Reason: %s, Object: %s %s/%s, Action: %s\n",
+				event.CreationTimestamp, event.Type, event.Reason, event.Regarding.Kind, event.Regarding.Namespace, event.Regarding.Name, event.Note)
 		}
 	}
 }
 
 func printKubernetesPods(namespace string) {
-	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "All pods in '%s' namespace:\n", namespace)
+	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "\nAll pods in '%s' namespace:\n", namespace)
 
 	pod, err := getOperatorPod(namespace)
 	if err == nil {
-		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "%+v\n\n", pod)
+		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "%s: %+v \n", pod.Name, pod.Status.Conditions)
 	}
 }
 
