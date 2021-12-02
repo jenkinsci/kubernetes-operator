@@ -3,6 +3,7 @@ package e2e
 import (
 	"context"
 	"fmt"
+	"k8s.io/apimachinery/pkg/api/resource"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -65,7 +66,8 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 				Annotations: map[string]string{"test": "label"},
 				Containers: []v1alpha2.Container{
 					{
-						Name: resources.JenkinsMasterContainerName,
+						Name:  resources.JenkinsMasterContainerName,
+						Image: JenkinsTestImage,
 						Env: []corev1.EnvVar{
 							{
 								Name:  "TEST_ENV",
@@ -99,6 +101,16 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 							FailureThreshold:    int32(12),
 							SuccessThreshold:    int32(1),
 							PeriodSeconds:       int32(5),
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1"),
+								corev1.ResourceMemory: resource.MustParse("500Mi"),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1000m"),
+								corev1.ResourceMemory: resource.MustParse("3Gi"),
+							},
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
