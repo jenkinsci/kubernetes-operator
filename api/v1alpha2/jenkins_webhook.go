@@ -37,20 +37,25 @@ import (
 )
 
 var (
-	jenkinslog                   = logf.Log.WithName("jenkins-resource") // log is for logging in this package.
-	PluginsMgr PluginDataManager = *NewPluginsDataManager("/tmp/plugins.json.gzip", "/tmp/plugins.json", false, time.Duration(1000)*time.Second)
-	_          webhook.Validator = &Jenkins{}
+	jenkinslog                                                = logf.Log.WithName("jenkins-resource") // log is for logging in this package.
+	SecValidator                                              = *NewSecurityValidator()
+	_                                       webhook.Validator = &Jenkins{}
+	initialSecurityWarningsDownloadSucceded                   = false
 )
 
-const Hosturl = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
+const (
+	Hosturl                 = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
+	CompressedFilePath      = "/tmp/plugins.json.gzip"
+	PluginDataFile          = "/tmp/plugins.json"
+	shortenedCheckingPeriod = 1 * time.Hour
+	defaultCheckingPeriod   = 12 * time.Minute
+)
 
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(in).
 		Complete()
 }
-
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
 // +kubebuilder:webhook:path=/validate-jenkins-io-jenkins-io-v1alpha2-jenkins,mutating=false,failurePolicy=fail,sideEffects=None,groups=jenkins.io.jenkins.io,resources=jenkins,verbs=create;update,versions=v1alpha2,name=vjenkins.kb.io,admissionReviewVersions={v1,v1beta1}
@@ -79,14 +84,11 @@ func (in *Jenkins) ValidateDelete() error {
 	return nil
 }
 
-type PluginDataManager struct {
-	PluginDataCache    PluginsInfo
-	Timeout            time.Duration
-	CompressedFilePath string
-	PluginDataFile     string
-	IsCached           bool
-	Attempts           int
-	SleepTime          time.Duration
+type SecurityValidator struct {
+	PluginDataCache PluginsInfo
+	isCached        bool
+	Attempts        int
+	checkingPeriod  time.Duration
 }
 
 type PluginsInfo struct {
@@ -118,7 +120,7 @@ type PluginData struct {
 
 // Validates security warnings for both updating and creating a Jenkins CR
 func Validate(r Jenkins) error {
-	if !PluginsMgr.IsCached {
+	if !SecValidator.isCached {
 		return errors.New("plugins data has not been fetched")
 	}
 
@@ -140,7 +142,7 @@ func Validate(r Jenkins) error {
 		}
 	}
 
-	for _, plugin := range PluginsMgr.PluginDataCache.Plugins {
+	for _, plugin := range SecValidator.PluginDataCache.Plugins {
 		if pluginData, ispresent := pluginSet[plugin.Name]; ispresent {
 			var hasVulnerabilities bool
 			for _, warning := range plugin.SecurityWarnings {
@@ -184,44 +186,42 @@ func Validate(r Jenkins) error {
 	return nil
 }
 
-func NewPluginsDataManager(compressedFilePath string, pluginDataFile string, isCached bool, timeout time.Duration) *PluginDataManager {
-	return &PluginDataManager{
-		CompressedFilePath: compressedFilePath,
-		PluginDataFile:     pluginDataFile,
-		IsCached:           isCached,
-		Timeout:            timeout,
+// NewMonitor creates a new worker and instantiates all the data structures required.
+func NewSecurityValidator() *SecurityValidator {
+	return &SecurityValidator{
+		isCached:       false,
+		Attempts:       0,
+		checkingPeriod: shortenedCheckingPeriod,
 	}
 }
 
-func (in *PluginDataManager) ManagePluginData(sig chan bool) {
-	var isInit bool
-	var retryInterval time.Duration
+func (in *SecurityValidator) MonitorSecurityWarnings(securityWarningsFetched chan bool) {
+	jenkinslog.Info("Security warnings check: enabled\n")
 	for {
-		var isCached bool
-		err := in.fetchPluginData()
-		if err == nil {
-			isCached = true
-		} else {
-			jenkinslog.Info("Cache plugin data", "failed to fetch plugin data", err)
-		}
-		// should only be executed once when the operator starts
-		if !isInit {
-			sig <- isCached // sending signal to main to continue
-			isInit = true
-		}
+		in.checkForSecurityVulnerabilities(securityWarningsFetched)
+		<-time.After(in.checkingPeriod)
+	}
+}
 
-		in.IsCached = in.IsCached || isCached
-		if !isCached {
-			retryInterval = time.Duration(1) * time.Hour
-		} else {
-			retryInterval = time.Duration(12) * time.Hour
-		}
-		time.Sleep(retryInterval)
+func (in *SecurityValidator) checkForSecurityVulnerabilities(securityWarningsFetched chan bool) {
+	err := in.fetchPluginData()
+	if err != nil {
+		jenkinslog.Info("Cache plugin data", "failed to fetch plugin data", err)
+		in.checkingPeriod = shortenedCheckingPeriod
+		return
+	}
+	in.isCached = true
+	in.checkingPeriod = defaultCheckingPeriod
+
+	// should only be executed once when the operator starts
+	if !initialSecurityWarningsDownloadSucceded {
+		securityWarningsFetched <- in.isCached
+		initialSecurityWarningsDownloadSucceded = true
 	}
 }
 
 // Downloads extracts and reads the JSON data in every 12 hours
-func (in *PluginDataManager) fetchPluginData() error {
+func (in *SecurityValidator) fetchPluginData() error {
 	jenkinslog.Info("Initializing/Updating the plugin data cache")
 	var err error
 	for in.Attempts = 0; in.Attempts < 5; in.Attempts++ {
@@ -262,29 +262,36 @@ func (in *PluginDataManager) fetchPluginData() error {
 	return err
 }
 
-func (in *PluginDataManager) download() error {
-	out, err := os.Create(in.CompressedFilePath)
+func (in *SecurityValidator) download() error {
+	out, err := os.Create(CompressedFilePath)
 	if err != nil {
 		return err
 	}
 	defer out.Close()
 
-	client := http.Client{
-		Timeout: in.Timeout,
-	}
-
-	resp, err := client.Get(Hosturl)
+	req, err := http.NewRequest(http.MethodGet, Hosturl, nil)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	req.Header.Set("Content-Type", "application/json")
 
-	_, err = io.Copy(out, resp.Body)
+	Client := http.Client{
+		Timeout: 1 * time.Minute,
+	}
+
+	response, err := Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer response.Body.Close()
+
+	_, err = io.Copy(out, response.Body)
 	return err
 }
 
-func (in *PluginDataManager) extract() error {
-	reader, err := os.Open(in.CompressedFilePath)
+func (in *SecurityValidator) extract() error {
+	reader, err := os.Open(CompressedFilePath)
 
 	if err != nil {
 		return err
@@ -296,7 +303,7 @@ func (in *PluginDataManager) extract() error {
 	}
 
 	defer archive.Close()
-	writer, err := os.Create(in.PluginDataFile)
+	writer, err := os.Create(PluginDataFile)
 	if err != nil {
 		return err
 	}
@@ -307,8 +314,8 @@ func (in *PluginDataManager) extract() error {
 }
 
 // Loads the JSON data into memory and stores it
-func (in *PluginDataManager) cache() error {
-	jsonFile, err := os.Open(in.PluginDataFile)
+func (in *SecurityValidator) cache() error {
+	jsonFile, err := os.Open(PluginDataFile)
 	if err != nil {
 		return err
 	}

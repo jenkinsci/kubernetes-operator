@@ -112,10 +112,10 @@ func main() {
 	logger.Info(fmt.Sprintf("Watch namespace: %v", namespace))
 
 	if validateSecurityWarnings {
-		isInitialized := make(chan bool)
-		go v1alpha2.PluginsMgr.ManagePluginData(isInitialized)
+		securityWarningsFetched := make(chan bool)
+		go v1alpha2.SecValidator.MonitorSecurityWarnings(securityWarningsFetched)
 
-		if !<-isInitialized {
+		if !<-securityWarningsFetched {
 			logger.Info("Unable to get the plugins data")
 		}
 	}
