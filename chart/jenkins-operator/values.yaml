@@ -219,7 +219,7 @@ jenkins:
         cpu: 1000m
         memory: 2Gi
       requests:
-        cpu: 600m
+        cpu: 100m
         memory: 500Mi
 
     # env contains container environment variables
