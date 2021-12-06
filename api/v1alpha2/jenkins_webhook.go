@@ -186,7 +186,7 @@ func Validate(r Jenkins) error {
 	return nil
 }
 
-// NewMonitor creates a new worker and instantiates all the data structures required.
+// NewMonitor creates a new worker and instantiates all the data structures required
 func NewSecurityValidator() *SecurityValidator {
 	return &SecurityValidator{
 		isCached:       false,
