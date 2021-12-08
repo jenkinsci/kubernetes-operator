@@ -2,7 +2,7 @@
 title: "Configuring Seed Jobs and Pipelines"
 linkTitle: "Configuring Seed Jobs and Pipelines"
 weight: 4
-date: 2021-08-19
+date: 2021-12-08
 description: >
   How to configure Jenkins with Operator
 ---

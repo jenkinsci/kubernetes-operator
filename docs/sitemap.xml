@@ -3,22 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/installing-the-operator/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/</loc>
     <lastmod>2021-10-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</loc>
-    <lastmod>2021-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/</loc>
-    <lastmod>2021-08-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</loc>
     <lastmod>2021-08-19T00:00:00+00:00</lastmod>
   </url>
   
@@ -49,7 +59,12 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/</loc>
-    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/deploying-jenkins/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -89,7 +104,12 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/</loc>
-    <lastmod>2021-11-08T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/customizing-jenkins/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -128,13 +148,18 @@
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/</loc>
-    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/</loc>
-    <lastmod>2021-08-19T00:00:00+00:00</lastmod>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-seed-jobs-and-pipelines/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/</loc>
+    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -143,13 +168,18 @@
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/</loc>
-    <lastmod>2021-10-20T00:00:00+00:00</lastmod>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/</loc>
-    <lastmod>2021-08-19T00:00:00+00:00</lastmod>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/configuring-backup-and-restore/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/</loc>
+    <lastmod>2021-10-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -159,7 +189,12 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/</loc>
-    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/separate-namespaces/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -174,22 +209,42 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</loc>
-    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/custom-backup-and-restore/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</loc>
-    <lastmod>2021-10-06T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/aks/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/</loc>
-    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/ldap/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/openshift/</loc>
-    <lastmod>2021-08-19T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/openshift/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -294,7 +349,12 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</loc>
-    <lastmod>2021-08-20T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/schema/</loc>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -379,7 +439,7 @@
   
   <url>
     <loc>https://jenkinsci.github.io/kubernetes-operator/</loc>
-    <lastmod>2021-11-08T00:00:00+00:00</lastmod>
+    <lastmod>2021-12-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
