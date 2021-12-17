@@ -99,7 +99,7 @@ spec:
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}
     {{- if .Values.jenkins.priorityClassName }}
-    priorityClassName: {{- .Values.jenkins.priorityClassName }}
+    priorityClassName: {{ .Values.jenkins.priorityClassName }}
     {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
