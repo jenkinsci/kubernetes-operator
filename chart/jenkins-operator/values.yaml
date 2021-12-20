@@ -59,6 +59,11 @@ jenkins:
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/ for more info
   notifications: []
 
+  # Enables customization of the Service Account attached to the master Jenkins instance via annotations
+  # https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ServiceAccount
+  serviceAccount:
+    annotations: {}
+
   # basePlugins are plugins installed and required by the operator
   # Shouldn't contain plugins defined by user
   # You can change their versions here
