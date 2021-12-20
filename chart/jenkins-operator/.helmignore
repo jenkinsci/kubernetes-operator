@@ -20,3 +20,7 @@
 .idea/
 *.tmproj
 .vscode/
+
+# Ignore packaged charts
+jenkins-operator-*.tgz
+
