@@ -95,9 +95,9 @@ e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
 
 .PHONY: helm-e2e
-IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)
+IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)-amd64
 
-helm-e2e: helm container-runtime-build ## Runs helm e2e tests, you can use EXTRA_ARGS
+helm-e2e: helm container-runtime-build-amd64 ## Runs helm e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
 
@@ -207,46 +207,56 @@ endif
 container-runtime-login: ## Log in into the Docker repository
 	@echo "+ $@"
 
-.PHONY: container-runtime-build
-container-runtime-build: check-env deepcopy-gen ## Build the container
+.PHONY: container-runtime-build-%
+container-runtime-build-%: ## Build the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) build \
-	--build-arg GO_VERSION=$(GO_VERSION) \
-	--build-arg CTIMEVAR="$(CTIMEVAR)" \
-	-t $(DOCKER_REGISTRY):$(GITCOMMIT) . \
-	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) buildx build \
+		--output=type=docker --platform linux/$* \
+		--build-arg GO_VERSION=$(GO_VERSION) \
+		--build-arg CTIMEVAR="$(CTIMEVAR)" \
+		--tag $(DOCKER_REGISTRY):$(GITCOMMIT)-$* . \
+		--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+
+.PHONY: container-runtime-build
+container-runtime-build: check-env deepcopy-gen container-runtime-build-amd64 container-runtime-build-arm64
 
 .PHONY: container-runtime-images
 container-runtime-images: ## List all local containers
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) images $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
+## Parameter is version
+define container-runtime-push-command
+$(CONTAINER_RUNTIME_COMMAND) buildx build \
+	--output=type=registry --platform linux/amd64,linux/arm64 \
+	--build-arg GO_VERSION=$(GO_VERSION) \
+	--build-arg CTIMEVAR="$(CTIMEVAR)" \
+	--tag $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(1) . \
+	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+endef
+
 .PHONY: container-runtime-push
-container-runtime-push: ## Push the container
+container-runtime-push: check-env deepcopy-gen ## Push the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call container-runtime-push-command,$(BUILD_TAG))
 
 .PHONY: container-runtime-snapshot-push
-container-runtime-snapshot-push: container-runtime-build
+container-runtime-snapshot-push: check-env deepcopy-gen
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call container-runtime-push-command,$(GITCOMMIT))
 
 .PHONY: container-runtime-release-version
-container-runtime-release-version: ## Release image with version tag (in addition to build tag)
+container-runtime-release-version: check-env deepcopy-gen ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call container-runtime-push-command,$(VERSION_TAG))
 
 .PHONY: container-runtime-release-latest
-container-runtime-release-latest: ## Release image with latest tags (in addition to build tag)
+container-runtime-release-latest: check-env deepcopy-gen ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call container-runtime-push-command,$(LATEST_TAG))
 
 .PHONY: container-runtime-release
-container-runtime-release: container-runtime-build container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
+container-runtime-release: container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
 	@echo "+ $@"
 
 # if this session isn't interactive, then we don't want to allocate a
@@ -528,6 +538,6 @@ uninstall-cert-manager: minikube-start
 	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
 	
 # Deploy the operator locally along with webhook using helm charts
-deploy-webhook: container-runtime-build  
+deploy-webhook: container-runtime-build-amd64
 	@echo "+ $@"
 	bin/helm upgrade jenkins chart/jenkins-operator --install --set-string operator.image=${IMAGE_NAME} --set webhook.enabled=true --set jenkins.enabled=false
