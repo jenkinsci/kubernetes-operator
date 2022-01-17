@@ -24,7 +24,7 @@ var (
 	// NamePattern is the plugin name regex pattern
 	NamePattern = regexp.MustCompile(`^[0-9a-zA-Z-_]+$`)
 	// VersionPattern is the plugin version regex pattern
-	VersionPattern = regexp.MustCompile(`^[0-9a-zA-Z+\\.-]+$`)
+	VersionPattern = regexp.MustCompile(`^[0-9a-zA-Z+\\.-_]+$`)
 	// DownloadURLPattern is the plugin download url regex pattern
 	DownloadURLPattern = regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
 )
