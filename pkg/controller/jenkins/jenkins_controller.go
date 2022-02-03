@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 	"time"
+	"strconv"
 
 	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -445,6 +446,19 @@ func (r *ReconcileJenkins) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool,
 		logger.Info("Setting default Agent image: " + constants.DefaultJenkinsAgentImage)
 		changed = true
 		jenkins.Spec.SeedAgent.Image = constants.DefaultJenkinsAgentImage
+	}
+
+	if len(jenkins.Spec.SeedJobs) > 0 && jenkins.Spec.SeedAgent.NumExecutors == 0 {
+		logger.Info("Setting default number of executors for SeedAgent: " + strconv.Itoa(constants.DefaultNumberOfExecutors))
+		changed = true
+		jenkins.Spec.SeedAgent.NumExecutors = constants.DefaultNumberOfExecutors
+	}
+	
+	if len(jenkins.Spec.SeedJobs) > 0 && len(jenkins.Spec.SeedAgent.Labels) == 0 {
+			logger.Info("Setting default labels for SeedAgent: " + constants.DefaultJenkinsAgentLabels)
+			changed = true
+			jenkins.Spec.SeedAgent.Labels = constants.DefaultJenkinsAgentLabels
+
 	}
 
 	if changed {

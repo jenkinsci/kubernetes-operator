@@ -17,4 +17,8 @@ const (
 	JavaOpsVariableName = "JAVA_OPTS"
 	// DefaultJenkinsAgentImage is the default Jenkins agent docker image
 	DefaultJenkinsAgentImage = "jenkins/inbound-agent:latest"
+	//DefaultNumberOfExecutors is the default number of SeedAgent executors
+	DefaultNumberOfExecutors = 5
+	//DefaultJenkinsAgentLabels is the default labels for SeedAgent
+	DefaultJenkinsAgentLabels = "seed-job-agent"
 )

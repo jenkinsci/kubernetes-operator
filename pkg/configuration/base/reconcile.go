@@ -282,16 +282,22 @@ func CompareContainerVolumeMounts(expected corev1.Container, actual corev1.Conta
 
 // compareVolumes returns true if Jenkins pod and Jenkins CR volumes are the same
 func (r *ReconcileJenkinsBaseConfiguration) compareVolumes(actualPod corev1.Pod) bool {
-	var withoutServiceAccount []corev1.Volume
+	var toCompare []corev1.Volume
 	for _, volume := range actualPod.Spec.Volumes {
-		if !strings.HasPrefix(volume.Name, actualPod.Spec.ServiceAccountName) {
-			withoutServiceAccount = append(withoutServiceAccount, volume)
+		if strings.HasPrefix(volume.Name, actualPod.Spec.ServiceAccountName) {
+			continue
 		}
+		// hotfix for k8s 1.21 - filter out kube-api-access-<random-suffix>
+		const kubeAPIAccessPrefix = "kube-api-access-"
+		if strings.HasPrefix(volume.Name, kubeAPIAccessPrefix) {
+			continue
+		}
+		toCompare = append(toCompare, volume)
 	}
 
 	return reflect.DeepEqual(
 		append(resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Master.Volumes...),
-		withoutServiceAccount,
+		toCompare,
 	)
 }
 

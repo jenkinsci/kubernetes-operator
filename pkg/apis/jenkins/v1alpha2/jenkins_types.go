@@ -544,6 +544,10 @@ var AllowedJenkinsCredentialMap = map[string]string{
 type SeedAgent struct {
 	// More info: https://kubernetes.io/docs/concepts/containers/images
 	Image string `json:"image"`
+	// Number of exectors for SeedAgent
+	NumExecutors int `json:"numExecutors"`
+	// Labels for SeedAgent
+	Labels string `json:"labels"`
 }
 
 // SeedJob defines configuration for seed job

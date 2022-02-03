@@ -156,7 +156,7 @@ type SeedJobs interface {
 	credentialValue(namespace string, seedJob v1alpha2.SeedJob) (string, error)
 	getAllSeedJobIDs(jenkins v1alpha2.Jenkins) []string
 	isRecreatePodNeeded(jenkins v1alpha2.Jenkins) bool
-	createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string) error
+	createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string, numExecutors int, labels string) error
 	ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error)
 	validateSchedule(job v1alpha2.SeedJob, str string, key string) []string
 	validateGitHubPushTrigger(jenkins v1alpha2.Jenkins) []string
@@ -193,11 +193,14 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	}
 
 	if len(jenkins.Spec.SeedJobs) > 0 {
-		err := s.createAgent(s.jenkinsClient, s.Client, jenkins, jenkins.Namespace, AgentName)
+		err := s.createAgent(s.jenkinsClient, s.Client, jenkins, jenkins.Namespace, AgentName, jenkins.Spec.SeedAgent.NumExecutors, jenkins.Spec.SeedAgent.Labels)
 		if err != nil {
 			return false, err
 		}
-
+		message := "AgentName: " + AgentName
+		label := "Labels: " + jenkins.Spec.SeedAgent.Labels
+		s.logger.Info(message)
+		s.logger.Info(label)
 		requeue, err := s.waitForSeedJobAgent(AgentName)
 		if err != nil {
 			return false, err
@@ -357,12 +360,13 @@ func (s *seedJobs) isRecreatePodNeeded(jenkins v1alpha2.Jenkins) bool {
 }
 
 // createAgent deploys Jenkins agent to Kubernetes cluster
-func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string) error {
+func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string, numExecutors int, labels string) error {
 	_, err := jenkinsClient.GetNode(agentName)
-
+	message := agentName
+	s.logger.Info(message)
 	// Create node if not exists
 	if err != nil && err.Error() == "No node found" {
-		_, err = jenkinsClient.CreateNode(agentName, 5, "The jenkins-operator generated agent", "/home/jenkins", agentName)
+		_, err = jenkinsClient.CreateNode(agentName, numExecutors, "The jenkins-operator generated agent", "/home/jenkins", labels)
 		if err != nil {
 			return stackerr.WithStack(err)
 		}

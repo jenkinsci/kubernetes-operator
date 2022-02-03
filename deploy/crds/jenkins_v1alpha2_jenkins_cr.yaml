@@ -6,7 +6,89 @@ spec:
   master:
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:lts
+      image: jenkins/jenkins:2.263.4
+      basePlugins:
+        - name: kubernetes
+          version: 1.29.2
+        - name: workflow-job
+          version: "2.40"
+        - name: workflow-aggregator
+          version: "2.6"
+        - name: git
+          version: 4.4.5
+        - name: job-dsl
+          version: "1.77"
+        - name: configuration-as-code
+          version: "1.47"
+        - name: kubernetes-credentials-provider
+          version: "0.15"
+        - name: analysis-core
+          version: "1.96"
+          downloadURL: 'http://mirrors.jenkins-ci.org/plugins/analysis-core/1.96/analysis-core.hpi'
+      plugins:
+        - name: simple-theme-plugin
+          version: "0.6"
+        - name: bitbucket
+          version: "1.1.27"
+        - name: workflow-cps-global-lib
+          version: "2.17"
+        - name: timestamper
+          version: "1.11.8"
+        - name: cloudbees-bitbucket-branch-source
+          version: "2.9.4"
+        - name: sonar
+          version: "2.12"
+        - name: groovy-events-listener-plugin
+          version: "1.014"
+          downloadURL: "https://updates.jenkins.io/download/plugins/groovy-events-listener-plugin/1.014/groovy-events-listener-plugin.hpi"
+        - name: config-file-provider
+          version: "3.7.0"
+        - name: pipeline-utility-steps
+          version: "2.6.1"
+        - name: warnings-ng
+          version: "8.4.4"
+        - name: email-ext
+          version: "2.82"
+        - name: warnings
+          version: "5.0.2"
+        - name: robot
+          version: "2.2.0"
+        - name: htmlpublisher
+          version: "1.23"
+        - name: copyartifact
+          version: "1.45.2"
+        - name: whitesource
+          version: "20.9.2"
+        - name: ssh-slaves
+          version: "1.31.2"
+        - name: docker-workflow
+          version: '1.23'
+        - name: crowd2
+          version: '2.0.2'
+        - name: matrix-auth
+          version: '2.6.4'
+        - name: prometheus
+          version: '2.0.7'
+        - name: basic-branch-build-strategies
+          version: '1.3.2'
+        - name: repository-connector
+          version: '2.0.2'
+        - name: stashNotifier
+          version: '1.20'
+        - name: antisamy-markup-formatter
+          version: '2.1'
+        - name: parameterized-scheduler
+          version: '0.9.2'
+        - name: throttle-concurrents
+          version: '2.1'
+        - name: jira
+          version: '3.2'
+        - name: jira-steps
+          version: '1.6.0'
+        - name: strict-crumb-issuer
+          version: '2.1.0'
+        - name: ssh-agent
+          version: '1.21'
       imagePullPolicy: Always
       livenessProbe:
         failureThreshold: 12
@@ -37,6 +119,8 @@ spec:
           memory: 500Mi
   seedAgent:
     image: jenkins/inbound-agent:latest
+    labels: "docker flyweight docker docker32G"
+    numExecutors: 50
   seedJobs:
   - id: jenkins-operator
     targets: "cicd/jobs/*.jenkins"
