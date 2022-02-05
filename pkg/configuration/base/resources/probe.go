@@ -5,7 +5,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-func NewSimpleProbe(uri string, port string, scheme corev1.URIScheme, initialDelaySeconds int32) *corev1.Probe {
+func NewProbe(uri string, port string, scheme corev1.URIScheme, initialDelaySeconds, timeoutSeconds, failureThreshold int32) *corev1.Probe {
 	return &corev1.Probe{
 		Handler: corev1.Handler{
 			HTTPGet: &corev1.HTTPGetAction{
@@ -15,12 +15,9 @@ func NewSimpleProbe(uri string, port string, scheme corev1.URIScheme, initialDel
 			},
 		},
 		InitialDelaySeconds: initialDelaySeconds,
+		TimeoutSeconds:      timeoutSeconds,
+		FailureThreshold:    failureThreshold,
+		SuccessThreshold:    int32(1),
+		PeriodSeconds:       int32(1),
 	}
-}
-
-func NewProbe(uri string, port string, scheme corev1.URIScheme, initialDelaySeconds, timeoutSeconds, failureThreshold int32) *corev1.Probe {
-	p := NewSimpleProbe(uri, port, scheme, initialDelaySeconds)
-	p.TimeoutSeconds = timeoutSeconds
-	p.FailureThreshold = failureThreshold
-	return p
 }

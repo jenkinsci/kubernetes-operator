@@ -7,7 +7,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) compareContainers(expected corev1.Container, actual corev1.Container) (messages []string, verbose []string) {
+func (r *JenkinsBaseConfigurationReconciler) compareContainers(expected corev1.Container, actual corev1.Container) (messages []string, verbose []string) {
 	if !reflect.DeepEqual(expected.Args, actual.Args) {
 		messages = append(messages, "Arguments have changed")
 		verbose = append(verbose, fmt.Sprintf("Arguments have changed to '%+v' in container '%s'", expected.Args, expected.Name))

@@ -1,100 +1,15 @@
----
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: jenkins-operator
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - services
-      - configmaps
-      - secrets
-    verbs:
-      - get
-      - create
-      - update
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-      - daemonsets
-      - replicasets
-      - statefulsets
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-    verbs:
-      - get
-      - create
-      - update
-      - list
-      - watch
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - roles
-      - rolebindings
-    verbs:
-      - get
-      - create
-      - update
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - pods/portforward
-    verbs:
-      - create
-  - apiGroups:
-      - ""
-    resources:
-      - pods/log
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-      - pods/exec
-    verbs:
-      - "*"
-  - apiGroups:
-      - ""
-    resources:
-      - events
-    verbs:
-      - watch
-      - list
-      - create
-      - patch
-  - apiGroups:
-      - apps
-    resourceNames:
-      - jenkins-operator
-    resources:
-      - deployments/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - jenkins.io
-    resources:
-      - '*'
-    verbs:
-      - '*'
-  - apiGroups:
-      - ""
-    resources:
-      - persistentvolumeclaims
-    verbs:
-      - get
-      - list
-      - watch
+{{ if eq .Values.jenkins.namespace "" }}
+{{- /*
+# This is a special case when .Values.jenkins.namespace is equal to empty
+# string which leads to WATCH_NAMESPACE env of jenkins-operator to be set to
+# empty string and leads to operator actually watching all namespaces. In this
+# case we need to create clusterrole and clusterrolebinding instead of role and
+# rolebinding
+*/ -}}
+  {{- template "jenkins-operator.role" .Values.jenkins.namespace }}
+{{ else }}
+  {{- template "jenkins-operator.role" .Release.Namespace }}
+  {{- if ne .Release.Namespace .Values.jenkins.namespace -}}
+    {{- template "jenkins-operator.role" .Values.jenkins.namespace }}
+  {{- end }}
+{{ end }}

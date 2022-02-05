@@ -1,0 +1,20 @@
+# permissions for end users to view jenkins.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-viewer-role
+rules:
+- apiGroups:
+  - jenkins.io
+  resources:
+  - jenkins
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - jenkins.io
+  resources:
+  - jenkins/status
+  verbs:
+  - get

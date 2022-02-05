@@ -2,14 +2,14 @@ package seedjobs
 
 import (
 	"context"
-	"crypto/x509"
-	"encoding/pem"
 	"fmt"
 	"strings"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+
 	stackerr "github.com/pkg/errors"
 	"github.com/robfig/cron"
+	"golang.org/x/crypto/ssh"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -55,8 +55,7 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 		}
 
 		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType ||
-			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType ||
-			seedJob.JenkinsCredentialType == v1alpha2.ExternalCredentialType {
+			seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
 			secret := &v1.Secret{}
 			namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: seedJob.CredentialID}
 			err := s.Client.Get(context.TODO(), namespaceName, secret)
@@ -221,19 +220,9 @@ func validateUsernamePasswordSecret(secret v1.Secret) []string {
 }
 
 func validatePrivateKey(privateKey string) error {
-	block, _ := pem.Decode([]byte(privateKey))
-	if block == nil {
-		return stackerr.New("failed to decode PEM block")
-	}
-
-	priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	_, err := ssh.ParseRawPrivateKey([]byte(privateKey))
 	if err != nil {
-		return stackerr.WithStack(err)
-	}
-
-	err = priv.Validate()
-	if err != nil {
-		return stackerr.WithStack(err)
+		return stackerr.Wrap(err, "failed to decode key")
 	}
 
 	return nil

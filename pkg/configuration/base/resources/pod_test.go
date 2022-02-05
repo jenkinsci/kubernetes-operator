@@ -3,7 +3,8 @@ package resources
 import (
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+
 	"github.com/stretchr/testify/assert"
 )
 

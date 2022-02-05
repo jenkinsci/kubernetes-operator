@@ -3,10 +3,9 @@ package configuration
 import (
 	"bytes"
 	"context"
-	"strings"
 	"time"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
@@ -36,6 +35,7 @@ type Configuration struct {
 	Scheme                       *runtime.Scheme
 	Config                       *rest.Config
 	JenkinsAPIConnectionSettings jenkinsclient.JenkinsAPIConnectionSettings
+	KubernetesClusterDomain      string
 }
 
 // RestartJenkinsMasterPod terminate Jenkins master pod and notifies about it.
@@ -88,7 +88,7 @@ func (c *Configuration) IsJenkinsTerminating(pod corev1.Pod) bool {
 
 // CreateResource is creating kubernetes resource and references it to Jenkins CR
 func (c *Configuration) CreateResource(obj metav1.Object) error {
-	runtimeObj, ok := obj.(runtime.Object)
+	clientObj, ok := obj.(client.Object)
 	if !ok {
 		return stackerr.Errorf("is not a %T a runtime.Object", obj)
 	}
@@ -98,25 +98,25 @@ func (c *Configuration) CreateResource(obj metav1.Object) error {
 		return stackerr.WithStack(err)
 	}
 
-	return c.Client.Create(context.TODO(), runtimeObj) // don't wrap error
+	return c.Client.Create(context.TODO(), clientObj) // don't wrap error
 }
 
 // UpdateResource is updating kubernetes resource and references it to Jenkins CR.
 func (c *Configuration) UpdateResource(obj metav1.Object) error {
-	runtimeObj, ok := obj.(runtime.Object)
+	clientObj, ok := obj.(client.Object)
 	if !ok {
 		return stackerr.Errorf("is not a %T a runtime.Object", obj)
 	}
 
-	// set Jenkins instance as the owner and controller, don't check error(can be already set)
+	// set Jenkins instance as the owner and controller, don't check errors(can be already set)
 	_ = controllerutil.SetControllerReference(c.Jenkins, obj, c.Scheme)
 
-	return c.Client.Update(context.TODO(), runtimeObj) // don't wrap error
+	return c.Client.Update(context.TODO(), clientObj) // don't wrap error
 }
 
 // CreateOrUpdateResource is creating or updating kubernetes resource and references it to Jenkins CR.
 func (c *Configuration) CreateOrUpdateResource(obj metav1.Object) error {
-	runtimeObj, ok := obj.(runtime.Object)
+	clientObj, ok := obj.(client.Object)
 	if !ok {
 		return stackerr.Errorf("is not a %T a runtime.Object", obj)
 	}
@@ -124,7 +124,7 @@ func (c *Configuration) CreateOrUpdateResource(obj metav1.Object) error {
 	// set Jenkins instance as the owner and controller, don't check error(can be already set)
 	_ = controllerutil.SetControllerReference(c.Jenkins, obj, c.Scheme)
 
-	err := c.Client.Create(context.TODO(), runtimeObj)
+	err := c.Client.Create(context.TODO(), clientObj)
 	if err != nil && errors.IsAlreadyExists(err) {
 		return c.UpdateResource(obj)
 	} else if err != nil && !errors.IsAlreadyExists(err) {
@@ -201,7 +201,7 @@ func (c *Configuration) getJenkinsAPIUrl() (string, error) {
 		return "", err
 	}
 	jenkinsURL := c.JenkinsAPIConnectionSettings.BuildJenkinsAPIUrl(service.Name, service.Namespace, service.Spec.Ports[0].Port, service.Spec.Ports[0].NodePort)
-	if prefix, ok := GetJenkinsOpts(*c.Jenkins)["prefix"]; ok {
+	if prefix, ok := resources.GetJenkinsOpts(*c.Jenkins)["prefix"]; ok {
 		jenkinsURL += prefix
 	}
 	return jenkinsURL, nil
@@ -276,30 +276,4 @@ func (c *Configuration) GetJenkinsClientFromSecret() (jenkinsclient.Jenkins, err
 		jenkinsURL,
 		string(credentialsSecret.Data[resources.OperatorCredentialsSecretUserNameKey]),
 		string(credentialsSecret.Data[resources.OperatorCredentialsSecretTokenKey]))
-}
-
-// GetJenkinsOpts gets JENKINS_OPTS env parameter, parses it's values and returns it as a map`
-func GetJenkinsOpts(jenkins v1alpha2.Jenkins) map[string]string {
-	envs := jenkins.Spec.Master.Containers[0].Env
-	jenkinsOpts := make(map[string]string)
-
-	for key, value := range envs {
-		if value.Name == "JENKINS_OPTS" {
-			jenkinsOptsEnv := envs[key]
-			jenkinsOptsWithDashes := jenkinsOptsEnv.Value
-			if len(jenkinsOptsWithDashes) == 0 {
-				return nil
-			}
-
-			jenkinsOptsWithEqOperators := strings.Split(jenkinsOptsWithDashes, " ")
-
-			for _, vx := range jenkinsOptsWithEqOperators {
-				opt := strings.Split(vx, "=")
-				jenkinsOpts[strings.ReplaceAll(opt[0], "--", "")] = opt[1]
-			}
-
-			return jenkinsOpts
-		}
-	}
-	return nil
 }

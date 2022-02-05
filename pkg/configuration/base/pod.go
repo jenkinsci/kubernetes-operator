@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/backuprestore"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
-	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 	"github.com/jenkinsci/kubernetes-operator/version"
@@ -20,7 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkinsMasterPod corev1.Pod, userAndPasswordHash string) reason.Reason {
+func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkinsMasterPod corev1.Pod, userAndPasswordHash string) reason.Reason {
 	var messages []string
 	var verbose []string
 
@@ -52,7 +51,14 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 			r.Configuration.Jenkins.Status.OperatorVersion, version.Version))
 	}
 
-	if !reflect.DeepEqual(r.Configuration.Jenkins.Spec.Master.SecurityContext, currentJenkinsMasterPod.Spec.SecurityContext) {
+	//FIXME too hacky
+	var jenkinsSecurityContext *corev1.PodSecurityContext
+	if r.Configuration.Jenkins.Spec.Master.SecurityContext == nil {
+		jenkinsSecurityContext = &corev1.PodSecurityContext{}
+	} else {
+		jenkinsSecurityContext = r.Configuration.Jenkins.Spec.Master.SecurityContext
+	}
+	if !reflect.DeepEqual(jenkinsSecurityContext, currentJenkinsMasterPod.Spec.SecurityContext) {
 		messages = append(messages, "Jenkins pod security context has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod security context has changed, actual '%+v' required '%+v'",
 			currentJenkinsMasterPod.Spec.SecurityContext, r.Configuration.Jenkins.Spec.Master.SecurityContext))
@@ -140,7 +146,7 @@ func (r *ReconcileJenkinsBaseConfiguration) checkForPodRecreation(currentJenkins
 	return reason.NewPodRestart(reason.OperatorSource, messages, verbose...)
 }
 
-func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.ObjectMeta) (reconcile.Result, error) {
+func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.ObjectMeta) (reconcile.Result, error) {
 	userAndPasswordHash, err := r.calculateUserAndPasswordHash()
 	if err != nil {
 		return reconcile.Result{}, err
@@ -162,13 +168,6 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 			return reconcile.Result{}, stackerr.WithStack(err)
 		}
 
-		currentJenkinsMasterPod, err := r.waitUntilCreateJenkinsMasterPod()
-		if err == nil {
-			r.handleAdmissionControllerChanges(currentJenkinsMasterPod)
-		} else {
-			r.logger.V(log.VWarn).Info(fmt.Sprintf("waitUntilCreateJenkinsMasterPod has failed: %s", err))
-		}
-
 		now := metav1.Now()
 		r.Configuration.Jenkins.Status = v1alpha2.JenkinsStatus{
 			OperatorVersion:     version.Version,
@@ -177,7 +176,7 @@ func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsMasterPod(meta metav1.O
 			PendingBackup:       r.Configuration.Jenkins.Status.LastBackup,
 			UserAndPasswordHash: userAndPasswordHash,
 		}
-		return reconcile.Result{Requeue: true}, r.Client.Update(context.TODO(), r.Configuration.Jenkins)
+		return reconcile.Result{Requeue: true}, r.Client.Status().Update(context.TODO(), r.Configuration.Jenkins)
 	} else if err != nil && !apierrors.IsNotFound(err) {
 		return reconcile.Result{}, stackerr.WithStack(err)
 	}

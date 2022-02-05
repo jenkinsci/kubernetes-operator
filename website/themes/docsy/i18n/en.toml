@@ -22,6 +22,11 @@ other = "in"
 [footer_all_rights_reserved]
 other = "All Rights Reserved"
 
+[footer_vl_license]
+other = "Jenkins Operator is created by VirtusLab. Source is available under Apache License Version 2 and website content under Creative Commons Attribution-ShareAlike 4.0."
+[footer_according_to_trademark]
+other = "Jenkins® is a registered trademark of Software in the Public Interest, Inc."
+
 [footer_privacy_policy]
 other = "Privacy Policy"
 

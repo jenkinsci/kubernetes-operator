@@ -2,8 +2,9 @@ package resources
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	corev1 "k8s.io/api/core/v1"
@@ -14,9 +15,9 @@ const (
 	// JenkinsMasterContainerName is the Jenkins master container name in pod
 	JenkinsMasterContainerName = "jenkins-master"
 	// JenkinsHomeVolumeName is the Jenkins home volume name
-	JenkinsHomeVolumeName = "jenkins-home"
-	jenkinsPath           = "/var/jenkins"
-
+	JenkinsHomeVolumeName    = "jenkins-home"
+	jenkinsPath              = "/var/jenkins"
+	httpGetPath              = "/login"
 	jenkinsScriptsVolumeName = "scripts"
 	// JenkinsScriptsVolumePath is a path where are scripts used to configure Jenkins
 	JenkinsScriptsVolumePath = jenkinsPath + "/scripts"
@@ -233,6 +234,8 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 		envs = append(envs, jenkinsHomeEnvVar)
 	}
 
+	setLivenessAndReadinessPath(jenkins)
+
 	return corev1.Container{
 		Name:            JenkinsMasterContainerName,
 		Image:           jenkinsContainer.Image,
@@ -254,9 +257,57 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 		},
 		SecurityContext: jenkinsContainer.SecurityContext,
 		Env:             envs,
+		EnvFrom:         jenkinsContainer.EnvFrom,
 		Resources:       jenkinsContainer.Resources,
 		VolumeMounts:    append(GetJenkinsMasterContainerBaseVolumeMounts(jenkins), jenkinsContainer.VolumeMounts...),
 	}
+}
+
+func setLivenessAndReadinessPath(jenkins *v1alpha2.Jenkins) {
+	ReadinessProbePath := jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path
+	LivenessProbePath := jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path
+
+	if prefix, ok := GetJenkinsOpts(*jenkins)["prefix"]; ok {
+		if !strings.HasPrefix(ReadinessProbePath, prefix) {
+			jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path = prefix + httpGetPath
+		}
+		if !strings.HasPrefix(LivenessProbePath, prefix) {
+			jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path = prefix + httpGetPath
+		}
+	} else {
+		if ReadinessProbePath != httpGetPath {
+			jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path = httpGetPath
+		}
+		if LivenessProbePath != httpGetPath {
+			jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path = httpGetPath
+		}
+	}
+}
+
+// GetJenkinsOpts gets JENKINS_OPTS env parameter, parses it's values and returns it as a map`
+func GetJenkinsOpts(jenkins v1alpha2.Jenkins) map[string]string {
+	envs := jenkins.Spec.Master.Containers[0].Env
+	jenkinsOpts := make(map[string]string)
+
+	for key, value := range envs {
+		if value.Name == "JENKINS_OPTS" {
+			jenkinsOptsEnv := envs[key]
+			jenkinsOptsWithDashes := jenkinsOptsEnv.Value
+			if len(jenkinsOptsWithDashes) == 0 {
+				return nil
+			}
+
+			jenkinsOptsWithEqOperators := strings.Split(jenkinsOptsWithDashes, " ")
+
+			for _, vx := range jenkinsOptsWithEqOperators {
+				opt := strings.Split(vx, "=")
+				jenkinsOpts[strings.ReplaceAll(opt[0], "--", "")] = opt[1]
+			}
+
+			return jenkinsOpts
+		}
+	}
+	return nil
 }
 
 // ConvertJenkinsContainerToKubernetesContainer converts Jenkins container to Kubernetes container
@@ -329,6 +380,7 @@ func NewJenkinsMasterPod(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins
 			ImagePullSecrets:   jenkins.Spec.Master.ImagePullSecrets,
 			Tolerations:        jenkins.Spec.Master.Tolerations,
 			PriorityClassName:  jenkins.Spec.Master.PriorityClassName,
+			HostAliases:        jenkins.Spec.Master.HostAliases,
 		},
 	}
 }

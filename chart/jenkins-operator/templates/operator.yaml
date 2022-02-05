@@ -30,13 +30,20 @@ spec:
               containerPort: 80
               protocol: TCP
           command:
-            - jenkins-operator
-          args: []
+            - /manager
+          args: 
+          {{- if .Values.webhook.enabled }}
+          - --validate-security-warnings
+          {{- end }}
+          {{- if .Values.webhook.enabled }}
+          volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: webhook-certs
+            readOnly: true
+          {{- end }}
           env:
             - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: {{ .Values.jenkins.namespace }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -56,4 +63,12 @@ spec:
     {{- with .Values.operator.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if .Values.webhook.enabled }}
+      volumes:
+      - name: webhook-certs
+        secret:
+          defaultMode: 420
+          secretName: jenkins-{{ .Values.webhook.certificate.name }}
+      terminationGracePeriodSeconds: 10
     {{- end }}

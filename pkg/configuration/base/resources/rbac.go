@@ -62,7 +62,6 @@ func NewDefaultPolicyRules() []v1.PolicyRule {
 	readOnly := []string{getVerb, listVerb, watchVerb}
 	Default := []string{createVerb, deleteVerb, getVerb, listVerb, patchVerb, updateVerb, watchVerb}
 	create := []string{createVerb}
-	watch := []string{watchVerb}
 
 	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "pods/portforward", create))
 	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "pods", Default))
@@ -70,7 +69,7 @@ func NewDefaultPolicyRules() []v1.PolicyRule {
 	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "configmaps", readOnly))
 	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "pods/log", readOnly))
 	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "secrets", readOnly))
-	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "events", watch))
+	rules = append(rules, NewPolicyRule(EmptyAPIGroup, "events", readOnly))
 
 	rules = append(rules, NewOpenShiftPolicyRule(OpenshiftAPIGroup, "imagestreams", readOnly))
 	rules = append(rules, NewOpenShiftPolicyRule(BuildAPIGroup, "buildconfigs", readOnly))

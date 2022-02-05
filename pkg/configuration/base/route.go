@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
-	"k8s.io/apimachinery/pkg/util/intstr"
-
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
+
 	routev1 "github.com/openshift/api/route/v1"
 	stackerr "github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // createRoute takes the ServiceName and Creates the Route based on it
-func (r *ReconcileJenkinsBaseConfiguration) createRoute(meta metav1.ObjectMeta, serviceName string, config *v1alpha2.Jenkins) error {
+func (r *JenkinsBaseConfigurationReconciler) createRoute(meta metav1.ObjectMeta, serviceName string, config *v1alpha2.Jenkins) error {
 	route := routev1.Route{}
 	name := fmt.Sprintf("jenkins-%s", config.ObjectMeta.Name)
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: meta.Namespace}, &route)

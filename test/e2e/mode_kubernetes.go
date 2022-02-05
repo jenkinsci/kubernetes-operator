@@ -4,17 +4,14 @@
 package e2e
 
 import (
-	"testing"
-
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 )
 
 const (
-	skipTestSafeRestart   = false
-	skipTestPriorityClass = false
+//skipTestSafeRestart   = false
+//skipTestPriorityClass = false
 )
 
-func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
-	t.Log("Update Jenkins CR")
+func updateJenkinsCR(jenkins *v1alpha2.Jenkins) {
 	// do nothing
 }

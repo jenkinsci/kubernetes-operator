@@ -1,0 +1,81 @@
+name: auto-generate-docs
+
+# Run this workflow every time a new commit pushed to your repository
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # Set the job key. The key is displayed as the job name
+  # when a job name is not provided
+  docs:
+    # Name the Job
+    name: auto-generate-docs
+    # Set the type of machine to run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive  # Fetch the Docsy theme
+          fetch-depth: 0
+
+      # Checks if the previous commit introduced any changes to website files
+      - name: Check for changes
+        run: |
+          IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || :)
+          [[ $IS_CHANGED -gt 0 ]] && echo "IS_CHANGED=true" >> $GITHUB_ENV || echo "IS_CHANGED=false" >> $GITHUB_ENV
+
+      # Sets up the appropriate version of Hugo
+      - name: Setup Hugo
+        if: env.IS_CHANGED == 'true'
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.62.2'
+          extended: true
+
+      # Sets up node - required by Hugo
+      - name: Setup Node
+        if: env.IS_CHANGED == 'true'
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      # Installs dependencies required by docsy theme
+      - name: Install docsy dependencies
+        if: env.IS_CHANGED == 'true'
+        run: |
+          cd website
+          npm install
+          npm build
+          sudo npm install -D --save autoprefixer
+          sudo npm install -D --save postcss-cli
+          cd ../
+
+      - name: Update last modified date in modified docs
+        if: env.IS_CHANGED == 'true'
+        run: |
+          git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*" \
+          | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
+
+      # Runs makefile goal - checks changes to /website folder and generates docs
+      - name: Run Makefile goal
+        if: env.IS_CHANGED == 'true'
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make generate-docs
+
+      # Creates pull request with generated docs
+      - name: Create Pull Request
+        if: env.IS_CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Auto-updated docs
+          branch: docs-generator
+          title: Auto-generated docs update
+          body: |
+            Auto generated docs from master commit ${{ github.sha }}

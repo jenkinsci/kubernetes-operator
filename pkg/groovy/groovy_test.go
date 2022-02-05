@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
 	"github.com/golang/mock/gomock"
-	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -43,7 +43,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -89,7 +89,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -125,7 +125,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -197,7 +197,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -257,7 +257,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -289,7 +289,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -323,7 +323,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -392,7 +392,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -452,7 +452,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -511,7 +511,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -577,7 +577,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, secret)

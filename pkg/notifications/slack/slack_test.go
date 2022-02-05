@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/provider"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
@@ -32,7 +32,7 @@ var (
 )
 
 func TestSlack_Send(t *testing.T) {
-	fakeClient := fake.NewFakeClient()
+	fakeClient := fake.NewClientBuilder().Build()
 	testURLSelectorKeyName := "test-url-selector"
 	testSecretName := "test-secret"
 
@@ -126,7 +126,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		s := Slack{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -172,7 +172,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		s := Slack{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -218,7 +218,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		s := Slack{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -264,7 +264,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		s := Slack{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},

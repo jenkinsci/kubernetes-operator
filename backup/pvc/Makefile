@@ -11,6 +11,7 @@ include $(config)
 PREFIX?=$(shell pwd)
 
 VERSION := $(shell cat VERSION.txt)
+PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 GITCOMMIT := $(shell git rev-parse --short HEAD)
 GITBRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 GITUNTRACKEDCHANGES := $(shell git status --porcelain --untracked-files=no)
@@ -130,7 +131,7 @@ docker-run: docker-build ## Run the container in docker, you can use EXTRA_ARGS
 BUMP := patch
 bump-version: ## Bump the version in the version file. Set BUMP to [ patch | major | minor ]
 	@echo "+ $@"
-	$(eval NEW_VERSION=$(shell sembump --kind $(BUMP) $(VERSION)))
+	$(eval NEW_VERSION=$(shell $(PROJECT_DIR)/../../bin/sembump --kind $(BUMP) $(VERSION)))
 	@echo "Bumping VERSION.txt from $(VERSION) to $(NEW_VERSION)"
 	echo $(NEW_VERSION) > VERSION.txt
 	git add VERSION.txt
