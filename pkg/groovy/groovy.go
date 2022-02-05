@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
@@ -77,7 +77,7 @@ func (g *Groovy) EnsureSingle(source, name, hash, groovyScript string) (requeue 
 
 	g.jenkins.Status.AppliedGroovyScripts = appliedGroovyScripts
 
-	return true, g.k8sClient.Update(context.TODO(), g.jenkins)
+	return true, g.k8sClient.Status().Update(context.TODO(), g.jenkins)
 }
 
 // WaitForSecretSynchronization runs groovy script which waits to synchronize secrets in pod by k8s
@@ -96,7 +96,10 @@ func (g *Groovy) WaitForSecretSynchronization(secretsPath string) (requeue bool,
 	for secretKey, secretValue := range secret.Data {
 		toCalculate[secretKey] = string(secretValue)
 	}
-	hash := g.calculateHash(toCalculate)
+	hash, err := g.calculateHash(toCalculate)
+	if err != nil {
+		return true, errors.WithStack(err)
+	}
 
 	name := "synchronizing-secret.groovy"
 	if g.isGroovyScriptAlreadyApplied(g.customization.Secret.Name, name, hash) {
@@ -137,7 +140,10 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 				continue
 			}
 
-			hash := g.calculateCustomizationHash(*secret, name, groovyScript)
+			hash, err := g.calculateCustomizationHash(*secret, name, groovyScript)
+			if err != nil {
+				return true, errors.WithStack(err)
+			}
 			if g.isGroovyScriptAlreadyApplied(configMap.Name, name, hash) {
 				continue
 			}
@@ -153,7 +159,7 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 	return false, nil
 }
 
-func (g *Groovy) calculateCustomizationHash(secret corev1.Secret, key, groovyScript string) string {
+func (g *Groovy) calculateCustomizationHash(secret corev1.Secret, key, groovyScript string) (string, error) {
 	toCalculate := map[string]string{}
 	for secretKey, secretValue := range secret.Data {
 		toCalculate[secretKey] = string(secretValue)
@@ -173,7 +179,7 @@ func (g *Groovy) isGroovyScriptAlreadyApplied(source, name, hash string) bool {
 	return false
 }
 
-func (g *Groovy) calculateHash(data map[string]string) string {
+func (g *Groovy) calculateHash(data map[string]string) (string, error) {
 	hash := sha256.New()
 
 	var keys []string
@@ -182,10 +188,16 @@ func (g *Groovy) calculateHash(data map[string]string) string {
 	}
 	sort.Strings(keys)
 	for _, key := range keys {
-		hash.Write([]byte(key))
-		hash.Write([]byte(data[key]))
+		_, err := hash.Write([]byte(key))
+		if err != nil {
+			return "", err
+		}
+		_, err = hash.Write([]byte(data[key]))
+		if err != nil {
+			return "", err
+		}
 	}
-	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
+	return base64.StdEncoding.EncodeToString(hash.Sum(nil)), nil
 }
 
 // AddSecretsLoaderToGroovyScript modify groovy scripts to load Kubernetes secrets into groovy map

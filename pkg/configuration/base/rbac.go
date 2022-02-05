@@ -9,11 +9,12 @@ import (
 
 	stackerr "github.com/pkg/errors"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) createRBAC(meta metav1.ObjectMeta) error {
+func (r *JenkinsBaseConfigurationReconciler) createRBAC(meta metav1.ObjectMeta) error {
 	err := r.createServiceAccount(meta)
 	if err != nil {
 		return err
@@ -38,13 +39,16 @@ func (r *ReconcileJenkinsBaseConfiguration) createRBAC(meta metav1.ObjectMeta) e
 	return nil
 }
 
-func (r *ReconcileJenkinsBaseConfiguration) ensureExtraRBAC(meta metav1.ObjectMeta) error {
+func (r *JenkinsBaseConfigurationReconciler) ensureExtraRBAC(meta metav1.ObjectMeta) error {
 	var err error
 	var name string
 	for _, roleRef := range r.Configuration.Jenkins.Spec.Roles {
 		name = getExtraRoleBindingName(meta.Name, roleRef)
 		roleBinding := resources.NewRoleBinding(name, meta.Namespace, meta.Name, roleRef)
-		err = r.CreateOrUpdateResource(roleBinding)
+		err := r.Client.Create(context.TODO(), roleBinding)
+		if err != nil && errors.IsAlreadyExists(err) {
+			continue
+		}
 		if err != nil {
 			return stackerr.WithStack(err)
 		}

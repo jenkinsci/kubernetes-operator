@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
@@ -16,7 +16,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) ensureJenkinsDeployment(meta metav1.ObjectMeta) (reconcile.Result, error) {
+func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsDeployment(meta metav1.ObjectMeta) (reconcile.Result, error) {
 	userAndPasswordHash, err := r.calculateUserAndPasswordHash()
 	if err != nil {
 		return reconcile.Result{}, err

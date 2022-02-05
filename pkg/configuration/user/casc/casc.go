@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
@@ -31,7 +31,7 @@ func New(jenkinsClient jenkinsclient.Jenkins, k8sClient k8s.Client, jenkins *v1a
 }
 
 // Ensure configures Jenkins with help Configuration as a code plugin
-func (c *configurationAsCode) Ensure(jenkins *v1alpha2.Jenkins) (requeue bool, err error) {
+func (c *configurationAsCode) Ensure(_ *v1alpha2.Jenkins) (requeue bool, err error) {
 	requeue, err = c.groovyClient.WaitForSecretSynchronization(resources.ConfigurationAsCodeSecretVolumePath)
 	if err != nil || requeue {
 		return requeue, err

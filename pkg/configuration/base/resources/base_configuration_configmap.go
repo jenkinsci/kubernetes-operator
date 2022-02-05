@@ -3,7 +3,7 @@ package resources
 import (
 	"fmt"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	corev1 "k8s.io/api/core/v1"
@@ -126,7 +126,7 @@ if (kubernetes == null) {
     add = true
 	kubernetes = new KubernetesCloud("kubernetes")
 }
-kubernetes.setServerUrl("https://kubernetes.default.svc.cluster.local:443")
+kubernetes.setServerUrl("https://kubernetes.default.svc.%s:443")
 kubernetes.setNamespace("%s")
 kubernetes.setJenkinsUrl("%s")
 kubernetes.setJenkinsTunnel("%s")
@@ -178,15 +178,23 @@ func GetBaseConfigurationConfigMapName(jenkins *v1alpha2.Jenkins) string {
 }
 
 // NewBaseConfigurationConfigMap builds Kubernetes config map used to base configuration.
-func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins) (*corev1.ConfigMap, error) {
+func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins, kubernetesClusterDomain string) (*corev1.ConfigMap, error) {
 	meta.Name = GetBaseConfigurationConfigMapName(jenkins)
-	jenkinsServiceFQDN, err := GetJenkinsHTTPServiceFQDN(jenkins)
+	clusterDomain, err := getClusterDomain(kubernetesClusterDomain)
 	if err != nil {
 		return nil, err
 	}
-	jenkinsSlavesServiceFQDN, err := GetJenkinsSlavesServiceFQDN(jenkins)
+	jenkinsServiceFQDN, err := GetJenkinsHTTPServiceFQDN(jenkins, kubernetesClusterDomain)
 	if err != nil {
 		return nil, err
+	}
+	jenkinsSlavesServiceFQDN, err := GetJenkinsSlavesServiceFQDN(jenkins, kubernetesClusterDomain)
+	if err != nil {
+		return nil, err
+	}
+	suffix := ""
+	if prefix, ok := GetJenkinsOpts(*jenkins)["prefix"]; ok {
+		suffix = prefix
 	}
 	groovyScriptsMap := map[string]string{
 		basicSettingsGroovyScriptName:             fmt.Sprintf(basicSettingsFmt, constants.DefaultAmountOfExecutors),
@@ -195,13 +203,15 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		enableMasterAccessControlGroovyScriptName: enableMasterAccessControl,
 		disableInsecureFeaturesGroovyScriptName:   disableInsecureFeatures,
 		configureKubernetesPluginGroovyScriptName: fmt.Sprintf(configureKubernetesPluginFmt,
+			clusterDomain,
 			jenkins.ObjectMeta.Namespace,
-			fmt.Sprintf("http://%s:%d", jenkinsServiceFQDN, jenkins.Spec.Service.Port),
+			fmt.Sprintf("http://%s:%d%s", jenkinsServiceFQDN, jenkins.Spec.Service.Port, suffix),
 			fmt.Sprintf("%s:%d", jenkinsSlavesServiceFQDN, jenkins.Spec.SlaveService.Port),
 		),
 		configureViewsGroovyScriptName:              configureViews,
 		disableJobDslScriptApprovalGroovyScriptName: disableJobDSLScriptApproval,
 	}
+
 	if jenkins.Spec.Master.DisableCSRFProtection {
 		delete(groovyScriptsMap, enableCSRFGroovyScriptName)
 	}

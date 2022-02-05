@@ -9,31 +9,45 @@ metadata:
   {{- end }}
 spec:
   configurationAsCode:
-    configurations:
-    {{- range .Values.jenkins.configuration.configurationAsCode }}
-    - name: {{ .configMapName }}
-    {{- end }}
     {{- if .Values.jenkins.configuration.configurationAsCode }}
+    configurations:
+      {{ range .Values.jenkins.configuration.configurationAsCode }}
+      - name: {{ .configMapName }}
+      {{- end }}
     secret:
       {{- if .Values.jenkins.configuration.secretRefName }}
       name: {{ .Values.jenkins.configuration.secretRefName }}
       {{- else if .Values.jenkins.configuration.secretData }}
       name: jenkins-{{ .Values.jenkins.name }}
+      {{- else }}
+      name: ""
       {{- end }}
+    {{- else }}
+    configurations: []
+    secret:
+      name: ""
     {{- end }}
   groovyScripts:
-    configurations:
-    {{- range .Values.jenkins.configuration.groovyScripts }}
-    - name: {{ .configMapName }}
-    {{- end }}
     {{- if .Values.jenkins.configuration.groovyScripts }}
+    configurations:
+      {{- range .Values.jenkins.configuration.groovyScripts }}
+      - name: {{ .configMapName }}
+      {{- end }}
     secret:
       {{- if .Values.jenkins.configuration.secretRefName }}
       name: {{ .Values.jenkins.configuration.secretRefName }}
       {{- else if .Values.jenkins.configuration.secretData }}
       name: jenkins-{{ .Values.jenkins.name }}
+      {{- else }}
+      name: ""
       {{- end }}
+    {{- else }}
+    configurations: []
+    secret:
+      name: ""
     {{- end }}
+  jenkinsAPISettings:
+    authorizationStrategy: {{ .Values.jenkins.authorizationStrategy }}
   {{- if .Values.jenkins.backup.enabled }}
   backup:
     containerName: {{ .Values.jenkins.backup.containerName }}
@@ -51,6 +65,13 @@ spec:
         {{- with .Values.jenkins.backup.restoreCommand }}
         command: {{ toYaml . | nindent 8 }}
         {{- end }}
+    {{- if .Values.jenkins.backup.getLatestAction }}
+    getLatestAction:
+      exec:
+        {{- with .Values.jenkins.backup.getLatestAction }}
+        command: {{ toYaml . | nindent 8 }}
+        {{- end }}
+    {{- end }}
     {{- if .Values.jenkins.backup.recoveryOnce }}
     recoveryOnce: {{ .Values.jenkins.backup.recoveryOnce }}
     {{- end }}
@@ -64,9 +85,15 @@ spec:
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.jenkins.serviceAccount }}
+  serviceAccount: {{ toYaml . | nindent 4 }}
+  {{- end }}
   master:
     {{- with .Values.jenkins.labels }}
     labels: {{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.jenkins.annotations }}
+    annotations: {{ toYaml . | nindent 6 }}
     {{- end }}
     {{- with .Values.jenkins.basePlugins }}
     basePlugins: {{ toYaml . | nindent 4 }}
@@ -74,35 +101,20 @@ spec:
     {{- with .Values.jenkins.plugins }}
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}
+    {{- if .Values.jenkins.priorityClassName }}
     priorityClassName: {{ .Values.jenkins.priorityClassName }}
+    {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
       - name:  jenkins-master
         image: {{ .Values.jenkins.image }}
         imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
-        {{- with .Values.jenkins.imagePullSecrets }}
-        imagePullSecrets: {{ toYaml . | nindent 10 }}
+        {{- with .Values.jenkins.livenessProbe }}
+        livenessProbe: {{ toYaml . | nindent 10 }}
         {{- end }}
-        livenessProbe:
-          failureThreshold: 12
-          httpGet:
-            path: /login
-            port: http
-            scheme: HTTP
-          initialDelaySeconds: 80
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /login
-            port: http
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+        {{- with .Values.jenkins.readinessProbe }}
+        readinessProbe: {{ toYaml . | nindent 10 }}
+        {{- end }}
         {{- with .Values.jenkins.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}
@@ -116,6 +128,9 @@ spec:
       - name: {{ .Values.jenkins.backup.containerName }}
         image: {{ .Values.jenkins.backup.image }}
         imagePullPolicy: IfNotPresent
+        {{- with .Values.jenkins.backup.resources }}
+        resources: {{ toYaml . | nindent 10 }}
+        {{- end }}
         {{- with .Values.jenkins.backup.env }}
         env: {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -126,6 +141,9 @@ spec:
     {{- with .Values.jenkins.volumes }}
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- with .Values.jenkins.imagePullSecrets }}
+    imagePullSecrets: {{ toYaml . | nindent 4 }}
+    {{- end }}
     {{- with .Values.jenkins.securityContext}}
     securityContext:
     {{- toYaml . | nindent 6 }}
@@ -133,6 +151,7 @@ spec:
   {{- with .Values.jenkins.seedAgent }}
   seedAgent: {{- toYaml . | nindent 4 }}
   {{- end }}
+  validateSecurityWarnings: {{ .Values.jenkins.validateSecurityWarnings }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

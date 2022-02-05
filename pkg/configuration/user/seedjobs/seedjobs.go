@@ -8,9 +8,8 @@ import (
 	"reflect"
 	"text/template"
 
-	"github.com/go-logr/logr"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/internal/render"
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
@@ -18,6 +17,8 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
+
+	"github.com/go-logr/logr"
 	stackerr "github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -79,6 +80,7 @@ import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.extensions.impl.CloneOption;
+import hudson.plugins.git.extensions.impl.GitLFSPull;
 import javaposse.jobdsl.plugin.ExecuteDslScripts;
 import javaposse.jobdsl.plugin.LookupStrategy;
 import javaposse.jobdsl.plugin.RemovedJobAction;
@@ -94,7 +96,7 @@ def jobDslSeedName = "{{ .ID }}-{{ .SeedJobSuffix }}";
 def jobRef = jenkins.getItem(jobDslSeedName)
 
 def repoList = GitSCM.createRepoList("{{ .RepositoryURL }}", "{{ .CredentialID }}")
-def gitExtensions = [new CloneOption(true, true, ";", 10), new CleanBeforeCheckout()]
+def gitExtensions = [new CloneOption(true, true, ";", 10), new CleanBeforeCheckout(), new GitLFSPull()]
 def scm = new GitSCM(
         repoList,
         newArrayList(new BranchSpec("{{ .RepositoryBranch }}")),
@@ -236,7 +238,7 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	seedJobIDs := s.getAllSeedJobIDs(*jenkins)
 	if !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
 		jenkins.Status.CreatedSeedJobs = seedJobIDs
-		return false, stackerr.WithStack(s.Client.Update(context.TODO(), jenkins))
+		return false, stackerr.WithStack(s.Client.Status().Update(context.TODO(), jenkins))
 	}
 
 	return true, nil
@@ -275,8 +277,15 @@ func (s *seedJobs) createJobs(jenkins *v1alpha2.Jenkins) (requeue bool, err erro
 		}
 
 		hash := sha256.New()
-		hash.Write([]byte(groovyScript))
-		hash.Write([]byte(credentialValue))
+		_, err = hash.Write([]byte(groovyScript))
+		if err != nil {
+			return true, err
+		}
+		_, err = hash.Write([]byte(credentialValue))
+		if err != nil {
+			return true, err
+		}
+
 		requeue, err := groovyClient.EnsureSingle(seedJob.ID, fmt.Sprintf("%s.groovy", seedJob.ID), base64.URLEncoding.EncodeToString(hash.Sum(nil)), groovyScript)
 		if err != nil {
 			return true, err
@@ -379,7 +388,7 @@ func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cl
 		return err
 	}
 
-	deployment, err := agentDeployment(jenkinsManifest, namespace, agentName, secret)
+	deployment, err := agentDeployment(jenkinsManifest, namespace, agentName, secret, s.KubernetesClusterDomain)
 	if err != nil {
 		return err
 	}
@@ -401,14 +410,19 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 	return fmt.Sprintf("%s-%s", agentName, jenkins.Name)
 }
 
-func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string) (*appsv1.Deployment, error) {
-	jenkinsSlavesServiceFQDN, err := resources.GetJenkinsSlavesServiceFQDN(jenkins)
+func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string, kubernetesDomainName string) (*appsv1.Deployment, error) {
+	jenkinsSlavesServiceFQDN, err := resources.GetJenkinsSlavesServiceFQDN(jenkins, kubernetesDomainName)
 	if err != nil {
 		return nil, err
 	}
-	jenkinsHTTPServiceFQDN, err := resources.GetJenkinsHTTPServiceFQDN(jenkins)
+	jenkinsHTTPServiceFQDN, err := resources.GetJenkinsHTTPServiceFQDN(jenkins, kubernetesDomainName)
 	if err != nil {
 		return nil, err
+	}
+
+	suffix := ""
+	if prefix, ok := resources.GetJenkinsOpts(*jenkins)["prefix"]; ok {
+		suffix = prefix
 	}
 	return &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -431,6 +445,7 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 					NodeSelector:     jenkins.Spec.Master.NodeSelector,
 					Tolerations:      jenkins.Spec.Master.Tolerations,
 					ImagePullSecrets: jenkins.Spec.Master.ImagePullSecrets,
+					HostAliases:      jenkins.Spec.Master.HostAliases,
 					Containers: []corev1.Container{
 						{
 							Name:  "jnlp",
@@ -452,10 +467,10 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 								},
 								{
 									Name: "JENKINS_URL",
-									Value: fmt.Sprintf("http://%s:%d",
+									Value: fmt.Sprintf("http://%s:%d%s",
 										jenkinsHTTPServiceFQDN,
 										jenkins.Spec.Service.Port,
-									),
+										suffix),
 								},
 								{
 									Name:  "JENKINS_AGENT_WORKDIR",

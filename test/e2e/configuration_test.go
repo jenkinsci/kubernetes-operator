@@ -3,167 +3,29 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"testing"
-	"time"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
+	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/plugins"
 
 	"github.com/bndr/gojenkins"
-	framework "github.com/operator-framework/operator-sdk/pkg/test"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 const e2e = "e2e"
 
-func TestConfiguration(t *testing.T) {
-	t.Parallel()
-	namespace, ctx := setupTest(t)
+func createUserConfigurationSecret(namespace string, stringData map[string]string) {
+	By("creating user configuration secret")
 
-	defer showLogsAndCleanup(t, ctx)
-
-	jenkinsCRName := e2e
-	numberOfExecutors := 6
-	numberOfExecutorsEnvName := "NUMBER_OF_EXECUTORS"
-	systemMessage := "Configuration as Code integration works!!!"
-	systemMessageEnvName := "SYSTEM_MESSAGE"
-	priorityClassName := ""
-	mySeedJob := seedJobConfig{
-		SeedJob: v1alpha2.SeedJob{
-			ID:                    "jenkins-operator",
-			CredentialID:          "jenkins-operator",
-			JenkinsCredentialType: v1alpha2.NoJenkinsCredentialCredentialType,
-			Targets:               "cicd/jobs/*.jenkins",
-			Description:           "Jenkins Operator repository",
-			RepositoryBranch:      "master",
-			RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
-			PollSCM:               "1 1 1 1 1",
-			UnstableOnDeprecation: true,
-			BuildPeriodically:     "1 1 1 1 1",
-			FailOnMissingPlugin:   true,
-			IgnoreMissingFiles:    true,
-			//AdditionalClasspath: can fail with the seed job agent
-			GitHubPushTrigger: true,
-		},
-	}
-	groovyScripts := v1alpha2.GroovyScripts{
-		Customization: v1alpha2.Customization{
-			Configurations: []v1alpha2.ConfigMapRef{
-				{
-					Name: userConfigurationConfigMapName,
-				},
-			},
-			Secret: v1alpha2.SecretRef{
-				Name: userConfigurationSecretName,
-			},
-		},
-	}
-
-	casc := v1alpha2.ConfigurationAsCode{
-		Customization: v1alpha2.Customization{
-			Configurations: []v1alpha2.ConfigMapRef{
-				{
-					Name: userConfigurationConfigMapName,
-				},
-			},
-			Secret: v1alpha2.SecretRef{
-				Name: userConfigurationSecretName,
-			},
-		},
-	}
-
-	stringData := make(map[string]string)
-	stringData[systemMessageEnvName] = systemMessage
-	stringData[numberOfExecutorsEnvName] = fmt.Sprintf("%d", numberOfExecutors)
-
-	// base
-	createUserConfigurationSecret(t, namespace, stringData)
-	createUserConfigurationConfigMap(t, namespace, numberOfExecutorsEnvName, fmt.Sprintf("${%s}", systemMessageEnvName))
-	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
-	createDefaultLimitsForContainersInNamespace(t, namespace)
-	createKubernetesCredentialsProviderSecret(t, namespace, mySeedJob)
-	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
-	verifyJenkinsMasterPodAttributes(t, jenkins)
-	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
-	defer cleanUpFunc()
-	verifyPlugins(t, jenkinsClient, jenkins)
-
-	// user
-	waitForJenkinsUserConfigurationToComplete(t, jenkins)
-	verifyUserConfiguration(t, jenkinsClient, numberOfExecutors, systemMessage)
-	verifyJenkinsSeedJobs(t, jenkinsClient, []seedJobConfig{mySeedJob})
-}
-
-func TestPlugins(t *testing.T) {
-	t.Parallel()
-	namespace, ctx := setupTest(t)
-	// Deletes test namespace
-	defer showLogsAndCleanup(t, ctx)
-
-	jobID := "k8s-e2e"
-
-	priorityClassName := ""
-	seedJobs := &[]v1alpha2.SeedJob{
-		{
-			ID:                    "jenkins-operator",
-			CredentialID:          "jenkins-operator",
-			JenkinsCredentialType: v1alpha2.NoJenkinsCredentialCredentialType,
-			Targets:               "cicd/jobs/k8s.jenkins",
-			Description:           "Jenkins Operator repository",
-			RepositoryBranch:      "master",
-			RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
-		},
-	}
-
-	jenkins := createJenkinsCR(t, "k8s-e2e", namespace, seedJobs, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, priorityClassName)
-	waitForJenkinsUserConfigurationToComplete(t, jenkins)
-
-	jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
-	defer cleanUpFunc()
-	waitForJob(t, jenkinsClient, jobID)
-	job, err := jenkinsClient.GetJob(jobID)
-
-	require.NoError(t, err, job)
-	i, err := job.InvokeSimple(map[string]string{})
-	require.NoError(t, err, i)
-
-	waitForJobToFinish(t, job, 2*time.Second, 2*time.Minute)
-
-	job, err = jenkinsClient.GetJob(jobID)
-	require.NoError(t, err, job)
-	build, err := job.GetLastBuild()
-	require.NoError(t, err)
-	assert.True(t, build.IsGood())
-}
-
-func TestPriorityClass(t *testing.T) {
-	if skipTestPriorityClass {
-		t.Skip()
-	}
-	t.Parallel()
-	namespace, ctx := setupTest(t)
-	defer showLogsAndCleanup(t, ctx)
-
-	jenkinsCRName := "k8s-ete-priority-class-existing"
-	// One of the existing priority classes
-	priorityClassName := "system-cluster-critical"
-
-	jenkins := createJenkinsCR(t, jenkinsCRName, namespace, nil, v1alpha2.GroovyScripts{}, v1alpha2.ConfigurationAsCode{}, priorityClassName)
-	waitForJenkinsBaseConfigurationToComplete(t, jenkins)
-	verifyJenkinsMasterPodAttributes(t, jenkins)
-	_, cleanUpFunc := verifyJenkinsAPIConnection(t, jenkins, namespace)
-	defer cleanUpFunc()
-}
-
-func createUserConfigurationSecret(t *testing.T, namespace string, stringData map[string]string) {
 	userConfiguration := &corev1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      userConfigurationSecretName,
@@ -172,13 +34,13 @@ func createUserConfigurationSecret(t *testing.T, namespace string, stringData ma
 		StringData: stringData,
 	}
 
-	t.Logf("User configuration secret %+v", *userConfiguration)
-	if err := framework.Global.Client.Create(context.TODO(), userConfiguration, nil); err != nil {
-		t.Fatal(err)
-	}
+	_, _ = fmt.Fprintf(GinkgoWriter, "User configuration secret %+v\n", *userConfiguration)
+	Expect(K8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
 }
 
-func createUserConfigurationConfigMap(t *testing.T, namespace string, numberOfExecutorsSecretKeyName string, systemMessage string) {
+func createUserConfigurationConfigMap(namespace string, numberOfExecutorsSecretKeyName string, systemMessage string) {
+	By("creating user configuration config map")
+
 	userConfiguration := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      userConfigurationConfigMapName,
@@ -200,13 +62,13 @@ unclassified:
 		},
 	}
 
-	t.Logf("User configuration %+v", *userConfiguration)
-	if err := framework.Global.Client.Create(context.TODO(), userConfiguration, nil); err != nil {
-		t.Fatal(err)
-	}
+	_, _ = fmt.Fprintf(GinkgoWriter, "User configuration %+v\n", *userConfiguration)
+	Expect(K8sClient.Create(context.TODO(), userConfiguration)).Should(Succeed())
 }
 
-func createDefaultLimitsForContainersInNamespace(t *testing.T, namespace string) {
+func createDefaultLimitsForContainersInNamespace(namespace string) {
+	By("creating default limits for containers in namespace")
+
 	limitRange := &corev1.LimitRange{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      e2e,
@@ -229,31 +91,34 @@ func createDefaultLimitsForContainersInNamespace(t *testing.T, namespace string)
 		},
 	}
 
-	t.Logf("LimitRange %+v", *limitRange)
-	if err := framework.Global.Client.Create(context.TODO(), limitRange, nil); err != nil {
-		t.Fatal(err)
-	}
+	_, _ = fmt.Fprintf(GinkgoWriter, "LimitRange %+v\n", *limitRange)
+	Expect(K8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
 }
 
-func verifyJenkinsMasterPodAttributes(t *testing.T, jenkins *v1alpha2.Jenkins) {
-	jenkinsPod := getJenkinsMasterPod(t, jenkins)
-	jenkins = getJenkins(t, jenkins.Namespace, jenkins.Name)
+func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {
+	By("creating Jenkins master pod properly")
 
-	assertMapContainsElementsFromAnotherMap(t, jenkins.Spec.Master.Annotations, jenkinsPod.ObjectMeta.Annotations)
-	assert.Equal(t, jenkins.Spec.Master.NodeSelector, jenkinsPod.Spec.NodeSelector)
+	jenkinsPod := getJenkinsMasterPod(jenkins)
+	jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 
-	assert.Equal(t, resources.JenkinsMasterContainerName, jenkinsPod.Spec.Containers[0].Name)
-	assert.Equal(t, len(jenkins.Spec.Master.Containers), len(jenkinsPod.Spec.Containers))
+	assertMapContainsElementsFromAnotherMap(jenkins.Spec.Master.Annotations, jenkinsPod.ObjectMeta.Annotations)
+	Expect(jenkinsPod.Spec.NodeSelector).Should(Equal(jenkins.Spec.Master.NodeSelector))
 
-	assert.Equal(t, jenkins.Spec.Master.SecurityContext, jenkinsPod.Spec.SecurityContext)
-	assert.Equal(t, jenkins.Spec.Master.Containers[0].Command, jenkinsPod.Spec.Containers[0].Command)
+	Expect(jenkinsPod.Spec.Containers[0].Name).Should(Equal(resources.JenkinsMasterContainerName))
+	Expect(jenkinsPod.Spec.Containers).Should(HaveLen(len(jenkins.Spec.Master.Containers)))
 
-	assert.Equal(t, resources.GetJenkinsMasterPodLabels(*jenkins), jenkinsPod.Labels)
-	assert.Equal(t, jenkins.Spec.Master.PriorityClassName, jenkinsPod.Spec.PriorityClassName)
+	if jenkins.Spec.Master.SecurityContext == nil {
+		jenkins.Spec.Master.SecurityContext = &corev1.PodSecurityContext{}
+	}
+	Expect(jenkinsPod.Spec.SecurityContext).Should(Equal(jenkins.Spec.Master.SecurityContext))
+	Expect(jenkinsPod.Spec.Containers[0].Command).Should(Equal(jenkins.Spec.Master.Containers[0].Command))
+
+	Expect(jenkinsPod.Labels).Should(Equal(resources.GetJenkinsMasterPodLabels(*jenkins)))
+	Expect(jenkinsPod.Spec.PriorityClassName).Should(Equal(jenkins.Spec.Master.PriorityClassName))
 
 	for _, actualContainer := range jenkinsPod.Spec.Containers {
 		if actualContainer.Name == resources.JenkinsMasterContainerName {
-			verifyContainer(t, resources.NewJenkinsMasterContainer(jenkins), actualContainer)
+			verifyContainer(resources.NewJenkinsMasterContainer(jenkins), actualContainer)
 			continue
 		}
 
@@ -266,11 +131,11 @@ func verifyJenkinsMasterPodAttributes(t *testing.T, jenkins *v1alpha2.Jenkins) {
 		}
 
 		if expectedContainer == nil {
-			t.Errorf("Container '%+v' not found in pod", actualContainer)
+			Fail(fmt.Sprintf("Container '%+v' not found in pod", actualContainer))
 			continue
 		}
 
-		verifyContainer(t, *expectedContainer, actualContainer)
+		verifyContainer(*expectedContainer, actualContainer)
 	}
 
 	for _, expectedVolume := range jenkins.Spec.Master.Volumes {
@@ -278,58 +143,54 @@ func verifyJenkinsMasterPodAttributes(t *testing.T, jenkins *v1alpha2.Jenkins) {
 		for _, actualVolume := range jenkinsPod.Spec.Volumes {
 			if expectedVolume.Name == actualVolume.Name {
 				volumeFound = true
-				assert.Equal(t, expectedVolume, actualVolume)
+				Expect(actualVolume).Should(Equal(expectedVolume))
 			}
 		}
 
 		if !volumeFound {
-			t.Errorf("Missing volume '+%v', actaul volumes '%+v'", expectedVolume, jenkinsPod.Spec.Volumes)
+			Fail(fmt.Sprintf("Missing volume '+%v', actaul volumes '%+v'", expectedVolume, jenkinsPod.Spec.Volumes))
 		}
 	}
-
-	t.Log("Jenkins pod attributes are valid")
 }
 
-func verifyContainer(t *testing.T, expected corev1.Container, actual corev1.Container) {
-	assert.Equal(t, expected.Args, actual.Args, expected.Name, expected.Name)
-	assert.Equal(t, expected.Command, actual.Command, expected.Name)
-	assert.ElementsMatch(t, expected.Env, actual.Env, expected.Name)
-	assert.Equal(t, expected.EnvFrom, actual.EnvFrom, expected.Name)
-	assert.Equal(t, expected.Image, actual.Image, expected.Name)
-	assert.Equal(t, expected.ImagePullPolicy, actual.ImagePullPolicy, expected.Name)
-	assert.Equal(t, expected.Lifecycle, actual.Lifecycle, expected.Name)
-	assert.Equal(t, expected.LivenessProbe, actual.LivenessProbe, expected.Name)
-	assert.Equal(t, expected.Ports, actual.Ports, expected.Name)
-	assert.Equal(t, expected.ReadinessProbe, actual.ReadinessProbe, expected.Name)
-	assert.Equal(t, expected.Resources, actual.Resources, expected.Name)
-	assert.Equal(t, expected.SecurityContext, actual.SecurityContext, expected.Name)
-	assert.Equal(t, expected.WorkingDir, actual.WorkingDir, expected.Name)
+func verifyContainer(expected corev1.Container, actual corev1.Container) {
+	Expect(actual.Args).Should(Equal(expected.Args), expected.Name)
+	Expect(actual.Command).Should(Equal(expected.Command), expected.Name)
+	Expect(actual.Env).Should(ConsistOf(expected.Env), expected.Name)
+	Expect(actual.EnvFrom).Should(Equal(expected.EnvFrom), expected.Name)
+	Expect(actual.Image).Should(Equal(expected.Image), expected.Name)
+	Expect(actual.ImagePullPolicy).Should(Equal(expected.ImagePullPolicy), expected.Name)
+	Expect(actual.Lifecycle).Should(Equal(expected.Lifecycle), expected.Name)
+	Expect(actual.LivenessProbe).Should(Equal(expected.LivenessProbe), expected.Name)
+	Expect(actual.Ports).Should(Equal(expected.Ports), expected.Name)
+	Expect(actual.ReadinessProbe).Should(Equal(expected.ReadinessProbe), expected.Name)
+	Expect(actual.Resources).Should(Equal(expected.Resources), expected.Name)
+	Expect(actual.SecurityContext).Should(Equal(expected.SecurityContext), expected.Name)
+	Expect(actual.WorkingDir).Should(Equal(expected.WorkingDir), expected.Name)
 	if !base.CompareContainerVolumeMounts(expected, actual) {
-		t.Errorf("Volume mounts are different in container '%s': expected '%+v', actual '%+v'",
-			expected.Name, expected.VolumeMounts, actual.VolumeMounts)
+		Fail(fmt.Sprintf("Volume mounts are different in container '%s': expected '%+v', actual '%+v'",
+			expected.Name, expected.VolumeMounts, expected.VolumeMounts))
 	}
 }
 
-func verifyPlugins(t *testing.T, jenkinsClient jenkinsclient.Jenkins, jenkins *v1alpha2.Jenkins) {
+func verifyPlugins(jenkinsClient jenkinsclient.Jenkins, jenkins *v1alpha2.Jenkins) {
+	By("installing plugins in Jenkins instance")
+
 	installedPlugins, err := jenkinsClient.GetPlugins(1)
-	if err != nil {
-		t.Fatal(err)
-	}
+	Expect(err).NotTo(HaveOccurred())
 
 	for _, basePlugin := range plugins.BasePlugins() {
 		if found, ok := isPluginValid(installedPlugins, basePlugin); !ok {
-			t.Fatalf("Invalid plugin '%s', actual '%+v'", basePlugin, found)
+			Fail(fmt.Sprintf("Invalid plugin '%s', actual '%+v'", basePlugin, found))
 		}
 	}
 
 	for _, userPlugin := range jenkins.Spec.Master.Plugins {
 		plugin := plugins.Plugin{Name: userPlugin.Name, Version: userPlugin.Version}
 		if found, ok := isPluginValid(installedPlugins, plugin); !ok {
-			t.Fatalf("Invalid plugin '%s', actual '%+v'", plugin, found)
+			Fail(fmt.Sprintf("Invalid plugin '%s', actual '%+v'", plugin, found))
 		}
 	}
-
-	t.Log("All plugins have been installed")
 }
 
 func isPluginValid(plugins *gojenkins.Plugins, requiredPlugin plugins.Plugin) (*gojenkins.Plugin, bool) {
@@ -345,13 +206,15 @@ func isPluginValid(plugins *gojenkins.Plugins, requiredPlugin plugins.Plugin) (*
 	return p, requiredPlugin.Version == p.Version
 }
 
-func verifyUserConfiguration(t *testing.T, jenkinsClient jenkinsclient.Jenkins, amountOfExecutors int, systemMessage string) {
+func verifyUserConfiguration(jenkinsClient jenkinsclient.Jenkins, amountOfExecutors int, systemMessage string) {
+	By("configuring Jenkins by groovy scripts")
+
 	checkConfigurationViaGroovyScript := fmt.Sprintf(`
 if (!new Integer(%d).equals(Jenkins.instance.numExecutors)) {
 	throw new Exception("Configuration via groovy scripts failed")
 }`, amountOfExecutors)
 	logs, err := jenkinsClient.ExecuteScript(checkConfigurationViaGroovyScript)
-	assert.NoError(t, err, logs)
+	Expect(err).NotTo(HaveOccurred(), logs)
 
 	checkSecretLoaderViaGroovyScript := fmt.Sprintf(`
 if (!new Integer(%d).equals(new Integer(secrets['NUMBER_OF_EXECUTORS']))) {
@@ -360,23 +223,33 @@ if (!new Integer(%d).equals(new Integer(secrets['NUMBER_OF_EXECUTORS']))) {
 
 	loader := groovy.AddSecretsLoaderToGroovyScript("/var/jenkins/groovy-scripts-secrets")
 	logs, err = jenkinsClient.ExecuteScript(loader(checkSecretLoaderViaGroovyScript))
-	assert.NoError(t, err, logs)
+	Expect(err).NotTo(HaveOccurred(), logs)
 
+	By("configuring Jenkins by CasC")
 	checkConfigurationAsCode := fmt.Sprintf(`
 if (!"%s".equals(Jenkins.instance.systemMessage)) {
 	throw new Exception("Configuration as code failed")
 }`, systemMessage)
 	logs, err = jenkinsClient.ExecuteScript(checkConfigurationAsCode)
-	assert.NoError(t, err, logs)
+	Expect(err).NotTo(HaveOccurred(), logs)
 }
 
-func assertMapContainsElementsFromAnotherMap(t *testing.T, expected map[string]string, actual map[string]string) {
+func verifyServices(jenkins *v1alpha2.Jenkins) {
+	By("creating Jenkins services properly")
+
+	jenkinsHTTPService := getJenkinsService(jenkins, "http")
+	jenkinsSlaveService := getJenkinsService(jenkins, "slave")
+	Expect(jenkinsHTTPService.Spec.Ports[0].TargetPort).Should(Equal(intstr.IntOrString{IntVal: constants.DefaultHTTPPortInt32, Type: intstr.Int}))
+	Expect(jenkinsSlaveService.Spec.Ports[0].TargetPort).Should(Equal(intstr.IntOrString{IntVal: constants.DefaultSlavePortInt32, Type: intstr.Int}))
+}
+
+func assertMapContainsElementsFromAnotherMap(expected map[string]string, actual map[string]string) {
 	for key, expectedValue := range expected {
 		actualValue, keyExists := actual[key]
 		if !keyExists {
-			assert.Failf(t, "key '%s' doesn't exist in map '%+v'", key, actual)
+			Fail(fmt.Sprintf("key '%s' doesn't exist in map '%+v'", key, actual))
 			continue
 		}
-		assert.Equal(t, expectedValue, actualValue, expected, actual)
+		Expect(actualValue).Should(Equal(expectedValue), key, expected, actual)
 	}
 }

@@ -3,7 +3,7 @@ package base
 import (
 	"context"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 
 	stackerr "github.com/pkg/errors"
@@ -13,7 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) createService(meta metav1.ObjectMeta, name string, config v1alpha2.Service) error {
+func (r *JenkinsBaseConfigurationReconciler) createService(meta metav1.ObjectMeta, name string, config v1alpha2.Service, targetPort int32) error {
 	service := corev1.Service{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: meta.Namespace}, &service)
 	if err != nil && apierrors.IsNotFound(err) {
@@ -26,7 +26,7 @@ func (r *ReconcileJenkinsBaseConfiguration) createService(meta metav1.ObjectMeta
 			Spec: corev1.ServiceSpec{
 				Selector: meta.Labels,
 			},
-		}, config)
+		}, config, targetPort)
 		if err = r.CreateResource(&service); err != nil {
 			return stackerr.WithStack(err)
 		}
@@ -35,6 +35,6 @@ func (r *ReconcileJenkinsBaseConfiguration) createService(meta metav1.ObjectMeta
 	}
 
 	service.Spec.Selector = meta.Labels // make sure that user won't break service by hand
-	service = resources.UpdateService(service, config)
+	service = resources.UpdateService(service, config, targetPort)
 	return stackerr.WithStack(r.UpdateResource(&service))
 }

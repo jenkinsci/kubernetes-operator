@@ -4,7 +4,7 @@
     <link>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/</link>
     <description>Recent Hugo news from gohugo.io</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 05 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Aug 2021 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://jenkinsci.github.io/kubernetes-operator/img/hugo.png</url>
       <title>GoHugo.io</title>
@@ -22,7 +22,7 @@
     <item>
       <title>Docs: Architecture and design</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/</link>
-      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 01 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/</guid>
       <description>
@@ -65,6 +65,10 @@
 
 &lt;p&gt;It helps to maintain or recover the desired state even after the operator or Jenkins restarts.&lt;/p&gt;
 
+&lt;h2 id=&#34;webhook&#34;&gt;Webhook&lt;/h2&gt;
+
+&lt;p&gt;It rejects/accepts admission requests based on potential security warnings in plugins present in the Jenkins Custom Resource.&lt;/p&gt;
+
       </description>
     </item>
     
@@ -77,7 +81,9 @@
       <description>
         
         
-        &lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; is fully compatible with &lt;strong&gt;&lt;code&gt;jenkins:lts&lt;/code&gt;&lt;/strong&gt; Docker image and does not introduce any hidden changes to the upstream Jenkins.&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; is fully compatible with &lt;strong&gt;&lt;code&gt;jenkins:lts&lt;/code&gt;&lt;/strong&gt; Docker image and does not introduce any hidden changes
+to the upstream Jenkins. However due to problems with plugins and images version compatibility we are using specific tags
+in the exemplary Custom Resource, so you know a working configuration.&lt;/p&gt;
 
 &lt;p&gt;If needed, the Docker image can be easily changed in custom resource manifest as long as it supports standard Jenkins file system structure.&lt;/p&gt;
 

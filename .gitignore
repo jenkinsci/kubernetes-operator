@@ -88,3 +88,6 @@ tags
 
 ### IntelliJ IDEA ###
 *.iml
+
+/bin
+testbin/*

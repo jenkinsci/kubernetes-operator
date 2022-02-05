@@ -2,6 +2,8 @@
 
 package e2e
 
+// TODO
+/*
 import (
 	"context"
 	"testing"
@@ -100,3 +102,4 @@ func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
 		jenkins.Spec.Master.Plugins = jenkins.Spec.Master.Plugins[0:3] // remove devoptics plugin
 	}
 }
+*/

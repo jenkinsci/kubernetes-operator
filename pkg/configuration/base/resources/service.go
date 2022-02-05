@@ -2,23 +2,23 @@ package resources
 
 import (
 	"fmt"
-
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
-	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
-	"github.com/operator-framework/operator-sdk/pkg/k8sutil"
-	stackerr "github.com/pkg/errors"
-
-	corev1 "k8s.io/api/core/v1"
-
 	"net"
+	"os"
 	"strings"
+
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
+
+	stackerr "github.com/pkg/errors"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 //ServiceKind the kind name for Service
 const ServiceKind = "Service"
 
 // UpdateService returns new service with override fields from config
-func UpdateService(actual corev1.Service, config v1alpha2.Service) corev1.Service {
+func UpdateService(actual corev1.Service, config v1alpha2.Service, targetPort int32) corev1.Service {
 	actual.ObjectMeta.Annotations = config.Annotations
 	for key, value := range config.Labels {
 		actual.ObjectMeta.Labels[key] = value
@@ -30,6 +30,7 @@ func UpdateService(actual corev1.Service, config v1alpha2.Service) corev1.Servic
 		actual.Spec.Ports = []corev1.ServicePort{{}}
 	}
 	actual.Spec.Ports[0].Port = config.Port
+	actual.Spec.Ports[0].TargetPort = intstr.IntOrString{IntVal: targetPort, Type: intstr.Int}
 	if config.NodePort != 0 {
 		actual.Spec.Ports[0].NodePort = config.NodePort
 	}
@@ -48,8 +49,8 @@ func GetJenkinsSlavesServiceName(jenkins *v1alpha2.Jenkins) string {
 }
 
 // GetJenkinsHTTPServiceFQDN returns Kubernetes service FQDN used for expose Jenkins HTTP endpoint
-func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
-	clusterDomain, err := getClusterDomain()
+func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins, kubernetesClusterDomain string) (string, error) {
+	clusterDomain, err := getClusterDomain(kubernetesClusterDomain)
 	if err != nil {
 		return "", err
 	}
@@ -58,8 +59,8 @@ func GetJenkinsHTTPServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
 }
 
 // GetJenkinsSlavesServiceFQDN returns Kubernetes service FQDN used for expose Jenkins slave endpoint
-func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
-	clusterDomain, err := getClusterDomain()
+func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins, kubernetesClusterDomain string) (string, error) {
+	clusterDomain, err := getClusterDomain(kubernetesClusterDomain)
 	if err != nil {
 		return "", err
 	}
@@ -68,12 +69,12 @@ func GetJenkinsSlavesServiceFQDN(jenkins *v1alpha2.Jenkins) (string, error) {
 }
 
 // GetClusterDomain returns Kubernetes cluster domain, default to "cluster.local"
-func getClusterDomain() (string, error) {
-	clusterDomain := "cluster.local"
-
-	if ok, err := isRunningInCluster(); !ok {
-		return clusterDomain, nil
-	} else if err != nil {
+func getClusterDomain(kubernetesClusterDomain string) (string, error) {
+	isRunningInCluster, err := IsRunningInCluster()
+	if !isRunningInCluster {
+		return kubernetesClusterDomain, nil
+	}
+	if err != nil {
 		return "", nil
 	}
 
@@ -84,20 +85,20 @@ func getClusterDomain() (string, error) {
 		return "", stackerr.WithStack(err)
 	}
 
-	clusterDomain = strings.TrimPrefix(cname, "kubernetes.default.svc")
-	clusterDomain = strings.TrimPrefix(clusterDomain, ".")
-	clusterDomain = strings.TrimSuffix(clusterDomain, ".")
+	kubernetesClusterDomain = strings.TrimPrefix(cname, "kubernetes.default.svc")
+	kubernetesClusterDomain = strings.TrimPrefix(kubernetesClusterDomain, ".")
+	kubernetesClusterDomain = strings.TrimSuffix(kubernetesClusterDomain, ".")
 
-	return clusterDomain, nil
+	return kubernetesClusterDomain, nil
 }
 
-func isRunningInCluster() (bool, error) {
-	_, err := k8sutil.GetOperatorNamespace()
-	if err != nil {
-		if err == k8sutil.ErrNoNamespace || err == k8sutil.ErrRunLocal {
-			return false, nil
-		}
+func IsRunningInCluster() (bool, error) {
+	const inClusterNamespacePath = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
+	_, err := os.Stat(inClusterNamespacePath)
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err == nil {
 		return true, nil
 	}
-	return false, stackerr.WithStack(err)
+	return false, err
 }

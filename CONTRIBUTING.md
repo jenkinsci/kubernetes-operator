@@ -1,46 +1,50 @@
-# Contributing
+# Contribution Model
 
-:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
-
-The following is a set of guidelines for contributing to the Jenkins Operator. These are mostly guidelines, not rules. 
-Use your best judgment, and feel free to propose changes to this document in a pull request.
-
-In this project we appreciate any kind of contributions: code, documentation, design, etc.
-Any contribution counts, and the size does not matter!
-
-## Newcomers
-
-If you are a newcomer contributor and have any questions, please do not hesitate to ask in the `#jenkins-operator` [Slack](https://virtuslab-oss.slack.com) Channel.
-
-#### Table Of Contents
-
-[Code of Conduct](#code-of-conduct)
+Thanks for taking the time to contribute!
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by the [Atom Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
+This project and everyone participating in it is governed by the [Jenkins Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. 
 
-## Commit Messages
+## We Develop with GitHub
+We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
 
-All commit messages should follow
-[these best practices](https://chris.beams.io/posts/git-commit/), specifically:
+## We Use GitHub Flow, So All Code Changes Happen Through Pull Requests
+Pull requests are the best way to propose changes to the codebase (we use GitHub Flow). We actively welcome your pull requests:
 
-- Start with a subject line
-- Contain a body that explains _why_ you're making the change you're making
-- Reference an issue number one exists, closing it if applicable (with text such
-  as
-  ["Fixes #245" or "Closes #111"](https://help.github.com/articles/closing-issues-using-keywords/))
+- Create feature requests and discuss the scope.
+- Fork the repo and create your branch from master.
+- If you’ve added code that should be tested, add tests.
+- If you’ve changed APIs or design, update the documentation.
+- Create a draft pull request (not yet ready for review, triggers CI build).
+- Ensure the e2e tests pass (wait for GitHub status checks).
+- Mark that pull request as ready for review.
 
-Not sure what to put? Try to Include:
+## Quality Standards
+It is important to keep the quality bar high and ensure all of us follow best practices and security, so the code is solid and can be reused by other people. Below you can find some quality standards.
 
-- What is the problem being solved?
-- Why is this the best approach?
-- What other approaches did you consider?
-- What side effects will this approach have?
-- What future work remains to be done?
+### General Contribution
 
-## Coding standards
+- Break down your pull request into smaller pieces, less code is easier to review. Most of PRs should fall under 200 lines of code changes unless specifically justified otherwise.
+- Add descriptive comments and labels to pull requests and issues.
+- Ensure end to end tests are passing.
+- commit message should follow [these best practices](https://chris.beams.io/posts/git-commit/), specifically: start with a subject line and reference an issue number e.g. ["Fixes #245" or "Closes #111"](https://help.github.com/articles/closing-issues-using-keywords/)
 
-### Go
+### Large Architectural Changes
+In case of large change which requires significant engineering effort and introduces side effects, we suggest writing a design proposal document first.
 
-- [Go code review comments](https://github.com/golang/go/wiki/CodeReviewComments)
+Design proposal is simply a document that states what you propose to do including:
+
+- Problem statement
+- Description of potential solution
+- Side effects
+- Breaking changes
+
+Keep in mind that a proposal is not a pitch, it needs to be technical.
+
+### Proposing changes to Helm Chart
+When issuing a PR that modifies the project's Helm Chart, please do not include in your PR changes that would release a new package version when merged.
+
+Specifically, please do not update `chart/index.yaml` and `chart/jenkins-operator/Chart.yaml` files and do not build chart archive package.
+
+For the sake of PR's brevity and security, Project's maintainers will issue a separate PR that releases new version of the Chart after your PR has been merged.

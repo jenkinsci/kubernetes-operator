@@ -4,9 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"k8s.io/apimachinery/pkg/api/errors"
-
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
@@ -16,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -74,7 +73,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		defer ctrl.Finish()
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -126,7 +125,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -174,7 +173,7 @@ func TestCreateAgent(t *testing.T) {
 		jenkins := jenkinsCustomResource()
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 

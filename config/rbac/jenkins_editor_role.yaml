@@ -1,0 +1,24 @@
+# permissions for end users to edit jenkins.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: jenkins-editor-role
+rules:
+- apiGroups:
+  - jenkins.io
+  resources:
+  - jenkins
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - jenkins.io
+  resources:
+  - jenkins/status
+  verbs:
+  - get

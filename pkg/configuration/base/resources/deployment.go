@@ -3,7 +3,7 @@ package resources
 import (
 	"fmt"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -37,6 +37,7 @@ func NewJenkinsDeployment(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkin
 					ImagePullSecrets:   jenkins.Spec.Master.ImagePullSecrets,
 					Tolerations:        jenkins.Spec.Master.Tolerations,
 					PriorityClassName:  jenkins.Spec.Master.PriorityClassName,
+					HostAliases:        jenkins.Spec.Master.HostAliases,
 				},
 			},
 			Selector: selector,

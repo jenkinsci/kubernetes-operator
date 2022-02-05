@@ -1,16 +1,14 @@
 package resources
 
 import (
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	routev1 "github.com/openshift/api/route/v1"
+
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
 )
-
-//RouteKind the kind name for route
-const RouteKind = "Route"
 
 var isRouteAPIAvailable = false
 var routeAPIChecked = false

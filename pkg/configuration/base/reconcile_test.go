@@ -4,13 +4,14 @@ import (
 	"context"
 	"testing"
 
-	"github.com/bndr/gojenkins"
-	"github.com/golang/mock/gomock"
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
+
+	"github.com/bndr/gojenkins"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -161,12 +162,12 @@ func TestCompareVolumes(t *testing.T) {
 	})
 }
 
-func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
+func TestJenkinsBaseConfigurationReconciler_verifyPlugins(t *testing.T) {
 	log.SetupLogger(true)
 
 	t.Run("happy, empty base and user plugins", func(t *testing.T) {
 		jenkins := &v1alpha2.Jenkins{}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -194,7 +195,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -238,7 +239,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -275,7 +276,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -312,7 +313,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -349,7 +350,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -386,7 +387,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -415,7 +416,7 @@ func TestReconcileJenkinsBaseConfiguration_verifyPlugins(t *testing.T) {
 				},
 			},
 		}
-		r := ReconcileJenkinsBaseConfiguration{
+		r := JenkinsBaseConfigurationReconciler{
 			logger: log.Log,
 			Configuration: configuration.Configuration{
 				Jenkins: jenkins,
@@ -618,7 +619,7 @@ func TestEnsureExtraRBAC(t *testing.T) {
 
 	t.Run("empty", func(t *testing.T) {
 		// given
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -654,7 +655,7 @@ func TestEnsureExtraRBAC(t *testing.T) {
 	clusterRoleKind := "ClusterRole"
 	t.Run("one extra", func(t *testing.T) {
 		// given
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -695,7 +696,7 @@ func TestEnsureExtraRBAC(t *testing.T) {
 	})
 	t.Run("two extra", func(t *testing.T) {
 		// given
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -743,7 +744,7 @@ func TestEnsureExtraRBAC(t *testing.T) {
 	})
 	t.Run("delete one extra", func(t *testing.T) {
 		// given
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -801,8 +802,8 @@ func TestEnsureExtraRBAC(t *testing.T) {
 		roleBindings, err := fetchAllRoleBindings(fakeClient)
 		assert.NoError(t, err)
 		assert.Equal(t, 3, len(roleBindings.Items))
-		assert.Equal(t, metaObject.Name, roleBindings.Items[1].Name)
-		assert.Equal(t, jenkins.Spec.Roles[0], roleBindings.Items[2].RoleRef)
+		assert.Equal(t, metaObject.Name, roleBindings.Items[0].Name)
+		assert.Equal(t, jenkins.Spec.Roles[0], roleBindings.Items[1].RoleRef)
 	})
 }
 

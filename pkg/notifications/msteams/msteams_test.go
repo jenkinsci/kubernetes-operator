@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/provider"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
@@ -32,11 +32,11 @@ var (
 )
 
 func TestTeams_Send(t *testing.T) {
-	fakeClient := fake.NewFakeClient()
+	fakeClient := fake.NewClientBuilder().Build()
 	testURLSelectorKeyName := "test-url-selector"
 	testSecretName := "test-secret"
 
-	event := event.Event{
+	e := event.Event{
 		Jenkins: v1alpha2.Jenkins{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      testCrName,
@@ -66,27 +66,27 @@ func TestTeams_Send(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, message.Title, provider.NotificationTitle(event))
-		assert.Equal(t, message.ThemeColor, teams.getStatusColor(event.Level))
+		assert.Equal(t, message.Title, provider.NotificationTitle(e))
+		assert.Equal(t, message.ThemeColor, teams.getStatusColor(e.Level))
 
 		mainSection := message.Sections[0]
 
-		reason := strings.Join(event.Reason.Short(), "\n\n - ")
+		reasonString := strings.Join(e.Reason.Short(), "\n\n - ")
 
-		assert.Equal(t, mainSection.Text, reason)
+		assert.Equal(t, mainSection.Text, reasonString)
 
 		for _, fact := range mainSection.Facts {
 			switch fact.Name {
 			case provider.PhaseFieldName:
-				assert.Equal(t, fact.Value, string(event.Phase))
+				assert.Equal(t, fact.Value, string(e.Phase))
 			case provider.CrNameFieldName:
-				assert.Equal(t, fact.Value, event.Jenkins.Name)
+				assert.Equal(t, fact.Value, e.Jenkins.Name)
 			case provider.MessageFieldName:
-				assert.Equal(t, fact.Value, reason)
+				assert.Equal(t, fact.Value, reasonString)
 			case provider.LevelFieldName:
-				assert.Equal(t, fact.Value, string(event.Level))
+				assert.Equal(t, fact.Value, string(e.Level))
 			case provider.NamespaceFieldName:
-				assert.Equal(t, fact.Value, event.Jenkins.Namespace)
+				assert.Equal(t, fact.Value, e.Jenkins.Namespace)
 			default:
 				t.Errorf("Found unexpected '%+v' fact", fact)
 			}
@@ -109,7 +109,7 @@ func TestTeams_Send(t *testing.T) {
 	err := fakeClient.Create(context.TODO(), secret)
 	assert.NoError(t, err)
 
-	err = teams.Send(event)
+	err = teams.Send(e)
 	assert.NoError(t, err)
 }
 
@@ -123,7 +123,7 @@ func TestGenerateMessages(t *testing.T) {
 
 		s := Teams{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -166,7 +166,7 @@ func TestGenerateMessages(t *testing.T) {
 
 		s := Teams{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -209,7 +209,7 @@ func TestGenerateMessages(t *testing.T) {
 
 		s := Teams{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -251,7 +251,7 @@ func TestGenerateMessages(t *testing.T) {
 		res := reason.NewUndefined(reason.KubernetesSource, []string{"ąśćńółżź"}, "ąśćńółżź")
 		s := Teams{
 			httpClient: http.Client{},
-			k8sClient:  fake.NewFakeClient(),
+			k8sClient:  fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},

@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 
@@ -58,7 +58,7 @@ type testServer struct {
 }
 
 // Login handles a login command with username and password.
-func (bkd *testServer) Login(state *smtp.ConnectionState, username, password string) (smtp.Session, error) {
+func (bkd *testServer) Login(_ *smtp.ConnectionState, username, password string) (smtp.Session, error) {
 	if username != testSMTPUsername || password != testSMTPPassword {
 		return nil, errors.New("invalid username or password")
 	}
@@ -66,7 +66,7 @@ func (bkd *testServer) Login(state *smtp.ConnectionState, username, password str
 }
 
 // AnonymousLogin requires clients to authenticate using SMTP AUTH before sending emails
-func (bkd *testServer) AnonymousLogin(state *smtp.ConnectionState) (smtp.Session, error) {
+func (bkd *testServer) AnonymousLogin(_ *smtp.ConnectionState) (smtp.Session, error) {
 	return nil, smtp.ErrAuthRequired
 }
 
@@ -128,7 +128,7 @@ func (s *testSession) Logout() error {
 }
 
 func TestSMTP_Send(t *testing.T) {
-	event := event.Event{
+	e := event.Event{
 		Jenkins: v1alpha2.Jenkins{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      testCrName,
@@ -140,7 +140,7 @@ func TestSMTP_Send(t *testing.T) {
 		Reason: testReason,
 	}
 
-	fakeClient := fake.NewFakeClient()
+	fakeClient := fake.NewClientBuilder().Build()
 	testUsernameSelectorKeyName := "test-username-selector"
 	testPasswordSelectorKeyName := "test-password-selector"
 	testSecretName := "test-secret"
@@ -167,7 +167,7 @@ func TestSMTP_Send(t *testing.T) {
 		},
 	}}
 
-	ts := &testServer{event: event}
+	ts := &testServer{event: e}
 
 	// Create fake SMTP server
 
@@ -205,7 +205,7 @@ func TestSMTP_Send(t *testing.T) {
 		assert.NoError(t, err)
 	}()
 
-	err = smtpClient.Send(event)
+	err = smtpClient.Send(e)
 
 	assert.NoError(t, err)
 }
@@ -231,7 +231,7 @@ func TestGenerateMessage(t *testing.T) {
 			Reason: res,
 		}
 		s := SMTP{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				LoggingLevel: level,
 				SMTP: &v1alpha2.SMTP{
@@ -264,7 +264,7 @@ func TestGenerateMessage(t *testing.T) {
 			Reason: res,
 		}
 		s := SMTP{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				LoggingLevel: level,
 				SMTP: &v1alpha2.SMTP{
@@ -297,7 +297,7 @@ func TestGenerateMessage(t *testing.T) {
 			Reason: res,
 		}
 		s := SMTP{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				LoggingLevel: level,
 				SMTP: &v1alpha2.SMTP{

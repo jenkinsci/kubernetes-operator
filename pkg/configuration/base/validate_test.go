@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
@@ -161,7 +161,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), secret)
 		assert.NoError(t, err)
 
@@ -187,7 +187,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 
 		baseReconcileLoop := New(configuration.Configuration{
 			Client:  fakeClient,
@@ -221,7 +221,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), secret)
 		assert.NoError(t, err)
 
@@ -257,7 +257,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), secret)
 		assert.NoError(t, err)
 
@@ -293,7 +293,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), secret)
 		assert.NoError(t, err)
 
@@ -329,7 +329,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			},
 		}
 
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), secret)
 		assert.NoError(t, err)
 
@@ -569,7 +569,7 @@ func TestValidateConfigMapVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "example"}},
@@ -596,7 +596,7 @@ func TestValidateConfigMapVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), &configMap)
 		assert.NoError(t, err)
 		baseReconcileLoop := New(configuration.Configuration{
@@ -624,7 +624,7 @@ func TestValidateConfigMapVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Client:  fakeClient,
 			Jenkins: jenkins,
@@ -634,7 +634,7 @@ func TestValidateConfigMapVolume(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, got, []string{"ConfigMap 'configmap-name' not found for volume '{volume-name {nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil &ConfigMapVolumeSource{LocalObjectReference:LocalObjectReference{Name:configmap-name,},Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil}}'"})
+		assert.Equal(t, got, []string{"ConfigMap 'configmap-name' not found for volume '{volume-name {nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil &ConfigMapVolumeSource{LocalObjectReference:LocalObjectReference{Name:configmap-name,},Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil nil}}'"})
 	})
 }
 
@@ -649,7 +649,7 @@ func TestValidateSecretVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "example"}},
 			Client:  fakeClient,
@@ -673,7 +673,7 @@ func TestValidateSecretVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		err := fakeClient.Create(context.TODO(), &secret)
 		assert.NoError(t, err)
 		baseReconcileLoop := New(configuration.Configuration{
@@ -699,7 +699,7 @@ func TestValidateSecretVolume(t *testing.T) {
 				},
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Client:  fakeClient,
 			Jenkins: jenkins,
@@ -708,7 +708,7 @@ func TestValidateSecretVolume(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, got, []string{"Secret 'secret-name' not found for volume '{volume-name {nil nil nil nil nil &SecretVolumeSource{SecretName:secret-name,Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil}}'"})
+		assert.Equal(t, got, []string{"Secret 'secret-name' not found for volume '{volume-name {nil nil nil nil nil &SecretVolumeSource{SecretName:secret-name,Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil}}'"})
 	})
 }
 
@@ -722,7 +722,7 @@ func TestValidateCustomization(t *testing.T) {
 	}
 	t.Run("empty", func(t *testing.T) {
 		customization := v1alpha2.Customization{}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: jenkins,
 			Client:  fakeClient,
@@ -744,7 +744,7 @@ func TestValidateCustomization(t *testing.T) {
 				Namespace: defaultNamespace,
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: jenkins,
 			Client:  fakeClient,
@@ -775,7 +775,7 @@ func TestValidateCustomization(t *testing.T) {
 				Namespace: defaultNamespace,
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: jenkins,
 			Client:  fakeClient,
@@ -802,7 +802,7 @@ func TestValidateCustomization(t *testing.T) {
 				Namespace: defaultNamespace,
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: jenkins,
 			Client:  fakeClient,
@@ -827,7 +827,7 @@ func TestValidateCustomization(t *testing.T) {
 				Namespace: defaultNamespace,
 			},
 		}
-		fakeClient := fake.NewFakeClient()
+		fakeClient := fake.NewClientBuilder().Build()
 		baseReconcileLoop := New(configuration.Configuration{
 			Jenkins: jenkins,
 			Client:  fakeClient,

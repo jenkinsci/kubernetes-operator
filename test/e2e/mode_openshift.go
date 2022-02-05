@@ -3,9 +3,7 @@
 package e2e
 
 import (
-	"testing"
-
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 
 	corev1 "k8s.io/api/core/v1"
@@ -16,9 +14,7 @@ const (
 	skipTestPriorityClass = true
 )
 
-func updateJenkinsCR(t *testing.T, jenkins *v1alpha2.Jenkins) {
-	t.Log("Update Jenkins CR: OpenShift")
-
+func updateJenkinsCR(jenkins *v1alpha2.Jenkins) {
 	jenkins.Spec.Master.Containers[0].Image = "quay.io/openshift/origin-jenkins"
 	jenkins.Spec.Master.Containers[0].Command = []string{
 		"bash",

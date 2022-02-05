@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/provider"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
@@ -24,7 +24,7 @@ func TestGenerateMessages(t *testing.T) {
 		res := reason.NewUndefined(reason.KubernetesSource, []string{"test-string"}, "test-verbose")
 
 		s := MailGun{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -65,7 +65,7 @@ func TestGenerateMessages(t *testing.T) {
 		res := reason.NewUndefined(reason.KubernetesSource, []string{"nil"}, "nil")
 
 		s := MailGun{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -106,7 +106,7 @@ func TestGenerateMessages(t *testing.T) {
 		res := reason.NewUndefined(reason.KubernetesSource, []string{""}, "")
 
 		s := MailGun{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},
@@ -147,7 +147,7 @@ func TestGenerateMessages(t *testing.T) {
 		res := reason.NewUndefined(reason.KubernetesSource, []string{"ąśćńółżź"}, "ąśćńółżź")
 
 		s := MailGun{
-			k8sClient: fake.NewFakeClient(),
+			k8sClient: fake.NewClientBuilder().Build(),
 			config: v1alpha2.Notification{
 				Verbose: true,
 			},

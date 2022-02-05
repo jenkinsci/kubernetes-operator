@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (r *ReconcileJenkinsBaseConfiguration) createServiceAccount(meta metav1.ObjectMeta) error {
+func (r *JenkinsBaseConfigurationReconciler) createServiceAccount(meta metav1.ObjectMeta) error {
 	serviceAccount := &corev1.ServiceAccount{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: meta.Name, Namespace: meta.Namespace}, serviceAccount)
 	annotations := r.Configuration.Jenkins.Spec.ServiceAccount.Annotations
