@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -468,12 +468,11 @@ func (r *JenkinsReconciler) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool
 		changed = true
 		jenkins.Spec.SeedAgent.NumExecutors = constants.DefaultNumberOfExecutors
 	}
-	
-	if len(jenkins.Spec.SeedJobs) > 0 && len(jenkins.Spec.SeedAgent.Labels) == 0 {
-			logger.Info("Setting default labels for SeedAgent: " + constants.DefaultJenkinsAgentLabels)
-			changed = true
-			jenkins.Spec.SeedAgent.Labels = constants.DefaultJenkinsAgentLabels
 
+	if len(jenkins.Spec.SeedJobs) > 0 && len(jenkins.Spec.SeedAgent.Labels) == 0 {
+		logger.Info("Setting default labels for SeedAgent: " + constants.DefaultJenkinsAgentLabels)
+		changed = true
+		jenkins.Spec.SeedAgent.Labels = constants.DefaultJenkinsAgentLabels
 	}
 
 	if changed {

@@ -81,6 +81,7 @@ func verifySeedJobProperties(jenkinsClient jenkinsclient.Jenkins, seedJob seedJo
 		ID                    string
 		CredentialID          string
 		Targets               string
+		ExecuteShell          string
 		RepositoryBranch      string
 		RepositoryURL         string
 		GitHubPushTrigger     bool
@@ -96,6 +97,7 @@ func verifySeedJobProperties(jenkinsClient jenkinsclient.Jenkins, seedJob seedJo
 		ID:                    seedJob.ID,
 		CredentialID:          seedJob.CredentialID,
 		Targets:               seedJob.Targets,
+		ExecuteShell:          seedJob.ExecuteShell,
 		RepositoryBranch:      seedJob.RepositoryBranch,
 		RepositoryURL:         seedJob.RepositoryURL,
 		GitHubPushTrigger:     seedJob.GitHubPushTrigger,

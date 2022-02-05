@@ -58,8 +58,14 @@ func jenkinsCustomResource() *v1alpha2.Jenkins {
 					Targets:               "cicd/jobs/*.jenkins",
 					Description:           "Jenkins Operator e2e tests repository",
 					RepositoryBranch:      "master",
+					ExecuteShell:          "mkdir test",
 					RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
 				},
+			},
+			SeedAgent: v1alpha2.SeedAgent{
+				NumExecutors: 15,
+				Image:        "jenkins/inbound-agent:latest",
+				Labels:       "seed-job-agent",
 			},
 		},
 	}
@@ -123,6 +129,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 
 		jenkins := jenkinsCustomResource()
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
+		jenkins.Spec.SeedAgent = v1alpha2.SeedAgent{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
 		fakeClient := fake.NewClientBuilder().Build()
@@ -137,7 +144,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		}
 
 		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(AgentName, jenkins.Spec.SeedAgent.NumExecutors, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		seedJobsClient := New(jenkinsClient, config)
@@ -199,7 +206,7 @@ func TestCreateAgent(t *testing.T) {
 		assert.NoError(t, err)
 
 		// when
-		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkinsCustomResource(), jenkins.Namespace, AgentName)
+		err = seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkinsCustomResource(), jenkins.Namespace, AgentName, jenkins.Spec.SeedAgent.NumExecutors, jenkins.Spec.SeedAgent.Labels)
 
 		// then
 		assert.NoError(t, err)
