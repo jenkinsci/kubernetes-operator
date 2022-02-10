@@ -158,7 +158,7 @@ spec:
                   basePlugins:
                     description: 'BasePlugins contains plugins required by operator
                       Defaults to : - name: kubernetes version: "1.30.11" - name:
-                      workflow-job version: "2.42" - name: workflow-aggregator version:
+                      workflow-job version: "1145.v7f2433caa07f" - name: workflow-aggregator version:
                       "2.6" - name: git version: "4.10.0" - name: job-dsl version:
                       "1.78.1" - name: configuration-as-code version: "1.55" - name:
                       kubernetes-credentials-provider version: "0.20"'

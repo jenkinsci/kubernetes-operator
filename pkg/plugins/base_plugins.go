@@ -7,7 +7,7 @@ const (
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:0.20"
 	kubernetesPlugin                    = "kubernetes:1.30.11"
 	workflowAggregatorPlugin            = "workflow-aggregator:2.6"
-	workflowJobPlugin                   = "workflow-job:2.42"
+	workflowJobPlugin                   = "workflow-job:1145.v7f2433caa07f"
 )
 
 // basePluginsList contains plugins to install by operator.

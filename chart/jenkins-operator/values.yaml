@@ -75,7 +75,7 @@ jenkins:
   # - name: kubernetes
   #   version: 1.30.11
   # - name: workflow-job
-  #   version: "2.42"
+  #   version: "1145.v7f2433caa07f"
   # - name: workflow-aggregator
   #   version: "2.6"
   # - name: git
