@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       skipTests:
-        description: "Should tests be skipped. If set to true, the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
+        description: "Flag for skipping the tests. If set to true, the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
         required: false
 
 env:
@@ -63,7 +63,7 @@ jobs:
 #          make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
 
       - name: Dummy step to skip if tests are to be skipped
-        if: ${{ github.event.inputs.skipTests }} != 'true'
+        if: ${{ github.event.inputs.skipTests != 'true' }}
         run: |
           echo "This was not skipped"
           exit 1
