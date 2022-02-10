@@ -104,7 +104,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 						},
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
-								corev1.ResourceCPU:    resource.MustParse("1"),
+								corev1.ResourceCPU:    resource.MustParse("250m"),
 								corev1.ResourceMemory: resource.MustParse("500Mi"),
 							},
 							Limits: corev1.ResourceList{

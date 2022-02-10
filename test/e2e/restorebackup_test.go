@@ -146,7 +146,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 						},
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
-								corev1.ResourceCPU:    resource.MustParse("1"),
+								corev1.ResourceCPU:    resource.MustParse("250m"),
 								corev1.ResourceMemory: resource.MustParse("500Mi"),
 							},
 							Limits: corev1.ResourceList{

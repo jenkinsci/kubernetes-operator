@@ -118,7 +118,7 @@ jenkins:
       cpu: 1000m
       memory: 3Gi
     requests:
-      cpu: 1
+      cpu: 250m
       memory: 500Mi
 
   # volumes used by Jenkins
