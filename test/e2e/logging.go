@@ -17,7 +17,7 @@ import (
 
 var (
 	podLogTailLimit       int64 = 15
-	kubernetesEventsLimit int64 = 15
+	kubernetesEventsLimit int64 = 30
 	// MUST match the labels in the deployment manifest: deploy/operator.yaml
 	operatorPodLabels = map[string]string{
 		"name": "jenkins-operator",
@@ -125,9 +125,11 @@ func printKubernetesPods(namespace string) {
 
 func ShowLogsIfTestHasFailed(failed bool, namespace string) {
 	if failed {
+		const defaultNamespace = "default"
 		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Test failed. Bellow here you can check logs:")
 
 		printKubernetesEvents(namespace)
+		printKubernetesEvents(defaultNamespace)
 		printKubernetesPods(namespace)
 		printOperatorLogs(namespace)
 	}
