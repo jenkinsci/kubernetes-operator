@@ -71,6 +71,7 @@ OPERATOR_ARGS ?= --jenkins-api-hostname=$(JENKINS_API_HOSTNAME) --jenkins-api-po
 
 PLATFORM = $(shell echo $(UNAME_S) | tr A-Z a-z)
 CPUS_NUMBER = 3
+MEMORY_AMOUNT = 4096
 ##################### FROM OPERATOR SDK ########################
 
 # Default bundle image tag
