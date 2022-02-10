@@ -30,7 +30,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.319.1-lts-alpine
+  image: jenkins/jenkins:2.319.3-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -72,20 +72,20 @@ jenkins:
   # Example:
   #
   # basePlugins:
-  # - name: kubernetes
-  #   version: 1.30.11
-  # - name: workflow-job
-  #   version: "1145.v7f2433caa07f"
-  # - name: workflow-aggregator
-  #   version: "2.6"
+  # - name: configuration-as-code
+  #   version: "1346.ve8cfa_3473c94"
   # - name: git
-  #   version: 4.10.0
+  #   version: 4.10.3
   # - name: job-dsl
   #   version: "1.78.1"
-  # - name: configuration-as-code
-  #   version: "1.55"
+  # - name: kubernetes
+  #   version: 1.31.3
   # - name: kubernetes-credentials-provider
   #   version: 0.20
+  # - name: workflow-aggregator
+  #   version: "2.6"
+  # - name: workflow-job
+  #   version: "1145.v7f2433caa07f"
   basePlugins: []
 
   # plugins are plugins required by the user

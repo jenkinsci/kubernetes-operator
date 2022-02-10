@@ -346,20 +346,20 @@ type JenkinsMaster struct {
 	// BasePlugins contains plugins required by operator
 	// +optional
 	// Defaults to :
-	// - name: kubernetes
-	// version: "1.30.11"
-	// - name: workflow-job
-	// version: "1145.v7f2433caa07f"
-	// - name: workflow-aggregator
-	// version: "2.6"
+	// - name: configuration-as-code
+	// version: "1346.ve8cfa_3473c94"
 	// - name: git
-	// version: "4.10.0"
+	// version: "4.10.3"
 	// - name: job-dsl
 	// version: "1.78.1"
-	// - name: configuration-as-code
-	// version: "1.55"
+	// - name: kubernetes
+	// version: "1.31.3"
 	// - name: kubernetes-credentials-provider
 	// version: "0.20"
+	// - name: workflow-aggregator
+	// version: "2.6"
+	// - name: workflow-job
+	// version: "1145.v7f2433caa07f"
 	BasePlugins []Plugin `json:"basePlugins,omitempty"`
 
 	// Plugins contains plugins required by user
