@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       skipTests:
-        description: "If set to true, the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
+        description: "Should tests be skipped. If set to true, the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
         required: false
 
 env:
