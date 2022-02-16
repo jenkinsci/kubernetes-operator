@@ -38,8 +38,8 @@ jobs:
       - name: Ensure Golang runtime dependencies
         run: make go-dependencies
 
-      - name: Verify code formatting
-        run: make verify
+#      - name: Verify code formatting
+#        run: make verify
 
       - name: Prepare environment for e2e
         if: ${{ github.event.inputs.skipTests != 'true' }}
