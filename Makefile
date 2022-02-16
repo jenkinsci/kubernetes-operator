@@ -211,7 +211,6 @@ container-runtime-login: ## Log in into the Docker repository
 container-runtime-build-%: ## Build the container
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) buildx build \
-		--driver=docker-container
 		--output=type=docker --platform linux/$* \
 		--build-arg GO_VERSION=$(GO_VERSION) \
 		--build-arg CTIMEVAR="$(CTIMEVAR)" \
@@ -229,6 +228,7 @@ container-runtime-images: ## List all local containers
 ## Parameter is version
 define container-runtime-push-command
 $(CONTAINER_RUNTIME_COMMAND) buildx build \
+	--driver=docker-container
 	--output=type=registry --platform linux/amd64,linux/arm64 \
 	--build-arg GO_VERSION=$(GO_VERSION) \
 	--build-arg CTIMEVAR="$(CTIMEVAR)" \
