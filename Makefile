@@ -228,6 +228,7 @@ container-runtime-images: ## List all local containers
 define buildx-create-command
 $(CONTAINER_RUNTIME_COMMAND) buildx create \
 	--driver=docker-container
+	--use
 endef
 
 ## Parameter is version
