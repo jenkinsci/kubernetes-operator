@@ -211,6 +211,7 @@ container-runtime-login: ## Log in into the Docker repository
 container-runtime-build-%: ## Build the container
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) buildx build \
+		--driver=docker-container
 		--output=type=docker --platform linux/$* \
 		--build-arg GO_VERSION=$(GO_VERSION) \
 		--build-arg CTIMEVAR="$(CTIMEVAR)" \
