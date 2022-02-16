@@ -38,8 +38,8 @@ jobs:
       - name: Ensure Golang runtime dependencies
         run: make go-dependencies
 
-#      - name: Verify code formatting
-#        run: make verify
+      - name: Verify code formatting
+        run: make verify
 
       - name: Prepare environment for e2e
         if: ${{ github.event.inputs.skipTests != 'true' }}
@@ -65,11 +65,11 @@ jobs:
           eval $(bin/minikube docker-env)
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
 
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-#          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Release Container Runtime
         run: |
