@@ -388,7 +388,7 @@ func (r *JenkinsReconciler) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool
 		changed = true
 		jenkinsContainer.Env = append(jenkinsContainer.Env, corev1.EnvVar{
 			Name:  constants.JavaOpsVariableName,
-			Value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Djenkins.install.runSetupWizard=false -Djava.awt.headless=true",
+			Value: "-XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=80.0 -Djenkins.install.runSetupWizard=false -Djava.awt.headless=true",
 		})
 	}
 	if len(jenkins.Spec.Master.BasePlugins) == 0 {

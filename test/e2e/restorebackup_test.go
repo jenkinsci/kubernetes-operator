@@ -15,6 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 const pvcName = "pvc-jenkins"
@@ -107,11 +108,50 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 			Master: v1alpha2.JenkinsMaster{
 				Containers: []v1alpha2.Container{
 					{
-						Name: resources.JenkinsMasterContainerName,
+						Name:  resources.JenkinsMasterContainerName,
+						Image: JenkinsTestImage,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "plugins-cache",
 								MountPath: "/usr/share/jenkins/ref/plugins",
+							},
+						},
+						ReadinessProbe: &corev1.Probe{
+							Handler: corev1.Handler{
+								HTTPGet: &corev1.HTTPGetAction{
+									Path:   "/login",
+									Port:   intstr.FromString("http"),
+									Scheme: corev1.URISchemeHTTP,
+								},
+							},
+							InitialDelaySeconds: int32(100),
+							TimeoutSeconds:      int32(4),
+							FailureThreshold:    int32(30),
+							SuccessThreshold:    int32(1),
+							PeriodSeconds:       int32(5),
+						},
+						LivenessProbe: &corev1.Probe{
+							Handler: corev1.Handler{
+								HTTPGet: &corev1.HTTPGetAction{
+									Path:   "/login",
+									Port:   intstr.FromString("http"),
+									Scheme: corev1.URISchemeHTTP,
+								},
+							},
+							InitialDelaySeconds: int32(80),
+							TimeoutSeconds:      int32(4),
+							FailureThreshold:    int32(30),
+							SuccessThreshold:    int32(1),
+							PeriodSeconds:       int32(5),
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("250m"),
+								corev1.ResourceMemory: resource.MustParse("500Mi"),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1000m"),
+								corev1.ResourceMemory: resource.MustParse("3Gi"),
 							},
 						},
 					},

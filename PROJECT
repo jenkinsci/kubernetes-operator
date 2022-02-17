@@ -7,6 +7,7 @@ resources:
   group: jenkins.io
   kind: Jenkins
   version: v1alpha2
+  webhookVersion: v1
 version: 3-alpha
 plugins:
   manifests.sdk.operatorframework.io/v2: {}

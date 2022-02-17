@@ -27,4 +27,6 @@ require (
 	k8s.io/client-go v0.20.2
 	k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 	sigs.k8s.io/controller-runtime v0.7.0
+	golang.org/x/mod  v0.4.2
+
 )

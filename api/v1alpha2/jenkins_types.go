@@ -18,6 +18,10 @@ type JenkinsSpec struct {
 	// +optional
 	SeedJobs []SeedJob `json:"seedJobs,omitempty"`
 
+	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
+	//+optional
+	ValidateSecurityWarnings bool `json:"validateSecurityWarnings,omitempty"`
+
 	// Notifications defines list of a services which are used to inform about Jenkins status
 	// Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun
 	// +optional
@@ -342,20 +346,20 @@ type JenkinsMaster struct {
 	// BasePlugins contains plugins required by operator
 	// +optional
 	// Defaults to :
+	// - name: configuration-as-code
+	// version: "1346.ve8cfa_3473c94"
+	// - name: git
+	// version: "4.10.3"
+	// - name: job-dsl
+	// version: "1.78.1"
 	// - name: kubernetes
-	// version: "1.28.6"
-	// - name: workflow-job
-	// version: "2.40"
+	// version: "1.31.3"
+	// - name: kubernetes-credentials-provider
+	// version: "0.20"
 	// - name: workflow-aggregator
 	// version: "2.6"
-	// - name: git
-	// version: "4.5.0"
-	// - name: job-dsl
-	// version: "1.77"
-	// - name: configuration-as-code
-	// version: "1.46"
-	// - name: kubernetes-credentials-provider
-	// version: "0.15"
+	// - name: workflow-job
+	// version: "1145.v7f2433caa07f"
 	BasePlugins []Plugin `json:"basePlugins,omitempty"`
 
 	// Plugins contains plugins required by user
@@ -368,6 +372,10 @@ type JenkinsMaster struct {
 	// PriorityClassName for Jenkins master pod
 	// +optional
 	PriorityClassName string `json:"priorityClassName,omitempty"`
+
+	// HostAliases for Jenkins master pod and SeedJob agent
+	// +optional
+	HostAliases []corev1.HostAlias `json:"hostAliases,omitempty"`
 }
 
 // Service defines Kubernetes service attributes

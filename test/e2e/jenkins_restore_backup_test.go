@@ -28,6 +28,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 

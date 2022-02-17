@@ -25,7 +25,7 @@
 <meta property="og:description" content="A native operator for Kubernetes to manage Jenkins" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jenkinsci.github.io/kubernetes-operator/" />
-<meta property="og:updated_time" content="2021-01-25T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
+<meta property="og:updated_time" content="2021-12-08T00:00:00+00:00" /><meta property="og:site_name" content="Jenkins Operator" />
 <meta itemprop="name" content="Jenkins Kubernetes Operator">
 <meta itemprop="description" content="A native operator for Kubernetes to manage Jenkins"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Jenkins Kubernetes Operator"/>
@@ -111,7 +111,7 @@
 <section class="row td-box td-box--primary position-relative td-box--gradient td-box--height-auto">
 	<div class="container text-center td-arrow-down">
 		<span class="h4 mb-0">
-			Jenkins operator is a Kubernetes native operator which fully manages Jenkins on Kubernetes.<br /> It was built with immutability and declarative configuration as code in mind.<br />
+			Jenkins Operator is a Kubernetes native operator which fully manages Jenkins on Kubernetes.<br /> It was built with immutability and declarative configuration as code in mind.<br />
 		</span>
 	</div>
 </section>
@@ -125,64 +125,44 @@
 <section class="row td-box td-box--dark td-box--gradient td-box--height-auto">
 	<div class="col">
 		<div class="row ">
-			<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-hdd"></i>
-  </div>
-  <h4 class="h3">Volumes handling</h4>
-  <p class="mb-0"><p>AWS EBS volume attach/detach issue when using PVC</p>
+			<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fas fa-cogs"></i>
+    </div>
+    <h4 class="h3">Better configuration as code</h4>
+    <p class="mb-0"><p>Use groovy scripts or JCasC to configure your Jenkins instance</p>
 </p>
-  
+    
 </div>
 
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-cogs"></i>
-  </div>
-  <h4 class="h3">Better configuration as code</h4>
-  <p class="mb-0"><p>Use groovy scripts or JCasC to configure your Jenkins instance</p>
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fas fa-shield-alt"></i>
+    </div>
+    <h4 class="h3">Security and hardening out of the box</h4>
+    <p class="mb-0"><p>Enable CSRF, disable usage stats, enable master access control and more by default</p>
 </p>
-  
+    
 </div>
 
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-shield-alt"></i>
-  </div>
-  <h4 class="h3">Security and hardening out of the box</h4>
-  <p class="mb-0"><p>Enable CSRF, disable usage stats, enable master access control and more by default</p>
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fas fa-plug"></i>
+    </div>
+    <h4 class="h3">Handle graceful shutdown properly</h4>
+    <p class="mb-0"><p>Less chance to lose data</p>
 </p>
-  
+    
 </div>
 
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-plug"></i>
-  </div>
-  <h4 class="h3">Handle graceful shutdown properly</h4>
-  <p class="mb-0"><p>Less chance to lose data</p>
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <h4 class="h3">Make errors more visible for end users</h4>
+    <p class="mb-0"><p>Improve user experience by informing what has been done</p>
 </p>
-  
-</div>
-
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-exclamation-circle"></i>
-  </div>
-  <h4 class="h3">Make errors more visible for end users</h4>
-  <p class="mb-0"><p>Improve user experience by informing what has been done</p>
-</p>
-  
-</div>
-
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-file-archive"></i>
-  </div>
-  <h4 class="h3">Backup and restore for jobs history</h4>
-  <p class="mb-0"><p>Prevent loss of job history</p>
-</p>
-  
+    
 </div>
 
 		</div>
@@ -199,37 +179,50 @@
 <section class="row td-box td-box--3 td-box--gradient td-box--height-auto">
 	<div class="col">
 		<div class="row ">
-			<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fab fa-github"></i>
-  </div>
-  <h4 class="h3">Contributions welcome!</h4>
-  <p class="mb-0"><p>We do a Pull Request contributions workflow on <strong>GitHub</strong>. New users are always welcome!</p>
+			<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fab fa-github"></i>
+    </div>
+    <h4 class="h3">Contributions welcome!</h4>
+    <p class="mb-0"><p>We do a Pull Request contributions workflow on <strong>GitHub</strong>. New users are always welcome!</p>
 </p>
-  <p><a href="https://github.com/jenkinsci/kubernetes-operator/pulls">Read more …</a></p>
+    <p><a href="https://github.com/jenkinsci/kubernetes-operator/pulls">Read more …</a></p>
 </div>
 
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fas fa-folder-open"></i>
-  </div>
-  <h4 class="h3">Documentation</h4>
-  <p class="mb-0"><p>Learning the usage of Jenkins Operator will make your life easier. After that, you can easily contribute to the project.</p>
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fas fa-folder-open"></i>
+    </div>
+    <h4 class="h3">Documentation</h4>
+    <p class="mb-0"><p>Learning the usage of Jenkins Operator will make your life easier. After that, you can easily contribute to the project.</p>
 </p>
-  <p><a href="/kubernetes-operator/docs">Read more …</a></p>
+    <p><a href="/kubernetes-operator/docs">Read more …</a></p>
 </div>
 
-<div class="col-lg-4 mb-5 mb-lg-0 text-center ">
-  <div class="mb-4 h1">
-    <i class="fab fa-slack"></i>
-  </div>
-  <h4 class="h3">Join #jenkins-operator on Slack!</h4>
-  <p class="mb-0"><p>Ask questions, receive help and talk with other users about operator on dedicated Slack channel.</p>
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fab fa-jenkins"></i>
+    </div>
+    <h4 class="h3">Jenkins Community Discourse</h4>
+    <p class="mb-0"><p>Ask questions, discuss best practices and talk to other users about Jenkins Operator on a dedicated Discourse category.</p>
 
-<p><a href="https://forms.gle/X3X8qA1XMirdBuEH7">Invite form</a>
-<a href="https://virtuslab-oss.slack.com">Go to Slack</a></p>
+<p><a href="https://community.jenkins.io/c/contributing/jenkins-operator/20">Visit Discourse</a></p>
 </p>
-  
+    
+</div>
+
+<div class="col-lg-3 mb-5 mb-lg-3 text-center ">
+    <div class="mb-4 h1">
+        <i class="fab fa-slack"></i>
+    </div>
+    <h4 class="h3">Join #jenkins-operator on Slack!</h4>
+    <p class="mb-0"><p>Chat with other users about Jenkins Operator on dedicated Slack channel.</p>
+
+<p><a href="https://forms.gle/X3X8qA1XMirdBuEH7">Invite form</a></p>
+
+<p><a href="https://virtuslab-oss.slack.com">Go to Slack</a></p>
+</p>
+    
 </div>
 
 		</div>

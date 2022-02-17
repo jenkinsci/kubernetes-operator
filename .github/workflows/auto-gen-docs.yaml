@@ -23,18 +23,15 @@ jobs:
           submodules: recursive  # Fetch the Docsy theme
           fetch-depth: 0
 
-      # Checks out a copy of your repository on the ubuntu-latest machine
+      # Checks if the previous commit introduced any changes to website files
       - name: Check for changes
         run: |
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*"; then
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*"
-            echo "IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*")" >> $GITHUB_ENV
-          else
-            echo "IS_CHANGED=empty" >> $GITHUB_ENV
-          fi
+          IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || :)
+          [[ $IS_CHANGED -gt 0 ]] && echo "IS_CHANGED=true" >> $GITHUB_ENV || echo "IS_CHANGED=false" >> $GITHUB_ENV
+
       # Sets up the appropriate version of Hugo
       - name: Setup Hugo
-        if: env.IS_CHANGED != 'empty'
+        if: env.IS_CHANGED == 'true'
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: '0.62.2'
@@ -42,14 +39,14 @@ jobs:
 
       # Sets up node - required by Hugo
       - name: Setup Node
-        if: env.IS_CHANGED != 'empty'
+        if: env.IS_CHANGED == 'true'
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
 
       # Installs dependencies required by docsy theme
       - name: Install docsy dependencies
-        if: env.IS_CHANGED != 'empty'
+        if: env.IS_CHANGED == 'true'
         run: |
           cd website
           npm install
@@ -57,17 +54,24 @@ jobs:
           sudo npm install -D --save autoprefixer
           sudo npm install -D --save postcss-cli
           cd ../
+
+      - name: Update last modified date in modified docs
+        if: env.IS_CHANGED == 'true'
+        run: |
+          git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*" \
+          | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
+
       # Runs makefile goal - checks changes to /website folder and generates docs
       - name: Run Makefile goal
-        if: env.IS_CHANGED != 'empty'
+        if: env.IS_CHANGED == 'true'
         env:
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make generate-docs
 
-      # Create push request with generated docs
+      # Creates pull request with generated docs
       - name: Create Pull Request
-        if: env.IS_CHANGED != 'empty'
+        if: env.IS_CHANGED == 'true'
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Auto-updated docs

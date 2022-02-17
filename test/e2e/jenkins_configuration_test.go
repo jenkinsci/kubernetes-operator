@@ -1,11 +1,13 @@
 package e2e
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	// +kubebuilder:scaffold:imports
 )
@@ -74,15 +76,16 @@ var _ = Describe("Jenkins controller configuration", func() {
 
 	BeforeEach(func() {
 		namespace = CreateNamespace()
-
 		createUserConfigurationSecret(namespace.Name, userConfigurationSecretData)
 		createUserConfigurationConfigMap(namespace.Name, numberOfExecutorsEnvName, fmt.Sprintf("${%s}", systemMessageEnvName))
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		jenkins = RenderJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 		createDefaultLimitsForContainersInNamespace(namespace.Name)
 		createKubernetesCredentialsProviderSecret(namespace.Name, mySeedJob)
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 
@@ -125,10 +128,12 @@ var _ = Describe("Jenkins controller priority class", func() {
 
 	BeforeEach(func() {
 		namespace = CreateNamespace()
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+		jenkins = RenderJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+		Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 
@@ -176,10 +181,12 @@ var _ = Describe("Jenkins controller plugins test", func() {
 
 	BeforeEach(func() {
 		namespace = CreateNamespace()
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		jenkins = RenderJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 

@@ -78,6 +78,7 @@ func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
 	var probeAddr string
+	var validateSecurityWarnings bool
 
 	isRunningInCluster, err := resources.IsRunningInCluster()
 	if err != nil {
@@ -88,6 +89,7 @@ func main() {
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", isRunningInCluster, "Enable leader election for controller manager. "+
 		"Enabling this will ensure there is only one active controller manager.")
+	flag.BoolVar(&validateSecurityWarnings, "validate-security-warnings", false, "Enable validation for potential security warnings in jenkins custom resource plugins")
 	hostname := flag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins API. It can be service name, node IP or localhost.")
 	port := flag.Int("jenkins-api-port", 0, "The port on which Jenkins API is running. Note: If you want to use nodePort don't set this setting and --jenkins-api-use-nodeport must be true.")
 	useNodePort := flag.Bool("jenkins-api-use-nodeport", false, "Connect to Jenkins API using the service nodePort instead of service port. If you want to set this as true - don't set --jenkins-api-port.")
@@ -108,6 +110,15 @@ func main() {
 		fatal(errors.New("failed to get watch namespace, please set up WATCH_NAMESPACE environment variable"), *debug)
 	}
 	logger.Info(fmt.Sprintf("Watch namespace: %v", namespace))
+
+	if validateSecurityWarnings {
+		securityWarningsFetched := make(chan bool)
+		go v1alpha2.SecValidator.MonitorSecurityWarnings(securityWarningsFetched)
+
+		if !<-securityWarningsFetched {
+			logger.Info("Unable to get the plugins data")
+		}
+	}
 
 	// get a config to talk to the API server
 	cfg, err := config.GetConfig()
@@ -169,6 +180,11 @@ func main() {
 		fatal(errors.Wrap(err, "unable to create Jenkins controller"), *debug)
 	}
 
+	if validateSecurityWarnings {
+		if err = (&v1alpha2.Jenkins{}).SetupWebhookWithManager(mgr); err != nil {
+			fatal(errors.Wrap(err, "unable to create Webhook"), *debug)
+		}
+	}
 	// +kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {

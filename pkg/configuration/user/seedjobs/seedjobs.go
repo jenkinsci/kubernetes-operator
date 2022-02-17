@@ -80,6 +80,7 @@ import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.SubmoduleConfig;
 import hudson.plugins.git.extensions.impl.CloneOption;
+import hudson.plugins.git.extensions.impl.GitLFSPull;
 import javaposse.jobdsl.plugin.ExecuteDslScripts;
 import javaposse.jobdsl.plugin.LookupStrategy;
 import javaposse.jobdsl.plugin.RemovedJobAction;
@@ -93,7 +94,10 @@ def jobDslSeedName = "{{ .ID }}-{{ .SeedJobSuffix }}";
 def jobRef = jenkins.getItem(jobDslSeedName)
 
 def repoList = GitSCM.createRepoList("{{ .RepositoryURL }}", "{{ .CredentialID }}")
-def gitExtensions = [new CloneOption(true, true, ";", 10)]
+def gitExtensions = [
+	new CloneOption(true, true, ";", 10),
+	new GitLFSPull()
+]
 def scm = new GitSCM(
         repoList,
         newArrayList(new BranchSpec("{{ .RepositoryBranch }}")),
@@ -435,10 +439,11 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 					NodeSelector:     jenkins.Spec.Master.NodeSelector,
 					Tolerations:      jenkins.Spec.Master.Tolerations,
 					ImagePullSecrets: jenkins.Spec.Master.ImagePullSecrets,
+					HostAliases:      jenkins.Spec.Master.HostAliases,
 					Containers: []corev1.Container{
 						{
 							Name:  "jnlp",
-							Image: "jenkins/inbound-agent:alpine",
+							Image: "jenkins/inbound-agent:4.9-1",
 							Env: []corev1.EnvVar{
 								{
 									Name: "JENKINS_TUNNEL",

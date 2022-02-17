@@ -1,6 +1,8 @@
 package e2e
 
 import (
+	"context"
+
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	. "github.com/onsi/ginkgo"
@@ -35,10 +37,12 @@ var _ = Describe("Jenkins controller", func() {
 		namespace = CreateNamespace()
 
 		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+		jenkins = RenderJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+		Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 
@@ -87,6 +91,7 @@ var _ = Describe("Jenkins controller", func() {
 	})
 
 	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
 		DestroyNamespace(namespace)
 	})
 
