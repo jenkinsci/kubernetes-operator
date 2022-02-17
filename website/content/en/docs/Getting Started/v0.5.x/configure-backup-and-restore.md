@@ -1,15 +1,11 @@
 ---
-title: "Configuring backup and restore"
-linkTitle: "Configuring backup and restore"
-weight: 5
-date: 2021-12-08
+title: "Configure backup and restore"
+linkTitle: "Configure backup and restore"
+weight: 10
+date: 2021-01-25
 description: >
 Prevent loss of job history
 ---
-
-> Because of Jenkins Operator's architecture, the configuration of Jenkins should be done using ConfigurationAsCode
-> or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
-> up. Therefore, the backup script makes a copy of jobs history only.
 
 Backup and restore is done by a container sidecar.
 
@@ -52,7 +48,7 @@ spec:
       fsGroup: 1000
     containers:
     - name: jenkins-master
-      image: jenkins/jenkins:2.277.4-lts-alpine
+      image: jenkins/jenkins:2.263.2-lts-alpine
     - name: backup # container responsible for the backup and restore
       env:
       - name: BACKUP_DIR
@@ -78,10 +74,6 @@ spec:
       exec:
         command:
         - /home/user/bin/backup.sh # this command is invoked on "backup" container to make backup, for example /home/user/bin/backup.sh <backup_number>, <backup_number> is passed by operator
-    getLatestAction:
-      exec:
-        command:
-        - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion; not having it in the CR may cause loss of data
     interval: 30 # how often make backup in seconds
     makeBackupBeforePodDeletion: true # make a backup before pod deletion
   restore:
@@ -90,5 +82,9 @@ spec:
       exec:
         command:
         - /home/user/bin/restore.sh # this command is invoked on "backup" container to make restore backup, for example /home/user/bin/restore.sh <backup_number>, <backup_number> is passed by operator
+    getLatestAction:
+      exec:
+        command:
+        - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion; not having it in the CR may cause loss of data
     #recoveryOnce: <backup_number> # if want to restore specific backup configure this field and then Jenkins will be restarted and desired backup will be restored
 ```
