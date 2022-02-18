@@ -19,6 +19,7 @@ type JenkinsSpec struct {
 	SeedJobs []SeedJob `json:"seedJobs,omitempty"`
 
 	// SeedJobAgentImage defines the image the jnlp agent will use
+	// +optional
 	SeedJobAgentImage string `json:"seedJobAgentImage,omitempty"`
 
 	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
