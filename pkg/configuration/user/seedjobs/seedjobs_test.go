@@ -113,6 +113,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 		var agentDeployment appsv1.Deployment
 		err = fakeClient.Get(ctx, types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, &agentDeployment)
 		assert.NoError(t, err)
+		assert.Equal(t, "jenkins/inbound-agent:4.9-1", agentDeployment.Spec.Template.Spec.Containers[0].Image)
+
 	})
 
 	t.Run("delete agent deployment when no seed jobs", func(t *testing.T) {
