@@ -229,7 +229,7 @@ func validateUsernamePasswordSecret(secret v1.Secret) []string {
 
 func validateGithubAppSecret(secret v1.Secret) []string {
 	var messages []string
-	appid, exists := secret.Data[AppIdSecretKey]
+	appid, exists := secret.Data[AppIDSecretKey]
 	if !exists {
 		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
 	}
