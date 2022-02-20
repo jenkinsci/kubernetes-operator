@@ -95,9 +95,9 @@ e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
 
 .PHONY: helm-e2e
-IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)
+IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)-amd64
 
-helm-e2e: helm container-runtime-build ## Runs helm e2e tests, you can use EXTRA_ARGS
+helm-e2e: helm container-runtime-build-amd64 ## Runs helm e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
 
@@ -207,46 +207,66 @@ endif
 container-runtime-login: ## Log in into the Docker repository
 	@echo "+ $@"
 
-.PHONY: container-runtime-build
-container-runtime-build: check-env deepcopy-gen ## Build the container
+.PHONY: container-runtime-build-%
+container-runtime-build-%: ## Build the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) build \
-	--build-arg GO_VERSION=$(GO_VERSION) \
-	--build-arg CTIMEVAR="$(CTIMEVAR)" \
-	-t $(DOCKER_REGISTRY):$(GITCOMMIT) . \
-	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(CONTAINER_RUNTIME_COMMAND) buildx build \
+		--output=type=docker --platform linux/$* \
+		--build-arg GO_VERSION=$(GO_VERSION) \
+		--build-arg CTIMEVAR="$(CTIMEVAR)" \
+		--tag $(DOCKER_REGISTRY):$(GITCOMMIT)-$* . \
+		--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+
+.PHONY: container-runtime-build
+container-runtime-build: check-env deepcopy-gen container-runtime-build-amd64 container-runtime-build-arm64
 
 .PHONY: container-runtime-images
 container-runtime-images: ## List all local containers
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) images $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
+define buildx-create-command
+$(CONTAINER_RUNTIME_COMMAND) buildx create \
+	--driver=docker-container \
+	--use
+endef
+
+## Parameter is version
+define container-runtime-push-command
+$(CONTAINER_RUNTIME_COMMAND) buildx build \
+	--output=type=registry --platform linux/amd64,linux/arm64 \
+	--build-arg GO_VERSION=$(GO_VERSION) \
+	--build-arg CTIMEVAR="$(CTIMEVAR)" \
+	--tag $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(1) . \
+	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
+endef
+
 .PHONY: container-runtime-push
-container-runtime-push: ## Push the container
+container-runtime-push: check-env deepcopy-gen ## Push the container
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(BUILD_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call buildx-create-command)
+	$(call container-runtime-push-command,$(BUILD_TAG))
 
 .PHONY: container-runtime-snapshot-push
-container-runtime-snapshot-push: container-runtime-build
+container-runtime-snapshot-push: check-env deepcopy-gen
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(GITCOMMIT) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call buildx-create-command)
+	$(call container-runtime-push-command,$(GITCOMMIT))
 
 .PHONY: container-runtime-release-version
-container-runtime-release-version: ## Release image with version tag (in addition to build tag)
+container-runtime-release-version: check-env deepcopy-gen ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call buildx-create-command)
+	$(call container-runtime-push-command,$(VERSION_TAG))
 
 .PHONY: container-runtime-release-latest
-container-runtime-release-latest: ## Release image with latest tags (in addition to build tag)
+container-runtime-release-latest: check-env deepcopy-gen ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
-	$(CONTAINER_RUNTIME_COMMAND) tag $(DOCKER_REGISTRY):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
-	$(CONTAINER_RUNTIME_COMMAND) push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(LATEST_TAG) $(CONTAINER_RUNTIME_EXTRA_ARGS)
+	$(call buildx-create-command)
+	$(call container-runtime-push-command,$(LATEST_TAG))
 
 .PHONY: container-runtime-release
-container-runtime-release: container-runtime-build container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
+container-runtime-release: container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
 	@echo "+ $@"
 
 # if this session isn't interactive, then we don't want to allocate a
@@ -334,7 +354,7 @@ endif
 minikube-start: minikube check-minikube ## Start minikube
 	@echo "+ $@"
 	bin/minikube status && exit 0 || \
-	bin/minikube start --kubernetes-version $(MINIKUBE_KUBERNETES_VERSION) --dns-domain=$(CLUSTER_DOMAIN) --extra-config=kubelet.cluster-domain=$(CLUSTER_DOMAIN) --driver=$(MINIKUBE_DRIVER) --memory 4096 --cpus $(CPUS_NUMBER)
+	bin/minikube start --kubernetes-version $(MINIKUBE_KUBERNETES_VERSION) --dns-domain=$(CLUSTER_DOMAIN) --extra-config=kubelet.cluster-domain=$(CLUSTER_DOMAIN) --driver=$(MINIKUBE_DRIVER) --memory $(MEMORY_AMOUNT) --cpus $(CPUS_NUMBER)
 
 .PHONY: crc-start
 crc-start: check-crc ## Start CodeReady Containers Kubernetes cluster
@@ -346,7 +366,7 @@ HAS_SEMBUMP := $(shell which $(PROJECT_DIR)/bin/sembump)
 sembump: # Download sembump locally if necessary
 	@echo "+ $@"
 ifndef HAS_SEMBUMP
-	mkdir bin
+	mkdir -p $(PROJECT_DIR)/bin
 	wget -O $(PROJECT_DIR)/bin/sembump https://github.com/justintout/sembump/releases/download/v0.1.0/sembump-$(PLATFORM)-amd64
 	chmod +x $(PROJECT_DIR)/bin/sembump
 endif
@@ -360,8 +380,9 @@ bump-version: sembump ## Bump the version in the version file. Set BUMP to [ pat
 	echo $(NEW_VERSION) > VERSION.txt
 	@echo "Updating version from $(VERSION) to $(NEW_VERSION) in README.md"
 	sed -i.bak 's/$(VERSION)/$(NEW_VERSION)/g' README.md
-	sed -i.bak 's/$(VERSION)/$(NEW_VERSION)/g' deploy/operator.yaml
+	sed -i.bak 's/$(VERSION)/$(NEW_VERSION)/g' config/manager/manager.yaml
 	sed -i.bak 's/$(VERSION)/$(NEW_VERSION)/g' deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
+	rm */*/**.bak
 	rm */**.bak
 	rm *.bak
 	cp config/service_account.yaml deploy/$(ALL_IN_ONE_DEPLOY_FILE_PREFIX)-$(API_VERSION).yaml
@@ -527,6 +548,6 @@ uninstall-cert-manager: minikube-start
 	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
 	
 # Deploy the operator locally along with webhook using helm charts
-deploy-webhook: container-runtime-build  
+deploy-webhook: container-runtime-build-amd64
 	@echo "+ $@"
 	bin/helm upgrade jenkins chart/jenkins-operator --install --set-string operator.image=${IMAGE_NAME} --set webhook.enabled=true --set jenkins.enabled=false

@@ -83,9 +83,9 @@ func TestValidate(t *testing.T) {
 		assert.Equal(t, got, errors.New("plugins data has not been fetched"))
 	})
 
-	PluginsMgr.IsCached = true
+	SecValidator.isCached = true
 	t.Run("Validating a Jenkins CR with plugins not having security warnings and validation is turned on", func(t *testing.T) {
-		PluginsMgr.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
+		SecValidator.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
 			{Name: "security-script"},
 			{Name: "git-client"},
 			{Name: "git"},
@@ -100,7 +100,7 @@ func TestValidate(t *testing.T) {
 	})
 
 	t.Run("Validating a Jenkins CR with some of the plugins having security warnings and validation is turned on", func(t *testing.T) {
-		PluginsMgr.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
+		SecValidator.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
 			{Name: "security-script", SecurityWarnings: createSecurityWarnings("1.2", "2.2")},
 			{Name: "workflow-cps", SecurityWarnings: createSecurityWarnings("2.59", "")},
 			{Name: "git-client"},
@@ -118,7 +118,7 @@ func TestValidate(t *testing.T) {
 	})
 
 	t.Run("Updating a Jenkins CR with some of the plugins having security warnings and validation is turned on", func(t *testing.T) {
-		PluginsMgr.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
+		SecValidator.PluginDataCache = PluginsInfo{Plugins: []PluginInfo{
 			{Name: "handy-uri-templates-2-api", SecurityWarnings: createSecurityWarnings("2.1.8-1.0", "2.2.8-1.0")},
 			{Name: "workflow-cps", SecurityWarnings: createSecurityWarnings("2.59", "")},
 			{Name: "resource-disposer", SecurityWarnings: createSecurityWarnings("0.7", "1.2")},

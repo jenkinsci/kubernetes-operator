@@ -3,6 +3,8 @@ ARG GO_VERSION
 # Build the manager binary
 FROM golang:$GO_VERSION as builder
 ARG CTIMEVAR
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -21,7 +23,7 @@ COPY version/ version/
 COPY main.go main.go
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -ldflags "-w $CTIMEVAR" -o manager main.go
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH GO111MODULE=on go build -ldflags "-w $CTIMEVAR" -o manager main.go
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
