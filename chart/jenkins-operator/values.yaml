@@ -30,7 +30,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.277.4-lts-alpine
+  image: jenkins/jenkins:2.319.3-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -48,8 +48,8 @@ jenkins:
   disableCSRFProtection: false
 
 
-  # ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
-  ValidateSecurityWarnings: false
+  # validateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
+  validateSecurityWarnings: false
   
   # imagePullSecrets is used if you want to pull images from private repository
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories for more info
@@ -59,6 +59,11 @@ jenkins:
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/ for more info
   notifications: []
 
+  # Enables customization of the Service Account attached to the master Jenkins instance via annotations
+  # https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ServiceAccount
+  serviceAccount:
+    annotations: {}
+
   # basePlugins are plugins installed and required by the operator
   # Shouldn't contain plugins defined by user
   # You can change their versions here
@@ -67,20 +72,20 @@ jenkins:
   # Example:
   #
   # basePlugins:
+  # - name: configuration-as-code
+  #   version: "1346.ve8cfa_3473c94"
+  # - name: git
+  #   version: 4.10.3
+  # - name: job-dsl
+  #   version: "1.78.1"
   # - name: kubernetes
-  #   version: 1.29.6
-  # - name: workflow-job
-  #   version: "2.41"
+  #   version: 1.31.3
+  # - name: kubernetes-credentials-provider
+  #   version: 0.20
   # - name: workflow-aggregator
   #   version: "2.6"
-  # - name: git
-  #   version: 4.7.2
-  # - name: job-dsl
-  #   version: "1.77"
-  # - name: configuration-as-code
-  #   version: "1.51"
-  # - name: kubernetes-credentials-provider
-  #   version: 0.18-1
+  # - name: workflow-job
+  #   version: "1145.v7f2433caa07f"
   basePlugins: []
 
   # plugins are plugins required by the user
@@ -95,8 +100,7 @@ jenkins:
   plugins: []
 
   # seedJobs is placeholder for jenkins seed jobs
-  # For seed job creation tutorial, check https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#prepare-job-definitions-and-pipelines
-  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#configure-seed-jobs for additional info
+  # For seed job creation tutorial, check https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/
   # Example:
   #
   # seedJobs:
@@ -111,10 +115,10 @@ jenkins:
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
     limits:
-      cpu: 1500m
+      cpu: 1000m
       memory: 3Gi
     requests:
-      cpu: 1
+      cpu: 250m
       memory: 500Mi
 
   # volumes used by Jenkins
@@ -147,26 +151,26 @@ jenkins:
 
   # LivenessProbe for Jenkins Master pod
   livenessProbe:
-    failureThreshold: 12
+    failureThreshold: 20
     httpGet:
       path: /login
       port: http
       scheme: HTTP
-    initialDelaySeconds: 80
+    initialDelaySeconds: 100
     periodSeconds: 10
     successThreshold: 1
-    timeoutSeconds: 5
+    timeoutSeconds: 8
   # ReadinessProbe for Jenkins Master pod
   readinessProbe:
-    failureThreshold: 3
+    failureThreshold: 60
     httpGet:
       path: /login
       port: http
       scheme: HTTP
-    initialDelaySeconds: 30
+    initialDelaySeconds: 120
     periodSeconds: 10
     successThreshold: 1
-    timeoutSeconds: 1
+    timeoutSeconds: 8
 
   # backup is section for configuring operator's backup feature
   # By default backup feature is enabled and pre-configured
@@ -216,11 +220,11 @@ jenkins:
     # resources used by backup container
     resources:
       limits:
-        cpu: 1500m
-        memory: 1Gi
+        cpu: 1000m
+        memory: 2Gi
       requests:
         cpu: 100m
-        memory: 256Mi
+        memory: 500Mi
 
     # env contains container environment variables
     # PVC backup provider handles these variables:
@@ -263,7 +267,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: virtuslab/jenkins-operator:v0.6.0
+  image: virtuslab/jenkins-operator:v0.7.0
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent

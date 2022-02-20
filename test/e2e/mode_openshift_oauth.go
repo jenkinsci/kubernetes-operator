@@ -1,3 +1,4 @@
+//go:build OpenShiftOAuth
 // +build OpenShiftOAuth
 
 package e2e

@@ -2,6 +2,16 @@ name: Publish nightly snapshot
 on:
   schedule:
     - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      skipTests:
+        description: "Flag for skipping the tests. If set to true (without quotation marks), the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
+        required: false
+
+env:
+  MINIKUBE_CPUS_NUMBER: 2
+  MINIKUBE_MEMORY_AMOUNT: 6144
+
 jobs:
   publish-image:
     name: Publish nightly snapshot
@@ -32,17 +42,23 @@ jobs:
         run: make verify
 
       - name: Prepare environment for e2e
+        if: ${{ github.event.inputs.skipTests != 'true' }}
         run: |
           sudo apt-get update
           sudo apt-get install socat
           sudo mkdir -p $HOME/.kube $HOME/.minikube
           sudo chown -R $USER $HOME/.kube $HOME/.minikube
-          make minikube-start MINIKUBE_DRIVER='docker' CPUS_NUMBER=2
+          make minikube-start \
+            MINIKUBE_DRIVER='docker'  \
+            MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
+            CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
 
       - name: Jenkins Operator - e2e
+        if: ${{ github.event.inputs.skipTests != 'true' }}
         run: make e2e E2E_TEST_ARGS='-ginkgo.v'
 
       - name: Jenkins Operator - Helm Chart tests
+        if: ${{ github.event.inputs.skipTests != 'true' }}
         run: |
           git reset --hard
           make helm-lint

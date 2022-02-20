@@ -1,5 +1,5 @@
-// +build !OpenShift
-// +build !OpenShiftOAuth
+//go:build !OpenShift && !OpenShiftOAuth
+// +build !OpenShift,!OpenShiftOAuth
 
 package e2e
 

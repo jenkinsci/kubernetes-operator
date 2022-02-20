@@ -23,6 +23,16 @@ import (
 
 const e2e = "e2e"
 
+var expectedBasePluginsList = []plugins.Plugin{
+	plugins.Must(plugins.New("configuration-as-code:1346.ve8cfa_3473c94")),
+	plugins.Must(plugins.New("git:4.10.3")),
+	plugins.Must(plugins.New("kubernetes:1.31.3")),
+	plugins.Must(plugins.New("kubernetes-credentials-provider:0.20")),
+	plugins.Must(plugins.New("job-dsl:1.78.1")),
+	plugins.Must(plugins.New("workflow-aggregator:2.6")),
+	plugins.Must(plugins.New("workflow-job:1145.v7f2433caa07f")),
+}
+
 func createUserConfigurationSecret(namespace string, stringData map[string]string) {
 	By("creating user configuration secret")
 
@@ -179,7 +189,7 @@ func verifyPlugins(jenkinsClient jenkinsclient.Jenkins, jenkins *v1alpha2.Jenkin
 	installedPlugins, err := jenkinsClient.GetPlugins(1)
 	Expect(err).NotTo(HaveOccurred())
 
-	for _, basePlugin := range plugins.BasePlugins() {
+	for _, basePlugin := range expectedBasePluginsList {
 		if found, ok := isPluginValid(installedPlugins, basePlugin); !ok {
 			Fail(fmt.Sprintf("Invalid plugin '%s', actual '%+v'", basePlugin, found))
 		}

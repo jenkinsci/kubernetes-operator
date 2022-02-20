@@ -2,7 +2,7 @@
 title: "Separate namespaces for Jenkins and Operator"
 linkTitle: "Separate namespaces for Jenkins and Operator"
 weight: 6
-date: 2021-10-06
+date: 2021-12-08
 description: >
     How to install Jenkins and Jenkins Operator in separate namespaces
 ---
@@ -277,37 +277,39 @@ spec:
       securityContext:
         runAsUser: 65532
       containers:
-        - command:
-            - /manager
-          args:
-            - --leader-elect
-          image: virtuslab/jenkins-operator:v0.6.0
-          name: jenkins-operator
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            allowPrivilegeEscalation: false
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8081
-            initialDelaySeconds: 15
-            periodSeconds: 20
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 8081
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          resources:
-            limits:
-              cpu: 100m
-              memory: 30Mi
-            requests:
-              cpu: 100m
-              memory: 20Mi
-          env:
-            - name: WATCH_NAMESPACE
-              value: jenkins
+      - command:
+        - /manager
+        args:
+        - --leader-elect
+        image: virtuslab/jenkins-operator:v0.7.0
+        name: jenkins-operator
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        env:
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
       terminationGracePeriodSeconds: 10
 ```
 
@@ -534,7 +536,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.277.4-lts-alpine
+        image: jenkins/jenkins:2.319.1-lts-alpine
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 12

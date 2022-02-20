@@ -36,10 +36,6 @@ spec:
           spec:
             description: Spec defines the desired state of the Jenkins
             properties:
-              ValidateSecurityWarnings:
-                description: ValidateSecurityWarnings enables or disables validating
-                  potential security warnings in Jenkins plugins via admission webhooks.
-                type: boolean
               backup:
                 description: 'Backup defines configuration of Jenkins backup More
                   info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/'
@@ -161,11 +157,11 @@ spec:
                     type: object
                   basePlugins:
                     description: 'BasePlugins contains plugins required by operator
-                      Defaults to : - name: kubernetes version: "1.29.6" - name: workflow-job
-                      version: "2.41" - name: workflow-aggregator version: "2.6" -
-                      name: git version: "4.7.2" - name: job-dsl version: "1.77" -
-                      name: configuration-as-code version: "1.51" - name: kubernetes-credentials-provider
-                      version: "0.18-1"'
+                      Defaults to : - name: kubernetes version: "1.31.3" - name:
+                      workflow-job version: "1145.v7f2433caa07f" - name: workflow-aggregator version:
+                      "2.6" - name: git version: "4.10.3" - name: job-dsl version:
+                      "1.78.1" - name: configuration-as-code version: "1346.ve8cfa_3473c94" - name:
+                      kubernetes-credentials-provider version: "0.20"'
                     items:
                       description: Plugin defines Jenkins plugin.
                       properties:
@@ -3336,6 +3332,10 @@ spec:
                       More info: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types'
                     type: string
                 type: object
+              validateSecurityWarnings:
+                description: ValidateSecurityWarnings enables or disables validating
+                  potential security warnings in Jenkins plugins via admission webhooks.
+                type: boolean
             required:
             - jenkinsAPISettings
             - master

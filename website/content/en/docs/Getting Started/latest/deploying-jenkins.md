@@ -2,7 +2,7 @@
 title: "Deploying Jenkins"
 linkTitle: "Deploying Jenkins"
 weight: 2
-date: 2021-10-06
+date: 2021-12-08
 description: >
   Deploy production ready Jenkins manifest
 ---
@@ -43,7 +43,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.277.4-lts-alpine
+        image: jenkins/jenkins:2.319.1-lts-alpine
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 12

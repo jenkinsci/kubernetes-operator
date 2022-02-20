@@ -2,7 +2,7 @@
 title: "Developer Guide"
 linkTitle: "Developer Guide"
 weight: 5
-date: 2021-10-06
+date: 2021-10-20
 description: >
   Jenkins Operator for developers
 ---
@@ -204,6 +204,17 @@ jenkins-jenkins-example                           1/1     Running             0 
 seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0          21m
 
 ```
+
+## Build and run with Docker Desktop
+
+Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.
+
+Run **Jenkins Operator** locally. 
+```bash
+make config="config.docker-desktop.env" run
+```
+
+From this point on, Docker Desktop usage is identical to minikube usage.
 
 ### Debug Jenkins Operator
 

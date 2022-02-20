@@ -1,10 +1,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Jenkins Operator – Latest (v0.6.x)</title>
+    <title>Jenkins Operator – Latest (v0.7.x)</title>
     <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
     <description>Recent Hugo news from gohugo.io</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 19 Aug 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 08 Dec 2021 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://jenkinsci.github.io/kubernetes-operator/img/hugo.png</url>
       <title>GoHugo.io</title>
@@ -22,7 +22,7 @@
     <item>
       <title>Docs: Installing the Operator</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</link>
-      <pubDate>Fri, 01 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/installing-the-operator/</guid>
       <description>
@@ -941,7 +941,7 @@ spec:
         args:
         - --leader-elect
         &lt;b&gt;- --validate-security-warnings&lt;/b&gt;
-        image: jenkins-operator:54231733-dirty 
+        image: virtuslab/jenkins-operator:v0.7.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
@@ -995,7 +995,7 @@ spec:
     <item>
       <title>Docs: Deploying Jenkins</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/</link>
-      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/</guid>
       <description>
@@ -1041,7 +1041,7 @@ Create manifest e.g. &lt;strong&gt;&lt;code&gt;jenkins_instance.yaml&lt;/code&gt
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;disableCSRFProtection&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;containers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-master&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;image&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins/jenkins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2.277&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;.4&lt;/span&gt;-lts-alpine&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;image&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins/jenkins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2.319&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;.1&lt;/span&gt;-lts-alpine&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;imagePullPolicy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Always&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;livenessProbe&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;          &lt;/span&gt;failureThreshold&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -1097,7 +1097,7 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
     <item>
       <title>Docs: Customizing Jenkins</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/</link>
-      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/</guid>
       <description>
@@ -1114,13 +1114,13 @@ Any plugin working for Jenkins can be installed by the Jenkins Operator.&lt;/p&g
 &lt;p&gt;Pre-installed plugins:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;configuration-as-code v1.51&lt;/li&gt;
-&lt;li&gt;git v4.7.2&lt;/li&gt;
-&lt;li&gt;job-dsl v1.77&lt;/li&gt;
-&lt;li&gt;kubernetes-credentials-provider v0.18-1&lt;/li&gt;
-&lt;li&gt;kubernetes v1.30.0&lt;/li&gt;
+&lt;li&gt;configuration-as-code v1.55&lt;/li&gt;
+&lt;li&gt;git v4.10.0&lt;/li&gt;
+&lt;li&gt;job-dsl v1.78.1&lt;/li&gt;
+&lt;li&gt;kubernetes-credentials-provider v0.20&lt;/li&gt;
+&lt;li&gt;kubernetes v1.30.11&lt;/li&gt;
 &lt;li&gt;workflow-aggregator v2.6&lt;/li&gt;
-&lt;li&gt;workflow-job v2.41&lt;/li&gt;
+&lt;li&gt;workflow-job v2.42&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Rest of the plugins can be found in &lt;a href=&#34;https://plugins.jenkins.io/&#34;&gt;plugins repository&lt;/a&gt;.&lt;/p&gt;
@@ -1136,7 +1136,7 @@ Any plugin working for Jenkins can be installed by the Jenkins Operator.&lt;/p&g
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;master&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;plugins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;simple-theme-plugin&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;0.6&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;0.7&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Under &lt;code&gt;spec.master.basePlugins&lt;/code&gt; you can find plugins for a valid &lt;strong&gt;Jenkins Operator&lt;/strong&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.io/v1alpha2&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -1146,19 +1146,19 @@ Any plugin working for Jenkins can be installed by the Jenkins Operator.&lt;/p&g
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;master&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;basePlugins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;kubernetes&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.30.0&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.30.11&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;workflow-job&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;2.40&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;2.42&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;workflow-aggregator&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;2.6&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;git&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;4.7.2&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;4.10.0&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;job-dsl&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.77&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.78.1&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;configuration-as-code&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.51&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;1.55&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;kubernetes-credentials-provider&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;0.18-1&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;version&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;0.20&amp;#34;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You can change their versions.&lt;/p&gt;
 
 &lt;p&gt;The &lt;strong&gt;Jenkins Operator&lt;/strong&gt; will then automatically install plugins after the Jenkins master pod restart.&lt;/p&gt;
@@ -1279,7 +1279,7 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
     <item>
       <title>Docs: Configuring Seed Jobs and Pipelines</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/</guid>
       <description>
@@ -1562,7 +1562,7 @@ stringData:
     <item>
       <title>Docs: Configuring backup and restore</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/</guid>
       <description>
@@ -1654,7 +1654,7 @@ up. Therefore, the backup script makes a copy of jobs history only.&lt;/p&gt;
     <item>
       <title>Docs: Separate namespaces for Jenkins and Operator</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/</link>
-      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/separate-namespaces/</guid>
       <description>
@@ -1920,37 +1920,39 @@ spec:
       securityContext:
         runAsUser: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;65532&lt;/span&gt;
       containers:
-        - command:
-            - /manager
-          args:
-            - --leader-elect
-          image: virtuslab/jenkins-operator:v0.6.0
-          name: jenkins-operator
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            allowPrivilegeEscalation: &lt;span style=&#34;color:#204a87&#34;&gt;false&lt;/span&gt;
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;8081&lt;/span&gt;
-            initialDelaySeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt;
-            periodSeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;20&lt;/span&gt;
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;8081&lt;/span&gt;
-            initialDelaySeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;5&lt;/span&gt;
-            periodSeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;10&lt;/span&gt;
-          resources:
-            limits:
-              cpu: 100m
-              memory: 30Mi
-            requests:
-              cpu: 100m
-              memory: 20Mi
-          env:
-            - name: WATCH_NAMESPACE
-              value: jenkins
+      - command:
+        - /manager
+        args:
+        - --leader-elect
+        image: virtuslab/jenkins-operator:v0.7.0
+        name: jenkins-operator
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: &lt;span style=&#34;color:#204a87&#34;&gt;false&lt;/span&gt;
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;8081&lt;/span&gt;
+          initialDelaySeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;15&lt;/span&gt;
+          periodSeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;20&lt;/span&gt;
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;8081&lt;/span&gt;
+          initialDelaySeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;5&lt;/span&gt;
+          periodSeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;10&lt;/span&gt;
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        env:
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
       terminationGracePeriodSeconds: &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;10&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Install the Operator in &lt;code&gt;jenkins-operator&lt;/code&gt; namespace with:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl apply -n jenkins-operator -f jenkins-operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
@@ -2162,7 +2164,7 @@ Copy it to &lt;code&gt;jenkins-instance.yaml&lt;/code&gt;&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;disableCSRFProtection&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;containers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-master&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;image&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins/jenkins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2.277&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;.4&lt;/span&gt;-lts-alpine&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;image&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins/jenkins&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2.319&lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;.1&lt;/span&gt;-lts-alpine&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;imagePullPolicy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Always&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;livenessProbe&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;          &lt;/span&gt;failureThreshold&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -2208,7 +2210,7 @@ its own namespace (&lt;code&gt;jenkins-operator&lt;/code&gt;), watch for CRs in 
     <item>
       <title>Docs: Custom backup and restore providers</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</link>
-      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore/</guid>
       <description>
@@ -2391,7 +2393,7 @@ the number of backups under control, e.g. Cloud Formation fragment:&lt;/p&gt;
     <item>
       <title>Docs: AKS</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</link>
-      <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/aks/</guid>
       <description>
@@ -2415,7 +2417,7 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
     <item>
       <title>Docs: LDAP</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/</link>
-      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/ldap/</guid>
       <description>
@@ -2543,7 +2545,7 @@ encoded by Kubernetes when the manifest is applied.&lt;/p&gt;
     <item>
       <title>Docs: OpenShift</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/openshift/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/openshift/</guid>
       <description>
@@ -2551,7 +2553,7 @@ encoded by Kubernetes when the manifest is applied.&lt;/p&gt;
         
         
 
-&lt;h2 id=&#34;release-0-6-0-is-not-compatible-with-openshift-and-jenkinsimage-crd-was-removed-from-it&#34;&gt;Release 0.6.0 is not compatible with OpenShift and JenkinsImage crd was removed from it.&lt;/h2&gt;
+&lt;h2 id=&#34;release-0-7-0-is-not-compatible-with-openshift&#34;&gt;Release 0.7.0 is not compatible with OpenShift.&lt;/h2&gt;
 
       </description>
     </item>
@@ -2559,7 +2561,7 @@ encoded by Kubernetes when the manifest is applied.&lt;/p&gt;
     <item>
       <title>Docs: Schema</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</link>
-      <pubDate>Fri, 20 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/</guid>
       <description>
@@ -2585,9 +2587,9 @@ encoded by Kubernetes when the manifest is applied.&lt;/p&gt;
 &lt;/p&gt;
 Resource Types:
 &lt;ul&gt;&lt;li&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;
 &lt;/li&gt;&lt;/ul&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Jenkins&#34;&gt;Jenkins
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Jenkins&#34;&gt;Jenkins
 &lt;/h3&gt;
 &lt;p&gt;
 &lt;p&gt;Jenkins is the Schema for the jenkins API&lt;/p&gt;
@@ -2635,7 +2637,7 @@ Refer to the Kubernetes API documentation for the fields of the
 &lt;td&gt;
 &lt;code&gt;spec&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsSpec&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsSpec&#34;&gt;
 JenkinsSpec
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2649,7 +2651,7 @@ JenkinsSpec
 &lt;td&gt;
 &lt;code&gt;master&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsMaster&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsMaster&#34;&gt;
 JenkinsMaster
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2663,23 +2665,35 @@ Every single change here requires a pod restart.&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;seedJobs&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SeedJob&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SeedJob
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
 &lt;em&gt;(Optional)&lt;/em&gt;
 &lt;p&gt;SeedJobs defines list of Jenkins Seed Job configurations
-More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines#configure-seed-jobs-and-pipelines&#34;&gt;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&lt;/a&gt;&lt;/p&gt;
+More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&#34;&gt;https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines&lt;/a&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;validateSecurityWarnings&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+bool
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;em&gt;(Optional)&lt;/em&gt;
+&lt;p&gt;ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
 &lt;code&gt;notifications&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Notification&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Notification
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Notification&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Notification
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -2693,7 +2707,7 @@ Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun&lt
 &lt;td&gt;
 &lt;code&gt;service&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Service&#34;&gt;
 Service
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2710,7 +2724,7 @@ type: ClusterIP&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;slaveService&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Service&#34;&gt;
 Service
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2727,7 +2741,7 @@ type: ClusterIP&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;backup&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Backup&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Backup&#34;&gt;
 Backup
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2742,7 +2756,7 @@ More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/
 &lt;td&gt;
 &lt;code&gt;restore&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Restore&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Restore&#34;&gt;
 Restore
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2757,7 +2771,7 @@ More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/
 &lt;td&gt;
 &lt;code&gt;groovyScripts&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.GroovyScripts&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.GroovyScripts&#34;&gt;
 GroovyScripts
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2771,7 +2785,7 @@ GroovyScripts
 &lt;td&gt;
 &lt;code&gt;configurationAsCode&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigurationAsCode&#34;&gt;
 ConfigurationAsCode
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2799,7 +2813,7 @@ ConfigurationAsCode
 &lt;td&gt;
 &lt;code&gt;serviceAccount&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ServiceAccount&#34;&gt;
 ServiceAccount
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2813,7 +2827,7 @@ ServiceAccount
 &lt;td&gt;
 &lt;code&gt;jenkinsAPISettings&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsAPISettings&#34;&gt;
 JenkinsAPISettings
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2829,7 +2843,7 @@ JenkinsAPISettings
 &lt;td&gt;
 &lt;code&gt;status&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsStatus&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsStatus&#34;&gt;
 JenkinsStatus
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2840,11 +2854,11 @@ JenkinsStatus
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AppliedGroovyScript&#34;&gt;AppliedGroovyScript
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.AppliedGroovyScript&#34;&gt;AppliedGroovyScript
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsStatus&#34;&gt;JenkinsStatus&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsStatus&#34;&gt;JenkinsStatus&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;AppliedGroovyScript is the applied groovy script in Jenkins by the operator.&lt;/p&gt;
@@ -2903,20 +2917,20 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy&#34;&gt;AuthorizationStrategy
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.AuthorizationStrategy&#34;&gt;AuthorizationStrategy
 (&lt;code&gt;string&lt;/code&gt; alias)&lt;/p&gt;&lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API&lt;/p&gt;
 &lt;/p&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Backup&#34;&gt;Backup
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Backup&#34;&gt;Backup
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Backup defines configuration of Jenkins backup.&lt;/p&gt;
@@ -2944,7 +2958,7 @@ string
 &lt;td&gt;
 &lt;code&gt;action&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Handler&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Handler&#34;&gt;
 Handler
 &lt;/a&gt;
 &lt;/em&gt;
@@ -2978,11 +2992,11 @@ bool
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigMapRef&#34;&gt;ConfigMapRef
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigMapRef&#34;&gt;ConfigMapRef
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Customization&#34;&gt;Customization&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Customization&#34;&gt;Customization&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;ConfigMapRef is reference to Kubernetes ConfigMap.&lt;/p&gt;
@@ -3007,11 +3021,11 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin.&lt;/p&gt;
@@ -3028,7 +3042,7 @@ string
 &lt;td&gt;
 &lt;code&gt;Customization&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Customization&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Customization&#34;&gt;
 Customization
 &lt;/a&gt;
 &lt;/em&gt;
@@ -3041,11 +3055,11 @@ Customization
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Container&#34;&gt;Container
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Container&#34;&gt;Container
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Container defines Kubernetes container attributes.&lt;/p&gt;
@@ -3223,12 +3237,7 @@ Values defined by an Env with a duplicate key will take precedence.&lt;/p&gt;
 &lt;/td&gt;
 &lt;td&gt;
 &lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;
-Pod volumes to mount into the container&amp;rsquo;s filesystem. More info:
-&lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts&#34;&gt;
-https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts
-&lt;/a&gt;
-&lt;/p&gt;
+&lt;p&gt;Pod volumes to mount into the container&amp;rsquo;s filesystem.&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -3293,12 +3302,12 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-contai
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Customization&#34;&gt;Customization
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Customization&#34;&gt;Customization
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.GroovyScripts&#34;&gt;GroovyScripts&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.GroovyScripts&#34;&gt;GroovyScripts&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Customization defines configuration of Jenkins customization.&lt;/p&gt;
@@ -3315,7 +3324,7 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-contai
 &lt;td&gt;
 &lt;code&gt;secret&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretRef&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretRef&#34;&gt;
 SecretRef
 &lt;/a&gt;
 &lt;/em&gt;
@@ -3327,8 +3336,8 @@ SecretRef
 &lt;td&gt;
 &lt;code&gt;configurations&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigMapRef&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigMapRef
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigMapRef&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigMapRef
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -3337,11 +3346,11 @@ SecretRef
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.GroovyScripts&#34;&gt;GroovyScripts
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.GroovyScripts&#34;&gt;GroovyScripts
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;GroovyScripts defines configuration of Jenkins customization via groovy scripts.&lt;/p&gt;
@@ -3358,7 +3367,7 @@ SecretRef
 &lt;td&gt;
 &lt;code&gt;Customization&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Customization&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Customization&#34;&gt;
 Customization
 &lt;/a&gt;
 &lt;/em&gt;
@@ -3371,12 +3380,12 @@ Customization
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Handler&#34;&gt;Handler
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Handler&#34;&gt;Handler
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Restore&#34;&gt;Restore&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Restore&#34;&gt;Restore&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Handler defines a specific action that should be taken.&lt;/p&gt;
@@ -3404,50 +3413,11 @@ Kubernetes core/v1.ExecAction
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Image&#34;&gt;Image
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsImageSpec&#34;&gt;JenkinsImageSpec&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;Defines Jenkins Plugin structure&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;name&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;version&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;JenkinsAPISettings
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API&lt;/p&gt;
@@ -3464,7 +3434,7 @@ string
 &lt;td&gt;
 &lt;code&gt;authorizationStrategy&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AuthorizationStrategy&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.AuthorizationStrategy&#34;&gt;
 AuthorizationStrategy
 &lt;/a&gt;
 &lt;/em&gt;
@@ -3474,195 +3444,20 @@ AuthorizationStrategy
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsCredentialType&#34;&gt;JenkinsCredentialType
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsCredentialType&#34;&gt;JenkinsCredentialType
 (&lt;code&gt;string&lt;/code&gt; alias)&lt;/p&gt;&lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.SeedJob&#34;&gt;SeedJob&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.SeedJob&#34;&gt;SeedJob&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;JenkinsCredentialType defines type of Jenkins credential used to seed job mechanism.&lt;/p&gt;
 &lt;/p&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsImage&#34;&gt;JenkinsImage
-&lt;/h3&gt;
-&lt;p&gt;
-&lt;p&gt;JenkinsImage is the Schema for the jenkinsimages API&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;metadata&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#objectmeta-v1-meta&#34;&gt;
-Kubernetes meta/v1.ObjectMeta
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-Refer to the Kubernetes API documentation for the fields of the
-&lt;code&gt;metadata&lt;/code&gt; field.
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;spec&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsImageSpec&#34;&gt;
-JenkinsImageSpec
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;br/&gt;
-&lt;br/&gt;
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;image&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Image&#34;&gt;
-Image
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;plugins&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;status&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsImageStatus&#34;&gt;
-JenkinsImageStatus
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsImageSpec&#34;&gt;JenkinsImageSpec
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsImage&#34;&gt;JenkinsImage&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;JenkinsImageSpec defines the desired state of JenkinsImage&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;image&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Image&#34;&gt;
-Image
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;plugins&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsImageStatus&#34;&gt;JenkinsImageStatus
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsImage&#34;&gt;JenkinsImage&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;JenkinsImageStatus defines the observed state of JenkinsImage&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;image&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;md5sum&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;installedPlugins&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin
-&lt;/a&gt;
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;JenkinsMaster defines the Jenkins master pod attributes and plugins,
@@ -3689,22 +3484,6 @@ map[string]string
 set by external tools to store and retrieve arbitrary metadata. They are not
 queryable and should be preserved when modifying objects.
 More info: &lt;a href=&#34;http://kubernetes.io/docs/user-guide/annotations&#34;&gt;http://kubernetes.io/docs/user-guide/annotations&lt;/a&gt;&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;masterAnnotations&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-map[string]string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
-&lt;em&gt;(Optional)&lt;/em&gt;
-&lt;p&gt;Annotations is an unstructured key value map stored with a resource that may be
-set by external tools to store and retrieve arbitrary metadata. They are not
-queryable and should be preserved when modifying objects.
-More info: &lt;a href=&#34;http://kubernetes.io/docs/user-guide/annotations&#34;&gt;http://kubernetes.io/docs/user-guide/annotations&lt;/a&gt;
-Deprecated: will be removed in the future, please use Annotations(annotations)&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -3759,8 +3538,8 @@ fsGroup: 1000&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;containers&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Container&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Container
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Container&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Container
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -3852,8 +3631,8 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/volumes&#
 &lt;td&gt;
 &lt;code&gt;basePlugins&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Plugin&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Plugin
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Plugin&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Plugin
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -3862,27 +3641,27 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/volumes&#
 &lt;p&gt;BasePlugins contains plugins required by operator
 Defaults to :
 - name: kubernetes
-version: &amp;ldquo;1.28.6&amp;rdquo;
+version: &amp;ldquo;1.30.11&amp;rdquo;
 - name: workflow-job
-version: &amp;ldquo;2.40&amp;rdquo;
+version: &amp;ldquo;2.42&amp;rdquo;
 - name: workflow-aggregator
 version: &amp;ldquo;2.6&amp;rdquo;
 - name: git
-version: &amp;ldquo;4.5.0&amp;rdquo;
+version: &amp;ldquo;4.10.0&amp;rdquo;
 - name: job-dsl
-version: &amp;ldquo;1.77&amp;rdquo;
+version: &amp;ldquo;1.78.1&amp;rdquo;
 - name: configuration-as-code
-version: &amp;ldquo;1.46&amp;rdquo;
+version: &amp;ldquo;1.55&amp;rdquo;
 - name: kubernetes-credentials-provider
-version: &amp;ldquo;0.15&amp;rdquo;&lt;/p&gt;
+version: &amp;ldquo;0.20&amp;rdquo;&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
 &lt;code&gt;plugins&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Plugin&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Plugin
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Plugin&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Plugin
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -3914,56 +3693,30 @@ string
 &lt;p&gt;PriorityClassName for Jenkins master pod&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsPlugin&#34;&gt;JenkinsPlugin
-&lt;/h3&gt;
-&lt;p&gt;
-(&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsImageSpec&#34;&gt;JenkinsImageSpec&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsImageStatus&#34;&gt;JenkinsImageStatus&lt;/a&gt;)
-&lt;/p&gt;
-&lt;p&gt;
-&lt;p&gt;Defines Jenkins Plugin structure&lt;/p&gt;
-&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Field&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;
-&lt;code&gt;name&lt;/code&gt;&lt;/br&gt;
+&lt;code&gt;hostAliases&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-string
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#hostalias-v1-core&#34;&gt;
+[]Kubernetes core/v1.HostAlias
+&lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
 &lt;td&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;
-&lt;code&gt;version&lt;/code&gt;&lt;/br&gt;
-&lt;em&gt;
-string
-&lt;/em&gt;
-&lt;/td&gt;
-&lt;td&gt;
+&lt;em&gt;(Optional)&lt;/em&gt;
+&lt;p&gt;HostAliases for Jenkins master pod and SeedJob agent&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
-&lt;p&gt;JenkinsSpec defines the desired state of the Jenkins.&lt;/p&gt;
+&lt;p&gt;JenkinsSpec defines the desired state of Jenkins&lt;/p&gt;
 &lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
@@ -3977,7 +3730,7 @@ string
 &lt;td&gt;
 &lt;code&gt;master&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsMaster&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsMaster&#34;&gt;
 JenkinsMaster
 &lt;/a&gt;
 &lt;/em&gt;
@@ -3991,8 +3744,8 @@ Every single change here requires a pod restart.&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;seedJobs&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SeedJob&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SeedJob
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4004,10 +3757,22 @@ More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
+&lt;code&gt;validateSecurityWarnings&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+bool
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;em&gt;(Optional)&lt;/em&gt;
+&lt;p&gt;ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
 &lt;code&gt;notifications&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Notification&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Notification
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Notification&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Notification
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4021,7 +3786,7 @@ Can be used to integrate chat services like Slack, Microsoft Teams or Mailgun&lt
 &lt;td&gt;
 &lt;code&gt;service&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Service&#34;&gt;
 Service
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4038,7 +3803,7 @@ type: ClusterIP&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;slaveService&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Service&#34;&gt;
 Service
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4055,7 +3820,7 @@ type: ClusterIP&lt;/p&gt;
 &lt;td&gt;
 &lt;code&gt;backup&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Backup&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Backup&#34;&gt;
 Backup
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4070,7 +3835,7 @@ More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/
 &lt;td&gt;
 &lt;code&gt;restore&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Restore&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Restore&#34;&gt;
 Restore
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4085,7 +3850,7 @@ More info: &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/docs/
 &lt;td&gt;
 &lt;code&gt;groovyScripts&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.GroovyScripts&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.GroovyScripts&#34;&gt;
 GroovyScripts
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4099,7 +3864,7 @@ GroovyScripts
 &lt;td&gt;
 &lt;code&gt;configurationAsCode&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigurationAsCode&#34;&gt;
 ConfigurationAsCode
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4127,7 +3892,7 @@ ConfigurationAsCode
 &lt;td&gt;
 &lt;code&gt;serviceAccount&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ServiceAccount&#34;&gt;
 ServiceAccount
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4141,7 +3906,7 @@ ServiceAccount
 &lt;td&gt;
 &lt;code&gt;jenkinsAPISettings&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsAPISettings&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsAPISettings&#34;&gt;
 JenkinsAPISettings
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4152,11 +3917,11 @@ JenkinsAPISettings
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsStatus&#34;&gt;JenkinsStatus
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsStatus&#34;&gt;JenkinsStatus
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Jenkins&#34;&gt;Jenkins&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;JenkinsStatus defines the observed state of Jenkins&lt;/p&gt;
@@ -4299,8 +4064,8 @@ string
 &lt;td&gt;
 &lt;code&gt;appliedGroovyScripts&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AppliedGroovyScript&#34;&gt;
-[][]github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.AppliedGroovyScript
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.AppliedGroovyScript&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.AppliedGroovyScript
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4311,11 +4076,11 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Mailgun&#34;&gt;Mailgun
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Mailgun&#34;&gt;Mailgun
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Mailgun is handler for Mailgun email service notification channel.&lt;/p&gt;
@@ -4342,7 +4107,7 @@ string
 &lt;td&gt;
 &lt;code&gt;apiKeySecretKeySelector&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;
 SecretKeySelector
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4372,11 +4137,11 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;MicrosoftTeams is handler for Microsoft MicrosoftTeams notification channel.&lt;/p&gt;
@@ -4393,7 +4158,7 @@ string
 &lt;td&gt;
 &lt;code&gt;webHookURLSecretKeySelector&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;
 SecretKeySelector
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4404,11 +4169,11 @@ SecretKeySelector
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Notification&#34;&gt;Notification
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Notification&#34;&gt;Notification
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Notification is a service configuration used to send notifications about Jenkins status.&lt;/p&gt;
@@ -4425,7 +4190,7 @@ SecretKeySelector
 &lt;td&gt;
 &lt;code&gt;level&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.NotificationLevel&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.NotificationLevel&#34;&gt;
 NotificationLevel
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4457,8 +4222,8 @@ string
 &lt;td&gt;
 &lt;code&gt;slack&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack&#34;&gt;
-github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Slack&#34;&gt;
+github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Slack
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4469,8 +4234,8 @@ github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack
 &lt;td&gt;
 &lt;code&gt;teams&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.MicrosoftTeams&#34;&gt;
-github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.MicrosoftTeams
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.MicrosoftTeams&#34;&gt;
+github.com/jenkinsci/kubernetes-operator/api/v1alpha2.MicrosoftTeams
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4481,8 +4246,8 @@ github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.MicrosoftTeam
 &lt;td&gt;
 &lt;code&gt;mailgun&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Mailgun&#34;&gt;
-github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Mailgun
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Mailgun&#34;&gt;
+github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Mailgun
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4493,8 +4258,8 @@ github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Mailgun
 &lt;td&gt;
 &lt;code&gt;smtp&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SMTP&#34;&gt;
-github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SMTP
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SMTP&#34;&gt;
+github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SMTP
 &lt;/a&gt;
 &lt;/em&gt;
 &lt;/td&gt;
@@ -4503,20 +4268,20 @@ github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SMTP
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.NotificationLevel&#34;&gt;NotificationLevel
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.NotificationLevel&#34;&gt;NotificationLevel
 (&lt;code&gt;string&lt;/code&gt; alias)&lt;/p&gt;&lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;NotificationLevel defines the level of a Notification.&lt;/p&gt;
 &lt;/p&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Plugin&#34;&gt;Plugin
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Plugin&#34;&gt;Plugin
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsMaster&#34;&gt;JenkinsMaster&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Plugin defines Jenkins plugin.&lt;/p&gt;
@@ -4564,11 +4329,115 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Restore&#34;&gt;Restore
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginData&#34;&gt;PluginData
+&lt;/h3&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;Version&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;Kind&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginInfo&#34;&gt;PluginInfo
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.PluginsInfo&#34;&gt;PluginsInfo&lt;/a&gt;)
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;name&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;securityWarnings&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Warning&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Warning
+&lt;/a&gt;
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginsInfo&#34;&gt;PluginsInfo
+&lt;/h3&gt;
+&lt;p&gt;
+(&lt;em&gt;Appears on:&lt;/em&gt;
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.SecurityValidator&#34;&gt;SecurityValidator&lt;/a&gt;)
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;plugins&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginInfo&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginInfo
+&lt;/a&gt;
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Restore&#34;&gt;Restore
+&lt;/h3&gt;
+&lt;p&gt;
+(&lt;em&gt;Appears on:&lt;/em&gt;
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Restore defines configuration of Jenkins backup restore operation.&lt;/p&gt;
@@ -4596,7 +4465,7 @@ string
 &lt;td&gt;
 &lt;code&gt;action&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Handler&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Handler&#34;&gt;
 Handler
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4609,7 +4478,7 @@ Handler
 &lt;td&gt;
 &lt;code&gt;getLatestAction&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Handler&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Handler&#34;&gt;
 Handler
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4634,11 +4503,11 @@ uint64
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SMTP&#34;&gt;SMTP
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SMTP&#34;&gt;SMTP
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;SMTP is handler for sending emails via this protocol.&lt;/p&gt;
@@ -4655,7 +4524,7 @@ uint64
 &lt;td&gt;
 &lt;code&gt;usernameSecretKeySelector&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;
 SecretKeySelector
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4667,7 +4536,7 @@ SecretKeySelector
 &lt;td&gt;
 &lt;code&gt;passwordSecretKeySelector&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;
 SecretKeySelector
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4727,14 +4596,14 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;SecretKeySelector
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;SecretKeySelector
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Mailgun&#34;&gt;Mailgun&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.SMTP&#34;&gt;SMTP&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Slack&#34;&gt;Slack&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Mailgun&#34;&gt;Mailgun&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.SMTP&#34;&gt;SMTP&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Slack&#34;&gt;Slack&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;SecretKeySelector selects a key of a Secret.&lt;/p&gt;
@@ -4773,11 +4642,11 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretRef&#34;&gt;SecretRef
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretRef&#34;&gt;SecretRef
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Customization&#34;&gt;Customization&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Customization&#34;&gt;Customization&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;SecretRef is reference to Kubernetes secret.&lt;/p&gt;
@@ -4802,11 +4671,67 @@ string
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SeedJob&#34;&gt;SeedJob
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecurityValidator&#34;&gt;SecurityValidator
+&lt;/h3&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;PluginDataCache&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.PluginsInfo&#34;&gt;
+PluginsInfo
+&lt;/a&gt;
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;isCached&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+bool
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;Attempts&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+int
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;checkingPeriod&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+time.Duration
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob&#34;&gt;SeedJob
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;SeedJob defines configuration for seed job
@@ -4891,7 +4816,7 @@ string
 &lt;td&gt;
 &lt;code&gt;credentialType&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.JenkinsCredentialType&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.JenkinsCredentialType&#34;&gt;
 JenkinsCredentialType
 &lt;/a&gt;
 &lt;/em&gt;
@@ -4999,11 +4924,11 @@ bool
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service&#34;&gt;Service
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Service&#34;&gt;Service
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Service defines Kubernetes service attributes&lt;/p&gt;
@@ -5136,11 +5061,11 @@ This field will be ignored if the cloud-provider does not support the feature.&l
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ServiceAccount&#34;&gt;ServiceAccount
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ServiceAccount&#34;&gt;ServiceAccount
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.JenkinsSpec&#34;&gt;JenkinsSpec&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;ServiceAccount defines Kubernetes service account attributes&lt;/p&gt;
@@ -5170,11 +5095,11 @@ More info: &lt;a href=&#34;http://kubernetes.io/docs/user-guide/annotations&#34;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Slack&#34;&gt;Slack
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Slack&#34;&gt;Slack
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Notification&#34;&gt;Notification&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;Slack is handler for Slack notification channel.&lt;/p&gt;
@@ -5191,7 +5116,7 @@ More info: &lt;a href=&#34;http://kubernetes.io/docs/user-guide/annotations&#34;
 &lt;td&gt;
 &lt;code&gt;webHookURLSecretKeySelector&lt;/code&gt;&lt;/br&gt;
 &lt;em&gt;
-&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.SecretKeySelector&#34;&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SecretKeySelector&#34;&gt;
 SecretKeySelector
 &lt;/a&gt;
 &lt;/em&gt;
@@ -5202,10 +5127,118 @@ SecretKeySelector
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Version&#34;&gt;Version
+&lt;/h3&gt;
+&lt;p&gt;
+(&lt;em&gt;Appears on:&lt;/em&gt;
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Warning&#34;&gt;Warning&lt;/a&gt;)
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;firstVersion&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;lastVersion&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Warning&#34;&gt;Warning
+&lt;/h3&gt;
+&lt;p&gt;
+(&lt;em&gt;Appears on:&lt;/em&gt;
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.PluginInfo&#34;&gt;PluginInfo&lt;/a&gt;)
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Field&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;versions&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+&lt;a href=&#34;#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Version&#34;&gt;
+[][]github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Version
+&lt;/a&gt;
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;id&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;message&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;url&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+string
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;code&gt;active&lt;/code&gt;&lt;/br&gt;
+&lt;em&gt;
+bool
+&lt;/em&gt;
+&lt;/td&gt;
+&lt;td&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;hr/&gt;
 &lt;p&gt;&lt;em&gt;
 Generated with &lt;code&gt;gen-crd-api-reference-docs&lt;/code&gt;
-on git commit &lt;code&gt;fe81e5a&lt;/code&gt;.
+on git commit &lt;code&gt;76078d5f&lt;/code&gt;.
 &lt;/em&gt;&lt;/p&gt;
 
       </description>

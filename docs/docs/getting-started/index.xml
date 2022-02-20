@@ -20,11 +20,40 @@
     
     
     <item>
-      <title>Docs: Latest (v0.6.x)</title>
+      <title>Docs: Latest (v0.7.x)</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</link>
-      <pubDate>Thu, 19 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
       
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/</guid>
+      <description>
+        
+        
+        
+
+
+
+&lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
+&lt;p&gt;This document describes a getting started guide for &lt;strong&gt;Jenkins Operator&lt;/strong&gt; &lt;code&gt;v0.7.x&lt;/code&gt; and also additional configuration.&lt;/p&gt;
+
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;first-steps&#34;&gt;First Steps&lt;/h2&gt;
+
+&lt;p&gt;Prepare your Kubernetes cluster and set up your &lt;code&gt;kubectl&lt;/code&gt; access.&lt;/p&gt;
+
+&lt;p&gt;Once you have a running Kubernetes cluster you can focus on installing &lt;strong&gt;Jenkins Operator&lt;/strong&gt; according to the
+&lt;a href=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/docs/getting-started/latest/installing-the-operator/&#34;&gt;Installation&lt;/a&gt; guide.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: v0.6.x</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/</link>
+      <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.6.x/</guid>
       <description>
         
         

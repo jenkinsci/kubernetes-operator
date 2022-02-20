@@ -1,3 +1,4 @@
+//go:build OpenShift
 // +build OpenShift
 
 package e2e
