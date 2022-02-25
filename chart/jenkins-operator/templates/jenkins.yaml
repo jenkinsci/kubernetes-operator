@@ -85,6 +85,9 @@ spec:
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.jenkins.nodeSelector }}
+  nodeSelector: {{ toYaml . | nindent 6 }}
+  {{- end }}
   {{- with .Values.jenkins.serviceAccount }}
   serviceAccount: {{ toYaml . | nindent 4 }}
   {{- end }}

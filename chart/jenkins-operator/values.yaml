@@ -24,6 +24,9 @@ jenkins:
   # labels are injected into metadata labels field
   labels: {}
 
+  # nodeSelector are injected into metadata nodeSelector field
+  nodeSelector: {}
+
   # annotations are injected into metadata annotations field
   annotations: {}
 
