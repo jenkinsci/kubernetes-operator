@@ -676,6 +676,215 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.Equal(t, result, []string{"seedJob `example` required data 'password' not found in secret 'deploy-keys'", "seedJob `example` required data 'password' is empty in secret 'deploy-keys'"})
 	})
+	// -->
+	t.Run("Valid with appId and privateKey", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.GithubAppCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				AppIDSecretKey: []byte("some-id"),
+				PrivateKeySecretKey: []byte("some-key"),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+		assert.Nil(t, result)
+	})
+	t.Run("Invalid with empty app id", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.GithubAppCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				AppIDSecretKey: []byte(""),
+				PrivateKeySecretKey: []byte("some-key"),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, result, []string{"seedJob `example` required data 'appId' is empty in secret 'deploy-keys'"})
+	})
+	t.Run("Invalid with empty private key", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.GithubAppCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				AppIDSecretKey: []byte("some-id"),
+				PrivateKeySecretKey: []byte(""),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' is empty in secret 'deploy-keys'"})
+	})
+	t.Run("Invalid without app id", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.GithubAppCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				PrivateKeySecretKey: []byte("some-key"),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, result, []string{"seedJob `example` required data 'appId' not found in secret 'deploy-keys'", "seedJob `example` required data 'appId' is empty in secret 'deploy-keys'"})
+	})
+	t.Run("Invalid without private key", func(t *testing.T) {
+		jenkins := v1alpha2.Jenkins{
+			ObjectMeta: jenkinsObjectMeta,
+			Spec: v1alpha2.JenkinsSpec{
+				SeedJobs: []v1alpha2.SeedJob{
+					{
+						ID:                    "example",
+						CredentialID:          "deploy-keys",
+						JenkinsCredentialType: v1alpha2.GithubAppCredentialType,
+						Targets:               "cicd/jobs/*.jenkins",
+						RepositoryBranch:      "master",
+						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
+					},
+				},
+			},
+		}
+		secret := &corev1.Secret{
+			TypeMeta:   secretTypeMeta,
+			ObjectMeta: secretObjectMeta,
+			Data: map[string][]byte{
+				AppIDSecretKey: []byte("some-username"),
+			},
+		}
+		fakeClient := fake.NewClientBuilder().Build()
+		err := fakeClient.Create(context.TODO(), secret)
+		assert.NoError(t, err)
+
+		config := configuration.Configuration{
+			Client:        fakeClient,
+			ClientSet:     kubernetes.Clientset{},
+			Notifications: nil,
+			Jenkins:       &v1alpha2.Jenkins{},
+		}
+
+		seedJobs := New(nil, config)
+		result, err := seedJobs.ValidateSeedJobs(jenkins)
+
+		assert.NoError(t, err)
+
+		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' not found in secret 'deploy-keys'", "seedJob `example` required data 'privateKey' is empty in secret 'deploy-keys'"})
+	})
+	// <--
 	t.Run("Invalid with wrong cron spec", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
 			Spec: v1alpha2.JenkinsSpec{
