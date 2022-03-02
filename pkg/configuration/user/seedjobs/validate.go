@@ -231,17 +231,17 @@ func validateGithubAppSecret(secret v1.Secret) []string {
 	var messages []string
 	appid, exists := secret.Data[AppIDSecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", AppIDSecretKey, secret.ObjectMeta.Name))
 	}
 	if len(appid) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", AppIDSecretKey, secret.ObjectMeta.Name))
 	}
 	pkey, exists := secret.Data[PrivateKeySecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
 	}
 	if len(pkey) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
 	}
 
 	return messages
