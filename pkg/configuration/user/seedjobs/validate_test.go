@@ -676,7 +676,6 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.Equal(t, result, []string{"seedJob `example` required data 'password' not found in secret 'deploy-keys'", "seedJob `example` required data 'password' is empty in secret 'deploy-keys'"})
 	})
-	// -->
 	t.Run("Valid with appId and privateKey", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
 			ObjectMeta: jenkinsObjectMeta,
@@ -884,7 +883,6 @@ func TestValidateSeedJobs(t *testing.T) {
 
 		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' not found in secret 'deploy-keys'", "seedJob `example` required data 'privateKey' is empty in secret 'deploy-keys'"})
 	})
-	// <--
 	t.Run("Invalid with wrong cron spec", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
 			Spec: v1alpha2.JenkinsSpec{
