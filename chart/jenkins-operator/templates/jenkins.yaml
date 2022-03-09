@@ -89,6 +89,9 @@ spec:
   serviceAccount: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
+    {{- with .Values.jenkins.hostAliases }}
+    hostAliases: {{ toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.jenkins.labels }}
     labels: {{ toYaml . | nindent 6 }}
     {{- end }}

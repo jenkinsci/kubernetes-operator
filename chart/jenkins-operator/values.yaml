@@ -21,6 +21,9 @@ jenkins:
   # Note: this affects roles and rolebindings for jenkins operator itself
   namespace: default
 
+  # hostAliases are injected into metadata hostAliases field
+  hostAliases: {}
+
   # labels are injected into metadata labels field
   labels: {}
 
