@@ -85,15 +85,15 @@ spec:
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.jenkins.nodeSelector }}
-  nodeSelector: {{ toYaml . | nindent 4 }}
-  {{- end }}
   {{- with .Values.jenkins.serviceAccount }}
   serviceAccount: {{ toYaml . | nindent 4 }}
   {{- end }}
   master:
     {{- with .Values.jenkins.labels }}
     labels: {{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.jenkins.nodeSelector }}
+    nodeSelector: {{ toYaml . | nindent 6 }}
     {{- end }}
     {{- with .Values.jenkins.annotations }}
     annotations: {{ toYaml . | nindent 6 }}
