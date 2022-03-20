@@ -23,8 +23,6 @@ func (p Plugin) String() string {
 var (
 	// NamePattern is the plugin name regex pattern
 	NamePattern = regexp.MustCompile(`^[0-9a-zA-Z\-_]+$`)
-	// VersionPattern is the plugin version regex pattern
-	VersionPattern = regexp.MustCompile(`^[0-9a-zA-Z\-_+\\.]+$`)
 	// DownloadURLPattern is the plugin download url regex pattern
 	DownloadURLPattern = regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)`)
 )
@@ -64,9 +62,6 @@ func NewPlugin(name, version, downloadURL string) (*Plugin, error) {
 func validatePlugin(name, version, downloadURL string) error {
 	if ok := NamePattern.MatchString(name); !ok {
 		return errors.Errorf("invalid plugin name '%s:%s', must follow pattern '%s'", name, version, NamePattern.String())
-	}
-	if ok := VersionPattern.MatchString(version); !ok {
-		return errors.Errorf("invalid plugin version '%s:%s', must follow pattern '%s'", name, version, VersionPattern.String())
 	}
 	if len(downloadURL) > 0 {
 		if ok := DownloadURLPattern.MatchString(downloadURL); !ok {
