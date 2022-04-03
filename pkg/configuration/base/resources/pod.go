@@ -234,7 +234,9 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 		envs = append(envs, jenkinsHomeEnvVar)
 	}
 
-	setLivenessAndReadinessPath(jenkins)
+	if jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet != nil {
+		setLivenessAndReadinessPath(jenkins)
+	}
 
 	return corev1.Container{
 		Name:            JenkinsMasterContainerName,
@@ -380,7 +382,7 @@ func NewJenkinsMasterPod(objectMeta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins
 			ImagePullSecrets:   jenkins.Spec.Master.ImagePullSecrets,
 			Tolerations:        jenkins.Spec.Master.Tolerations,
 			PriorityClassName:  jenkins.Spec.Master.PriorityClassName,
-			HostAliases: 	    jenkins.Spec.Master.HostAliases,
+			HostAliases:        jenkins.Spec.Master.HostAliases,
 		},
 	}
 }
