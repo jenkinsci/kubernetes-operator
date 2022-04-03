@@ -3,12 +3,15 @@ on:
   push:
     branches:
       - master
-      - security-validator
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
     branches:
       - master
-      - security-validator
+
+env:
+  MINIKUBE_CPUS_NUMBER: 2
+  MINIKUBE_MEMORY_AMOUNT: 6144
+
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
@@ -45,7 +48,10 @@ jobs:
           sudo apt-get install socat
           sudo mkdir -p $HOME/.kube $HOME/.minikube
           sudo chown -R $USER $HOME/.kube $HOME/.minikube
-          make minikube-start MINIKUBE_DRIVER='docker' CPUS_NUMBER=2
+          make minikube-start \
+            MINIKUBE_DRIVER='docker' \
+            MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
+            CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
 
       - name: Jenkins Operator - e2e
         run: make e2e E2E_TEST_ARGS='-ginkgo.v'

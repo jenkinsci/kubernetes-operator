@@ -85,6 +85,9 @@ spec:
   {{- with .Values.jenkins.notifications }}
   notifications: {{ toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.jenkins.serviceAccount }}
+  serviceAccount: {{ toYaml . | nindent 4 }}
+  {{- end }}
   master:
     {{- with .Values.jenkins.labels }}
     labels: {{ toYaml . | nindent 6 }}
@@ -99,16 +102,13 @@ spec:
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}
     {{- if .Values.jenkins.priorityClassName }}
-    priorityClassName: {{- .Values.jenkins.priorityClassName }}
+    priorityClassName: {{ .Values.jenkins.priorityClassName }}
     {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
     containers:
       - name:  jenkins-master
         image: {{ .Values.jenkins.image }}
         imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
-        {{- with .Values.jenkins.imagePullSecrets }}
-        imagePullSecrets: {{ toYaml . | nindent 10 }}
-        {{- end }}
         {{- with .Values.jenkins.livenessProbe }}
         livenessProbe: {{ toYaml . | nindent 10 }}
         {{- end }}
@@ -141,11 +141,14 @@ spec:
     {{- with .Values.jenkins.volumes }}
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- with .Values.jenkins.imagePullSecrets }}
+    imagePullSecrets: {{ toYaml . | nindent 4 }}
+    {{- end }}
     {{- with .Values.jenkins.securityContext}}
     securityContext:
     {{- toYaml . | nindent 6 }}
     {{- end }}
-  ValidateSecurityWarnings: {{ .Values.jenkins.ValidateSecurityWarnings }}
+  validateSecurityWarnings: {{ .Values.jenkins.validateSecurityWarnings }}
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}

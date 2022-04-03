@@ -1,8 +1,8 @@
 ---
 title: "Developer Guide"
 linkTitle: "Developer Guide"
-weight: 4
-date: 2021-08-19
+weight: 5
+date: 2021-10-20
 description: >
   Jenkins Operator for developers
 ---
@@ -16,7 +16,7 @@ This document explains how to setup your development environment.
 - [operator_sdk][operator_sdk] version 1.3.0
 - [git][git_tool]
 - [go][go_tool] version 1.15.6
-- [goimports, golint, checkmake and staticcheck][install_dev_tools]
+- goimports, golint, checkmake and staticcheck
 - [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
 - [docker][docker_tool] version 17.03+
 
@@ -205,6 +205,17 @@ seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0 
 
 ```
 
+## Build and run with Docker Desktop
+
+Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.
+
+Run **Jenkins Operator** locally. 
+```bash
+make config="config.docker-desktop.env" run
+```
+
+From this point on, Docker Desktop usage is identical to minikube usage.
+
 ### Debug Jenkins Operator
 
 ```bash
@@ -326,4 +337,3 @@ It uses [cert-manager](https://cert-manager.io/) as an external dependency.
 [kubectl_tool]:https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [minikube]:https://kubernetes.io/docs/tasks/tools/install-minikube/
 [virtualbox]:https://www.virtualbox.org/wiki/Downloads
-[install_dev_tools]:https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/tools/

@@ -108,7 +108,8 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 			Master: v1alpha2.JenkinsMaster{
 				Containers: []v1alpha2.Container{
 					{
-						Name: resources.JenkinsMasterContainerName,
+						Name:  resources.JenkinsMasterContainerName,
+						Image: JenkinsTestImage,
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "plugins-cache",
@@ -142,6 +143,16 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 							FailureThreshold:    int32(30),
 							SuccessThreshold:    int32(1),
 							PeriodSeconds:       int32(5),
+						},
+						Resources: corev1.ResourceRequirements{
+							Requests: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("250m"),
+								corev1.ResourceMemory: resource.MustParse("500Mi"),
+							},
+							Limits: corev1.ResourceList{
+								corev1.ResourceCPU:    resource.MustParse("1000m"),
+								corev1.ResourceMemory: resource.MustParse("3Gi"),
+							},
 						},
 					},
 					{

@@ -1,10 +1,10 @@
 ---
 title: "Troubleshooting"
 linkTitle: "Troubleshooting"
-weight: 3
-date: 2021-08-19
+weight: 4
+date: 2021-10-06
 description: >
-    Jenkins security and hardening out of the box
+    Troubleshooting Jenkins Operator
 ---
 
 This document helps you to state the reason for an error in the Jenkins Operator, which is the first step in solving it.
@@ -15,7 +15,7 @@ Jenkins Operator can provide some useful logs. To get them, run:
 $ kubectl logs <controller-manager-pod-name> -f 
 ```
 
-In the logs look for WARNING, ERROR and SEVERE keywords.
+In the logs look for `WARNING`, `ERROR` and `SEVERE` keywords.
 
 ## Jenkins logs
 
@@ -55,5 +55,5 @@ $ kubectl delete pod <jenkins-pod>
 ```
 
 ## Operator debug mode
-If you need to access additional logs from the Operator, you can run it in debug mode. To do that, add ``"--debug""``
+If you need to access additional logs from the Operator, you can run it in debug mode. To do that, add ``"--debug"``
 argument to jenkins-operator container args in your Operator deployment.

@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins-operator
-  namespace: default
   labels:
     control-plane: controller-manager
 spec:
@@ -24,7 +23,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: virtuslab/jenkins-operator:v0.5.0
+        image: virtuslab/jenkins-operator:v0.7.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:

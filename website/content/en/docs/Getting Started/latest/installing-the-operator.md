@@ -2,7 +2,7 @@
 title: "Installing the Operator"
 linkTitle: "Installing the Operator"
 weight: 1
-date: 2021-08-20
+date: 2021-12-08
 description: >
   How to install Jenkins Operator
 ---
@@ -941,7 +941,7 @@ spec:
         args:
         - --leader-elect
         <b>- --validate-security-warnings</b>
-        image: jenkins-operator:54231733-dirty 
+        image: virtuslab/jenkins-operator:v0.7.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
