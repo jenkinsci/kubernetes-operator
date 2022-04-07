@@ -111,6 +111,9 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
+  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:4.9-1 will be used.
+  seedJobAgentImage: ""
+
   # Resource limit/request for Jenkins
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
