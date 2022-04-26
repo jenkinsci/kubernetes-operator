@@ -281,6 +281,12 @@ type JenkinsMaster struct {
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
+	// Topology spread constraints to control how Pods are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.
+	// This can help to achieve high availability as well as efficient resource utilization.
+	// More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+	// +optional
+	TopologySpreadConstraints []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
+
 	// SecurityContext that applies to all the containers of the Jenkins
 	// Master. As per kubernetes specification, it can be overridden
 	// for each container individually.
