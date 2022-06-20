@@ -163,7 +163,6 @@ type SeedJobs interface {
 	isRecreatePodNeeded(jenkins v1alpha2.Jenkins) bool
 	createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string) error
 	ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error)
-	validateSchedule(job v1alpha2.SeedJob, str string, key string) []string
 	validateGitHubPushTrigger(jenkins v1alpha2.Jenkins) []string
 	validateBitbucketPushTrigger(jenkins v1alpha2.Jenkins) []string
 	validateIfIDIsUnique(seedJobs []v1alpha2.SeedJob) []string
