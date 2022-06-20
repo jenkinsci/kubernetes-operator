@@ -353,7 +353,7 @@ type JenkinsMaster struct {
 	// - name: configuration-as-code
 	// version: "1346.ve8cfa_3473c94"
 	// - name: git
-	// version: "4.10.3"
+	// version: "4.11.3"
 	// - name: job-dsl
 	// version: "1.78.1"
 	// - name: kubernetes

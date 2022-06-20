@@ -2,7 +2,7 @@ package plugins
 
 const (
 	configurationAsCodePlugin           = "configuration-as-code:1346.ve8cfa_3473c94"
-	gitPlugin                           = "git:4.10.3"
+	gitPlugin                           = "git:4.11.3"
 	jobDslPlugin                        = "job-dsl:1.78.1"
 	kubernetesPlugin                    = "kubernetes:1.31.3"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:0.20"
