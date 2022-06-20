@@ -8,7 +8,6 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	stackerr "github.com/pkg/errors"
-	"github.com/robfig/cron"
 	"golang.org/x/crypto/ssh"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -89,22 +88,6 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 			}
 		}
 
-		if len(seedJob.BuildPeriodically) > 0 {
-			if msg := s.validateSchedule(seedJob, seedJob.BuildPeriodically, "buildPeriodically"); len(msg) > 0 {
-				for _, m := range msg {
-					messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
-				}
-			}
-		}
-
-		if len(seedJob.PollSCM) > 0 {
-			if msg := s.validateSchedule(seedJob, seedJob.PollSCM, "pollSCM"); len(msg) > 0 {
-				for _, m := range msg {
-					messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
-				}
-			}
-		}
-
 		if seedJob.GitHubPushTrigger {
 			if msg := s.validateGitHubPushTrigger(jenkins); len(msg) > 0 {
 				for _, m := range msg {
@@ -123,15 +106,6 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 	}
 
 	return messages, nil
-}
-
-func (s *seedJobs) validateSchedule(job v1alpha2.SeedJob, str string, key string) []string {
-	var messages []string
-	_, err := cron.Parse(str)
-	if err != nil {
-		messages = append(messages, fmt.Sprintf("`%s` schedule '%s' is invalid cron spec in `%s`", key, str, job.ID))
-	}
-	return messages
 }
 
 func (s *seedJobs) validateGitHubPushTrigger(jenkins v1alpha2.Jenkins) []string {

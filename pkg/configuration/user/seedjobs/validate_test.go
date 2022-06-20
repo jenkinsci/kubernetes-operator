@@ -696,7 +696,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			TypeMeta:   secretTypeMeta,
 			ObjectMeta: secretObjectMeta,
 			Data: map[string][]byte{
-				AppIDSecretKey: []byte("some-id"),
+				AppIDSecretKey:      []byte("some-id"),
 				PrivateKeySecretKey: []byte("some-key"),
 			},
 		}
@@ -737,7 +737,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			TypeMeta:   secretTypeMeta,
 			ObjectMeta: secretObjectMeta,
 			Data: map[string][]byte{
-				AppIDSecretKey: []byte(""),
+				AppIDSecretKey:      []byte(""),
 				PrivateKeySecretKey: []byte("some-key"),
 			},
 		}
@@ -779,7 +779,7 @@ func TestValidateSeedJobs(t *testing.T) {
 			TypeMeta:   secretTypeMeta,
 			ObjectMeta: secretObjectMeta,
 			Data: map[string][]byte{
-				AppIDSecretKey: []byte("some-id"),
+				AppIDSecretKey:      []byte("some-id"),
 				PrivateKeySecretKey: []byte(""),
 			},
 		}
@@ -882,39 +882,6 @@ func TestValidateSeedJobs(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, result, []string{"seedJob `example` required data 'privateKey' not found in secret 'deploy-keys'", "seedJob `example` required data 'privateKey' is empty in secret 'deploy-keys'"})
-	})
-	t.Run("Invalid with wrong cron spec", func(t *testing.T) {
-		jenkins := v1alpha2.Jenkins{
-			Spec: v1alpha2.JenkinsSpec{
-				SeedJobs: []v1alpha2.SeedJob{
-					{
-						ID:                    "example",
-						CredentialID:          "jenkins-operator-e2e",
-						JenkinsCredentialType: v1alpha2.NoJenkinsCredentialCredentialType,
-						Targets:               "cicd/jobs/*.jenkins",
-						RepositoryBranch:      "master",
-						RepositoryURL:         "https://github.com/jenkinsci/kubernetes-operator.git",
-						BuildPeriodically:     "invalid-cron-spec",
-					},
-				},
-			},
-		}
-
-		fakeClient := fake.NewClientBuilder().Build()
-
-		config := configuration.Configuration{
-			Client:        fakeClient,
-			ClientSet:     kubernetes.Clientset{},
-			Notifications: nil,
-			Jenkins:       &v1alpha2.Jenkins{},
-		}
-
-		seedJobs := New(nil, config)
-		result, err := seedJobs.ValidateSeedJobs(jenkins)
-
-		assert.NoError(t, err)
-
-		assert.Equal(t, result, []string{"seedJob `example` `buildPeriodically` schedule 'invalid-cron-spec' is invalid cron spec in `example`"})
 	})
 	t.Run("Valid with good cron spec", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
