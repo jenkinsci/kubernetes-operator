@@ -1,9 +1,6 @@
 name: Release Operator
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - chore/add-release-workflow
 
 jobs:
   build-and-release:
