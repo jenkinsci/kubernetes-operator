@@ -45,7 +45,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: CHANGELOG.txt
           tag_name: ${{ env.VERSION }}
 
       - name: Build Operator image
