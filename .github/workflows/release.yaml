@@ -1,0 +1,59 @@
+name: Release Operator
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    name: Build Operator image and push to acr
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up env vars
+        run: |
+          echo "GO111MODULE=on" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+          echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
+
+      - name: Prepare go environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Ensure Golang runtime dependencies
+        run: make go-dependencies
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Tag the release
+        run: make tag
+
+      - name: Set version for release tag name
+        run: |
+          echo "VERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.txt
+          tag_name: ${{ env.VERSION }}
+
+      - name: Build Operator image
+        run: make container-runtime-build
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Push the image to DockerHub
+        run: |
+          make container-runtime-release
