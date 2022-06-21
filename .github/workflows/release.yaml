@@ -47,15 +47,13 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
 
-      - name: Build Operator image
-        run: make container-runtime-build
-
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Push the image to DockerHub
+      - name: Build and push the image to DockerHub
         run: |
+          git reset --hard
           make container-runtime-release
