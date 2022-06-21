@@ -257,13 +257,13 @@ container-runtime-snapshot-push: check-env deepcopy-gen
 container-runtime-release-version: check-env deepcopy-gen ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
 	$(call buildx-create-command)
-	$(call container-runtime-push-command,$(VERSION_TAG))
+	#$(call container-runtime-push-command,$(VERSION_TAG))
 
 .PHONY: container-runtime-release-latest
 container-runtime-release-latest: check-env deepcopy-gen ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
 	$(call buildx-create-command)
-	$(call container-runtime-push-command,$(LATEST_TAG))
+	#$(call container-runtime-push-command,$(LATEST_TAG))
 
 .PHONY: container-runtime-release
 container-runtime-release: container-runtime-release-version container-runtime-release-latest ## Release image with version and latest tags (in addition to build tag)
