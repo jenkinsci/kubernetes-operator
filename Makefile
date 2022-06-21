@@ -398,7 +398,7 @@ bump-version: sembump ## Bump the version in the version file. Set BUMP to [ pat
 .PHONY: tag
 tag: ## Create a new git tag to prepare to build a release
 	@echo "+ $@"
-	git tag -s -a $(VERSION) -m "$(VERSION)"
+	git tag -a $(VERSION) -m "$(VERSION)"
 	git push origin $(VERSION)
 
 .PHONY: help
