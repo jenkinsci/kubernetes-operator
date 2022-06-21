@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-release:
-    name: Build Operator image and push to acr
+    name: Release Operator, build and push newest image
     runs-on: ubuntu-latest
 
     steps:
