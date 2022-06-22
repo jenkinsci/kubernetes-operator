@@ -3,6 +3,21 @@ entries:
   jenkins-operator:
   - apiVersion: v2
     appVersion: 0.7.1
+    created: "2022-06-22T15:47:45.014723169Z"
+    dependencies:
+    - condition: webhook.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.5.1
+    description: Kubernetes native operator which fully manages Jenkins on Kubernetes
+    digest: e4f72051328b0feae90f5445c58a8776941ffb900a5849de14780ec0e2ce6081
+    icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
+    name: jenkins-operator
+    urls:
+    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.6.2.tgz
+    version: 0.6.2
+  - apiVersion: v2
+    appVersion: 0.7.1
     created: "2022-06-22T11:26:06.518430865Z"
     dependencies:
     - condition: webhook.enabled
@@ -318,4 +333,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.0.1.tgz
     version: 0.0.1
-generated: "2022-06-22T11:26:06.502333353Z"
+generated: "2022-06-22T15:47:44.995217822Z"
