@@ -1,10 +1,11 @@
 run:
   deadline: 10m
+  skip-files:
+    - api/v1alpha2/zz_generated.deepcopy.go
 linters-settings:
   errcheck:
     check-blank: false
     ignore: fmt:.*,io/ioutil:^Read.*,Write
-
 linters:
   enable-all: true
   disable:
