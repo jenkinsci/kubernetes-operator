@@ -302,13 +302,12 @@ func buildConfigMapTypeMeta() metav1.TypeMeta {
 
 func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 	data := struct {
-		JenkinsHomePath                    string
-		InitConfigurationPath              string
-		InstallPluginsCommand              string
-		InstallPluginsScriptRemoteLocation string
-		JenkinsScriptsVolumePath           string
-		BasePlugins                        []v1alpha2.Plugin
-		UserPlugins                        []v1alpha2.Plugin
+		JenkinsHomePath          string
+		InitConfigurationPath    string
+		InstallPluginsCommand    string
+		JenkinsScriptsVolumePath string
+		BasePlugins              []v1alpha2.Plugin
+		UserPlugins              []v1alpha2.Plugin
 	}{
 		JenkinsHomePath:          getJenkinsHomePath(jenkins),
 		InitConfigurationPath:    jenkinsInitConfigurationVolumePath,
