@@ -15,7 +15,6 @@ import (
 const installPluginsCommand = "install-plugins.sh"
 const installPluginsScriptRemoteLocation = "https://raw.githubusercontent.com/jenkinsci/docker/a9de6b9fb3a0601e51321bc0ea8c7638db2bf88f/install-plugins.sh"
 
-
 // bash scripts installs single jenkins plugin with specific version
 const installPluginsBashFmt = `#!/bin/bash -eu
 
@@ -308,21 +307,21 @@ func buildConfigMapTypeMeta() metav1.TypeMeta {
 
 func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 	data := struct {
-		JenkinsHomePath          		string
-		InitConfigurationPath    		string
-		InstallPluginsCommand    		string
-		InstallPluginsScriptRemoteLocation 	string
-		JenkinsScriptsVolumePath 		string
-		BasePlugins              		[]v1alpha2.Plugin
-		UserPlugins              		[]v1alpha2.Plugin
+		JenkinsHomePath                    string
+		InitConfigurationPath              string
+		InstallPluginsCommand              string
+		InstallPluginsScriptRemoteLocation string
+		JenkinsScriptsVolumePath           string
+		BasePlugins                        []v1alpha2.Plugin
+		UserPlugins                        []v1alpha2.Plugin
 	}{
-		JenkinsHomePath:          		getJenkinsHomePath(jenkins),
-		InitConfigurationPath:    		jenkinsInitConfigurationVolumePath,
-		BasePlugins:              		jenkins.Spec.Master.BasePlugins,
-		UserPlugins:              		jenkins.Spec.Master.Plugins,
-		InstallPluginsCommand:    		installPluginsCommand,
-		InstallPluginsScriptRemoteLocation: 	installPluginsScriptRemoteLocation,
-		JenkinsScriptsVolumePath: 		JenkinsScriptsVolumePath,
+		JenkinsHomePath:                    getJenkinsHomePath(jenkins),
+		InitConfigurationPath:              jenkinsInitConfigurationVolumePath,
+		BasePlugins:                        jenkins.Spec.Master.BasePlugins,
+		UserPlugins:                        jenkins.Spec.Master.Plugins,
+		InstallPluginsCommand:              installPluginsCommand,
+		InstallPluginsScriptRemoteLocation: installPluginsScriptRemoteLocation,
+		JenkinsScriptsVolumePath:           JenkinsScriptsVolumePath,
 	}
 
 	output, err := render.Render(initBashTemplate, data)
