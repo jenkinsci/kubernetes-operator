@@ -15,7 +15,7 @@ import (
 const installPluginsCommand = "install-plugins.sh"
 
 // bash scripts installs single jenkins plugin with specific version
-const installPluginsBashFmt = `#!/bin/bash -eu
+const installPluginsBashScript = `#!/bin/bash -eu
 
 # Resolve dependencies and download plugins given on the command line
 #
@@ -418,7 +418,7 @@ func NewScriptsConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jenkins) (*co
 		ObjectMeta: meta,
 		Data: map[string]string{
 			InitScriptName:        *initBashScript,
-			installPluginsCommand: fmt.Sprintf(installPluginsBashFmt, getJenkinsHomePath(jenkins)),
+			installPluginsCommand: installPluginsBashScript,
 		},
 	}, nil
 }
