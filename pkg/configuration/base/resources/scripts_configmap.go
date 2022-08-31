@@ -12,7 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const installPluginsCommand = "install-plugins.sh"
+const installPluginsCommand = "jenkins-plugin-cli"
 
 // bash scripts installs single jenkins plugin with specific version
 const installPluginsBashScript = `#!/bin/bash -eu
@@ -348,9 +348,9 @@ cat > {{ .JenkinsHomePath }}/base-plugins << EOF
 EOF
 
 if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/base-plugins
+  {{ $installPluginsCommand }} -f {{ .JenkinsHomePath }}/base-plugins
 else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/base-plugins
+  {{ $installPluginsCommand }} -f {{ .JenkinsHomePath }}/base-plugins
 fi
 echo "Installing plugins required by Operator - end"
 
@@ -361,9 +361,9 @@ cat > {{ .JenkinsHomePath }}/user-plugins << EOF
 {{ end }}
 EOF
 if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/user-plugins
+  {{ $installPluginsCommand }} -f {{ .JenkinsHomePath }}/user-plugins
 else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/user-plugins
+  {{ $installPluginsCommand }} -f {{ .JenkinsHomePath }}/user-plugins
 fi
 echo "Installing plugins required by user - end"
 `))
