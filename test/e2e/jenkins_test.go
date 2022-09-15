@@ -244,7 +244,7 @@ func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
 		return jenkinsPod.DeletionTimestamp != nil, nil
-	}, 30*retryInterval, retryInterval).Should(BeTrue())
+	}, 50*retryInterval, retryInterval).Should(BeTrue())
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted\n")
 }
