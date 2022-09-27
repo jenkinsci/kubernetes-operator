@@ -158,4 +158,7 @@ spec:
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if .Values.jenkins.seedJobAgentImage }}
+  seedJobAgentImage: {{ .Values.jenkins.seedJobAgentImage }}
+  {{- end }}
 {{- end }}
