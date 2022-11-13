@@ -200,7 +200,7 @@ jenkins:
 
     # image used by backup feature
     # By default using prebuilt backup PVC image by VirtusLab
-    image: virtuslab/jenkins-operator-backup-pvc:v0.1.0
+    image: virtuslab/jenkins-operator-backup-pvc:v0.1.1
 
     # containerName is backup container name
     containerName: backup

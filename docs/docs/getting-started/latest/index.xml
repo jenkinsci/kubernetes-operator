@@ -641,7 +641,7 @@ Backup defines configuration of Jenkins backup.
                 &lt;code&gt;image&lt;/code&gt;
             &lt;/td&gt;
             &lt;td&gt;
-                virtuslab/jenkins-operator-backup-pvc:v0.0.8
+                virtuslab/jenkins-operator-backup-pvc:v0.1.1
             &lt;/td&gt;
             &lt;td&gt;
                 Image used by backup feature.
