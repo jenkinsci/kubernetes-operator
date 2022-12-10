@@ -6,6 +6,7 @@ set -eo pipefail
 [[ -z "${BACKUP_DIR}" ]] && echo "Required 'BACKUP_DIR' env not set" && exit 1;
 [[ -z "${JENKINS_HOME}" ]] && echo "Required 'JENKINS_HOME' env not set" && exit 1;
 BACKUP_TMP_DIR=$(mktemp -d)
+trap "test -d "${BACKUP_TMP_DIR}" && rm -fr "${BACKUP_TMP_DIR}"" EXIT
 
 backup_number=$1
 echo "Running backup"
