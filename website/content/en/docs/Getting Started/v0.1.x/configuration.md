@@ -274,12 +274,12 @@ The default command for the Jenkins master container `jenkins/jenkins:lts` looks
 command:
 - bash
 - -c
-- /var/jenkins/scripts/init.sh && /sbin/tini -s -- /usr/local/bin/jenkins.sh
+- /var/jenkins/scripts/init.sh && /usr/bin/tini -s -- /usr/local/bin/jenkins.sh
 ```
 
 The script`/var/jenkins/scripts/init.sh` is provided by the operator and configures init.groovy.d (creates the Jenkins user) 
 and installs plugins.
-The `/sbin/tini -s -- /usr/local/bin/jenkins.sh` command runs the Jenkins master main process.
+The `/usr/bin/tini -s -- /usr/local/bin/jenkins.sh` command runs the Jenkins master main process.
 
 You can overwrite it in the following pattern:
 
@@ -287,7 +287,7 @@ You can overwrite it in the following pattern:
 command:
 - bash
 - -c
-- /var/jenkins/scripts/init.sh && <custom-code-here> && /sbin/tini -s -- /usr/local/bin/jenkins.sh
+- /var/jenkins/scripts/init.sh && <custom-code-here> && /usr/bin/tini -s -- /usr/local/bin/jenkins.sh
 ```
 
 [job-dsl]:https://github.com/jenkinsci/job-dsl-plugin

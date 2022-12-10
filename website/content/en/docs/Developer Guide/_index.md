@@ -132,7 +132,7 @@ items:
       - command:
         - bash
         - -c
-        - /var/jenkins/scripts/init.sh && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh
+        - /var/jenkins/scripts/init.sh && exec /usr/bin/tini -s -- /usr/local/bin/jenkins.sh
         env:
         - name: JAVA_OPTS
           value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
