@@ -14,7 +14,7 @@ import (
 
 var (
 	errorNotFound = errors.New("404")
-	regex         = regexp.MustCompile("(<application-desc main-class=\"hudson.remoting.jnlp.Main\"><argument>)(?P<secret>[a-z0-9]*)")
+	regex         = regexp.MustCompile("(<application-desc><argument>)(?P<secret>[a-z0-9]*)")
 )
 
 // Jenkins defines Jenkins API.
@@ -159,7 +159,7 @@ func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
 
 	httpClient := &http.Client{
 		Jar:     jar,
-		Timeout: 10 * time.Second,
+		Timeout: 20 * time.Second,
 	}
 
 	if len(userName) > 0 && len(passwordOrToken) > 0 {
