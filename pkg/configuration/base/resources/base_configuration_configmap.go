@@ -62,9 +62,6 @@ if (jenkins.isUsageStatisticsCollected()) {
 }
 `
 
-const enableMasterAccessControl = `
-`
-
 const disableInsecureFeatures = `
 import jenkins.*
 import jenkins.model.*
