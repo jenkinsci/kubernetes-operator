@@ -12,7 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const installPluginsCommand = "install-plugins.sh"
+const installPluginsCommand = "jenkins-plugin-cli"
 
 // bash scripts installs single jenkins plugin with specific version
 const installPluginsBashScript = `#!/bin/bash -eu
@@ -341,30 +341,23 @@ chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
 {{- $installPluginsCommand := .InstallPluginsCommand }}
 
 echo "Installing plugins required by Operator - begin"
-cat > {{ .JenkinsHomePath }}/base-plugins << EOF
+cat > {{ .JenkinsHomePath }}/base-plugins.txt << EOF
 {{ range $index, $plugin := .BasePlugins }}
 {{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
 {{ end }}
 EOF
 
-if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/base-plugins
-else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/base-plugins
-fi
+{{ $installPluginsCommand }} --verbose -f {{ .JenkinsHomePath }}/base-plugins.txt
 echo "Installing plugins required by Operator - end"
 
 echo "Installing plugins required by user - begin"
-cat > {{ .JenkinsHomePath }}/user-plugins << EOF
+cat > {{ .JenkinsHomePath }}/user-plugins.txt << EOF
 {{ range $index, $plugin := .UserPlugins }}
 {{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
 {{ end }}
 EOF
-if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/user-plugins
-else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/user-plugins
-fi
+
+{{ $installPluginsCommand }} --verbose -f {{ .JenkinsHomePath }}/user-plugins.txt
 echo "Installing plugins required by user - end"
 `))
 
@@ -388,7 +381,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		InitConfigurationPath:    jenkinsInitConfigurationVolumePath,
 		BasePlugins:              jenkins.Spec.Master.BasePlugins,
 		UserPlugins:              jenkins.Spec.Master.Plugins,
-		InstallPluginsCommand:    JenkinsScriptsVolumePath + "/" + installPluginsCommand,
+		InstallPluginsCommand:    installPluginsCommand,
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
 	}
 

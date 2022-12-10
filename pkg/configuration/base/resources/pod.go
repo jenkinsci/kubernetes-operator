@@ -53,7 +53,7 @@ func GetJenkinsMasterContainerBaseCommand() []string {
 	return []string{
 		"bash",
 		"-c",
-		fmt.Sprintf("%s/%s && exec /sbin/tini -s -- /usr/local/bin/jenkins.sh",
+		fmt.Sprintf("%s/%s && exec /usr/bin/tini -s -- /usr/local/bin/jenkins.sh",
 			JenkinsScriptsVolumePath, InitScriptName),
 	}
 }
