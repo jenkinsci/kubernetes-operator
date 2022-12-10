@@ -14,11 +14,10 @@ const (
 	basicSettingsGroovyScriptName               = "1-basic-settings.groovy"
 	enableCSRFGroovyScriptName                  = "2-enable-csrf.groovy"
 	disableUsageStatsGroovyScriptName           = "3-disable-usage-stats.groovy"
-	enableMasterAccessControlGroovyScriptName   = "4-enable-master-access-control.groovy"
-	disableInsecureFeaturesGroovyScriptName     = "5-disable-insecure-features.groovy"
-	configureKubernetesPluginGroovyScriptName   = "6-configure-kubernetes-plugin.groovy"
-	configureViewsGroovyScriptName              = "7-configure-views.groovy"
-	disableJobDslScriptApprovalGroovyScriptName = "8-disable-job-dsl-script-approval.groovy"
+	disableInsecureFeaturesGroovyScriptName     = "4-disable-insecure-features.groovy"
+	configureKubernetesPluginGroovyScriptName   = "5-configure-kubernetes-plugin.groovy"
+	configureViewsGroovyScriptName              = "6-configure-views.groovy"
+	disableJobDslScriptApprovalGroovyScriptName = "7-disable-job-dsl-script-approval.groovy"
 )
 
 const basicSettingsFmt = `
@@ -64,15 +63,6 @@ if (jenkins.isUsageStatisticsCollected()) {
 `
 
 const enableMasterAccessControl = `
-import jenkins.security.s2m.AdminWhitelistRule
-import jenkins.model.Jenkins
-
-// see https://wiki.jenkins-ci.org/display/JENKINS/Slave+To+Master+Access+Control
-def jenkins = Jenkins.instance
-jenkins.getInjector()
-        .getInstance(AdminWhitelistRule.class)
-        .setMasterKillSwitch(false) // for real though, false equals enabled..........
-jenkins.save()
 `
 
 const disableInsecureFeatures = `
@@ -197,11 +187,10 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		suffix = prefix
 	}
 	groovyScriptsMap := map[string]string{
-		basicSettingsGroovyScriptName:             fmt.Sprintf(basicSettingsFmt, constants.DefaultAmountOfExecutors),
-		enableCSRFGroovyScriptName:                enableCSRF,
-		disableUsageStatsGroovyScriptName:         disableUsageStats,
-		enableMasterAccessControlGroovyScriptName: enableMasterAccessControl,
-		disableInsecureFeaturesGroovyScriptName:   disableInsecureFeatures,
+		basicSettingsGroovyScriptName:           fmt.Sprintf(basicSettingsFmt, constants.DefaultAmountOfExecutors),
+		enableCSRFGroovyScriptName:              enableCSRF,
+		disableUsageStatsGroovyScriptName:       disableUsageStats,
+		disableInsecureFeaturesGroovyScriptName: disableInsecureFeatures,
 		configureKubernetesPluginGroovyScriptName: fmt.Sprintf(configureKubernetesPluginFmt,
 			clusterDomain,
 			jenkins.ObjectMeta.Namespace,
