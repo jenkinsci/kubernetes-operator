@@ -21,7 +21,7 @@ func configureAuthorizationToUnSecure(namespace, configMapName string) {
 			Namespace: namespace,
 		},
 		Data: map[string]string{
-			"set-unsecured-authorization.groovy": `
+			"8-set-unsecured-authorization.groovy": `
 import hudson.security.*
 
 def jenkins = jenkins.model.Jenkins.getInstance()
