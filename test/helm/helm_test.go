@@ -117,7 +117,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 			jenkins := e2e.RenderJenkinsCR(jenkinsCRName, namespace.Name, seedJobs, groovyScripts, casc, "")
 			jenkins.Spec.Master.Plugins = invalidPlugins
 			jenkins.Spec.ValidateSecurityWarnings = true
-			Expect(e2e.K8sClient.Create(context.TODO(), jenkins)).Should(MatchError("admission webhook \"vjenkins.kb.io\" denied the request: security vulnerabilities detected in the following user-defined plugins: \naudit-trail:3.5\ngithub:1.29.0"))
+			Expect(e2e.K8sClient.Create(context.TODO(), jenkins)).Should(MatchError("admission webhook \"vjenkins.kb.io\" denied the request: security vulnerabilities detected in the following user-defined plugins: \ngithub:1.31.0"))
 		})
 	})
 	Context("When Jenkins CR doesn't contain plugins with security warnings", func() {
