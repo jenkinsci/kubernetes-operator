@@ -319,53 +319,53 @@ var initBashTemplate = template.Must(template.New(InitScriptName).Parse(`#!/usr/
 set -e
 set -x
 
-if [ "${DEBUG_JENKINS_OPERATOR}" == "true" ]; then
-	echo "Printing debug messages - begin"
-	id
-	env
-	ls -la {{ .JenkinsHomePath }}
-	echo "Printing debug messages - end"
-else
-    echo "To print debug messages set environment variable 'DEBUG_JENKINS_OPERATOR' to 'true'"
-fi
+# if [ "${DEBUG_JENKINS_OPERATOR}" == "true" ]; then
+# 	echo "Printing debug messages - begin"
+# 	id
+# 	env
+# 	ls -la {{ .JenkinsHomePath }}
+# 	echo "Printing debug messages - end"
+# else
+#     echo "To print debug messages set environment variable 'DEBUG_JENKINS_OPERATOR' to 'true'"
+# fi
 
 # https://wiki.jenkins.io/display/JENKINS/Post-initialization+script
-mkdir -p {{ .JenkinsHomePath }}/init.groovy.d
-cp -n {{ .InitConfigurationPath }}/*.groovy {{ .JenkinsHomePath }}/init.groovy.d
+# mkdir -p {{ .JenkinsHomePath }}/init.groovy.d
+# cp -n {{ .InitConfigurationPath }}/*.groovy {{ .JenkinsHomePath }}/init.groovy.d
 
-mkdir -p {{ .JenkinsHomePath }}/scripts
-cp {{ .JenkinsScriptsVolumePath }}/*.sh {{ .JenkinsHomePath }}/scripts
-chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
+# mkdir -p {{ .JenkinsHomePath }}/scripts
+# cp {{ .JenkinsScriptsVolumePath }}/*.sh {{ .JenkinsHomePath }}/scripts
+# chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
 
-{{- $jenkinsHomePath := .JenkinsHomePath }}
-{{- $installPluginsCommand := .InstallPluginsCommand }}
+# {{- $jenkinsHomePath := .JenkinsHomePath }}
+# {{- $installPluginsCommand := .InstallPluginsCommand }}
 
-echo "Installing plugins required by Operator - begin"
-cat > {{ .JenkinsHomePath }}/base-plugins << EOF
-{{ range $index, $plugin := .BasePlugins }}
-{{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
-{{ end }}
-EOF
+# echo "Installing plugins required by Operator - begin"
+# cat > {{ .JenkinsHomePath }}/base-plugins << EOF
+# {{ range $index, $plugin := .BasePlugins }}
+# {{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
+# {{ end }}
+# EOF
 
-if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/base-plugins
-else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/base-plugins
-fi
-echo "Installing plugins required by Operator - end"
+# if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
+#  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/base-plugins
+# else
+#  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/base-plugins
+# fi
+# echo "Installing plugins required by Operator - end"
 
-echo "Installing plugins required by user - begin"
-cat > {{ .JenkinsHomePath }}/user-plugins << EOF
-{{ range $index, $plugin := .UserPlugins }}
-{{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
-{{ end }}
-EOF
-if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
-  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/user-plugins
-else
-  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/user-plugins
-fi
-echo "Installing plugins required by user - end"
+# echo "Installing plugins required by user - begin"
+# cat > {{ .JenkinsHomePath }}/user-plugins << EOF
+# {{ range $index, $plugin := .UserPlugins }}
+# {{ $plugin.Name }}:{{ $plugin.Version }}{{if $plugin.DownloadURL}}:{{ $plugin.DownloadURL }}{{end}}
+# {{ end }}
+# EOF
+# if [[ -z "${OPENSHIFT_JENKINS_IMAGE_VERSION}" ]]; then
+#  {{ $installPluginsCommand }} < {{ .JenkinsHomePath }}/user-plugins
+# else
+#  {{ $installPluginsCommand }} {{ .JenkinsHomePath }}/user-plugins
+# fi
+# echo "Installing plugins required by user - end"
 `))
 
 func buildConfigMapTypeMeta() metav1.TypeMeta {
