@@ -284,7 +284,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: quay.io/brokenpip3/jenkins-kubernetes-operator:f312d3d4
+  image: quay.io/brokenpip3/jenkins-kubernetes-operator:a86b738a
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
