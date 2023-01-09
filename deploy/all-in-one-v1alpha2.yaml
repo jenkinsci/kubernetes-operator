@@ -266,10 +266,10 @@ spec:
         resources:
           limits:
             cpu: 100m
-            memory: 30Mi
+            memory: 90Mi
           requests:
             cpu: 100m
-            memory: 20Mi
+            memory: 60Mi
         env:
           - name: WATCH_NAMESPACE
             valueFrom:
