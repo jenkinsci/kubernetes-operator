@@ -2294,6 +2294,243 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
     </item>
     
     <item>
+      <title>Docs: Configuration</title>
+      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</link>
+      <pubDate>Thu, 12 Jan 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</guid>
+      <description>
+        
+        
+        
+
+&lt;p&gt;Jenkins operator uses &lt;a href=&#34;https://github.com/jenkinsci/job-dsl-plugin&#34;&gt;job-dsl&lt;/a&gt; and &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/&#34;&gt;kubernetes-credentials-provider&lt;/a&gt; plugins for configuring jobs
+and deploy keys.&lt;/p&gt;
+
+&lt;h2 id=&#34;prepare-job-definitions-and-pipelines&#34;&gt;Prepare job definitions and pipelines&lt;/h2&gt;
+
+&lt;p&gt;First you have to prepare pipelines and job definition in your GitHub repository using the following structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cicd/
+├── jobs
+│   └── build.jenkins
+└── pipelines
+    └── build.jenkins&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;cicd/jobs/build.jenkins&lt;/strong&gt; it&amp;rsquo;s a job definition:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
+
+pipelineJob(&#39;build-jenkins-operator&#39;) {
+    displayName(&#39;Build jenkins-operator&#39;)
+
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url(&#39;https://github.com/jenkinsci/kubernetes-operator.git&#39;)
+                        credentials(&#39;jenkins-operator&#39;)
+                    }
+                    branches(&#39;*/master&#39;)
+                }
+            }
+            scriptPath(&#39;cicd/pipelines/build.jenkins&#39;)
+        }
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;cicd/pipelines/build.jenkins&lt;/strong&gt; is an actual Jenkins pipeline:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
+
+def label = &#34;build-jenkins-operator-${UUID.randomUUID().toString()}&#34;
+def home = &#34;/home/jenkins&#34;
+def workspace = &#34;${home}/workspace/build-jenkins-operator&#34;
+def workdir = &#34;${workspace}/src/github.com/jenkinsci/kubernetes-operator/&#34;
+
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: &#39;jnlp&#39;, image: &#39;jenkins/inbound-agent:alpine&#39;),
+                containerTemplate(name: &#39;go&#39;, image: &#39;golang:1-alpine&#39;, command: &#39;cat&#39;, ttyEnabled: true),
+        ],
+        envVars: [
+                envVar(key: &#39;GOPATH&#39;, value: workspace),
+        ],
+        ) {
+
+    node(label) {
+        dir(workdir) {
+            stage(&#39;Init&#39;) {
+                timeout(time: 3, unit: &#39;MINUTES&#39;) {
+                    checkout scm
+                }
+                container(&#39;go&#39;) {
+                    sh &#39;apk --no-cache --update add make git gcc libc-dev&#39;
+                }
+            }
+
+            stage(&#39;Dep&#39;) {
+                container(&#39;go&#39;) {
+                    sh &#39;make dep&#39;
+                }
+            }
+
+            stage(&#39;Test&#39;) {
+                container(&#39;go&#39;) {
+                    sh &#39;make test&#39;
+                }
+            }
+
+            stage(&#39;Build&#39;) {
+                container(&#39;go&#39;) {
+                    sh &#39;make build&#39;
+                }
+            }
+        }
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;configure-seed-jobs&#34;&gt;Configure Seed Jobs&lt;/h2&gt;
+
+&lt;p&gt;Jenkins Seed Jobs are configured using &lt;code&gt;Jenkins.spec.seedJobs&lt;/code&gt; section from your custom resource manifest:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator
+    targets: &#34;cicd/jobs/*.jenkins&#34;
+    description: &#34;Jenkins Operator repository&#34;
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; will automatically discover and configure all the seed jobs.&lt;/p&gt;
+
+&lt;p&gt;You can verify if deploy keys were successfully configured in the Jenkins &lt;strong&gt;Credentials&lt;/strong&gt; tab.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins-credentials.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can verify if your pipelines were successfully configured in the Jenkins Seed Job console output.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins-seed.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If your GitHub repository is &lt;strong&gt;private&lt;/strong&gt; you have to configure SSH or username/password authentication.&lt;/p&gt;
+
+&lt;h3 id=&#34;ssh-authentication&#34;&gt;SSH authentication&lt;/h3&gt;
+
+&lt;h4 id=&#34;generate-ssh-keys&#34;&gt;Generate SSH Keys&lt;/h4&gt;
+
+&lt;p&gt;There are two methods of SSH private key generation:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ openssl genrsa -out &amp;lt;filename&amp;gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2048&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;or&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ ssh-keygen -t rsa -b &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2048&lt;/span&gt;
+$ ssh-keygen -p -f &amp;lt;filename&amp;gt; -m pem&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then copy content from generated file.&lt;/p&gt;
+
+&lt;h4 id=&#34;public-key&#34;&gt;Public key&lt;/h4&gt;
+
+&lt;p&gt;If you want to upload your public key to your Git server you need to extract it.&lt;/p&gt;
+
+&lt;p&gt;If key was generated by &lt;code&gt;openssl&lt;/code&gt; then you need to type this to extract public key:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ openssl rsa -in &amp;lt;filename&amp;gt; -pubout &amp;gt; &amp;lt;filename&amp;gt;.pub&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If key was generated by &lt;code&gt;ssh-keygen&lt;/code&gt; the public key content is located in &lt;filename&gt;.pub and there is no need to extract public key&lt;/p&gt;
+
+&lt;h4 id=&#34;configure-ssh-authentication&#34;&gt;Configure SSH authentication&lt;/h4&gt;
+
+&lt;p&gt;Configure a seed job like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-ssh
+    credentialType: basicSSHUserPrivateKey
+    credentialID: k8s-ssh
+    targets: &#34;cicd/jobs/*.jenkins&#34;
+    description: &#34;Jenkins Operator repository&#34;
+    repositoryBranch: master
+    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and create a Kubernetes Secret (name of secret should be the same from &lt;code&gt;credentialID&lt;/code&gt; field):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-ssh
+stringData:
+  privateKey: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
+    oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
+    ...
+  username: github_user_name&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;username-password-authentication&#34;&gt;Username &amp;amp; password authentication&lt;/h3&gt;
+
+&lt;p&gt;Configure a seed job like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-user-pass
+    credentialType: usernamePassword
+    credentialID: k8s-user-pass
+    targets: &#34;cicd/jobs/*.jenkins&#34;
+    description: &#34;Jenkins Operator repository&#34;
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and create a Kubernetes Secret (name of secret should be the same from &lt;code&gt;credentialID&lt;/code&gt; field):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Secret
+metadata:
+  name: k8s-user-pass
+stringData:
+  username: github_user_name
+  password: password_or_token&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id=&#34;http-proxy-for-downloading-plugins&#34;&gt;HTTP Proxy for downloading plugins&lt;/h2&gt;
+
+&lt;p&gt;To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins CR, for e.g.:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;master&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;containers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-master&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;env&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;          &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;CURL_OPTIONS&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;            &lt;/span&gt;value&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-L&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-x&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;proxy_url&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In &lt;code&gt;CURL_OPTIONS&lt;/code&gt; var you can set additional arguments to curl command.&lt;/p&gt;
+
+&lt;h2 id=&#34;jenkins-login-credentials&#34;&gt;Jenkins login credentials&lt;/h2&gt;
+
+&lt;p&gt;The operator automatically generates a Jenkins username and password and stores it in Kubernetes secret named
+&lt;code&gt;jenkins-operator-credentials-&amp;lt;cr_name&amp;gt;&lt;/code&gt; in the namespace where Jenkins CR has been deployed.&lt;/p&gt;
+
+&lt;p&gt;If you want change it you can override the secret:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Secret&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-credentials-&amp;lt;cr-name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
+&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;namespace: &amp;lt;namespace&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;data&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;user&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;base64-encoded-new-username&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
+&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;password: &amp;lt;base64-encoded-new-password&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If needed &lt;strong&gt;Jenkins Operator&lt;/strong&gt; will restart the Jenkins master pod and then you can login with the new username and password
+credentials.&lt;/p&gt;
+
+&lt;h2 id=&#34;override-default-jenkins-container-command&#34;&gt;Override default Jenkins container command&lt;/h2&gt;
+
+&lt;p&gt;The default command for the Jenkins master container &lt;code&gt;jenkins/jenkins:lts&lt;/code&gt; looks like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;command&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;bash&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-c&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/var/jenkins/scripts/init.sh&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/bin/tini&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-s&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;--&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/local/bin/jenkins.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The script&lt;code&gt;/var/jenkins/scripts/init.sh&lt;/code&gt; is provided by the operator and configures init.groovy.d (creates the Jenkins user)
+and installs plugins.
+The &lt;code&gt;/usr/bin/tini -s -- /usr/local/bin/jenkins.sh&lt;/code&gt; command runs the Jenkins master main process.&lt;/p&gt;
+
+&lt;p&gt;You can overwrite it in the following pattern:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;command&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;bash&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-c&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/var/jenkins/scripts/init.sh&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;custom-code-here&amp;gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/bin/tini&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-s&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;--&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/local/bin/jenkins.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Deploying Jenkins</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/</link>
       <pubDate>Wed, 08 Dec 2021 00:00:00 +0000</pubDate>
@@ -3335,243 +3572,6 @@ stringData:
         }
     }
 }&lt;/code&gt;&lt;/pre&gt;
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Configuration</title>
-      <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</link>
-      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</guid>
-      <description>
-        
-        
-        
-
-&lt;p&gt;Jenkins operator uses &lt;a href=&#34;https://github.com/jenkinsci/job-dsl-plugin&#34;&gt;job-dsl&lt;/a&gt; and &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/&#34;&gt;kubernetes-credentials-provider&lt;/a&gt; plugins for configuring jobs
-and deploy keys.&lt;/p&gt;
-
-&lt;h2 id=&#34;prepare-job-definitions-and-pipelines&#34;&gt;Prepare job definitions and pipelines&lt;/h2&gt;
-
-&lt;p&gt;First you have to prepare pipelines and job definition in your GitHub repository using the following structure:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;cicd/
-├── jobs
-│   └── build.jenkins
-└── pipelines
-    └── build.jenkins&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;cicd/jobs/build.jenkins&lt;/strong&gt; it&amp;rsquo;s a job definition:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
-
-pipelineJob(&#39;build-jenkins-operator&#39;) {
-    displayName(&#39;Build jenkins-operator&#39;)
-
-    definition {
-        cpsScm {
-            scm {
-                git {
-                    remote {
-                        url(&#39;https://github.com/jenkinsci/kubernetes-operator.git&#39;)
-                        credentials(&#39;jenkins-operator&#39;)
-                    }
-                    branches(&#39;*/master&#39;)
-                }
-            }
-            scriptPath(&#39;cicd/pipelines/build.jenkins&#39;)
-        }
-    }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;cicd/pipelines/build.jenkins&lt;/strong&gt; is an actual Jenkins pipeline:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;#!/usr/bin/env groovy
-
-def label = &#34;build-jenkins-operator-${UUID.randomUUID().toString()}&#34;
-def home = &#34;/home/jenkins&#34;
-def workspace = &#34;${home}/workspace/build-jenkins-operator&#34;
-def workdir = &#34;${workspace}/src/github.com/jenkinsci/kubernetes-operator/&#34;
-
-podTemplate(label: label,
-        containers: [
-                containerTemplate(name: &#39;jnlp&#39;, image: &#39;jenkins/inbound-agent:alpine&#39;),
-                containerTemplate(name: &#39;go&#39;, image: &#39;golang:1-alpine&#39;, command: &#39;cat&#39;, ttyEnabled: true),
-        ],
-        envVars: [
-                envVar(key: &#39;GOPATH&#39;, value: workspace),
-        ],
-        ) {
-
-    node(label) {
-        dir(workdir) {
-            stage(&#39;Init&#39;) {
-                timeout(time: 3, unit: &#39;MINUTES&#39;) {
-                    checkout scm
-                }
-                container(&#39;go&#39;) {
-                    sh &#39;apk --no-cache --update add make git gcc libc-dev&#39;
-                }
-            }
-
-            stage(&#39;Dep&#39;) {
-                container(&#39;go&#39;) {
-                    sh &#39;make dep&#39;
-                }
-            }
-
-            stage(&#39;Test&#39;) {
-                container(&#39;go&#39;) {
-                    sh &#39;make test&#39;
-                }
-            }
-
-            stage(&#39;Build&#39;) {
-                container(&#39;go&#39;) {
-                    sh &#39;make build&#39;
-                }
-            }
-        }
-    }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;configure-seed-jobs&#34;&gt;Configure Seed Jobs&lt;/h2&gt;
-
-&lt;p&gt;Jenkins Seed Jobs are configured using &lt;code&gt;Jenkins.spec.seedJobs&lt;/code&gt; section from your custom resource manifest:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator
-    targets: &#34;cicd/jobs/*.jenkins&#34;
-    description: &#34;Jenkins Operator repository&#34;
-    repositoryBranch: master
-    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;Jenkins Operator&lt;/strong&gt; will automatically discover and configure all the seed jobs.&lt;/p&gt;
-
-&lt;p&gt;You can verify if deploy keys were successfully configured in the Jenkins &lt;strong&gt;Credentials&lt;/strong&gt; tab.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins-credentials.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;You can verify if your pipelines were successfully configured in the Jenkins Seed Job console output.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins-seed.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If your GitHub repository is &lt;strong&gt;private&lt;/strong&gt; you have to configure SSH or username/password authentication.&lt;/p&gt;
-
-&lt;h3 id=&#34;ssh-authentication&#34;&gt;SSH authentication&lt;/h3&gt;
-
-&lt;h4 id=&#34;generate-ssh-keys&#34;&gt;Generate SSH Keys&lt;/h4&gt;
-
-&lt;p&gt;There are two methods of SSH private key generation:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ openssl genrsa -out &amp;lt;filename&amp;gt; &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2048&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;or&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ ssh-keygen -t rsa -b &lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;2048&lt;/span&gt;
-$ ssh-keygen -p -f &amp;lt;filename&amp;gt; -m pem&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Then copy content from generated file.&lt;/p&gt;
-
-&lt;h4 id=&#34;public-key&#34;&gt;Public key&lt;/h4&gt;
-
-&lt;p&gt;If you want to upload your public key to your Git server you need to extract it.&lt;/p&gt;
-
-&lt;p&gt;If key was generated by &lt;code&gt;openssl&lt;/code&gt; then you need to type this to extract public key:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ openssl rsa -in &amp;lt;filename&amp;gt; -pubout &amp;gt; &amp;lt;filename&amp;gt;.pub&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;If key was generated by &lt;code&gt;ssh-keygen&lt;/code&gt; the public key content is located in &lt;filename&gt;.pub and there is no need to extract public key&lt;/p&gt;
-
-&lt;h4 id=&#34;configure-ssh-authentication&#34;&gt;Configure SSH authentication&lt;/h4&gt;
-
-&lt;p&gt;Configure a seed job like this:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator-ssh
-    credentialType: basicSSHUserPrivateKey
-    credentialID: k8s-ssh
-    targets: &#34;cicd/jobs/*.jenkins&#34;
-    description: &#34;Jenkins Operator repository&#34;
-    repositoryBranch: master
-    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;and create a Kubernetes Secret (name of secret should be the same from &lt;code&gt;credentialID&lt;/code&gt; field):&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Secret
-metadata:
-  name: k8s-ssh
-stringData:
-  privateKey: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
-    oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
-    ...
-  username: github_user_name&lt;/code&gt;&lt;/pre&gt;
-&lt;h3 id=&#34;username-password-authentication&#34;&gt;Username &amp;amp; password authentication&lt;/h3&gt;
-
-&lt;p&gt;Configure a seed job like this:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  seedJobs:
-  - id: jenkins-operator-user-pass
-    credentialType: usernamePassword
-    credentialID: k8s-user-pass
-    targets: &#34;cicd/jobs/*.jenkins&#34;
-    description: &#34;Jenkins Operator repository&#34;
-    repositoryBranch: master
-    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;and create a Kubernetes Secret (name of secret should be the same from &lt;code&gt;credentialID&lt;/code&gt; field):&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Secret
-metadata:
-  name: k8s-user-pass
-stringData:
-  username: github_user_name
-  password: password_or_token&lt;/code&gt;&lt;/pre&gt;
-&lt;h2 id=&#34;http-proxy-for-downloading-plugins&#34;&gt;HTTP Proxy for downloading plugins&lt;/h2&gt;
-
-&lt;p&gt;To use forwarding proxy with an operator to download plugins you need to add the following environment variable to Jenkins CR, for e.g.:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;master&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;containers&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-master&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;        &lt;/span&gt;env&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;          &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;CURL_OPTIONS&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;            &lt;/span&gt;value&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-L&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-x&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;proxy_url&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;In &lt;code&gt;CURL_OPTIONS&lt;/code&gt; var you can set additional arguments to curl command.&lt;/p&gt;
-
-&lt;h2 id=&#34;jenkins-login-credentials&#34;&gt;Jenkins login credentials&lt;/h2&gt;
-
-&lt;p&gt;The operator automatically generates a Jenkins username and password and stores it in Kubernetes secret named
-&lt;code&gt;jenkins-operator-credentials-&amp;lt;cr_name&amp;gt;&lt;/code&gt; in the namespace where Jenkins CR has been deployed.&lt;/p&gt;
-
-&lt;p&gt;If you want change it you can override the secret:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;apiVersion&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;kind&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Secret&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-credentials-&amp;lt;cr-name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;namespace: &amp;lt;namespace&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;data&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;user&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;base64-encoded-new-username&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
-&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;password: &amp;lt;base64-encoded-new-password&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;If needed &lt;strong&gt;Jenkins Operator&lt;/strong&gt; will restart the Jenkins master pod and then you can login with the new username and password
-credentials.&lt;/p&gt;
-
-&lt;h2 id=&#34;override-default-jenkins-container-command&#34;&gt;Override default Jenkins container command&lt;/h2&gt;
-
-&lt;p&gt;The default command for the Jenkins master container &lt;code&gt;jenkins/jenkins:lts&lt;/code&gt; looks like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;command&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;bash&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-c&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/var/jenkins/scripts/init.sh&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/bin/tini&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-s&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;--&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/local/bin/jenkins.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The script&lt;code&gt;/var/jenkins/scripts/init.sh&lt;/code&gt; is provided by the operator and configures init.groovy.d (creates the Jenkins user)
-and installs plugins.
-The &lt;code&gt;/usr/bin/tini -s -- /usr/local/bin/jenkins.sh&lt;/code&gt; command runs the Jenkins master main process.&lt;/p&gt;
-
-&lt;p&gt;You can overwrite it in the following pattern:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;command&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;bash&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-c&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/var/jenkins/scripts/init.sh&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;custom-code-here&amp;gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/bin/tini&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-s&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;--&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/local/bin/jenkins.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
     
