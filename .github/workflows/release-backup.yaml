@@ -7,7 +7,7 @@ on:
       - 'backup/pvc/**'
 
   push:
-    branches: ["feat-backup-img-ci"]
+    branches: ["master"]
     tags: ["*"]
     paths:
       - 'backup/pvc/**'
