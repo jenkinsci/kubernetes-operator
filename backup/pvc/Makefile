@@ -15,7 +15,7 @@ PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 GITCOMMIT := $(shell git rev-parse --short HEAD)
 GITBRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 GITUNTRACKEDCHANGES := $(shell git status --porcelain --untracked-files=no)
-GITIGNOREDBUTTRACKEDCHANGES := $(shell git ls-files -i --exclude-standard)
+GITIGNOREDBUTTRACKEDCHANGES := $(shell git ls-files -i -o --exclude-standard)
 ifneq ($(GITUNTRACKEDCHANGES),)
     GITCOMMIT := $(GITCOMMIT)-dirty
 endif
@@ -58,7 +58,7 @@ spring-clean: ## Cleanup git ignored files (interactive)
 	git clean -Xdi
 
 .PHONY: checkmake
-HAS_CHECKMAKE := $(shell which checkmake)
+HAS_CHECKMAKE := $(shell command -v checkmake)
 checkmake: ## Check this Makefile
 	@echo "+ $@"
 ifndef HAS_CHECKMAKE
@@ -73,13 +73,18 @@ endef
 
 .PHONY: docker-e2e
 E2E_TESTS := $(shell ls e2e)
-docker-e2e: docker-build ## Make e2e tests for docker image
+docker-e2e: docker-build-e2e ## Make e2e tests for docker image
 	@echo "+ $@"
 	$(foreach TEST_NAME,$(E2E_TESTS), $(call e2e,$(TEST_NAME)))
 
 .PHONY: docker-login
 docker-login: ## Log in into the Docker repository
 	@echo "+ $@"
+
+.PHONY: docker-build-e2e
+docker-build-e2e: UID=1001
+docker-build-e2e: GID=1001
+docker-build-e2e: docker-build
 
 .PHONY: docker-build
 docker-build: check-env ## Build the container
@@ -127,15 +132,25 @@ docker-run: docker-build ## Run the container in docker, you can use EXTRA_ARGS
 	docker run --rm -i $(DOCKER_FLAGS) \
 		$(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) $(ARGS)
 
+.PHONY: sembump
+HAS_SEMBUMP := $(shell which $(PROJECT_DIR)/bin/sembump)
+sembump: # Download sembump locally if necessary
+	@echo "+ $@"
+ifndef HAS_SEMBUMP
+	mkdir -p $(PROJECT_DIR)/bin
+	wget -O $(PROJECT_DIR)/bin/sembump https://github.com/justintout/sembump/releases/download/v0.1.0/sembump-linux-amd64
+	chmod +x $(PROJECT_DIR)/bin/sembump
+endif
+
 .PHONY: bump-version
 BUMP := patch
-bump-version: ## Bump the version in the version file. Set BUMP to [ patch | major | minor ]
+bump-version: sembump ## Bump the version in the version file. Set BUMP to [ patch | major | minor ]
 	@echo "+ $@"
 	$(eval NEW_VERSION=$(shell $(PROJECT_DIR)/../../bin/sembump --kind $(BUMP) $(VERSION)))
 	@echo "Bumping VERSION.txt from $(VERSION) to $(NEW_VERSION)"
 	echo $(NEW_VERSION) > VERSION.txt
 	git add VERSION.txt
-	git commit -vaem "Bump backup PVC version to $(NEW_VERSION)"
+	git commit -avm "Bump backup PVC version to $(NEW_VERSION)"
 
 .PHONY: tag
 tag: ## Create a new git tag to prepare to build a release
@@ -159,7 +174,7 @@ ifneq ($(GITUNTRACKEDCHANGES),)
 endif
 ifneq ($(GITIGNOREDBUTTRACKEDCHANGES),)
 	@echo "Ignored but tracked files:"
-	@git ls-files -i --exclude-standard
+	@git ls-files -i -c --exclude-standard
 	@echo
 endif
 	@echo "Dependencies:"
