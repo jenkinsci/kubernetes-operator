@@ -33,7 +33,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.375.2-lts
+  image: jenkins/jenkins:2.375.3-lts
 
   # env contains jenkins container environment variables
   env: []
