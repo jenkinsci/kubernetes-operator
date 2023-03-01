@@ -27,7 +27,7 @@ func UpdateRoute(actual routev1.Route, jenkins *v1alpha2.Jenkins) routev1.Route 
 	return actual
 }
 
-//IsRouteAPIAvailable tells if the Route API is installed and discoverable
+// IsRouteAPIAvailable tells if the Route API is installed and discoverable
 func IsRouteAPIAvailable(clientSet *kubernetes.Clientset) bool {
 	if routeAPIChecked {
 		return isRouteAPIAvailable

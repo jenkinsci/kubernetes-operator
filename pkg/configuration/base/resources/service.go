@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-//ServiceKind the kind name for Service
+// ServiceKind the kind name for Service
 const ServiceKind = "Service"
 
 // UpdateService returns new service with override fields from config

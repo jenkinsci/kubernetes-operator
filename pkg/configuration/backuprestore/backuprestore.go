@@ -285,7 +285,7 @@ func (bar *BackupAndRestore) StopBackupTrigger() {
 	triggers.stop(bar.logger, bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
 }
 
-//IsBackupTriggerEnabled returns true if the backup trigger is enabled
+// IsBackupTriggerEnabled returns true if the backup trigger is enabled
 func (bar *BackupAndRestore) IsBackupTriggerEnabled() bool {
 	_, enabled := triggers.get(bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
 	return enabled

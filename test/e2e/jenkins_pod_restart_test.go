@@ -57,58 +57,59 @@ var _ = Describe("Jenkins controller", func() {
 	})
 })
 
-// TODO: @brokenpip3 temporary disable this flaky test
-//var _ = Describe("Jenkins controller", func() {
-//
-//	const (
-//		jenkinsCRName     = e2e
-//		priorityClassName = ""
-//	)
-//
-//	var (
-//		namespace     *corev1.Namespace
-//		jenkins       *v1alpha2.Jenkins
-//		groovyScripts = v1alpha2.GroovyScripts{
-//			Customization: v1alpha2.Customization{
-//				Configurations: []v1alpha2.ConfigMapRef{
-//					{
-//						Name: userConfigurationConfigMapName,
-//					},
-//				},
-//			},
-//		}
-//		casc = v1alpha2.ConfigurationAsCode{
-//			Customization: v1alpha2.Customization{
-//				Configurations: []v1alpha2.ConfigMapRef{},
-//			},
-//		}
-//	)
-//
-//	BeforeEach(func() {
-//		namespace = CreateNamespace()
-//
-//		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
-//		jenkins = createJenkinsCRSafeRestart(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
-//	})
-//
-//	AfterEach(func() {
-//		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
-//		DestroyNamespace(namespace)
-//	})
-//
-//	Context("when running Jenkins safe restart", func() {
-//		It("authorization strategy is not overwritten", func() {
-//			WaitForJenkinsBaseConfigurationToComplete(jenkins)
-//			WaitForJenkinsUserConfigurationToComplete(jenkins)
-//			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
-//			defer cleanUpFunc()
-//			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
-//
-//			err := jenkinsClient.SafeRestart()
-//			Expect(err).NotTo(HaveOccurred())
-//			waitForJenkinsSafeRestart(jenkinsClient)
-//
-//			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
-//		})
-//	})
-//})
+var _ = Describe("Jenkins controller", func() {
+
+	const (
+		jenkinsCRName     = e2e
+		priorityClassName = ""
+	)
+
+	var (
+		namespace     *corev1.Namespace
+		jenkins       *v1alpha2.Jenkins
+		groovyScripts = v1alpha2.GroovyScripts{
+			Customization: v1alpha2.Customization{
+				Configurations: []v1alpha2.ConfigMapRef{
+					{
+						Name: userConfigurationConfigMapName,
+					},
+				},
+			},
+		}
+		casc = v1alpha2.ConfigurationAsCode{
+			Customization: v1alpha2.Customization{
+				Configurations: []v1alpha2.ConfigMapRef{},
+			},
+		}
+	)
+
+	BeforeEach(func() {
+		namespace = CreateNamespace()
+
+		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
+		jenkins = createJenkinsCRSafeRestart(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+	})
+
+	AfterEach(func() {
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
+		DestroyNamespace(namespace)
+	})
+
+	Context("when running Jenkins safe restart", func() {
+		It("authorization strategy is not overwritten", func() {
+           // TODO: @brokenpip3 temporary disable this flaky test
+			Skip("Temporary skipping this test")
+			WaitForJenkinsBaseConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
+			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
+			defer cleanUpFunc()
+			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
+
+			err := jenkinsClient.SafeRestart()
+			Expect(err).NotTo(HaveOccurred())
+			waitForJenkinsSafeRestart(jenkinsClient)
+
+			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
+		})
+	})
+})
