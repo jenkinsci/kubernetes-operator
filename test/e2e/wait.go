@@ -80,6 +80,7 @@ func WaitForJenkinsUserConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins instance is up and ready\n")
 }
 
+//lint:ignore U1000 Ignore unused function temporarily
 func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 	ginkgo.By("waiting for Jenkins safe restart")
 

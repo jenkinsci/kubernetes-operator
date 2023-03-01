@@ -36,6 +36,7 @@ jenkins.save()
 	Expect(K8sClient.Create(context.TODO(), limitRange)).Should(Succeed())
 }
 
+//lint:ignore U1000 Ignore unused function temporarily
 func checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient jenkinsclient.Jenkins) {
 	By("checking if Authorization Strategy Unsecured is set")
 
