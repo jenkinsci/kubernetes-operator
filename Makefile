@@ -95,7 +95,7 @@ e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
 
 .PHONY: helm-e2e
-IMAGE_NAME := $(DOCKER_REGISTRY):$(GITCOMMIT)-amd64
+IMAGE_NAME := $(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 
 helm-e2e: helm container-runtime-build-amd64 ## Runs helm e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
@@ -214,7 +214,7 @@ container-runtime-build-%: ## Build the container
 		--output=type=docker --platform linux/$* \
 		--build-arg GO_VERSION=$(GO_VERSION) \
 		--build-arg CTIMEVAR="$(CTIMEVAR)" \
-		--tag $(DOCKER_REGISTRY):$(GITCOMMIT)-$* . \
+		--tag $(QUAY_REGISTRY):$(GITCOMMIT)-$* . \
 		--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
 
 .PHONY: container-runtime-build
@@ -237,7 +237,7 @@ $(CONTAINER_RUNTIME_COMMAND) buildx build \
 	--output=type=registry --platform linux/amd64,linux/arm64 \
 	--build-arg GO_VERSION=$(GO_VERSION) \
 	--build-arg CTIMEVAR="$(CTIMEVAR)" \
-	--tag $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(1) . \
+	--tag $(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(1) . \
 	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
 endef
 
@@ -282,7 +282,7 @@ container-runtime-run: ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
 	$(CONTAINER_RUNTIME_COMMAND) run $(CONTAINER_RUNTIME_EXTRA_ARGS) --rm -i $(DOCKER_FLAGS) \
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
-		$(DOCKER_REGISTRY):$(GITCOMMIT) /usr/bin/jenkins-operator $(OPERATOR_ARGS)
+		$(QUAY_REGISTRY):$(GITCOMMIT) /usr/bin/jenkins-operator $(OPERATOR_ARGS)
 
 .PHONY: minikube-run
 minikube-run: export WATCH_NAMESPACE = $(NAMESPACE)
@@ -474,7 +474,7 @@ uninstall-crds: manifests kustomize
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy: manifests kustomize
-	cd config/manager && $(KUSTOMIZE) edit set image controller=$(DOCKER_REGISTRY):$(GITCOMMIT)
+	cd config/manager && $(KUSTOMIZE) edit set image controller=$(QUAY_REGISTRY):$(GITCOMMIT)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config
@@ -525,7 +525,7 @@ endif
 .PHONY: bundle
 bundle: manifests operator-sdk kustomize
 	bin/operator-sdk generate kustomize manifests -q
-	cd config/manager && $(KUSTOMIZE) edit set image controller=$(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY):$(VERSION_TAG)
+	cd config/manager && $(KUSTOMIZE) edit set image controller=$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
 	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	bin/operator-sdk bundle validate ./bundle
 
@@ -542,11 +542,11 @@ kubebuilder:
 
 # install cert-manager v1.5.1
 install-cert-manager: minikube-start
-	kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
+	kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
 
 uninstall-cert-manager: minikube-start
-	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
-	
+	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
+
 # Deploy the operator locally along with webhook using helm charts
 deploy-webhook: container-runtime-build-amd64
 	@echo "+ $@"
