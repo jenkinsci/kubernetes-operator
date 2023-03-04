@@ -237,7 +237,7 @@ $(CONTAINER_RUNTIME_COMMAND) buildx build \
 	--output=type=registry --platform linux/amd64,linux/arm64 \
 	--build-arg GO_VERSION=$(GO_VERSION) \
 	--build-arg CTIMEVAR="$(CTIMEVAR)" \
-	--tag $(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(1) . \
+	--tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(1) . \
 	--file Dockerfile $(CONTAINER_RUNTIME_EXTRA_ARGS)
 endef
 
@@ -525,7 +525,7 @@ endif
 .PHONY: bundle
 bundle: manifests operator-sdk kustomize
 	bin/operator-sdk generate kustomize manifests -q
-	cd config/manager && $(KUSTOMIZE) edit set image controller=$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
+	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
 	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 	bin/operator-sdk bundle validate ./bundle
 
