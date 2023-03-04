@@ -74,7 +74,7 @@ Fill out ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7)) and come say hi!
 We are trying our best to resolve issues quickly, but they have to wait to be released. If you can't wait for an official
 docker image release and acknowledge the risk, you can use our unofficial images, which are built nightly.
 
-You can find the project's Docker Hub repository [here](https://hub.docker.com/r/virtuslab/jenkins-operator).
+You can find the project's Quay.io repository [here](https://quay.io/organization/jenkins-kubernetes-operator).
 
 Look for the images with tag "{git-hash}", where {git-hash} is the hash of the master commit that interests you.
 
