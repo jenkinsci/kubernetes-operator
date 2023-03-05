@@ -30,7 +30,7 @@ var expectedBasePluginsList = []plugins.Plugin{
 	plugins.Must(plugins.New("kubernetes-credentials-provider:1.209.v862c6e5fb_1ef")),
 	plugins.Must(plugins.New("job-dsl:1.81")),
 	plugins.Must(plugins.New("workflow-aggregator:590.v6a_d052e5a_a_b_5")),
-	plugins.Must(plugins.New("workflow-job:1268.v6eb_e2ee1a_85a")),
+	plugins.Must(plugins.New("workflow-job:1282.ve6d865025906")),
 }
 
 func createUserConfigurationSecret(namespace string, stringData map[string]string) {
