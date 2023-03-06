@@ -89,7 +89,7 @@ docker-build-e2e: docker-build
 .PHONY: docker-build
 docker-build: check-env ## Build the container
 	@echo "+ $@"
-	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
+	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t quay.io/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
 
 .PHONY: docker-images
 docker-images: ## List all local containers
