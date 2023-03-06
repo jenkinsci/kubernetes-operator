@@ -33,7 +33,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.375.2-lts
+  image: jenkins/jenkins:2.375.3-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -64,7 +64,7 @@ jenkins:
 
   # validateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
   validateSecurityWarnings: false
-  
+
   # imagePullSecrets is used if you want to pull images from private repository
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories for more info
   imagePullSecrets: []
@@ -87,9 +87,9 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 3802.vb_b_600831fcb_3
+  #   version: 3883.v4d70a_a_a_df034
   # - name: workflow-job
-  #   version: 1254.v3f64639b_11dd
+  #   version: 1282.ve6d865025906
   # - name: workflow-aggregator
   #   version: 590.v6a_d052e5a_a_b_5
   # - name: git
@@ -99,7 +99,7 @@ jenkins:
   # - name: configuration-as-code
   #   version: 1569.vb_72405b_80249
   # - name: kubernetes-credentials-provider
-  #   version: 1.208.v128ee9800c04
+  #   version: 1.209.v862c6e5fb_1ef
 
   basePlugins: []
 
@@ -311,8 +311,8 @@ webhook:
 
     # validity of the certificate
     duration: 2160h
-  
-    # time after which the certificate will be automatically renewed 
+
+    # time after which the certificate will be automatically renewed
     renewbefore: 360h
   # enable or disable the validation webhook
   enabled: false

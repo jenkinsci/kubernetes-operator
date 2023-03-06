@@ -68,7 +68,7 @@ endif
 
 define e2e
 echo "\nRunning $(1) e2e test";
-@e2e/$(1)/test.sh $(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT)
+@e2e/$(1)/test.sh $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT)
 endef
 
 .PHONY: docker-e2e
@@ -89,7 +89,7 @@ docker-build-e2e: docker-build
 .PHONY: docker-build
 docker-build: check-env ## Build the container
 	@echo "+ $@"
-	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t $(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
+	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
 
 .PHONY: docker-images
 docker-images: ## List all local containers
@@ -99,20 +99,20 @@ docker-images: ## List all local containers
 .PHONY: docker-push
 docker-push: docker-build ## Push the container
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(BUILD_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(BUILD_TAG)
+	docker tag $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
+	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
 
 .PHONY: docker-release-version
 docker-release-version: docker-build ## Release image with version tag (in addition to build tag)
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(VERSION_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(VERSION_TAG)
+	docker tag $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
+	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
 
 .PHONY: docker-release-latest
 docker-release-latest: docker-build ## Release image with latest tags (in addition to build tag)
 	@echo "+ $@"
-	docker tag $(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(LATEST_TAG)
-	docker push $(DOCKER_ORGANIZATION)/$(DOCKER_REGISTRY)-$(NAME):$(LATEST_TAG)
+	docker tag $(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
+	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
 
 .PHONY: docker-release
 docker-release: docker-release-version docker-release-latest ## Release image with version and latest tags (in addition to build tag)
@@ -130,7 +130,7 @@ endif
 docker-run: docker-build ## Run the container in docker, you can use EXTRA_ARGS
 	@echo "+ $@"
 	docker run --rm -i $(DOCKER_FLAGS) \
-		$(DOCKER_REGISTRY)-$(NAME):$(GITCOMMIT) $(ARGS)
+		$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) $(ARGS)
 
 .PHONY: sembump
 HAS_SEMBUMP := $(shell which $(PROJECT_DIR)/bin/sembump)

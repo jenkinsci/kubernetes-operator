@@ -8,8 +8,8 @@ import (
 )
 
 const (
-//skipTestSafeRestart   = false
-//skipTestPriorityClass = false
+// skipTestSafeRestart   = false
+// skipTestPriorityClass = false
 )
 
 func updateJenkinsCR(jenkins *v1alpha2.Jenkins) {
