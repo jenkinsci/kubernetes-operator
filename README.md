@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/badge/version-v0.7.1-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.7.1)
 [![Build status](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests.yaml/badge.svg)](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
-[![Docker Pulls](https://img.shields.io/docker/pulls/virtuslab/jenkins-operator.svg)](https://hub.docker.com/r/virtuslab/jenkins-operator/tags)
 
 ![logo](/assets/jenkins_gopher_wide.png)
 
@@ -65,9 +64,6 @@ Selected content:
 Main channel of communication on topics related to Jenkins Operator is [Jenkins Operator Category](https://community.jenkins.io/c/contributing/jenkins-operator/20) on [Jenkins Community Discourse](https://community.jenkins.io/).
 
 Here you can ask questions about the project, discuss best practices on using it, and talk to other users of the Operator, contributors and project's maintainers.
-
-We also have a dedicated channel called `#jenkins-operator` on [virtuslab-oss.slack.com](https://virtuslab-oss.slack.com).
-Fill out ([Invite form](https://forms.gle/X3X8qA1XMirdBuEH7)) and come say hi!
 
 ## Snapshots between releases
 
