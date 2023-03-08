@@ -147,7 +147,7 @@ endif
 BUMP := patch
 bump-version: sembump ## Bump the version in the version file. Set BUMP to [ patch | major | minor ]
 	@echo "+ $@"
-	$(eval NEW_VERSION=$(shell $(PROJECT_DIR)/../../bin/sembump --kind $(BUMP) $(VERSION)))
+	$(eval NEW_VERSION=$(shell $(PROJECT_DIR)/bin/sembump --kind $(BUMP) $(VERSION)))
 	@echo "Bumping VERSION.txt from $(VERSION) to $(NEW_VERSION)"
 	echo $(NEW_VERSION) > VERSION.txt
 	git add VERSION.txt
