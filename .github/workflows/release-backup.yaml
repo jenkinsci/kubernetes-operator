@@ -7,7 +7,7 @@ on:
       - 'backup/pvc/**'
 
   push:
-    branches: ["master"]
+    branches: ["master", "quayio_fixies"]
     tags: ["*"]
     paths:
       - 'backup/pvc/**'
@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Check envs
+        run: make -C backup/pvc check-env
 
       - name: Build the e2e image
         run: make -C backup/pvc docker-build-e2e
@@ -33,7 +36,8 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Bump the version
-        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        shell: bash
         run: make -C backup/pvc sembump && make -C backup/pvc bump-version
 
       - name: Login to Quay.io
@@ -45,8 +49,8 @@ jobs:
           password: ${{ secrets.QUAYIO_TOKEN }}
 
       - name: Build and push the image to DockerHub
-        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git reset --hard
           make -C backup/pvc docker-build
-          make -C backup/pvc docker-release
+          #make -C backup/pvc docker-release
