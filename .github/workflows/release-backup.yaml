@@ -30,7 +30,7 @@ jobs:
         run: make -C backup/pvc docker-e2e
 
       - name: Configure Git
-        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
