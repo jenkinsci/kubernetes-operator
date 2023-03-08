@@ -1,4 +1,3 @@
-#
 # Set POSIX sh for maximum interoperability
 SHELL := /bin/sh
 PATH  := $(GOPATH)/bin:$(PATH)
