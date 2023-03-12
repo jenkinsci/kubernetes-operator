@@ -28,6 +28,13 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH GO111MODULE=on go build -ldf
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM gcr.io/distroless/static:nonroot
+LABEL maintainer="Jenkins Kubernetes Operator Community" \
+      org.opencontainers.image.authors="Jenkins Kubernetes Operator Community" \
+      org.opencontainers.image.title="jenkins-kubernetes-operator" \
+      org.opencontainers.image.description="Kubernetes native Jenkins Operator" \
+      org.opencontainers.image.url="quay.io/jenkins-kubernetes-operator/operator" \
+      org.opencontainers.image.source="https://github.com/jenkinsci/kubernetes-operator/tree/master" \
+      org.opencontainers.image.base.name="gcr.io/distroless/static:nonroot"
 WORKDIR /
 COPY --from=builder /workspace/manager .
 USER 65532:65532
