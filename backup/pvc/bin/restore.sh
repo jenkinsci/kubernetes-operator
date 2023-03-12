@@ -7,7 +7,7 @@ set -eo pipefail
 [[ -z "${JENKINS_HOME}" ]] && echo "Required 'JENKINS_HOME' env not set" && exit 1;
 
 backup_number=$1
-echo "Running restore backup"
+echo "Running restore backup with backup number #${backup_number}"
 
 tar -C ${JENKINS_HOME} -zxf "${BACKUP_DIR}/${backup_number}.tar.gz"
 
