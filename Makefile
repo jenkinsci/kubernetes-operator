@@ -140,6 +140,13 @@ install: ## Installs the executable
 	@echo "+ $@"
 	go install -tags "$(BUILDTAGS)" ${GO_LDFLAGS} $(BUILD_PATH)
 
+.PHONY: update-lts-version
+update-lts-version: ## Update the latest lts version
+	@echo "+ $@"
+	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' chart/jenkins-operator/values.yaml
+	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/e2e/test_utility.go
+	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/helm/helm_test.go
+
 .PHONY: run
 run: export WATCH_NAMESPACE = $(NAMESPACE)
 run: export OPERATOR_NAME = $(NAME)
