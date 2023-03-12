@@ -3,10 +3,10 @@ repos:
     rev: v1.51.2
     hooks:
       - id: golangci-lint
-        #  - repo: https://github.com/sirosen/check-jsonschema
-        #    rev: 0.21.0
-        #    hooks:
-        #      - id: check-github-workflows
+  - repo: https://github.com/sirosen/check-jsonschema
+    rev: 0.21.0
+    hooks:
+      - id: check-github-workflows
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
