@@ -68,7 +68,7 @@ endif
 
 define e2e
 echo "\nRunning $(1) e2e test";
-@e2e/$(1)/test.sh quay.io/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT)
+@e2e/$(1)/test.sh quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT)
 endef
 
 .PHONY: docker-e2e
