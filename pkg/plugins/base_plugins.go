@@ -4,9 +4,9 @@ const (
 	configurationAsCodePlugin           = "configuration-as-code:1569.vb_72405b_80249"
 	gitPlugin                           = "git:5.0.0"
 	jobDslPlugin                        = "job-dsl:1.81"
-	kubernetesPlugin                    = "kubernetes:3883.v4d70a_a_a_df034"
+	kubernetesPlugin                    = "kubernetes:3893.v73d36f3b_9103"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.209.v862c6e5fb_1ef"
-	workflowAggregatorPlugin            = "workflow-aggregator:590.v6a_d052e5a_a_b_5"
+	workflowAggregatorPlugin            = "workflow-aggregator:596.v8c21c963d92d"
 	workflowJobPlugin                   = "workflow-job:1282.ve6d865025906"
 )
 
