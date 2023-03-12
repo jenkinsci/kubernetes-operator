@@ -200,8 +200,8 @@ jenkins:
     enabled: true
 
     # image used by backup feature
-    # By default using prebuilt backup PVC image by VirtusLab
-    image: virtuslab/jenkins-operator-backup-pvc:v0.1.1
+    # By default using prebuilt backup PVC image
+    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.1
 
     # containerName is backup container name
     containerName: backup
@@ -285,7 +285,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: virtuslab/jenkins-operator:60b8ee5
+  image: quay.io/jenkins-kubernetes-operator/operator:d91a729
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
