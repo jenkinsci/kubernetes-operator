@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - master
+      - main
+    paths:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
 
 jobs:
   # Set the job key. The key is displayed as the job name

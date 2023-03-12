@@ -3,10 +3,21 @@ on:
   push:
     branches:
       - master
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
+      - 'backup/**'
+      - '*.md'
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
-    branches:
-      - master
+    paths-ignore:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
+      - 'backup/**'
+      - '*.md'
 
 env:
   MINIKUBE_CPUS_NUMBER: 2

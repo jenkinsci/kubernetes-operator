@@ -7,7 +7,9 @@ on:
       - 'backup/pvc/**'
 
   push:
-    branches: ["master"]
+    branches:
+      - master
+      - main
     tags: ["*"]
     paths:
       - 'backup/pvc/**'
