@@ -375,7 +375,7 @@ kind-delete: ## Delete kind cluster
 
 .PHONY: bats-tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
-bats-tests: container-runtime-build ## Run bats tests
+bats-tests: container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
 	OPERATOR_IMAGE="${IMAGE_NAME}" bats -T -p test/bats
