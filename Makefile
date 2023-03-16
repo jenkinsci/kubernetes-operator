@@ -375,10 +375,17 @@ kind-delete: ## Delete kind cluster
 
 .PHONY: bats-tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
+BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
+ifndef BUILD_PRESENT
 bats-tests: container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p --show-output-of-passing-tests test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x --show-output-of-passing-tests test/bats
+else
+bats-tests: ## Run bats tests
+	@echo "+ $@"
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x --show-output-of-passing-tests test/bats
+endif
 
 .PHONY: crc-start
 crc-start: check-crc ## Start CodeReady Containers Kubernetes cluster
