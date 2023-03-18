@@ -37,7 +37,6 @@ func (r *JenkinsBaseConfigurationReconciler) verifyPlugins(jenkinsClient jenkins
 			}
 			if found, ok := isPluginVersionCompatible(allPluginsInJenkins, plugin); !ok {
 				r.logger.V(log.VWarn).Info(fmt.Sprintf("The plugin you specified as code is incompatible with this jenkins version: plugin '%s' version, actual '%+v'", plugin, found.Version))
-
 			}
 		}
 	}
