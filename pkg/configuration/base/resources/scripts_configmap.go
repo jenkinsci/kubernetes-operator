@@ -46,7 +46,7 @@ cat > {{ .JenkinsHomePath }}/base-plugins.txt << EOF
 {{ end }}
 EOF
 
-{{ $installPluginsCommand }} --verbose --latest=false -f {{ .JenkinsHomePath }}/base-plugins.txt
+{{ $installPluginsCommand }} --verbose --latest {{ .LatestPlugins }} -f {{ .JenkinsHomePath }}/base-plugins.txt
 echo "Installing plugins required by Operator - end"
 
 echo "Installing plugins required by user - begin"
@@ -56,7 +56,7 @@ cat > {{ .JenkinsHomePath }}/user-plugins.txt << EOF
 {{ end }}
 EOF
 
-{{ $installPluginsCommand }} --verbose --latest=false -f {{ .JenkinsHomePath }}/user-plugins.txt
+{{ $installPluginsCommand }} --verbose --latest {{ .LatestPlugins }} -f {{ .JenkinsHomePath }}/user-plugins.txt
 echo "Installing plugins required by user - end"
 `))
 
@@ -68,6 +68,14 @@ func buildConfigMapTypeMeta() metav1.TypeMeta {
 }
 
 func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
+
+	defaultlatestPlugin := true
+
+	latestP := jenkins.Spec.Master.LatestPlugins
+	if !latestP {
+		latestP = defaultlatestPlugin
+	}
+
 	data := struct {
 		JenkinsHomePath          string
 		InitConfigurationPath    string
@@ -75,6 +83,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		JenkinsScriptsVolumePath string
 		BasePlugins              []v1alpha2.Plugin
 		UserPlugins              []v1alpha2.Plugin
+		LatestPlugins            bool
 	}{
 		JenkinsHomePath:          getJenkinsHomePath(jenkins),
 		InitConfigurationPath:    jenkinsInitConfigurationVolumePath,
@@ -82,6 +91,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		UserPlugins:              jenkins.Spec.Master.Plugins,
 		InstallPluginsCommand:    installPluginsCommand,
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
+		LatestPlugins:            latestP,
 	}
 
 	output, err := render.Render(initBashTemplate, data)

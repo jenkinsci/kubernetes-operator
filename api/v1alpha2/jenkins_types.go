@@ -370,6 +370,11 @@ type JenkinsMaster struct {
 	// +optional
 	Plugins []Plugin `json:"plugins,omitempty"`
 
+	// Allow to override jenkins-plugin-cli default behavior
+	// while donwloading the plugin and dependencies
+	// see: https://github.com/jenkinsci/plugin-installation-manager-tool#cli-options
+	LatestPlugins bool `json:"latestPlugins"`
+
 	// DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins
 	DisableCSRFProtection bool `json:"disableCSRFProtection"`
 
