@@ -368,8 +368,8 @@ kind-setup: ## Setup kind cluster
 	@echo "+ $@"
 	kind create cluster --name $(KIND_CLUSTER_NAME)
 
-.PHONY: kind-delete
-kind-delete: ## Delete kind cluster
+.PHONY: kind-clean
+kind-clean: ## Delete kind cluster
 	@echo "+ $@"
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
 
@@ -380,11 +380,11 @@ ifndef BUILD_PRESENT
 bats-tests: container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x --show-output-of-passing-tests test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
 else
 bats-tests: ## Run bats tests
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x --show-output-of-passing-tests test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
 endif
 
 .PHONY: crc-start

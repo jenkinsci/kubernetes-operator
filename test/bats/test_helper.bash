@@ -7,7 +7,7 @@ _common_setup() {
 
     CONTEXT="kind-jenkins"
     export DETIK_CLIENT_NAME="kubectl"
-    export DETIK_CLIENT_NAMESPACE="$(git rev-parse --verify HEAD --short)"
+    export DETIK_CLIENT_NAMESPACE="ns-$(git rev-parse --verify HEAD --short)"
     export KUBECTL="kubectl --context=${CONTEXT} -n ${DETIK_CLIENT_NAMESPACE}"
     export HELM="helm --kube-context=${CONTEXT} -n ${DETIK_CLIENT_NAMESPACE}"
 }
