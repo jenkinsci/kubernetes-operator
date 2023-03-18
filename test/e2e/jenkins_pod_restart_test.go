@@ -97,7 +97,7 @@ var _ = Describe("Jenkins controller", func() {
 
 	Context("when running Jenkins safe restart", func() {
 		It("authorization strategy is not overwritten", func() {
-           // TODO: @brokenpip3 temporary disable this flaky test
+			// TODO: @brokenpip3 temporary disable this flaky test
 			Skip("Temporary skipping this test")
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
 			WaitForJenkinsUserConfigurationToComplete(jenkins)
