@@ -68,7 +68,6 @@ func buildConfigMapTypeMeta() metav1.TypeMeta {
 }
 
 func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
-
 	defaultlatestPlugin := true
 
 	latestP := jenkins.Spec.Master.LatestPlugins
