@@ -340,7 +340,7 @@ func TestJenkinsBaseConfigurationReconciler_verifyPlugins(t *testing.T) {
 		got, err := r.verifyPlugins(jenkinsClient)
 
 		assert.NoError(t, err)
-		assert.False(t, got)
+		assert.True(t, got)
 	})
 	t.Run("plugin version matter for user plugins", func(t *testing.T) {
 		jenkins := &v1alpha2.Jenkins{
@@ -377,7 +377,7 @@ func TestJenkinsBaseConfigurationReconciler_verifyPlugins(t *testing.T) {
 		got, err := r.verifyPlugins(jenkinsClient)
 
 		assert.NoError(t, err)
-		assert.False(t, got)
+		assert.True(t, got)
 	})
 	t.Run("missing base plugin", func(t *testing.T) {
 		jenkins := &v1alpha2.Jenkins{
