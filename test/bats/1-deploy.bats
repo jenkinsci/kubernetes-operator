@@ -98,6 +98,6 @@ diag() {
   assert_success
 }
 
-teardown() {
-  touch "chart/jenkins-operator/deploy.tmp"
+@test "1.9 Helm: Clean" {
+  rm "chart/jenkins-operator/deploy.tmp"
 }

@@ -1,4 +1,4 @@
-name: Run tests
+name: Run e2e tests
 on:
   push:
     branches:
