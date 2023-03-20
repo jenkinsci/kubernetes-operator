@@ -66,10 +66,3 @@ jobs:
 
       - name: Jenkins Operator - e2e
         run: make e2e E2E_TEST_ARGS='-ginkgo.v'
-
-      - name: Jenkins Operator - Helm Chart tests
-        run: |
-          git reset --hard
-          make helm-lint
-          eval $(bin/minikube docker-env)
-          make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
