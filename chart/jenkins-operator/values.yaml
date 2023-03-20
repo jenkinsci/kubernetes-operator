@@ -114,6 +114,12 @@ jenkins:
   #   version: "0.6"
   plugins: []
 
+  # latestPlugins: Allow to override jenkins-plugin-cli default behavior
+  # while downloading the plugin and dependencies
+  # see: https://github.com/jenkinsci/plugin-installation-manager-tool#cli-options
+  # default to true
+  latestPlugins: true
+
   # seedJobs is placeholder for jenkins seed jobs
   # For seed job creation tutorial, check https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/
   # Example:

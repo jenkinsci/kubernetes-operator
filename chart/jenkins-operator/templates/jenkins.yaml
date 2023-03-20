@@ -104,6 +104,7 @@ spec:
     {{- with .Values.jenkins.plugins }}
     plugins: {{ toYaml . | nindent 4 }}
     {{- end }}
+    latestPlugins: {{ .Values.jenkins.latestPlugins }}
     {{- if .Values.jenkins.priorityClassName }}
     priorityClassName: {{ .Values.jenkins.priorityClassName }}
     {{- end }}

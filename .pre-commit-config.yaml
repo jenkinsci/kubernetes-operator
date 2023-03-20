@@ -1,12 +1,21 @@
 repos:
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.21.0
+    rev: 0.22.0
     hooks:
       - id: check-github-workflows
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
       - id: detect-private-key
-      - id: check-yaml
       - id: trailing-whitespace
       - id: end-of-file-fixer
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: "v0.1.19"
+    hooks:
+      - id: helmlint
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: "v1.11.0"
+    hooks:
+      - id: helm-docs
+        args:
+          - --chart-search-root=chart/jenkins-operator
