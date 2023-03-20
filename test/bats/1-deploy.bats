@@ -43,22 +43,22 @@ diag() {
 }
 
 #bats test_tags=phase:helm
-@test "1.3 Helm: check Jenkins service status" {
-  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
-  run verify "there is 1 service named 'jenkins-operator-http-jenkins'"
-  assert_success
-
-  run verify "there is 1 service named 'jenkins-operator-slave-jenkins'"
-  assert_success
-}
-
-#bats test_tags=phase:helm
-@test "1.4 Helm: check Jenkins Pod status" {
+@test "1.3 Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 
   run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  assert_success
+}
+
+#bats test_tags=phase:helm
+@test "1.4 Helm: check Jenkins service status" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run verify "there is 1 service named 'jenkins-operator-http-jenkins'"
+  assert_success
+
+  run verify "there is 1 service named 'jenkins-operator-slave-jenkins'"
   assert_success
 }
 
