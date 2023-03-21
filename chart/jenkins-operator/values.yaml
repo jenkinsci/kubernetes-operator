@@ -27,9 +27,6 @@ jenkins:
   # nodeSelector are injected into metadata nodeSelector field
   nodeSelector: {}
 
-  # tolerations are injected into metadata tolerations field
-  tolerations: []
-
   # annotations are injected into metadata annotations field
   annotations: {}
 
