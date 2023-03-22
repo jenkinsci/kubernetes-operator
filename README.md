@@ -1,8 +1,9 @@
 # Jenkins Operator
 
 [![Version](https://img.shields.io/badge/version-v0.7.1-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.7.1)
-[![Build status](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests.yaml/badge.svg)](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests.yaml)
+[![Build status](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml/badge.svg)](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
+[![Gitter](https://badges.gitter.im/jenkinsci/kubernetes-operator.png)(test)]
 
 ![logo](/assets/jenkins_gopher_wide.png)
 
@@ -64,6 +65,8 @@ Selected content:
 Main channel of communication on topics related to Jenkins Operator is [Jenkins Operator Category](https://community.jenkins.io/c/contributing/jenkins-operator/20) on [Jenkins Community Discourse](https://community.jenkins.io/).
 
 Here you can ask questions about the project, discuss best practices on using it, and talk to other users of the Operator, contributors and project's maintainers.
+
+We also have a [gitter]()/[matrix](https://matrix.to/#/#jenkinsci_kubernetes-operator:gitter.im) channel, come to say hi!
 
 ## Snapshots between releases
 
