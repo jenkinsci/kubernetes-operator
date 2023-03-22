@@ -50,7 +50,7 @@ jobs:
           username: ${{ secrets.QUAYIO_USERNAME }}
           password: ${{ secrets.QUAYIO_TOKEN }}
 
-      - name: Build and push the image to DockerHub
+      - name: Build and push the image to Quay.io
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git reset --hard

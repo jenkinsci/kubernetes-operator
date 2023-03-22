@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.QUAYIO_USERNAME }}
           password: ${{ secrets.QUAYIO_TOKEN }}
 
-      - name: Build and push the image to DockerHub
+      - name: Build and push the image to Quay.io
         run: |
           git reset --hard
           make container-runtime-release
