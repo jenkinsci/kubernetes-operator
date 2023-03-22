@@ -363,6 +363,12 @@ minikube-start: minikube check-minikube ## Start minikube
 	bin/minikube status && exit 0 || \
 	bin/minikube start --kubernetes-version $(MINIKUBE_KUBERNETES_VERSION) --dns-domain=$(CLUSTER_DOMAIN) --extra-config=kubelet.cluster-domain=$(CLUSTER_DOMAIN) --driver=$(MINIKUBE_DRIVER) --memory $(MEMORY_AMOUNT) --cpus $(CPUS_NUMBER)
 
+.PHONY: minikube-destroy
+minikube-destroy: ## Stop and destroy minikube
+	@echo "+ $@"
+	bin/minikube stop
+	bin/minikube delete
+
 .PHONY: kind-setup
 kind-setup: ## Setup kind cluster
 	@echo "+ $@"

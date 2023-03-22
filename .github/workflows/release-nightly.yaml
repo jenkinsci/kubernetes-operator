@@ -17,10 +17,10 @@ jobs:
     name: Publish nightly snapshot
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Prep - check out code
         uses: actions/checkout@v2
 
-      - name: Set up env vars
+      - name: Prep - Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
           echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
@@ -28,20 +28,31 @@ jobs:
           echo "MINIKUBE_WANTREPORTERRORPROMPT=false" >> $GITHUB_ENV
           echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
           echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env)" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
-      - name: Prepare go environment
+      - name: Prep - setup BATS
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: 1.9.0
+
+      - name: Prep - setup Bats libs
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        uses: brokenpip3/setup-bats-libs@0.1.0
+
+      - name: Prep - go environment
         uses: actions/setup-go@v2
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - name: Ensure Golang runtime dependencies
+      - name: Prep - Ensure Golang runtime dependencies
         run: make go-dependencies
 
-      - name: Verify code formatting
+      - name: Test - verify code formatting
         run: make verify
 
-      - name: Prepare environment for e2e
+      - name: Prep - Minikube setup
         if: ${{ github.event.inputs.skipTests != 'true' }}
         run: |
           sudo apt-get update
@@ -53,11 +64,11 @@ jobs:
             MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
             CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
 
-      - name: Jenkins Operator - e2e
+      - name: Test - e2e
         if: ${{ github.event.inputs.skipTests != 'true' }}
         run: make e2e E2E_TEST_ARGS='-ginkgo.v'
 
-      - name: Jenkins Operator - Helm Chart tests
+      - name: Test - Helm Chart
         if: ${{ github.event.inputs.skipTests != 'true' }}
         run: |
           git reset --hard
@@ -65,14 +76,29 @@ jobs:
           eval $(bin/minikube docker-env)
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
 
-      - name: Login to Quay.io
+      - name: Prep - Destroy minikube
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        run: |
+          make minikube-destroy
+
+      - name: Prep - Kind setup
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        uses: helm/kind-action@v1.5.0
+        with:
+          cluster_name: ${{env.KIND_CLUSTER_NAME}}
+
+      - name: Test - bats
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        run: make bats-tests
+
+      - name: Post - Login to Quay.io
         uses: docker/login-action@v1
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}
           password: ${{ secrets.QUAYIO_TOKEN }}
 
-      - name: Release Container Runtime
+      - name: Post - Push image
         run: |
           git reset --hard
           make container-runtime-snapshot-push
