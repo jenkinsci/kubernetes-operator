@@ -88,14 +88,13 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.seedJobAgentImage | string | `""` |  |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
-| jenkins.tolerations | list | `[]` |  |
 | jenkins.validateSecurityWarnings | bool | `false` |  |
 | jenkins.volumeMounts | list | `[]` |  |
 | jenkins.volumes[0].name | string | `"backup"` |  |
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:d91a729"` |  |
+| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:9fd053b"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |
