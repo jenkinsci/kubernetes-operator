@@ -310,7 +310,6 @@ operator:
   tolerations: []
   affinity: {}
 
-# By enabling the webhook
 webhook:
 # TLS certificates for webhook
   certificate:
