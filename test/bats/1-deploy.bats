@@ -35,9 +35,6 @@ diag() {
   run verify "there is 1 deployment named 'default-jenkins-operator'"
   assert_success
 
-  run verify "there is 1 pod named 'default-jenkins-operator-'"
-  assert_success
-
   run try "at most 20 times every 10s to get pods named 'default-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
   assert_success
 }
@@ -98,6 +95,22 @@ diag() {
   assert_success
 }
 
+#bats test_tags=phase:helm
+@test "1.9 Helm: check Jenkins crd" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run verify "there is 1 crd named 'jenkins.jenkins.io'"
+  assert_success
+  # Test the conditional cert manager installation
+  run verify "there is 0 crd named 'cert-manager.io'"
+  assert_success
+}
+
 @test "1.9 Helm: Clean" {
+  run ${HELM} uninstall default
+  assert_success
+  # Wait for the complete removal
+  sleep 30
+  run verify "there is 0 pvc named 'jenkins backup'"
+  assert_success
   rm "chart/jenkins-operator/deploy.tmp"
 }

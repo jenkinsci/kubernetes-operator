@@ -310,6 +310,7 @@ operator:
   tolerations: []
   affinity: {}
 
+# By enabling the webhook
 webhook:
 # TLS certificates for webhook
   certificate:
@@ -321,10 +322,16 @@ webhook:
     # time after which the certificate will be automatically renewed
     renewbefore: 360h
   # enable or disable the validation webhook
+  # if enabled please check the certmanager part of the values
   enabled: false
 
+# ---> Certmanager subchart part
+
 # This startupapicheck is a Helm post-install hook that waits for the webhook
-# endpoints to become available.
+# endpoints to become available. The installCRDs is necessary to install
+# the certificate CRDs necessary for the webhook.
+# If you want the webhook enabled these 2 options needs to be "true"
 cert-manager:
+  installCRDs: false
   startupapicheck:
     enabled: false

@@ -1,7 +1,29 @@
 {{- if .Values.webhook.enabled }}
+#---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sleep-until-certificate-{{ .Values.webhook.certificate.name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: sleep-until-certificate
+        image: "alpine:3"
+        command: ["/bin/sleep", "15"]
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "2"
   name: jenkins-{{ .Values.webhook.certificate.name }}
   namespace: {{ .Release.Namespace }}
 spec:
@@ -9,16 +31,18 @@ spec:
   renewBefore: {{ .Values.webhook.certificate.renewbefore }}
   secretName: jenkins-{{ .Values.webhook.certificate.name }}
   dnsNames:
-  - jenkins-webhook-service.{{ .Release.Namespace }}.svc 
-  - jenkins-webhook-service.{{ .Release.Namespace }}.svc.cluster.local 
+  - jenkins-webhook-service.{{ .Release.Namespace }}.svc
+  - jenkins-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
     kind: Issuer
     name: selfsigned
-
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "2"
   name: selfsigned
   namespace: {{ .Release.Namespace }}
 spec:
@@ -28,7 +52,9 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "1"
   name: jenkins-{{ .Values.webhook.certificate.name }}
 type: opaque
-
 {{- end }}

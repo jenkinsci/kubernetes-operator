@@ -14,7 +14,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| cert-manager.startupapicheck.enabled | bool | `false` |  |
+| cert-manager | object | `{"installCRDs":false,"startupapicheck":{"enabled":false}}` | -> Certmanager subchart part This startupapicheck is a Helm post-install hook that waits for the webhook endpoints to become available. The installCRDs is necessary to install the certificate CRDs necessary for the webhook. If you want the webhook enabled these 2 options needs to be "true" |
 | jenkins.annotations | object | `{}` |  |
 | jenkins.apiVersion | string | `"jenkins.io/v1alpha2"` |  |
 | jenkins.authorizationStrategy | string | `"createUser"` |  |
