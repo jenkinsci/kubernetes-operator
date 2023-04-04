@@ -3243,6 +3243,9 @@ spec:
                       info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies'
                     format: int32
                     type: integer
+                  portName:
+                    description: 'The port name which is provided to the service. More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service'
+                    type: string
                   type:
                     description: 'Type determines how the Service is exposed. Defaults
                       to ClusterIP. Valid options are ExternalName, ClusterIP, NodePort,

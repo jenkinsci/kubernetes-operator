@@ -448,6 +448,10 @@ type Service struct {
 	// This field will be ignored if the cloud-provider does not support the feature.
 	// +optional
 	LoadBalancerIP string `json:"loadBalancerIP,omitempty"`
+
+	// The port name which is provided to the service.
+	// More info: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
+	Portname string `json:"Portname,omitempty"`
 }
 
 // JenkinsStatus defines the observed state of Jenkins
