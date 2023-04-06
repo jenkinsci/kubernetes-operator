@@ -1,6 +1,5 @@
 {{- if .Values.webhook.enabled }}
-{{- $jenkinswebhook := (lookup "admissionregistration.k8s.io/v1" "ValidatingWebhookConfiguration" .Release.Namespace (printf  "{{ .Release.Name }}-webhook" )) }}
-{{- if not $jenkinswebhook }}
+{{- if not (lookup "admissionregistration.k8s.io/v1" "ValidatingWebhookConfiguration" .Release.Namespace "{{ .Release.Name }}-webhook" ) }}
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
