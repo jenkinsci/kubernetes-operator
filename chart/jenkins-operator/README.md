@@ -52,7 +52,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.387.1-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.387.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
