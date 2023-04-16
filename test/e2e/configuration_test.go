@@ -158,7 +158,7 @@ func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {
 		}
 
 		if !volumeFound {
-			Fail(fmt.Sprintf("Missing volume '+%v', actaul volumes '%+v'", expectedVolume, jenkinsPod.Spec.Volumes))
+			Fail(fmt.Sprintf("Missing volume '+%v', actual volumes '%+v'", expectedVolume, jenkinsPod.Spec.Volumes))
 		}
 	}
 }

@@ -69,7 +69,7 @@ jenkins:
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories for more info
   imagePullSecrets: []
 
-  # notifications is feature that notify user about Jenkins reconcilation status
+  # notifications is feature that notify user about Jenkins reconciliation status
   # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/ for more info
   notifications: []
 

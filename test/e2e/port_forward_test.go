@@ -27,7 +27,7 @@ type portForwardToPodRequest struct {
 	localPort int
 	// podPort is the target port for the pod
 	podPort int
-	// Steams configures where to write or read input from
+	// Streams configures where to write or read input from
 	streams genericclioptions.IOStreams
 	// stopCh is the channel used to manage the port forward lifecycle
 	stopCh <-chan struct{}

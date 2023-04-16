@@ -18,4 +18,4 @@ jobs:
         with:
           check_filenames: true
           ignore_words_list: aks,ags
-          skip: "*.js,package-lock.json,*.lock,website/themes/docsy/assets/vendor/Font-Awesome/*,*.toml"
+          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg"
