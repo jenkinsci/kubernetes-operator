@@ -10,24 +10,24 @@
       <title>GoHugo.io</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/</link>
     </image>
-    
+
 	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-      
-        
-      
-    
-    
+
+
+
+
+
+
+
     <item>
       <title>Docs: Deploy Jenkins</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/deploy-jenkins/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/deploy-jenkins/</guid>
       <description>
-        
-        
+
+
         &lt;p&gt;Once Jenkins Operator is up and running let&amp;rsquo;s deploy actual Jenkins instance.
 Create manifest e.g. &lt;strong&gt;&lt;code&gt;jenkins_instance.yaml&lt;/code&gt;&lt;/strong&gt; with following data and save it on drive.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: jenkins.io/v1alpha2
@@ -89,17 +89,17 @@ kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;s
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Configuration</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/configuration/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/configuration/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;h2 id=&#34;configure-seed-jobs-and-pipelines&#34;&gt;Configure Seed Jobs and Pipelines&lt;/h2&gt;
 
@@ -364,17 +364,17 @@ stringData:
 }&lt;/code&gt;&lt;/pre&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Customization</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/customization/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/customization/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Jenkins can be customized using groovy scripts or the &lt;a href=&#34;https://github.com/jenkinsci/configuration-as-code-plugin&#34;&gt;configuration as code plugin&lt;/a&gt;.
 By using a &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;ConfigMap&lt;/a&gt; you can create your own &lt;strong&gt;Jenkins&lt;/strong&gt; customized configuration.
@@ -387,7 +387,7 @@ Then you must reference the &lt;strong&gt;&lt;code&gt;ConfigMap&lt;/code&gt;&lt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;example&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;configurationAsCode&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; 
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;groovyScripts&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -398,7 +398,7 @@ Then you must reference the &lt;strong&gt;&lt;code&gt;ConfigMap&lt;/code&gt;&lt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;data&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt;-configure-theme.groovy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;| 
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt;-configure-theme.groovy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;|
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;import jenkins.*&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;import&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.model.*&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;import&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;hudson.*&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -450,7 +450,7 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;example&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;configurationAsCode&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; 
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;secret&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-conf-secrets&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -465,13 +465,13 @@ The secrets are loaded to &lt;code&gt;secrets&lt;/code&gt; map.&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;metadata&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;data&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt;-system-message.groovy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;| 
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;1&lt;/span&gt;-system-message.groovy&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;|
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;import jenkins.*&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;import&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins.model.*&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;import&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;hudson.*&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;import&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;hudson.model.*&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;Jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;=&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;Jenkins.getInstance()&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;jenkins.setSystemMessage(secrets&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;SYSTEM_MESSAGE&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;)&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;jenkins.save()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Or by applying this configuration as code:&lt;/p&gt;
@@ -525,16 +525,16 @@ spec:
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: AKS</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/aks/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/aks/</guid>
       <description>
-        
-        
+
+
         &lt;p&gt;Azure AKS managed Kubernetes service adds to every pod the following environment variables:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;KUBERNETES_PORT_443_TCP_ADDR&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;value&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -549,17 +549,17 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Configure backup and restore</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/configure-backup-and-restore/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/configure-backup-and-restore/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Backup and restore is done by a container sidecar.&lt;/p&gt;
 
@@ -631,17 +631,17 @@ restart of a Jenkins pod over and over again.&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#recoveryOnce: &amp;lt;backup_number&amp;gt; # if want to restore specific backup configure this field and then Jenkins will be restarted and desired backup will be restored&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Custom Backup and Restore Providers</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/custom-backup-and-restore/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/custom-backup-and-restore/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;With enough effort one can create a custom backup and restore provider
 for the Jenkins Operator.&lt;/p&gt;
@@ -814,17 +814,17 @@ the number of backups under control, e.g. Cloud Formation fragment:&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;              &lt;/span&gt;DaysAfterInitiation&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#0000cf;font-weight:bold&#34;&gt;3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Migration from v0.1.x</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/migration/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/migration/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;h3 id=&#34;major-changes&#34;&gt;Major Changes&lt;/h3&gt;
 
@@ -841,7 +841,7 @@ and this mechanism was replaced since &lt;code&gt;v0.2.0&lt;/code&gt; with Groov
 
 &lt;p&gt;As a result, the &lt;strong&gt;Jenkins&lt;/strong&gt; configuration jobs (&amp;ldquo;Configure Seed Jobs&amp;rdquo;, &amp;ldquo;jenkins-operator-base-configuration&amp;rdquo;, &amp;ldquo;jenkins-operator-user-configuration&amp;rdquo;) are no longer visible in &lt;strong&gt;Jenkins&lt;/strong&gt; UI.&lt;/p&gt;
 
-&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; you can see if any of the configuration jobs failed or succeded in the &lt;strong&gt;Jenkins&lt;/strong&gt; UI (job build logs).
+&lt;p&gt;In &lt;code&gt;v0.1.x&lt;/code&gt; you can see if any of the configuration jobs failed or succeeded in the &lt;strong&gt;Jenkins&lt;/strong&gt; UI (job build logs).
 Instead, you can make sure the operator is running correctly by inspecting its logs, e.g.:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl -n logs deployment/jenkins-operator&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h4 id=&#34;making-user-configuration-sources-configurable&#34;&gt;Making User Configuration sources configurable&lt;/h4&gt;
@@ -865,7 +865,7 @@ and add explicit references to the existing &lt;code&gt;ConfigMap&lt;/code&gt; a
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;spec&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;...&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;configurationAsCode&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
-&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; 
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;configurations&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;secret:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;      &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;jenkins-operator-user-configuration-&amp;lt;cr_name&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;gt;
@@ -877,17 +877,17 @@ and add explicit references to the existing &lt;code&gt;ConfigMap&lt;/code&gt; a
 &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Diagnostics</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/diagnostics/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/diagnostics/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Turn on debug in &lt;strong&gt;Jenkins Operator&lt;/strong&gt; deployment:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sed -i &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;s|\(args:\).*|\1\ [&amp;#34;--debug&amp;#34;\]|&amp;#39;&lt;/span&gt; deploy/operator.yaml
@@ -904,17 +904,17 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl delete pod jenkins-&amp;lt;cr_name&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Schema</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/schema/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.2.x/schema/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document contains API scheme for &lt;code&gt;jenkins-operator&lt;/code&gt; Custom Resource Definition manifest&lt;/p&gt;
@@ -1573,7 +1573,7 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-contai
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.ConfigurationAsCode&#34;&gt;ConfigurationAsCode&lt;/a&gt;,
 &lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.GroovyScripts&#34;&gt;GroovyScripts&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
@@ -1648,7 +1648,7 @@ Customization
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;,
 &lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Restore&#34;&gt;Restore&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
@@ -2458,8 +2458,8 @@ uint64
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Mailgun&#34;&gt;Mailgun&lt;/a&gt;, 
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Mailgun&#34;&gt;Mailgun&lt;/a&gt;,
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.MicrosoftTeams&#34;&gt;MicrosoftTeams&lt;/a&gt;,
 &lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Slack&#34;&gt;Slack&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
@@ -2889,6 +2889,6 @@ on git commit &lt;code&gt;f4c4235&lt;/code&gt;.
 
       </description>
     </item>
-    
+
   </channel>
 </rss>

@@ -2214,7 +2214,7 @@ spec:
 kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;jsonpath={.data.password}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; base64 -d&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Connect to the Jenkins Operator (minikube):&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;minikube service jenkins-operator-http-&amp;lt;cr_name&amp;gt; --url&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Connect to the Jenkins intance (actual Kubernetes cluster):&lt;/p&gt;
+&lt;p&gt;Connect to the Jenkins instance (actual Kubernetes cluster):&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl port-forward jenkins-&amp;lt;cr_name&amp;gt; 8080:8080&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then open browser with address &lt;code&gt;http://localhost:8080&lt;/code&gt;.
 &lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
