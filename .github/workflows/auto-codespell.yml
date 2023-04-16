@@ -17,5 +17,5 @@ jobs:
         uses: codespell-project/actions-codespell@v1
         with:
           check_filenames: true
-          ignore_words_list: aks,ags
-          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg"
+          ignore_words_list: aks,ags,Startin
+          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*"

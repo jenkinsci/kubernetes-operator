@@ -8,12 +8,12 @@ description: >
 ---
 
 {{% pageinfo %}}
-This document describes installation procedure for **Jenkins Operator**. 
+This document describes installation procedure for **Jenkins Operator**.
 All container images can be found at [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository.
 {{% /pageinfo %}}
 
 ## Requirements
- 
+
 To run **Jenkins Operator**, you will need:
 
 - access to a Kubernetes cluster version `1.17+`
@@ -27,7 +27,7 @@ Listed below are the two ways to deploy Jenkins Operator.
 First, install Jenkins Custom Resource Definition:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml 
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml
 ```
 
 Then, install the Operator and other required resources:
@@ -97,7 +97,7 @@ You can further customize Jenkins using `values.yaml`:
 true
 </td>
 <td>
-Enabled can enable or disable the Jenkins instance. 
+Enabled can enable or disable the Jenkins instance.
 Set to false if you have configured CR already and/or you want to deploy an operator only.
 </td>
 </tr>
@@ -130,7 +130,7 @@ Name of resource. The pod name will be <code>jenkins-&lt;name&gt;</code> (name w
 default
 </td>
 <td>
-Namespace the resources will be deployed to. It's not recommended to use default namespace. 
+Namespace the resources will be deployed to. It's not recommended to use default namespace.
 Create new namespace for jenkins (e.g. <code>kubectl create -n jenkins</code>)
 </td>
 </tr>
@@ -235,8 +235,8 @@ Used if you want to pull images from private repository
 []
 </td>
 <td>
-Notifications is feature that notify user about Jenkins reconcilation status
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/">More info</a>  
+Notifications is feature that notify user about Jenkins reconciliation status
+<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/">More info</a>
 </td>
 </tr>
 <tr>
@@ -284,7 +284,7 @@ Example:
 plugins:
  - name: simple-theme-plugin
    version: 0.5.1
-</pre>  
+</pre>
 </td>
 </tr>
 <tr>
@@ -306,10 +306,10 @@ seedJobs:
   targets: "cicd/jobs/*.jenkins"
   description: "Jenkins Operator repository"
   repositoryBranch: master
-  repositoryUrl: 
+  repositoryUrl:
   - https://github.com/jenkinsci/kubernetes-operator.git
 </pre>
-</code>  
+</code>
 </td>
 </tr>
 <tr>
@@ -459,7 +459,7 @@ Configuration
 </td>
 <td></td>
 <td>
-Section where we can configure Jenkins instance. 
+Section where we can configure Jenkins instance.
 See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a> for details
 </td>
 </tr>
@@ -702,7 +702,7 @@ Backup defines configuration of Jenkins backup.
         <tr>
             <td>
                 <code>pvc</code>
-            </td>                     
+            </td>
             <td colspan="2">
                 <p>Persistent Volume Claim Kubernetes resource</p>
                 <br/>
@@ -716,7 +716,7 @@ Backup defines configuration of Jenkins backup.
                             true
                         </td>
                         <td>
-                            Enable/disable switch for PVC                        
+                            Enable/disable switch for PVC
                         </td>
                     </tr>
                     <tr>
@@ -749,7 +749,7 @@ Backup defines configuration of Jenkins backup.
                             ""
                         </td>
                         <td>
-                            StorageClassName for PVC  
+                            StorageClassName for PVC
                             <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1">More info</a>
                         </td>
                     </tr>
@@ -760,7 +760,7 @@ Backup defines configuration of Jenkins backup.
          <tr>
             <td>
                 <code>env</code>
-            </td>          
+            </td>
             <td>
 <pre>
 - name: BACKUP_DIR
@@ -772,7 +772,7 @@ Backup defines configuration of Jenkins backup.
 </pre>
             </td>
                 <td>
-                    Contains container environment variables. 
+                    Contains container environment variables.
                     PVC backup provider handles these variables:<br />
                     BACKUP_DIR - path for storing backup files (default: "/backup")<br />
                     JENKINS_HOME - path to jenkins home (default: "/jenkins-home")<br />
@@ -798,7 +798,7 @@ Backup defines configuration of Jenkins backup.
         </tr>
     </tbody>
 </table>
- 
+
  <h4 id="Configuration">Configuration
  </h3>
  <p>
@@ -879,7 +879,7 @@ You can find nightly built images by heading to [virtuslab/jenkins-operator](htt
 
 ## Note on restricted Jenkins controller pod volumeMounts
 Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
-One of the key points of this design is maintaining an immutable state of Jenkins. 
+One of the key points of this design is maintaining an immutable state of Jenkins.
 
 One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume
 (jenkins-home) as Jenkins home directory.
@@ -894,7 +894,7 @@ below is the full list of those volumeMounts:
 * init-configuration
 * operator-credentials
 
-## Validating Webhook 
+## Validating Webhook
 Validating webhook can be used in order to increase the Operator's capabilities to monitor security issues. It will look for security vulnerabilities in the base and requested plugins. It can be easily installed via Helm charts by setting webhook.enabled in values.yaml.
 
 
@@ -902,7 +902,7 @@ Validating webhook can be used in order to increase the Operator's capabilities 
 For the installation with yaml manifests (without using Helm chart), first, install cert-manager:
 
 ```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml 
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
 ```
 
 It takes some time to get cert-manager up and running.
@@ -973,7 +973,7 @@ spec:
         <b>volumeMounts:
           - mountPath: /tmp/k8s-webhook-server/serving-certs
             name: webhook-certs
-            readOnly: true       
+            readOnly: true
       volumes:
       - name: webhook-certs
         secret:
@@ -986,4 +986,3 @@ spec:
 To enable security validation in the Jenkins Custom Resource, set
 
 >jenkins.ValidateSecurityWarnings=true
-

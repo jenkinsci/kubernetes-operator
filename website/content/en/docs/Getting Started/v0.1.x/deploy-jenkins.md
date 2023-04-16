@@ -82,7 +82,7 @@ Connect to the Jenkins Operator (minikube):
 minikube service jenkins-operator-http-<cr_name> --url
 ```
 
-Connect to the Jenkins intance (actual Kubernetes cluster):
+Connect to the Jenkins instance (actual Kubernetes cluster):
 
 ```bash
 kubectl port-forward jenkins-<cr_name> 8080:8080
