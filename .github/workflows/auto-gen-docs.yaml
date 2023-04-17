@@ -77,7 +77,7 @@ jobs:
       # Creates pull request with generated docs
       - name: Create Pull Request
         if: env.IS_CHANGED == 'true'
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Auto-updated docs
           branch: docs-generator
