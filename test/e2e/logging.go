@@ -126,7 +126,7 @@ func printKubernetesPods(namespace string) {
 func ShowLogsIfTestHasFailed(failed bool, namespace string) {
 	if failed {
 		const defaultNamespace = "default"
-		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Test failed. Bellow here you can check logs:")
+		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Test failed. Below here you can check logs:")
 
 		printKubernetesEvents(namespace)
 		printKubernetesEvents(defaultNamespace)

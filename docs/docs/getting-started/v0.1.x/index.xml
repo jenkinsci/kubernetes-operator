@@ -10,25 +10,25 @@
       <title>GoHugo.io</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/</link>
     </image>
-    
+
 	  <atom:link href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-      
-        
-      
-    
-    
+
+
+
+
+
+
+
     <item>
       <title>Docs: Deploy Jenkins</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/deploy-jenkins/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/deploy-jenkins/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;h2 id=&#34;deploy-jenkins&#34;&gt;Deploy Jenkins&lt;/h2&gt;
 
@@ -86,24 +86,24 @@ spec:
 kubectl get secret jenkins-operator-credentials-&amp;lt;cr_name&amp;gt; -o &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;jsonpath={.data.password}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;|&lt;/span&gt; base64 -d&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Connect to the Jenkins Operator (minikube):&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;minikube service jenkins-operator-http-&amp;lt;cr_name&amp;gt; --url&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Connect to the Jenkins intance (actual Kubernetes cluster):&lt;/p&gt;
+&lt;p&gt;Connect to the Jenkins instance (actual Kubernetes cluster):&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl port-forward jenkins-&amp;lt;cr_name&amp;gt; 8080:8080&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Then open browser with address &lt;code&gt;http://localhost:8080&lt;/code&gt;.
 &lt;img src=&#34;https://jenkinsci.github.io/kubernetes-operator/kubernetes-operator/img/jenkins.png&#34; alt=&#34;jenkins&#34; /&gt;&lt;/p&gt;
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Configuration</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</link>
       <pubDate>Mon, 16 Jan 2023 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configuration/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Jenkins operator uses &lt;a href=&#34;https://github.com/jenkinsci/job-dsl-plugin&#34;&gt;job-dsl&lt;/a&gt; and &lt;a href=&#34;https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/&#34;&gt;kubernetes-credentials-provider&lt;/a&gt; plugins for configuring jobs
 and deploy keys.&lt;/p&gt;
@@ -330,17 +330,17 @@ The &lt;code&gt;/usr/bin/tini -s -- /usr/local/bin/jenkins.sh&lt;/code&gt; comma
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/var/jenkins/scripts/init.sh&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&amp;lt;custom-code-here&amp;gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/bin/tini&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;-s&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;--&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;/usr/local/bin/jenkins.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Customization</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/customization/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/customization/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Jenkins can be customized by using groovy scripts or the Jenkins Configuration as a Code Plugin. All custom configuration is stored in
 the &lt;strong&gt;jenkins-operator-user-configuration-&lt;cr_name&gt;&lt;/strong&gt; ConfigMap, which is automatically created by the &lt;strong&gt;Jenkins Operator&lt;/strong&gt;.&lt;/p&gt;
@@ -433,16 +433,16 @@ spec:
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: AKS</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/aks/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/aks/</guid>
       <description>
-        
-        
+
+
         &lt;p&gt;Azure AKS managed Kubernetes service adds to every pod the following environment variables:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;-&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;name&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;KUBERNETES_PORT_443_TCP_ADDR&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;value&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
@@ -457,17 +457,17 @@ the restart of a Jenkins pod over and over again.&lt;/p&gt;
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Configure backup and restore</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configure-backup-and-restore/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/configure-backup-and-restore/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Backup and restore is done by a container sidecar.&lt;/p&gt;
 
@@ -537,17 +537,17 @@ the restart of a Jenkins pod over and over again.&lt;/p&gt;
 &lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#recoveryOnce: &amp;lt;backup_number&amp;gt; # if want to restore specific backup configure this field and then Jenkins will be restarted and desired backup will be restored&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Diagnostics</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/diagnostics/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/diagnostics/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Turn on debug in &lt;strong&gt;Jenkins Operator&lt;/strong&gt; deployment:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sed -i &lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#39;s|\(args:\).*|\1\ [&amp;#34;--debug&amp;#34;\]|&amp;#39;&lt;/span&gt; deploy/operator.yaml
@@ -564,17 +564,17 @@ kubectl apply -f deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl delete pod jenkins-&amp;lt;cr_name&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Scheme</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/scheme/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/scheme/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;div class=&#34;pageinfo pageinfo-primary&#34;&gt;
 &lt;p&gt;This document contains API scheme for &lt;code&gt;jenkins-operator&lt;/code&gt; manifest&lt;/p&gt;
@@ -1193,7 +1193,7 @@ More info: &lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-contai
 &lt;/h3&gt;
 &lt;p&gt;
 (&lt;em&gt;Appears on:&lt;/em&gt;
-&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;, 
+&lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Backup&#34;&gt;Backup&lt;/a&gt;,
 &lt;a href=&#34;#github.com%2fjenkinsci%2fkubernetes-operator%2fpkg%2fapis%2fjenkins%2fv1alpha2.Restore&#34;&gt;Restore&lt;/a&gt;)
 &lt;/p&gt;
 &lt;p&gt;
@@ -2014,17 +2014,17 @@ on git commit &lt;code&gt;37e531a&lt;/code&gt;.
 
       </description>
     </item>
-    
+
     <item>
       <title>Docs: Migration guide from v1alpha1 to v1alpha2</title>
       <link>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/</link>
       <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
-      
+
       <guid>https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/</guid>
       <description>
-        
-        
-        
+
+
+
 
 &lt;p&gt;Please note that &lt;strong&gt;CRD manifests are global&lt;/strong&gt;, not namespaced, so every &lt;strong&gt;Jenkins operator&lt;/strong&gt; running on the cluster
 will be impacted by the new CRD manifest. Multiple operator instances with different versions &lt;em&gt;should&lt;/em&gt; continue to work.&lt;/p&gt;
@@ -2317,6 +2317,6 @@ or use the default deployment manifest:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;$ kubectl -n &lt;namespace&gt; apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/operator.yaml&lt;/code&gt;&lt;/pre&gt;
       </description>
     </item>
-    
+
   </channel>
 </rss>

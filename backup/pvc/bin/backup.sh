@@ -11,8 +11,8 @@ trap "test -d "${BACKUP_TMP_DIR}" && rm -fr "${BACKUP_TMP_DIR}"" EXIT ERR SIGINT
 backup_number=$1
 echo "Running backup"
 
-# config.xml in a job directory is a config file that shouldnt be backed up
-# config.xml in child directores is state that should. For example-
+# config.xml in a job directory is a config file that shouldn't be backed up
+# config.xml in child directories is state that should. For example-
 # branches/myorg/branches/myrepo/branches/master/config.xml should be retained while
 # branches/myorg/config.xml should not
 tar -C "${JENKINS_HOME}" -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/workspace* --no-wildcards-match-slash --anchored --exclude jobs/*/config.xml -c jobs && \
