@@ -42,7 +42,7 @@ jobs:
         uses: brokenpip3/setup-bats-libs@0.1.0
 
       - name: Prep - go environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
 
