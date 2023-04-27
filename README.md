@@ -28,7 +28,7 @@ Jenkins uses [plugins](https://plugins.jenkins.io/) like CasC to extend it's sol
 - Integration with Kubernetes ([Jenkins kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin))
 - Pipelines as Code ([Jenkins pipelines](https://jenkins.io/doc/book/pipeline/))
 - Extensibility via Groovy Scripts (similar to [Jenkins script console](https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console)) or ([configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin))
-- Secure Defaults and Hardening (see [the security section](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/) of the documentation)
+- Secure Defaults and Hardening (see [the security section](https://jenkinsci.github.io/kubernetes-operator/docs/security/) of the documentation)
 
 ## Problem statement and goals
 
@@ -38,7 +38,7 @@ We want to make Jenkins more robust, suitable for dynamic and multi-tenant envir
 Some of the problems we want to solve:
 - [installing plugins with incompatible versions or security vulnerabilities](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/#install-plugins/)
 - [better configuration as code](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/)
-- [security and hardening out of the box](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/)
+- [security and hardening out of the box](https://jenkinsci.github.io/kubernetes-operator/docs/security/)
 - [make errors more visible for end users](https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/)
 - orphaned jobs with no JNLP connection
 - handle graceful shutdown properly
@@ -51,7 +51,7 @@ Go to [**our documentation website**](https://jenkinsci.github.io/kubernetes-ope
 Selected content:
 1. [How it works](https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/)
 2. [Getting Started](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/)
-3. [Security](https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/security/)
+3. [Security](https://jenkinsci.github.io/kubernetes-operator/docs/security/)
 4. [Troubleshooting](https://jenkinsci.github.io/kubernetes-operator/docs/troubleshooting/)
 5. [Developer Guide](https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/)
 6. [FAQ](https://jenkinsci.github.io/kubernetes-operator/docs/faq/)
