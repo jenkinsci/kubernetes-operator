@@ -31,7 +31,11 @@ func UpdateService(actual corev1.Service, config v1alpha2.Service, targetPort in
 	}
 	actual.Spec.Ports[0].Port = config.Port
 	actual.Spec.Ports[0].TargetPort = intstr.IntOrString{IntVal: targetPort, Type: intstr.Int}
-	actual.Spec.Ports[0].Name = config.Portname
+	if config.Portname == "" {
+		actual.Spec.Ports[0].Name = "http"
+	} else {
+		actual.Spec.Ports[0].Name = config.Portname
+	}
 	if config.NodePort != 0 {
 		actual.Spec.Ports[0].NodePort = config.NodePort
 	}
