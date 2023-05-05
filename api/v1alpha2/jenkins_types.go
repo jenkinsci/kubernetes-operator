@@ -343,6 +343,11 @@ type JenkinsMaster struct {
 	// +optional
 	Volumes []corev1.Volume `json:"volumes,omitempty"`
 
+	// Storage settings for the jenkins home directory
+	// Can be tempDir or ephemeral
+	// +optional
+	StorageSettings StorageSettings `json:"storage,omitempty"`
+
 	// If specified, the pod's tolerations.
 	// +optional
 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
@@ -385,6 +390,14 @@ type JenkinsMaster struct {
 	// HostAliases for Jenkins master pod and SeedJob agent
 	// +optional
 	HostAliases []corev1.HostAlias `json:"hostAliases,omitempty"`
+}
+
+// StorageSettings defines Jenkins master pod persistance attributes.
+type StorageSettings struct {
+	UseTempDir bool `json:"useTempDir"`
+	UseEphemeralStorage bool `json:"useEphemeralStorage"`
+	StorageClassName string `json:"storageClassName"`
+	StorageRequest string `json:"storageRequest"`
 }
 
 // Service defines Kubernetes service attributes

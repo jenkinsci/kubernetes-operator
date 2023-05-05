@@ -8,6 +8,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -88,18 +89,67 @@ func getJenkinsHomePath(jenkins *v1alpha2.Jenkins) string {
 	return defaultJenkinsHomePath
 }
 
+func validateStorageSize(storageSize string) bool {
+	if strings.TrimSpace(storageSize) == "" {
+		return false
+	}
+	_, err := resource.ParseQuantity(storageSize)
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
+// get Jenkins home storage settings from the CRD
+func getJenkinsHomeStorageSettings(jenkins *v1alpha2.Jenkins) corev1.Volume {
+	JenkinsHomeVolume := corev1.Volume{}
+	emptyDirVol := corev1.Volume{
+		Name: JenkinsHomeVolumeName,
+		VolumeSource: corev1.VolumeSource{
+			// Create empty dir for Jenkins home
+			EmptyDir: &corev1.EmptyDirVolumeSource{},
+		},
+	}
+
+	if jenkins.Spec.Master.StorageSettings.UseEphemeralStorage {
+		if !validateStorageSize(jenkins.Spec.Master.StorageSettings.StorageRequest) {
+			fmt.Println("Invalid storage size %s, falling back to empty dir" + jenkins.Spec.Master.StorageSettings.StorageRequest)
+			JenkinsHomeVolume = emptyDirVol
+			return JenkinsHomeVolume
+		}
+		JenkinsHomeVolume = corev1.Volume{
+			Name: JenkinsHomeVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				// Create ephemeral storage for Jenkins home
+				Ephemeral: &corev1.EphemeralVolumeSource{
+					VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
+						Spec: corev1.PersistentVolumeClaimSpec{
+							StorageClassName: &jenkins.Spec.Master.StorageSettings.StorageClassName,
+							AccessModes:      []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
+							Resources: corev1.ResourceRequirements{
+								Requests: corev1.ResourceList{
+									corev1.ResourceStorage: resource.MustParse(jenkins.Spec.Master.StorageSettings.StorageRequest),
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+	} else {
+		JenkinsHomeVolume = emptyDirVol
+	}
+	return JenkinsHomeVolume
+}
+
 // GetJenkinsMasterPodBaseVolumes returns Jenkins master pod volumes required by operator
 func GetJenkinsMasterPodBaseVolumes(jenkins *v1alpha2.Jenkins) []corev1.Volume {
 	configMapVolumeSourceDefaultMode := corev1.ConfigMapVolumeSourceDefaultMode
 	secretVolumeSourceDefaultMode := corev1.SecretVolumeSourceDefaultMode
 	var scriptsVolumeDefaultMode int32 = 0777
 	volumes := []corev1.Volume{
-		{
-			Name: JenkinsHomeVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				EmptyDir: &corev1.EmptyDirVolumeSource{},
-			},
-		},
+		getJenkinsHomeStorageSettings(jenkins),
 		{
 			Name: jenkinsScriptsVolumeName,
 			VolumeSource: corev1.VolumeSource{
