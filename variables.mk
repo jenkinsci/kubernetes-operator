@@ -28,7 +28,7 @@ VERSION := $(shell cat VERSION.txt)
 GITCOMMIT := $(shell git rev-parse --short HEAD)
 GITBRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 GITUNTRACKEDCHANGES := $(shell git status --porcelain --untracked-files=no)
-GITIGNOREDBUTTRACKEDCHANGES := $(shell git ls-files -i --exclude-standard)
+GITIGNOREDBUTTRACKEDCHANGES := $(shell git ls-files -i -c --exclude-standard)
 ifneq ($(GITUNTRACKEDCHANGES),)
     GITCOMMIT := $(GITCOMMIT)-dirty
 endif
