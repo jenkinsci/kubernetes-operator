@@ -1,7 +1,6 @@
 package resources
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
