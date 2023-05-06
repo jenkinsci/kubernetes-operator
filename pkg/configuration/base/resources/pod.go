@@ -94,16 +94,11 @@ func validateStorageSize(storageSize string) bool {
 		return false
 	}
 	_, err := resource.ParseQuantity(storageSize)
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }
 
 // get Jenkins home storage settings from the CRD
 func getJenkinsHomeStorageSettings(jenkins *v1alpha2.Jenkins) corev1.Volume {
-	JenkinsHomeVolume := corev1.Volume{}
 	emptyDirVol := corev1.Volume{
 		Name: JenkinsHomeVolumeName,
 		VolumeSource: corev1.VolumeSource{
@@ -111,7 +106,7 @@ func getJenkinsHomeStorageSettings(jenkins *v1alpha2.Jenkins) corev1.Volume {
 			EmptyDir: &corev1.EmptyDirVolumeSource{},
 		},
 	}
-
+	var JenkinsHomeVolume corev1.Volume
 	if jenkins.Spec.Master.StorageSettings.UseEphemeralStorage {
 		if !validateStorageSize(jenkins.Spec.Master.StorageSettings.StorageRequest) {
 			fmt.Println("Invalid storage size %s, falling back to empty dir" + jenkins.Spec.Master.StorageSettings.StorageRequest)

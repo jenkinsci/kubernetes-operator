@@ -346,7 +346,7 @@ type JenkinsMaster struct {
 	// Storage settings for the jenkins home directory
 	// Can be tempDir or ephemeral
 	// +optional
-	StorageSettings StorageSettings `json:"storage,omitempty"`
+	StorageSettings StorageSettings `json:"storageSettings,omitempty"`
 
 	// If specified, the pod's tolerations.
 	// +optional
@@ -392,11 +392,16 @@ type JenkinsMaster struct {
 	HostAliases []corev1.HostAlias `json:"hostAliases,omitempty"`
 }
 
-// StorageSettings defines Jenkins master pod persistance attributes.
+// StorageSettings defines Jenkins master pod persistence attributes.
+// +optional
 type StorageSettings struct {
-	UseTempDir bool `json:"useTempDir"`
+	// UseEmptyDir allows you to create an emptydir as jenkins-home, also this is the default
+	UseEmptyDir bool `json:"useEmptyDir"`
+	// UseEphemeralStorage allows you to create kubernetes ephemeral pvc, see "https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes"
 	UseEphemeralStorage bool `json:"useEphemeralStorage"`
+	// StorageClassName in case of ephemeral pvc, can be empty
 	StorageClassName string `json:"storageClassName"`
+	// StorageRequest allows you to specify the storage request, required in case of ephemeral pvc
 	StorageRequest string `json:"storageRequest"`
 }
 
