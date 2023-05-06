@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -144,6 +143,52 @@ func TestGetJenkinsMasterPodBaseVolumes(t *testing.T) {
 		assert.True(t, groovyExists)
 		assert.True(t, cascExists)
 	})
+	// TODO: fix me
+	t.Run("home volume is present and is Tempdir", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					StorageSettings: v1alpha2.StorageSettings{
+						UseEmptyDir: true,
+					},
+				},
+			},
+		}
+
+		homeExist, homeTempdirExist, homeEphemeralStorageExist := checkHomeVolumesPresence(jenkins)
+
+		assert.True(t, homeExist)
+		assert.True(t, homeTempdirExist)
+		assert.False(t, homeEphemeralStorageExist)
+	})
+	t.Run("home volume is present and it's ephemeral", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					StorageSettings: v1alpha2.StorageSettings{
+						UseEphemeralStorage: true,
+						StorageClassName:    "default",
+						StorageRequest:      "1Gi",
+					},
+				},
+			},
+		}
+
+		homeExist, homeTempdirExist, homeEphemeralStorageExist := checkHomeVolumesPresence(jenkins)
+
+		assert.True(t, homeExist)
+		assert.False(t, homeTempdirExist)
+		assert.True(t, homeEphemeralStorageExist)
+	})
+	t.Run("home volume is default and should be an empty dir", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{}
+
+		homeExist, homeTempdirExist, homeEphemeralStorageExist := checkHomeVolumesPresence(jenkins)
+
+		assert.True(t, homeExist)
+		assert.True(t, homeTempdirExist)
+		assert.False(t, homeEphemeralStorageExist)
+	})
 }
 
 func checkSecretVolumesPresence(jenkins *v1alpha2.Jenkins) (groovyExists bool, cascExists bool) {
@@ -155,4 +200,56 @@ func checkSecretVolumesPresence(jenkins *v1alpha2.Jenkins) (groovyExists bool, c
 		}
 	}
 	return groovyExists, cascExists
+}
+
+func checkHomeVolumesPresence(jenkins *v1alpha2.Jenkins) (homeExist bool, homeTempdirExist bool, homeEphemeralStorageExist bool) {
+	for _, volume := range GetJenkinsMasterPodBaseVolumes(jenkins) {
+		if volume.Name == ("jenkins-home") {
+			homeExist = true
+			// check if the volume is an emptyDir
+			if volume.VolumeSource.EmptyDir != nil {
+				homeTempdirExist = true
+			} else if volume.VolumeSource.Ephemeral != nil {
+				homeEphemeralStorageExist = true
+			}
+		} else {
+			homeExist = false
+			homeTempdirExist = false
+			homeEphemeralStorageExist = false
+		}
+	}
+	return homeExist, homeTempdirExist, homeEphemeralStorageExist
+}
+
+func Test_validateStorageSize(t *testing.T) {
+	type args struct {
+		storageSize string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "1Gi",
+			args: args{
+				storageSize: "1Gi",
+			},
+			want: true,
+		},
+		{
+			name: "1Gi1",
+			args: args{
+				storageSize: "1Gi1",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := validateStorageSize(tt.args.storageSize); got != tt.want {
+				t.Errorf("validateStorageSize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

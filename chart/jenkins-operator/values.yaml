@@ -158,6 +158,18 @@ jenkins:
   # See https://jenkinsci.github.io/kubernetes-operator/docs/installation/#note-on-restricted-jenkins-controller-pod-volumemounts for details
   volumeMounts: []
 
+  # Storage for Jenkins
+  # By default emptyDir
+  # See https://kubernetes.io/docs/concepts/storage/volumes/#emptydir for details
+  storageSettings:
+    useEmptyDir: true
+    # Alternative storage settings
+    # An ephemeral pvc can be used see https://kubernetes.io/docs/concepts/storage/volumes/#ephemeral-volume
+    # In case is true we also need to pass the storageRequest and optionally the storageClassName
+    ephemeralStorage: false
+    storageClassName: ""
+    storageRequest: ""
+
   # defines authorization strategy of the operator for the Jenkins API
   authorizationStrategy: createUser
 

@@ -25,7 +25,7 @@ const e2e = "e2e"
 
 var expectedBasePluginsList = []plugins.Plugin{
 	plugins.Must(plugins.New("configuration-as-code:1625.v27444588cc3d")),
-	plugins.Must(plugins.New("git:5.0.0")),
+	plugins.Must(plugins.New("git:5.0.1")),
 	plugins.Must(plugins.New("kubernetes:3909.v1f2c633e8590")),
 	plugins.Must(plugins.New("kubernetes-credentials-provider:1.211.vc236a_f5a_2f3c")),
 	plugins.Must(plugins.New("job-dsl:1.83")),

@@ -146,6 +146,9 @@ spec:
         {{- end }}
       {{- end }}
     {{- with .Values.jenkins.volumes }}
+    storageSettings: {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.jenkins.storageSettings }}
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- with .Values.jenkins.imagePullSecrets }}
