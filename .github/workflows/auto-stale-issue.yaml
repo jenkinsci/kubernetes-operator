@@ -1,0 +1,22 @@
+name: "Stale issue automation"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          operations-per-run: 200
+          days-before-issue-stale: 60
+          days-before-issue-close: 10
+          exempt-pr-labels: "not-stale"
+          exempt-issue-labels: "not-stale"
