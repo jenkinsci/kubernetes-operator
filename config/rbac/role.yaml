@@ -1,9 +1,9 @@
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  name: jenkins-operator
+  creationTimestamp: null
+  name: manager-role
 rules:
 - apiGroups:
   - apps

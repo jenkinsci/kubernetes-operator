@@ -70,7 +70,7 @@ HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
 lint: ## Verifies `golint` passes
 	@echo "+ $@"
 ifndef HAS_GOLINT
-	$(call go-get-tool,$(PROJECT_DIR)/bin/golangci-lint,github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0)
+	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
 endif
 	@bin/golangci-lint run
 
@@ -79,7 +79,7 @@ HAS_GOIMPORTS := $(shell which $(PROJECT_DIR)/bin/goimports)
 goimports: ## Verifies `goimports` passes
 	@echo "+ $@"
 ifndef HAS_GOIMPORTS
-	$(call go-get-tool,$(PROJECT_DIR)/bin/goimports,golang.org/x/tools/cmd/goimports@v0.1.0)
+	$(call GOBIN=$(PROJECT_DIR)/bin go install golang.org/x/tools/cmd/goimports@v0.1.0)
 endif
 	@bin/goimports -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
@@ -455,7 +455,7 @@ ifneq ($(GITUNTRACKEDCHANGES),)
 endif
 ifneq ($(GITIGNOREDBUTTRACKEDCHANGES),)
 	@echo "Ignored but tracked files:"
-	@git ls-files -i -c --exclude-standard
+	@git ls-files -i -o --exclude-standard
 	@echo
 endif
 	@echo "Dependencies:"

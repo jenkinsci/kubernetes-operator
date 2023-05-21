@@ -3,7 +3,7 @@ module github.com/jenkinsci/kubernetes-operator
 go 1.20
 
 require (
-	github.com/bndr/gojenkins v1.1.0
+	github.com/bndr/gojenkins v1.0.1
 	github.com/docker/distribution v2.8.1+incompatible
 	github.com/emersion/go-smtp v0.16.0
 	github.com/go-logr/logr v1.2.4
