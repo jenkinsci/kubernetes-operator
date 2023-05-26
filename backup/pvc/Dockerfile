@@ -13,7 +13,10 @@ ARG GID
 
 ENV USER=user
 
-RUN addgroup --gid "$GID" "$USER" && \
+RUN apt update \
+   && apt install -y procps zstd \
+   && rm -rf /var/lib/apt/lists/* \
+   && addgroup --gid "$GID" "$USER" && \
     adduser \
     --disabled-password \
     --gecos "" \
