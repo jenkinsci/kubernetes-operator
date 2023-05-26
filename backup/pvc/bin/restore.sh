@@ -13,15 +13,17 @@ echo "Running restore backup with backup number #${backup_number}"
 if [[ -f "$backup_file.tar.gz" ]]; then
     echo "Old format tar.gz found, restoring it"
     OPTS=""
+    EXT="tar.gz"
 elif [[ -f "$backup_file.tar.zstd" ]]; then
     echo "Backup file found, proceeding"
     OPTS="--zstd"
+    EXT="tar.zstd"
 else
   echo "ERR: Backup file not found: $backup_file"
   exit 1
 fi
 
-tar $OPTS -C ${JENKINS_HOME} -xf "${BACKUP_DIR}/${backup_number}.tar.zstd"
+tar $OPTS -C "${JENKINS_HOME}" -xf "${BACKUP_DIR}/${backup_number}.${EXT}"
 
 echo Done
 exit 0
