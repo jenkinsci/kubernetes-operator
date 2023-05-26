@@ -29,7 +29,7 @@ docker exec ${cid} /home/user/bin/backup.sh ${backup_number}
 
 [ "$(docker exec ${cid} ls /tmp | grep 'tmp')" ] && echo "tmp directory not empty" && exit 1;
 
-backup_file="${BACKUP_DIR}/${backup_number}.tar.gz"
+backup_file="${BACKUP_DIR}/${backup_number}.tar.zstd"
 [[ ! -f ${backup_file} ]] && echo "Backup file ${backup_file} not found" && exit 1;
 
 echo "tmp directory empty, backup in backup directory present"

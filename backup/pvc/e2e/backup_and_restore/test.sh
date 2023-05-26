@@ -30,7 +30,7 @@ trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${RESTORE_FOLDE
 backup_number=1
 docker exec ${cid} /home/user/bin/backup.sh ${backup_number}
 
-backup_file="${BACKUP_DIR}/${backup_number}.tar.gz"
+backup_file="${BACKUP_DIR}/${backup_number}.tar.zstd"
 [[ ! -f ${backup_file} ]] && echo "Backup file ${backup_file} not found" && exit 1;
 
 docker exec ${cid} /bin/bash -c "JENKINS_HOME=${RESTORE_FOLDER};/home/user/bin/restore.sh ${backup_number}"
