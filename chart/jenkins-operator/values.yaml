@@ -90,13 +90,13 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 3923.v294a_d4250b_91
+  #   version: 3937.vd7b_82db_e347b_
   # - name: workflow-job
-  #   version: 1292.v27d8cc3e2602
+  #   version: 1301.v054d9cea_9593
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
-  #   version: 5.0.1
+  #   version: 5.0.2
   # - name: job-dsl
   #   version: "1.83"
   # - name: configuration-as-code
