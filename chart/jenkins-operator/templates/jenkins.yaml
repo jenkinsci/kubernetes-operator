@@ -95,6 +95,9 @@ spec:
     {{- with .Values.jenkins.nodeSelector }}
     nodeSelector: {{ toYaml . | nindent 6 }}
     {{- end }}
+    {{- with .Values.jenkins.tolerations }}
+    tolerations: {{ toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.jenkins.annotations }}
     annotations: {{ toYaml . | nindent 6 }}
     {{- end }}
