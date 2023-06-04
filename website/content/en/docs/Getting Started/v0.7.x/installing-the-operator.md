@@ -941,7 +941,7 @@ spec:
         args:
         - --leader-elect
         <b>- --validate-security-warnings</b>
-        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+        image: virtuslab/jenkins-operator:v0.7.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
