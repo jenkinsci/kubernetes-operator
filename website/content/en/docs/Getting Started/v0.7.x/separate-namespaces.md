@@ -281,7 +281,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+        image: virtuslab/jenkins-operator:v0.7.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
@@ -536,7 +536,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.401.1-lts
+        image: jenkins/jenkins:2.319.1-lts-alpine
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 12
