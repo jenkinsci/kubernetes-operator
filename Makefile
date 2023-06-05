@@ -478,7 +478,7 @@ helm-release-latest: helm
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.62.2
+HUGO_VERSION = v0.113.0
 HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
 hugo:
 ifeq ($(HAS_HUGO), )
