@@ -54,5 +54,6 @@ jobs:
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git reset --hard
+          rm bin/sembump
           make -C backup/pvc docker-build
           make -C backup/pvc docker-release
