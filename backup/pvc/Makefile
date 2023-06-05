@@ -151,6 +151,7 @@ bump-version: sembump ## Bump the version in the version file. Set BUMP to [ pat
 	echo $(NEW_VERSION) > VERSION.txt
 	git add VERSION.txt
 	git commit -avm "Bump backup PVC version to $(NEW_VERSION)"
+	rm $(PROJECT_DIR)/bin/sembump
 
 .PHONY: tag
 tag: ## Create a new git tag to prepare to build a release
