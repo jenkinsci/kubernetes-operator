@@ -54,7 +54,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.401.1-lts
+        image: jenkins/jenkins:2.277.4-lts-alpine
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -71,7 +71,7 @@ spec:
             value: /jenkins-home
           - name: BACKUP_COUNT
             value: "3" # keep only the 2 most recent backups
-        image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.3 # look at backup/pvc directory
+        image: virtuslab/jenkins-operator-backup-pvc:v0.1.1 # look at backup/pvc directory
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /jenkins-home # Jenkins home volume
