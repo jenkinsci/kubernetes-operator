@@ -32,13 +32,13 @@ jobs:
         run: make -C backup/pvc docker-e2e
 
       - name: Configure Git
-        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Bump the version
-        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         shell: bash
         run: make -C backup/pvc sembump && make -C backup/pvc bump-version
 
@@ -51,8 +51,8 @@ jobs:
           password: ${{ secrets.QUAYIO_TOKEN }}
 
       - name: Build and push the image to Quay.io
-        #if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         run: |
           git reset --hard
           make -C backup/pvc docker-build
-          #make -C backup/pvc docker-release
+          make -C backup/pvc docker-release
