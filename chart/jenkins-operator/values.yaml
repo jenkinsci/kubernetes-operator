@@ -36,7 +36,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.387.3-lts
+  image: jenkins/jenkins:2.401.1-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -92,15 +92,15 @@ jenkins:
   # - name: kubernetes
   #   version: 3937.vd7b_82db_e347b_
   # - name: workflow-job
-  #   version: 1301.v054d9cea_9593
+  #   version: 1308.v58d48a_763b_31
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
   #   version: 5.0.2
   # - name: job-dsl
-  #   version: "1.83"
+  #   version: "1.84"
   # - name: configuration-as-code
-  #   version: 1625.v27444588cc3d
+  #   version: 1647.ve39ca_b_829b_42
   # - name: kubernetes-credentials-provider
   #   version: 1.211.vc236a_f5a_2f3c
 
@@ -210,7 +210,7 @@ jenkins:
 
     # image used by backup feature
     # By default using prebuilt backup PVC image
-    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.1
+    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.5
 
     # containerName is backup container name
     containerName: backup
@@ -294,7 +294,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta
+  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta2
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
