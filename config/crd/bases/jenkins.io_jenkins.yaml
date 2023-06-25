@@ -157,11 +157,11 @@ spec:
                     type: object
                   basePlugins:
                     description: 'BasePlugins contains plugins required by operator
-                      Defaults to : - name: configuration-as-code version: "1346.ve8cfa_3473c94"
-                      - name: git version: "4.11.3" - name: job-dsl version: "1.78.1"
-                      - name: kubernetes version: "1.31.3" - name: kubernetes-credentials-provider
-                      version: "0.20" - name: workflow-aggregator version: "2.6" -
-                      name: workflow-job version: "1145.v7f2433caa07f"'
+                      Defaults to : - name: kubernetes version: "1.31.3" - name:
+                      workflow-job version: "1145.v7f2433caa07f" - name: workflow-aggregator version:
+                      "2.6" - name: git version: "4.11.3" - name: job-dsl version:
+                      "1.78.1" - name: configuration-as-code version: "1346.ve8cfa_3473c94" - name:
+                      kubernetes-credentials-provider version: "0.20"'
                     items:
                       description: Plugin defines Jenkins plugin.
                       properties:
@@ -1100,6 +1100,11 @@ spec:
                       - resources
                       type: object
                     type: array
+                  latestPlugins:
+                    description: 'Allow to override jenkins-plugin-cli default behavior
+                      while downloading the plugin and dependencies, see:
+                      https://github.com/jenkinsci/plugin-installation-manager-tool#cli-options'
+                    type: boolean
                   disableCSRFProtection:
                     description: DisableCSRFProtection allows you to toggle CSRF Protection
                       on Jenkins
@@ -1145,10 +1150,6 @@ spec:
                       selectors of replication controllers and services. More info:
                       http://kubernetes.io/docs/user-guide/labels'
                     type: object
-                  latestPlugins:
-                    description: 'Allow to override jenkins-plugin-cli default behavior
-                      while downloading the plugin and dependencies see: https://github.com/jenkinsci/plugin-installation-manager-tool#cli-options'
-                    type: boolean
                   nodeSelector:
                     additionalProperties:
                       type: string
@@ -2863,7 +2864,6 @@ spec:
                     type: array
                 required:
                 - disableCSRFProtection
-                - latestPlugins
                 type: object
               notifications:
                 description: Notifications defines list of a services which are used
@@ -3124,10 +3124,8 @@ spec:
                   type: object
                 type: array
               seedJobAgentImage:
-                description: SeedJobAgentImage defines the image that will be used
-                  by the seed job agent. If not defined jenkins/inbound-agent:4.9-1
-                  will be used.
                 type: string
+                description: 'SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:4.10-3 will be used.'
               seedJobs:
                 description: 'SeedJobs defines list of Jenkins Seed Job configurations
                   More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines'
