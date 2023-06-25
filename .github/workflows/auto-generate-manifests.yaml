@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - main
+      - fix-add-plain-manifest-ci
     paths-ignore:
       - 'docs/**'
       - 'website/**'
@@ -36,6 +37,10 @@ jobs:
           --set jenkins.enabled=false  \
           --set jenkins.backup.enabled=false \
           --set jenkins.backup.pvc.enabled=false \
+          --set operator.resources.limits.cpu=100m \
+          --set operator.resources.limits.memory=120Mi
+          --set operator.resources.requests.cpu=100m \
+          --set operator.resources.requests.memory=120Mi \
           chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
           sed -i '/namespace: default/d' deploy/all-in-one-v1alpha2.yaml
 
