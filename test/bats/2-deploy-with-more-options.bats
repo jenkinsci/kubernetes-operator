@@ -69,11 +69,11 @@ setup() {
 
 @test "2.7 check backup" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
-
-  run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
+  #sleep 120
+  run ${KUBECTL} logs -l app.kubernetes.io/name=jenkins-operator --tail 10000
   assert_success
-  sleep 120
-  assert_output --partial 'Performing backup '1'	{"cr": "jenkins"}'
+  assert_output --partial "Performing backup '1'"
+  assert_output --partial "Backup completed '1', updating status"
 }
 
 
