@@ -23,6 +23,8 @@ diag() {
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
+    --set jenkins.latestPlugins=true \
+    --set jenkins.backup.makeBackupBeforePodDeletion=false \
     chart/jenkins-operator
   assert_success
   assert ${HELM} status default
@@ -98,6 +100,19 @@ diag() {
   assert_success
 }
 
+#bats test_tags=phase:helm
+@test "1.9 Helm: check Jenkins crd" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run verify "there is 1 crd named 'jenkins.jenkins.io'"
+  assert_success
+}
+
 @test "1.9 Helm: Clean" {
+  run ${HELM} uninstall default
+  assert_success
+  # Wait for the complete removal
+  sleep 30
+  run verify "there is 0 pvc named 'jenkins backup'"
+  assert_success
   rm "chart/jenkins-operator/deploy.tmp"
 }
