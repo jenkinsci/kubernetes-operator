@@ -4,7 +4,6 @@ on:
     branches:
       - master
       - main
-      - fix-add-plain-manifest-ci
     paths-ignore:
       - 'docs/**'
       - 'website/**'
