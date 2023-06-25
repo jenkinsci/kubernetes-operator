@@ -30,7 +30,7 @@ jobs:
       - name: Helm lint
         run: make helm-lint
 
-      #TODO: add also the webhook part and understand if is necessary
+        #TODO: add also the webhook part and understand if is necessary
       - name: Helm update plain manifests
         run: |
           helm template --set fullnameOverride=jenkins-operator \
@@ -38,6 +38,7 @@ jobs:
           --set jenkins.backup.enabled=false \
           --set jenkins.backup.pvc.enabled=false \
           chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
+          sed -i '/namespace: default/d' deploy/all-in-one-v1alpha2.yaml
 
           cp chart/jenkins-operator/crds/jenkins-crd.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
