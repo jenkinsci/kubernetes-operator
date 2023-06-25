@@ -72,7 +72,7 @@ setup() {
 
   run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
   assert_success
-  sleep 10
+  sleep 120
   assert_output --partial 'Performing backup '1'	{"cr": "jenkins"}'
 }
 
