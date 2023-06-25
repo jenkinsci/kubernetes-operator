@@ -68,6 +68,12 @@ func buildConfigMapTypeMeta() metav1.TypeMeta {
 }
 
 func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
+	defaultlatestPlugin := true
+	latestP := jenkins.Spec.Master.LatestPlugins
+	if latestP == nil {
+		latestP = defaultlatestPlugin
+	}
+
 	data := struct {
 		JenkinsHomePath          string
 		InitConfigurationPath    string
@@ -83,7 +89,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		UserPlugins:              jenkins.Spec.Master.Plugins,
 		InstallPluginsCommand:    installPluginsCommand,
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
-		LatestPlugins:            jenkins.Spec.Master.LatestPlugins,
+		LatestPlugins:            latestP,
 	}
 
 	output, err := render.Render(initBashTemplate, data)
