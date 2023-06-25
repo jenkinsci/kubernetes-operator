@@ -1,0 +1,61 @@
+name: Update k8s manifests
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
+      - 'backup/**'
+      - '*.md'
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths-ignore:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
+      - 'backup/**'
+      - '*.md'
+
+jobs:
+  run-tests:
+    if: github.event.pull_request.draft == false
+    name: Run automated tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up env vars
+        run: |
+          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+
+      - name: Verify code formatting
+        run: make verify
+
+      - name: Helm lint
+        run: make helm-lint
+
+      - name: Helm update plain manifests
+        run: |
+          helm template --set fullnameOverride=jenkins-operator \ 
+          --set jenkins.enabled=false  \
+          --set jenkins.backup.enabled=false \
+          --set jenkins.backup.pvc.enabled=false \
+          chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
+
+          cp chart/jenkins-operator/crds/jenkins-crd.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: Auto-updated Kubernetes Manifests
+          branch: manifest-deploy-update
+          title: Auto-updated Kubernetes Manifests
+          body: |
+            Auto-updated Kubernetes Manifests from master commit ${{ github.sha }}
+
+          
+
