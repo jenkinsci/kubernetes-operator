@@ -31,7 +31,7 @@ spec:
               protocol: TCP
           command:
             - /manager
-          args: 
+          args:
           {{- if .Values.webhook.enabled }}
           - --validate-security-warnings
           {{- end }}
@@ -41,6 +41,18 @@ spec:
             name: webhook-certs
             readOnly: true
           {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
           env:
             - name: WATCH_NAMESPACE
               value: {{ .Values.jenkins.namespace }}
