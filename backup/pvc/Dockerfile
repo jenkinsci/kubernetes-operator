@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 LABEL maintainer="Jenkins Kubernetes Operator Community" \
       org.opencontainers.image.authors="Jenkins Kubernetes Operator Community" \
@@ -25,7 +25,7 @@ RUN apt update \
     "$USER"
 
 WORKDIR /home/user/bin
-COPY bin .
+COPY bin/*.sh .
 RUN chmod +x *.sh
 USER user
 
