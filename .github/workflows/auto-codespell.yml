@@ -18,4 +18,4 @@ jobs:
         with:
           check_filenames: true
           ignore_words_list: aks,ags,startin
-          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*"
+          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
