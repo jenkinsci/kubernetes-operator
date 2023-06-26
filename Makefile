@@ -146,6 +146,7 @@ update-lts-version: ## Update the latest lts version
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' chart/jenkins-operator/values.yaml
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/e2e/test_utility.go
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/helm/helm_test.go
+	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' pkg/constants/constants.go
 
 .PHONY: run
 run: export WATCH_NAMESPACE = $(NAMESPACE)
