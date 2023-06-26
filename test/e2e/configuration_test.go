@@ -26,7 +26,7 @@ const e2e = "e2e"
 var expectedBasePluginsList = []plugins.Plugin{
 	plugins.Must(plugins.New("configuration-as-code:1647.ve39ca_b_829b_42")),
 	plugins.Must(plugins.New("git:5.1.0")),
-	plugins.Must(plugins.New("kubernetes:kubernetes:3952.v88e3b_0cf300b_")),
+	plugins.Must(plugins.New("kubernetes:3952.v88e3b_0cf300b_")),
 	plugins.Must(plugins.New("kubernetes-credentials-provider:1.225.v14f9e6b_28f53")),
 	plugins.Must(plugins.New("job-dsl:1.84")),
 	plugins.Must(plugins.New("workflow-aggregator:596.v8c21c963d92d")),
