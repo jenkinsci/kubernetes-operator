@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - main
+      - fix-auto-generate-manifests-2
     paths-ignore:
       - 'docs/**'
       - 'website/**'
@@ -42,7 +43,7 @@ jobs:
           --set operator.resources.requests.memory=120Mi \
           chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
           sed -i '/namespace: default/d' deploy/all-in-one-v1alpha2.yaml
-          sed -i 's/# Source://g' deploy/all-in-one-v1alpha2.yaml
+          sed -i 's/# Source: .*//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/app\.kubernetes\.io\/instance: release-name//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/app\.kubernetes\.io\/managed-by: Helm//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/helm\.sh\/chart: [a-zA-Z0-9]+//g' deploy/all-in-one-v1alpha2.yaml
