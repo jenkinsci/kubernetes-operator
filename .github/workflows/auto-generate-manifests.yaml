@@ -4,7 +4,6 @@ on:
     branches:
       - master
       - main
-      - fix-auto-generate-manifests-2
     paths-ignore:
       - 'docs/**'
       - 'website/**'
