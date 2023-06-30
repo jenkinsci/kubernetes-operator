@@ -47,7 +47,7 @@ jobs:
           sed -i 's/app\.kubernetes\.io\/instance: release-name//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/app\.kubernetes\.io\/managed-by: Helm//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/helm\.sh\/chart: [a-zA-Z0-9]+//g' deploy/all-in-one-v1alpha2.yaml
-          sed -i 's/^$/d' deploy/all-in-one-v1alpha2.yaml
+          sed -i '/^$/d' deploy/all-in-one-v1alpha2.yaml
 
           cp chart/jenkins-operator/crds/jenkins-crd.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
