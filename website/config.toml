@@ -42,7 +42,7 @@ blog = "/:section/:year/:month/:day/:slug/"
 #latexDashes = true
 
 [markup]
-defaultMarkdownHandler = "blackfriday"
+defaultMarkdownHandler = "goldmark"
 
 # Image processing configuration.
 [imaging]
@@ -134,4 +134,3 @@ no = 'Sorry to hear that. Please <a href="https://github.com/USERNAME/REPOSITORY
 #	url = "https://github.com/google/docsy"
 #	icon = "fab fa-github"
 #        desc = "Development takes place here!"
-
