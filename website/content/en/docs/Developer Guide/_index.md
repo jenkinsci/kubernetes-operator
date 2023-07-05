@@ -34,7 +34,7 @@ Start minikube instance configured for **Jenkins Operator**. Appropriate minikub
 ```bash
 make minikube-start
 ```
-Next run **Jenkins Operator** locally. 
+Next run **Jenkins Operator** locally.
 ```bash
 make run
 ```
@@ -45,7 +45,7 @@ Console output indicating readiness of this phase:
 kubectl config use-context minikube
 Switched to context "minikube".
 Watching 'default' namespace
-bin/manager --jenkins-api-hostname=192.168.99.252 --jenkins-api-port=0 --jenkins-api-use-nodeport=true --cluster-domain=cluster.local 
+bin/manager --jenkins-api-hostname=192.168.99.252 --jenkins-api-port=0 --jenkins-api-use-nodeport=true --cluster-domain=cluster.local
 2021-02-08T14:14:45.263+0100    INFO    cmd     Version: v0.5.0
 2021-02-08T14:14:45.263+0100    INFO    cmd     Git commit: 305dbeda-dirty-dirty
 2021-02-08T14:14:45.264+0100    INFO    cmd     Go Version: go1.15.6
@@ -93,9 +93,9 @@ kubectl apply -f config/samples/jenkins.io_v1alpha2_jenkins.yaml
 {"level":"info","ts":1612790853.489524,"logger":"controller-jenkins","msg":"User configuration phase is complete, took 2m38s","cr":"jenkins-example"}
 
 Two log lines says that Jenkins Operator works correctly:
- 
-* `Base configuration phase is complete` - ensures manifests, Jenkins pod, Jenkins configuration and Jenkins API token  
-* `User configuration phase is complete` - ensures Jenkins restore, backup and seed jobs along with user configuration 
+
+* `Base configuration phase is complete` - ensures manifests, Jenkins pod, Jenkins configuration and Jenkins API token
+* `User configuration phase is complete` - ensures Jenkins restore, backup and seed jobs along with user configuration
 
 > Details about base and user phase can be found [here](https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/).
 
@@ -209,7 +209,7 @@ seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0 
 
 Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.
 
-Run **Jenkins Operator** locally. 
+Run **Jenkins Operator** locally.
 ```bash
 make config="config.docker-desktop.env" run
 ```
@@ -250,7 +250,7 @@ kubectl --context remote-k8s --namespace default get po
 
 ## Testing
 
-Tests are written using [Ginkgo](https://onsi.github.io/ginkgo/) with [Gomega](https://onsi.github.io/gomega/). 
+Tests are written using [Ginkgo](https://onsi.github.io/ginkgo/) with [Gomega](https://onsi.github.io/gomega/).
 
 Run unit tests with go fmt, lint, staticcheck, vet:
 
@@ -283,6 +283,15 @@ Run the specific e2e test:
 
 ```bash
 make e2e E2E_TEST_SELECTOR='^TestConfiguration$'
+```
+
+### Running Bats tests
+
+Run bats tests in a `kind` cluster:
+
+```bash
+make kind-setuo
+make bats-tests
 ```
 
 ### Building docker image on minikube
