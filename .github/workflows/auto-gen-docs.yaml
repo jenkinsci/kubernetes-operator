@@ -10,6 +10,12 @@ on:
       - 'docs/**'
       - 'website/**'
       - 'assets/**'
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
 
 jobs:
   # Set the job key. The key is displayed as the job name
@@ -76,7 +82,7 @@ jobs:
 
       # Creates pull request with generated docs
       - name: Create Pull Request
-        if: env.IS_CHANGED == 'true'
+        if: env.IS_CHANGED == 'true' && github.event_name != 'pull_request'
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Auto-updated docs
