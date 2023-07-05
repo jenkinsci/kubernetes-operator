@@ -270,9 +270,7 @@ spec:
             periodSeconds: 10
           env:
             - name: WATCH_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
+              value: default
             - name: POD_NAME
               valueFrom:
                 fieldRef:
