@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Codespell
-        uses: codespell-project/actions-codespell@v1
+        uses: codespell-project/actions-codespell@v2
         with:
           check_filenames: true
           ignore_words_list: aks,ags,startin
