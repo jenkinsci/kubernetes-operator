@@ -39,7 +39,7 @@ jobs:
 
       - name: Prep - setup Bats libs
         if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: brokenpip3/setup-bats-libs@0.1.0
+        uses: brokenpip3/setup-bats-libs@1.5.1
 
       - name: Prep - go environment
         uses: actions/setup-go@v2
