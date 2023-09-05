@@ -290,7 +290,7 @@ make e2e E2E_TEST_SELECTOR='^TestConfiguration$'
 Run bats tests in a `kind` cluster:
 
 ```bash
-make kind-setuo
+make kind-setup
 make bats-tests
 ```
 
