@@ -36,7 +36,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.401.1-lts
+  image: jenkins/jenkins:2.414.1-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -90,19 +90,19 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 3937.vd7b_82db_e347b_
+  #   version: 4029.v5712230ccb_f8
   # - name: workflow-job
-  #   version: 1308.v58d48a_763b_31
+  #   version: 1342.v046651d5b_dfe
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
-  #   version: 5.0.2
+  #   version: 5.2.0
   # - name: job-dsl
-  #   version: "1.84"
+  #   version: "1.85"
   # - name: configuration-as-code
   #   version: 1647.ve39ca_b_829b_42
   # - name: kubernetes-credentials-provider
-  #   version: 1.211.vc236a_f5a_2f3c
+  #   version: 1.234.vf3013b_35f5b_a
 
   basePlugins: []
 
@@ -294,7 +294,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta2
+  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent

@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: v0.8.0-beta](https://img.shields.io/badge/Version-v0.8.0--beta-informational?style=flat-square) ![AppVersion: v0.8.0-beta](https://img.shields.io/badge/AppVersion-v0.8.0--beta-informational?style=flat-square)
+![Version: 0.8.0-beta.2](https://img.shields.io/badge/Version-0.8.0--beta.2-informational?style=flat-square) ![AppVersion: 0.8.0-beta.2](https://img.shields.io/badge/AppVersion-0.8.0--beta.2-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -52,7 +52,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.401.1-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.414.1-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
@@ -95,7 +95,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta2"` |  |
+| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |
