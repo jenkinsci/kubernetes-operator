@@ -479,22 +479,24 @@ helm-release-latest: helm
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.118.1
-HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
+HUGO_VERSION = 0.118.1
+HAS_HUGO := $(shell $(HUGO_PATH) version 2>&- | grep $(HUGO_VERSION))
 hugo:
 ifeq ($(HAS_HUGO), )
 	@echo "Installing Hugo $(HUGO_VERSION)"
-	rm -rf $(HUGO_PATH)
-	git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH)
-	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
+	#rm $(HUGO_PATH)
+	curl -L -O https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz
+	tar -xzvf hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz hugo
+	rm hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz
+	mv hugo bin/
 endif
 
 .PHONY: generate-docs
 generate-docs: hugo ## Re-generate docs directory from the website directory
 	@echo "+ $@"
 	rm -rf docs || echo "Cannot remove docs dir, ignoring"
-	cd website && npm install
-	$(HUGO_PATH)/hugo -s website -d ../docs
+	cd website && npm install && npm install postcss-cli
+	$(HUGO_PATH) -s website -d ../docs
 
 .PHONY: run-docs
 run-docs: hugo
