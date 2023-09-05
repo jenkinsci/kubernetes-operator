@@ -24,13 +24,13 @@ import (
 const e2e = "e2e"
 
 var expectedBasePluginsList = []plugins.Plugin{
-	plugins.Must(plugins.New("configuration-as-code:1647.ve39ca_b_829b_42")),
-	plugins.Must(plugins.New("git:5.1.0")),
-	plugins.Must(plugins.New("kubernetes:3952.v88e3b_0cf300b_")),
-	plugins.Must(plugins.New("kubernetes-credentials-provider:1.225.v14f9e6b_28f53")),
-	plugins.Must(plugins.New("job-dsl:1.84")),
+	plugins.Must(plugins.New("configuration-as-code:1700.v6f448841296e")),
+	plugins.Must(plugins.New("git:5.2.0")),
+	plugins.Must(plugins.New("kubernetes:4029.v5712230ccb_f8")),
+	plugins.Must(plugins.New("kubernetes-credentials-provider:1.234.vf3013b_35f5b_a")),
+	plugins.Must(plugins.New("job-dsl:1.85")),
 	plugins.Must(plugins.New("workflow-aggregator:596.v8c21c963d92d")),
-	plugins.Must(plugins.New("workflow-job:1308.v58d48a_763b_31")),
+	plugins.Must(plugins.New("workflow-job:4029.v5712230ccb_f8")),
 }
 
 func createUserConfigurationSecret(namespace string, stringData map[string]string) {
