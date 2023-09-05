@@ -3,6 +3,6 @@
   command = "git submodule update -f --init && cd userguide && npm install postcss-cli && hugo --themesDir ../.."
 
 [build.environment]
-  HUGO_VERSION = "0.55.6"
+  HUGO_VERSION = "0.118.1"
   HUGO_THEME = "repo"
   NODE_VERSION = "12.2.0"
