@@ -484,11 +484,10 @@ HAS_HUGO := $(shell $(HUGO_PATH) version 2>&- | grep $(HUGO_VERSION))
 hugo:
 ifeq ($(HAS_HUGO), )
 	@echo "Installing Hugo $(HUGO_VERSION)"
-	#rm $(HUGO_PATH)
 	curl -L -O https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz
 	tar -xzvf hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz hugo
 	rm hugo_extended_$(HUGO_VERSION)_Linux-64bit.tar.gz
-	mv hugo bin/
+	mv hugo $(HUGO_PATH)
 endif
 
 .PHONY: generate-docs
