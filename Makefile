@@ -495,7 +495,7 @@ endif
 generate-docs: hugo ## Re-generate docs directory from the website directory
 	@echo "+ $@"
 	rm -rf docs || echo "Cannot remove docs dir, ignoring"
-	cd website && npm install && npm install postcss-cli
+	cd website && npm install && npm install postcss postcss-cli autoprefixer
 	$(HUGO_PATH) -s website -d ../docs
 
 .PHONY: run-docs
