@@ -95,7 +95,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta2"` |  |
+| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |
