@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prep - check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Prep - Set up env vars
         run: |
