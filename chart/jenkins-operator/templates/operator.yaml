@@ -57,6 +57,8 @@ spec:
             - name: WATCH_NAMESPACE
               {{- if .Values.jenkins.enabled }}
               value: {{ .Values.jenkins.namespace }}
+              {{- else if .Values.operator.watchNamespace }}
+              value: {{ .Values.operator.watchNamespace }}
               {{- else }}
               valueFrom:
                 fieldRef:

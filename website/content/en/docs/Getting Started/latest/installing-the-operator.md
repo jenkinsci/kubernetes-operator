@@ -127,11 +127,13 @@ Name of resource. The pod name will be <code>jenkins-&lt;name&gt;</code> (name w
 <code>namespace</code>
 </td>
 <td>
-default
+""
 </td>
 <td>
-Namespace the resources will be deployed to. It's not recommended to use default namespace.
-Create new namespace for jenkins (e.g. <code>kubectl create -n jenkins</code>)
+Namespace the resources will be deployed to. If omitted, the resources will be deployed to the same namespace as the operator.
+It's not recommended to use default namespace. Create new namespace for jenkins (e.g. <code>kubectl create -n jenkins</code>).
+
+<b>Note:</b> If the Jenkins instance is disabled, this propery will be ignored. Use the `operator.watchNamespace` property instead.
 </td>
 </tr>
 <tr>
