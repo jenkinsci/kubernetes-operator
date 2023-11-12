@@ -387,11 +387,11 @@ ifndef BUILD_PRESENT
 bats-tests: container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 else
 bats-tests: ## Run bats tests
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 endif
 
 .PHONY: crc-start
