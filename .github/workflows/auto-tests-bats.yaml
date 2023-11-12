@@ -44,13 +44,13 @@ jobs:
       - name: Ensure Golang runtime dependencies
         run: make go-dependencies
 
-      - name: Setup BATS
-        uses: mig4/setup-bats@v1
+      - name: Setup Bats and libs
+        uses: brokenpip3/setup-bats-libs@1.5.2
         with:
-          bats-version: 1.9.0
-
-      - name: Setup Bats libs
-        uses: brokenpip3/setup-bats-libs@0.1.0
+          support-path: "${{ github.workspace }}/.bats/bats-support"
+          assert-path: "${{ github.workspace }}/.bats/bats-assert"
+          detik-path: "${{ github.workspace }}/.bats/bats-detik"
+          file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Kind setup
         uses: helm/kind-action@v1.5.0
@@ -58,4 +58,6 @@ jobs:
           cluster_name: ${{env.KIND_CLUSTER_NAME}}
 
       - name: Jenkins Operator - bats tests
+        env:
+          BATS_LIB_PATH: "${{ github.workspace }}/.bats"
         run: make bats-tests
