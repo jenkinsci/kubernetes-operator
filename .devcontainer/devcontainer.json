@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json
 {
-    "name": "Kubernetes - Minikube-in-Docker",
+    "name": "Jenkins kubernetes operator devcontainer",
     "image": "mcr.microsoft.com/devcontainers/base:bookworm",
 
     "features": {
