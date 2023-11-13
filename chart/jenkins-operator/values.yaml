@@ -308,6 +308,10 @@ operator:
   # fullnameOverride overrides the deployment name
   fullnameOverride: ""
 
+  # Select a different namespace to look for the Jenkins CR and deploy Jenkins in. Defaults to the same namespace as
+  # the operator.
+  # watchNamespace: "jenkins-namespace"
+
   resources: {}
   nodeSelector: {}
   tolerations: []
