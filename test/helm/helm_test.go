@@ -77,12 +77,12 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 		invalidPlugins = []v1alpha2.Plugin{
 			{Name: "simple-theme-plugin", Version: "0.6"},
 			{Name: "audit-trail", Version: "3.8"},
-			{Name: "github", Version: "1.31.0"},
+			{Name: "github", Version: "1.36.0"},
 		}
 		validPlugins = []v1alpha2.Plugin{
 			{Name: "simple-theme-plugin", Version: "136.v23a_15f86c53d"},
 			{Name: "audit-trail", Version: "3.11"},
-			{Name: "github", Version: "1.36.0"},
+			{Name: "github", Version: "1.37.3.1"},
 		}
 	)
 
@@ -117,7 +117,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 			jenkins := e2e.RenderJenkinsCR(jenkinsCRName, namespace.Name, seedJobs, groovyScripts, casc, "")
 			jenkins.Spec.Master.Plugins = invalidPlugins
 			jenkins.Spec.ValidateSecurityWarnings = true
-			Expect(e2e.K8sClient.Create(context.TODO(), jenkins)).Should(MatchError("admission webhook \"vjenkins.kb.io\" denied the request: security vulnerabilities detected in the following user-defined plugins: \ngithub:1.31.0"))
+			Expect(e2e.K8sClient.Create(context.TODO(), jenkins)).Should(MatchError("admission webhook \"vjenkins.kb.io\" denied the request: security vulnerabilities detected in the following user-defined plugins: \ngithub:1.36.0"))
 		})
 	})
 	Context("When Jenkins CR doesn't contain plugins with security warnings", func() {
