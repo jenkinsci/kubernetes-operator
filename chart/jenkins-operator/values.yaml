@@ -96,7 +96,7 @@ jenkins:
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
-  #   version: 5.2.0
+  #   version: 5.2.1
   # - name: job-dsl
   #   version: "1.85"
   # - name: configuration-as-code

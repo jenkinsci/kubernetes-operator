@@ -5,6 +5,8 @@ setup() {
 
 #bats test_tags=phase:helm
 @test "2.1 Install helm chart with options" {
+  # The kind storage class provider needs some sec to delete the old pvc
+  sleep 30
   run ${HELM} dependency update chart/jenkins-operator
   assert_success
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
