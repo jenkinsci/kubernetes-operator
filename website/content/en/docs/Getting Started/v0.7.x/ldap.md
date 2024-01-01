@@ -77,31 +77,30 @@ data:
           userIdStrategy: "caseInsensitive"
 ```
 
-> Note the use of `${LDAP_MANAGER_PASSWORD}` above. You can reference
-> Kubernetes secrets in your JCasC ConfigMaps by adding the following to your
-> Jenkins object:
->
-> ```yaml
-> kind: Jenkins
-> spec:
->   configurationAsCode:
->     configurations:
->       - name: jenkins-casc
->     secret:
->       # This here
->       name: jenkins-casc-secrets
-> ```
->
-> ```yaml
-> apiVersion: v1
-> kind: Secret
-> metadata:
->   name: jenkins-cred-conf-secrets
-> stringData:
->   LDAP_MANAGER_PASSWORD: <password-for-manager-created-in-ldap>
-> ```
->
-> Schema reference: [v1alpha2.ConfigurationAsCode](./schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode)
+>Note the use of `${LDAP_MANAGER_PASSWORD}` above. You can reference
+>Kubernetes secrets in your JCasC ConfigMaps by adding the following to your
+
+Jenkins object:
+
+```yaml
+kind: Jenkins
+spec:
+  configurationAsCode:
+    configurations:
+      - name: jenkins-casc
+    secret:
+      # This here
+      name: jenkins-casc-secrets
+```
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jenkins-cred-conf-secrets
+stringData:
+  LDAP_MANAGER_PASSWORD: <password-for-manager-created-in-ldap>
+```
+Schema reference: [v1alpha2.ConfigurationAsCode](./schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode)
 
 Finally you must configure the Jenkins operator to use the manager's
 credentials from the AD.
