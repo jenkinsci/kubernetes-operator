@@ -23,7 +23,7 @@ jobs:
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive  # Fetch the Docsy theme
           fetch-depth: 0
@@ -45,7 +45,7 @@ jobs:
       # Sets up node - required by Hugo
       - name: Setup Node
         if: env.IS_CHANGED == 'true'
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: '12.x'
 

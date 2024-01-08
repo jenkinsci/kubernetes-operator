@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check envs
         run: make -C backup/pvc check-env
@@ -46,7 +46,7 @@ jobs:
 
       - name: Login to Quay.io
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}
