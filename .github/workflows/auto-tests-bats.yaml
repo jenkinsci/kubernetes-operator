@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up env vars
         run: |
@@ -37,7 +37,7 @@ jobs:
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -53,7 +53,7 @@ jobs:
           file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Kind setup
-        uses: helm/kind-action@v1.5.0
+        uses: helm/kind-action@v1.9.0
         with:
           cluster_name: ${{env.KIND_CLUSTER_NAME}}
 
