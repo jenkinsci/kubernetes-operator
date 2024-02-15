@@ -6,6 +6,6 @@ version: 0.8.0
 icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
 dependencies:
 - name: cert-manager
-  version: "1.5.1"
+  version: "1.14.2"
   condition: cert-manager.enabled
   repository: https://charts.jetstack.io
