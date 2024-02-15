@@ -330,8 +330,11 @@ webhook:
   # enable or disable the validation webhook
   enabled: false
 
-# This startupapicheck is a Helm post-install hook that waits for the webhook
-# endpoints to become available.
 cert-manager:
+  # cert-manager is required to generate certificates for webhook. If you don't have cert-manager installed in your cluster,
+  # you can install it as a subordinate chart
+  enabled: false
+  # This startupapicheck is a Helm post-install hook that waits for the webhook
+  # endpoints to become available.
   startupapicheck:
     enabled: false

@@ -7,5 +7,5 @@ icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/ass
 dependencies:
 - name: cert-manager
   version: "1.5.1"
-  condition: webhook.enabled
+  condition: cert-manager.enabled
   repository: https://charts.jetstack.io

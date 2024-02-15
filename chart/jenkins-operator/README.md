@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: 0.8.0-beta.2](https://img.shields.io/badge/Version-0.8.0--beta.2-informational?style=flat-square) ![AppVersion: 0.8.0-beta.2](https://img.shields.io/badge/AppVersion-0.8.0--beta.2-informational?style=flat-square)
+![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![AppVersion: 0.8.0](https://img.shields.io/badge/AppVersion-0.8.0-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -14,6 +14,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| cert-manager.enabled | bool | `false` |  |
 | cert-manager.startupapicheck.enabled | bool | `false` |  |
 | jenkins.annotations | object | `{}` |  |
 | jenkins.apiVersion | string | `"jenkins.io/v1alpha2"` |  |
@@ -44,8 +45,8 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.volumeMounts[1].mountPath | string | `"/backup"` |  |
 | jenkins.backup.volumeMounts[1].name | string | `"backup"` |  |
 | jenkins.basePlugins | list | `[]` |  |
-| jenkins.configuration.configurationAsCode | object | `{}` |  |
-| jenkins.configuration.groovyScripts | object | `{}` |  |
+| jenkins.configuration.configurationAsCode | list | `[]` |  |
+| jenkins.configuration.groovyScripts | list | `[]` |  |
 | jenkins.configuration.secretData | object | `{}` |  |
 | jenkins.configuration.secretRefName | string | `""` |  |
 | jenkins.disableCSRFProtection | bool | `false` |  |
