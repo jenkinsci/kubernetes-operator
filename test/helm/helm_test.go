@@ -106,6 +106,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 				"--set-string", fmt.Sprintf("operator.image=%s", *imageName),
 				"--set", fmt.Sprintf("jenkins.securityValidator=%t", true),
 				"--set", fmt.Sprintf("jenkins.enabled=%t", false),
+				"--set", fmt.Sprintf("cert-manager.enabled=%t", true),
 				"--set", fmt.Sprintf("webhook.enabled=%t", true), "--install")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
@@ -126,6 +127,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
 				"--set-string", fmt.Sprintf("operator.image=%s", *imageName),
+				"--set", fmt.Sprintf("cert-manager.enabled=%t", true),
 				"--set", fmt.Sprintf("webhook.enabled=%t", true),
 				"--set", fmt.Sprintf("jenkins.latestPlugins=%t", true),
 				"--set", fmt.Sprintf("jenkins.enabled=%t", false), "--install")
