@@ -14,7 +14,12 @@ else
 	endif
 endif
 
+define strip_quotes
+$(shell echo $(1) | sed -e 's/^"//' -e 's/"$$//')
+endef
+
 include config.base.env
+$(foreach var,$(shell cat config.base.env),$(eval $(call strip_quotes,$(var))))
 
 # Import config
 # You can change the default config with `make config="config_special.env" build`
