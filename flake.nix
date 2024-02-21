@@ -31,6 +31,8 @@
         devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
           packages = [
               pkgs.gnumake
+              pkgs.wget
+              pkgs.helm-docs
               go_15_pkgs.go
               golangci_pkgs.golangci-lint
           ];
