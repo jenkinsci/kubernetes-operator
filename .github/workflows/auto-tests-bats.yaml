@@ -45,7 +45,7 @@ jobs:
         run: make go-dependencies
 
       - name: Setup Bats and libs
-        uses: brokenpip3/setup-bats-libs@1.5.2
+        uses: bats-core/bats-action@1.5.5
         with:
           support-path: "${{ github.workspace }}/.bats/bats-support"
           assert-path: "${{ github.workspace }}/.bats/bats-assert"

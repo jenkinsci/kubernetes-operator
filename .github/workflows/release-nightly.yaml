@@ -26,20 +26,19 @@ jobs:
           echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
           echo "MINIKUBE_WANTUPDATENOTIFICATION=false" >> $GITHUB_ENV
           echo "MINIKUBE_WANTREPORTERRORPROMPT=false" >> $GITHUB_ENV
-          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
-          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
-          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env)" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
-      - name: Prep - setup BATS
+      - name: Prep - setup Bats and bats libs
         if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: mig4/setup-bats@v1
+        uses: bats-core/bats-action@1.5.5
         with:
-          bats-version: 1.9.0
-
-      - name: Prep - setup Bats libs
-        if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: brokenpip3/setup-bats-libs@1.5.2
+          support-path: "${{ github.workspace }}/.bats/bats-support"
+          assert-path: "${{ github.workspace }}/.bats/bats-assert"
+          detik-path: "${{ github.workspace }}/.bats/bats-detik"
+          file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Prep - go environment
         uses: actions/setup-go@v5
