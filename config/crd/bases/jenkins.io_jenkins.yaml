@@ -3145,7 +3145,6 @@ spec:
                     type: array
                 required:
                 - disableCSRFProtection
-                - latestPlugins
                 type: object
               notifications:
                 description: Notifications defines list of a services which are used

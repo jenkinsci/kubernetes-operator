@@ -1,5 +1,5 @@
 domain: jenkins.io
-layout: go.kubebuilder.io/v3
+layout: go.kubebuilder.io/v4
 projectName: jenkins-operator
 repo: github.com/jenkinsci/kubernetes-operator
 resources:

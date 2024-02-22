@@ -25,7 +25,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: virtuslab/jenkins-operator:v0.7.1
+        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:

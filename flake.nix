@@ -4,8 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    go_15.url = "github:nixos/nixpkgs/4eccd6f731627ba5ad9915bcf600c9329a34ca78";
-    golangci.url = "github:nixos/nixpkgs/e912fb83d2155a393e7146da98cda0e455a80fb6";
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,12 +11,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, go_15, golangci, gomod2nix, ... }:
+  outputs = { self, nixpkgs, flake-utils, gomod2nix, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        go_15_pkgs = go_15.legacyPackages.${system};
-        golangci_pkgs = golangci.legacyPackages.${system};
         operatorVersion = builtins.readFile ./VERSION.txt;
         sdkVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).OPERATOR_SDK_VERSION);
         jenkinsLtsVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).LATEST_LTS_VERSION);
@@ -33,8 +29,8 @@
               pkgs.gnumake
               pkgs.wget
               pkgs.helm-docs
-              go_15_pkgs.go
-              golangci_pkgs.golangci-lint
+              pkgs.go_1_20
+              pkgs.golangci-lint
           ];
           shellHook = ''
               echo Operator Version ${operatorVersion}

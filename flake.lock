@@ -18,38 +18,6 @@
         "type": "github"
       }
     },
-    "go_15": {
-      "locked": {
-        "lastModified": 1610974077,
-        "narHash": "sha256-kfU2R7Q6eMU34VooazWvCqxOKwQOApCYh9TH79oZ8VA=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "4eccd6f731627ba5ad9915bcf600c9329a34ca78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "4eccd6f731627ba5ad9915bcf600c9329a34ca78",
-        "type": "github"
-      }
-    },
-    "golangci": {
-      "locked": {
-        "lastModified": 1593485095,
-        "narHash": "sha256-cgfJfZKqPgqQ1fdFWdpNnDEO2HmIVIDCvBTGke2LpnI=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e912fb83d2155a393e7146da98cda0e455a80fb6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e912fb83d2155a393e7146da98cda0e455a80fb6",
-        "type": "github"
-      }
-    },
     "gomod2nix": {
       "inputs": {
         "flake-utils": [
@@ -92,8 +60,6 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "go_15": "go_15",
-        "golangci": "golangci",
         "gomod2nix": "gomod2nix",
         "nixpkgs": "nixpkgs"
       }
