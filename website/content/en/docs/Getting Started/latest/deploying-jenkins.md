@@ -14,7 +14,7 @@ This document describes the procedure for deploying Jenkins.
 
 ## Prerequisites
 The Operator needs to have been deployed beforehand. The procedure for deploying Jenkins described here doesn't apply to
-installation of Operator via Helm chart unless `jenkins.enabled` was set to false. 
+installation of Operator via Helm chart unless `jenkins.enabled` was set to false.
 That’s because by default, installation via Helm chart also covers deploying Jenkins.
 
 
@@ -43,7 +43,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.319.1-lts-alpine
+        image: jenkins/jenkins:2.401.1-lts
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 12

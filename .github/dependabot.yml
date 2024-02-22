@@ -4,11 +4,25 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      golang:
+        patterns:
+          - "*"
+
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "/website"
     schedule:
       interval: "daily"
+    groups:
+      npm:
+        patterns:
+          - "*"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    groups:
+      actions:
+        patterns:
+          - "*"

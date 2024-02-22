@@ -1,0 +1,56 @@
+// For format details, see https://aka.ms/devcontainer.json
+{
+    "name": "Jenkins kubernetes operator devcontainer",
+    "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "enableNonRootDocker": "true",
+            "moby": "true"
+        },
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+            "version": "latest",
+            "helm": "latest",
+            "minikube": "none"
+        },
+        "ghcr.io/devcontainers/features/go:1": {
+            "version": "1.15",
+            "golangciLintVersion": "1.26.0"
+        },
+        "ghcr.io/mpriscella/features/kind:1": {
+            "version": "latest"
+        },
+        "ghcr.io/edouard-lopez/devcontainer-features/bats:0": {
+            "version": "latest"
+        },
+        "ghcr.io/brokenpip3/devcontainers-bats/bats-libs:0": {
+        }
+    },
+    // "forwardPorts": [],
+
+    "postCreateCommand": "go version",
+
+    // "postStartCommand": "nohup bash -c 'minikube start &' > minikube.log 2>&1",
+
+    // Configure tool-specific properties.
+    "customizations": {
+        "codespaces": {
+            "openFiles": [
+                "Makefile"
+               ]
+        },
+        // install some vscode extensions
+        "vscode": {
+            "extensions": [
+                "golang.Go",
+                "jetmartin.bats",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "budparr.language-hugo-vscode",
+                "GitHub.copilot",
+                "GitHub.copilot-chat"
+            ]
+        }
+    },
+
+    // "remoteUser": "root"
+}

@@ -56,16 +56,16 @@ func (r *reconcileUserConfiguration) ReconcileCasc() (reconcile.Result, error) {
 func (r *reconcileUserConfiguration) ReconcileOthers() (reconcile.Result, error) {
 	backupAndRestore := backuprestore.New(r.Configuration, r.logger)
 
+	if err := backupAndRestore.Restore(r.jenkinsClient); err != nil {
+		return reconcile.Result{}, err
+	}
+
 	result, err := r.ensureSeedJobs()
 	if err != nil {
 		return reconcile.Result{}, err
 	}
 	if result.Requeue {
 		return result, nil
-	}
-
-	if err := backupAndRestore.Restore(r.jenkinsClient); err != nil {
-		return reconcile.Result{}, err
 	}
 
 	if err := backupAndRestore.Backup(false); err != nil {

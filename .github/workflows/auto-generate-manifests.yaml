@@ -1,0 +1,60 @@
+name: Update k8s manifests
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'website/**'
+      - 'assets/**'
+      - 'backup/**'
+      - '*.md'
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  update-manifest:
+    name: Update k8s manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up env vars
+        run: |
+          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+
+      - name: Helm lint
+        run: make helm-lint
+
+        #TODO: add also the webhook part and understand if is necessary
+      - name: Helm update plain manifests
+        run: |
+          helm template --set fullnameOverride=jenkins-operator \
+          --set jenkins.enabled=false  \
+          --set jenkins.backup.enabled=false \
+          --set jenkins.backup.pvc.enabled=false \
+          --set operator.resources.limits.cpu=100m \
+          --set operator.resources.limits.memory=120Mi \
+          --set operator.resources.requests.cpu=100m \
+          --set operator.resources.requests.memory=120Mi \
+          chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
+          sed -i '/namespace: default/d' deploy/all-in-one-v1alpha2.yaml
+          sed -i 's/# Source: .*//g' deploy/all-in-one-v1alpha2.yaml
+          sed -i 's/app\.kubernetes\.io\/instance: release-name//g' deploy/all-in-one-v1alpha2.yaml
+          sed -i 's/app\.kubernetes\.io\/managed-by: Helm//g' deploy/all-in-one-v1alpha2.yaml
+          sed -i 's/helm\.sh\/chart: [a-zA-Z0-9]+//g' deploy/all-in-one-v1alpha2.yaml
+          sed -i '/^[[:space:]]*$/d' deploy/all-in-one-v1alpha2.yaml
+
+          cp chart/jenkins-operator/crds/jenkins-crd.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: Auto-updated Kubernetes Manifests
+          branch: manifest-deploy-update
+          title: Auto-updated Kubernetes Manifests
+          body: |
+            Auto-updated Kubernetes Manifests from master commit ${{ github.sha }}

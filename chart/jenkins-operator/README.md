@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: 0.6.2](https://img.shields.io/badge/Version-0.6.2-informational?style=flat-square) ![AppVersion: 0.7.1](https://img.shields.io/badge/AppVersion-0.7.1-informational?style=flat-square)
+![Version: 0.8.0-beta.2](https://img.shields.io/badge/Version-0.8.0--beta.2-informational?style=flat-square) ![AppVersion: 0.8.0-beta.2](https://img.shields.io/badge/AppVersion-0.8.0--beta.2-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -28,7 +28,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.env[2].name | string | `"BACKUP_COUNT"` |  |
 | jenkins.backup.env[2].value | string | `"3"` |  |
 | jenkins.backup.getLatestAction[0] | string | `"/home/user/bin/get-latest.sh"` |  |
-| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.1"` |  |
+| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.6"` |  |
 | jenkins.backup.interval | int | `30` |  |
 | jenkins.backup.makeBackupBeforePodDeletion | bool | `true` |  |
 | jenkins.backup.pvc.className | string | `""` |  |
@@ -52,7 +52,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.387.2-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.414.1-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
@@ -88,13 +88,14 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.seedJobAgentImage | string | `""` |  |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
+| jenkins.tolerations | list | `[]` |  |
 | jenkins.validateSecurityWarnings | bool | `false` |  |
 | jenkins.volumeMounts | list | `[]` |  |
 | jenkins.volumes[0].name | string | `"backup"` |  |
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0-beta"` |  |
+| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |

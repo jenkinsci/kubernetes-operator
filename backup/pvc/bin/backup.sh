@@ -6,7 +6,7 @@ set -eo pipefail
 [[ -z "${BACKUP_DIR}" ]] && echo "Required 'BACKUP_DIR' env not set" && exit 1;
 [[ -z "${JENKINS_HOME}" ]] && echo "Required 'JENKINS_HOME' env not set" && exit 1;
 BACKUP_TMP_DIR=$(mktemp -d)
-trap "test -d "${BACKUP_TMP_DIR}" && rm -fr "${BACKUP_TMP_DIR}"" EXIT ERR SIGINT SIGTERM
+trap "test -d "${BACKUP_TMP_DIR}" && rm -fr "${BACKUP_TMP_DIR}"" EXIT SIGINT SIGTERM
 
 backup_number=$1
 echo "Running backup"
@@ -15,12 +15,22 @@ echo "Running backup"
 # config.xml in child directories is state that should. For example-
 # branches/myorg/branches/myrepo/branches/master/config.xml should be retained while
 # branches/myorg/config.xml should not
-tar -C "${JENKINS_HOME}" -czf "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" --exclude jobs/*/workspace* --no-wildcards-match-slash --anchored --exclude jobs/*/config.xml -c jobs && \
-mv "${BACKUP_TMP_DIR}/${backup_number}.tar.gz" "${BACKUP_DIR}/${backup_number}.tar.gz"
+tar --zstd -C "${JENKINS_HOME}" -cf "${BACKUP_TMP_DIR}/${backup_number}.tar.zstd" \
+    --exclude jobs/*/workspace* \
+    --no-wildcards-match-slash --anchored \
+    --ignore-failed-read \
+    --exclude jobs/*/config.xml -c jobs || ret=$?
+
+if [[ "$ret" -eq 0 ]]; then
+  echo "Backup was completed without warnings"
+  mv "${BACKUP_TMP_DIR}/${backup_number}.tar.zstd" "${BACKUP_DIR}/${backup_number}.tar.zstd"
+elif [[ "$ret" -eq 1 ]]; then
+  echo "Backup was completed with some warnings"
+  mv "${BACKUP_TMP_DIR}/${backup_number}.tar.zstd" "${BACKUP_DIR}/${backup_number}.tar.zstd"
+fi
 
 rm -rf "${BACKUP_TMP_DIR}"
-
-[[ ! -s ${BACKUP_DIR}/${backup_number}.tar.gz ]] && echo "backup file '${BACKUP_DIR}/${backup_number}.tar.gz' is empty" && exit 1;
+[[ ! -s ${BACKUP_DIR}/${backup_number}.tar.zstd ]] && echo "backup file '${BACKUP_DIR}/${backup_number}.tar.zstd' is empty" && exit 1;
 
 echo Done
 exit 0

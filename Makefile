@@ -147,6 +147,7 @@ update-lts-version: ## Update the latest lts version
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' chart/jenkins-operator/values.yaml
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/e2e/test_utility.go
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/helm/helm_test.go
+	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' pkg/constants/constants.go
 
 .PHONY: run
 run: export WATCH_NAMESPACE = $(NAMESPACE)
@@ -387,11 +388,11 @@ ifndef BUILD_PRESENT
 bats-tests: container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 else
 bats-tests: ## Run bats tests
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p -x test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 endif
 
 .PHONY: crc-start
@@ -479,7 +480,7 @@ helm-release-latest: helm
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.111.3
+HUGO_VERSION = v0.113.0
 HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
 .PHONY: hugo
 hugo:

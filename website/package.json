@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/bep/tech-doc-hugo#readme",
   "devDependencies": {
-    "autoprefixer": "^9.8.8",
-    "postcss-cli": "^5.0.1"
+    "autoprefixer": "^10.4.17",
+    "postcss-cli": "^11.0.0"
   }
 }

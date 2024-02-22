@@ -2,6 +2,36 @@ apiVersion: v1
 entries:
   jenkins-operator:
   - apiVersion: v2
+    appVersion: 0.8.0
+    created: "2023-09-13T06:54:41.369295961Z"
+    dependencies:
+    - condition: webhook.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.5.1
+    description: Kubernetes native operator which fully manages Jenkins on Kubernetes
+    digest: da8ae04166cb1b64a9dd3d741c6a50d63846ebe8e2e92f09313ad3c6a0dd9ca4
+    icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
+    name: jenkins-operator
+    urls:
+    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.8.0.tgz
+    version: 0.8.0
+  - apiVersion: v2
+    appVersion: 0.8.0-beta.2
+    created: "2023-06-30T21:22:53.308590035Z"
+    dependencies:
+    - condition: webhook.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.5.1
+    description: Kubernetes native operator which fully manages Jenkins on Kubernetes
+    digest: b2502f91dffa1136190a8a98d73ac997c70387e100d79200b7403039ca98411e
+    icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
+    name: jenkins-operator
+    urls:
+    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.8.0-beta.2.tgz
+    version: 0.8.0-beta.2
+  - apiVersion: v2
     appVersion: v0.8.0-beta
     created: "2023-04-17T22:11:04.706959723Z"
     dependencies:
@@ -348,4 +378,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-04-17T22:11:04.68789848Z"
+generated: "2023-09-13T06:54:41.354056045Z"

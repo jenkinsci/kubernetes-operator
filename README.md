@@ -1,11 +1,16 @@
 # Jenkins Operator
 
-[![Version](https://img.shields.io/badge/version-v0.7.1-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.7.1)
+[![Version](https://img.shields.io/badge/version-v0.8.0-brightgreen.svg)](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.8.0)
 [![Build status](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml/badge.svg)](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jenkinsci/kubernetes-operator "Go Report Card")](https://goreportcard.com/report/github.com/jenkinsci/kubernetes-operator)
 [![Gitter chat](https://badges.gitter.im/jenkinsci/kubernetes-operator.png)](https://gitter.im/jenkinsci/kubernetes-operator)
 
-![logo](/assets/jenkins_gopher_wide.png)
+<a href="">
+  <picture>
+     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins_gopher_wide_exp_dark.png">
+     <img src="https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins_gopher_wide_exp.png">
+  </picture>
+</a>
 
 ## What's the Jenkins Operator?
 

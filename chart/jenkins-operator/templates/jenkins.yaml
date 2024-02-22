@@ -95,6 +95,9 @@ spec:
     {{- with .Values.jenkins.nodeSelector }}
     nodeSelector: {{ toYaml . | nindent 6 }}
     {{- end }}
+    {{- with .Values.jenkins.tolerations }}
+    tolerations: {{ toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.jenkins.annotations }}
     annotations: {{ toYaml . | nindent 6 }}
     {{- end }}
@@ -134,7 +137,7 @@ spec:
       {{- if .Values.jenkins.backup.enabled }}
       - name: {{ .Values.jenkins.backup.containerName }}
         image: {{ .Values.jenkins.backup.image }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }} 
         {{- with .Values.jenkins.backup.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}

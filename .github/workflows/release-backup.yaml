@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Check envs
         run: make -C backup/pvc check-env
@@ -40,11 +40,13 @@ jobs:
       - name: Bump the version
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         shell: bash
-        run: make -C backup/pvc sembump && make -C backup/pvc bump-version
+        run: |
+          make -C backup/pvc sembump
+          make -C backup/pvc bump-version
 
       - name: Login to Quay.io
         if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}

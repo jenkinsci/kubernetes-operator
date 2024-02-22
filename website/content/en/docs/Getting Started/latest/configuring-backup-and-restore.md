@@ -7,8 +7,8 @@ description: >
   Prevent loss of job history
 ---
 
-> Because of Jenkins Operator's architecture, the configuration of Jenkins should be done using ConfigurationAsCode 
-> or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration 
+> Because of Jenkins Operator's architecture, the configuration of Jenkins should be done using ConfigurationAsCode
+> or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
 > up. Therefore, the backup script makes a copy of jobs history only.
 
 Backup and restore is done by a container sidecar.
@@ -54,7 +54,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.277.4-lts-alpine
+        image: jenkins/jenkins:2.401.1-lts
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -71,7 +71,7 @@ spec:
             value: /jenkins-home
           - name: BACKUP_COUNT
             value: "3" # keep only the 2 most recent backups
-        image: virtuslab/jenkins-operator-backup-pvc:v0.1.1 # look at backup/pvc directory
+        image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.3 # look at backup/pvc directory
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /jenkins-home # Jenkins home volume
