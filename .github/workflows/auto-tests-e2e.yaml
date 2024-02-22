@@ -72,7 +72,7 @@ jobs:
         shell: bash
         continue-on-error: true
         run: |
-          randomns=$(kubectl get ns| grep -i 'ns-[0-9]\+' |cut -d ' ' -f 1)
+          randomns=$(kubectl get ns| grep -i 'ns[0-9]\+' |cut -d ' ' -f 1)
           kubectl get pods -n ${randomns}
           kubectl get events -n ${randomns}
           kubectl logs -l app=jenkins-operator -n ${randomns}
