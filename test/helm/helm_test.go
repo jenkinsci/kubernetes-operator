@@ -80,9 +80,9 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 			{Name: "github", Version: "1.36.0"},
 		}
 		validPlugins = []v1alpha2.Plugin{
-			{Name: "simple-theme-plugin", Version: "136.v23a_15f86c53d"},
-			{Name: "audit-trail", Version: "3.11"},
-			{Name: "github", Version: "1.37.3.1"},
+			{Name: "simple-theme-plugin", Version: "176.v39740c03a_a_f5"},
+			{Name: "audit-trail", Version: "361.v82cde86c784e"},
+			{Name: "github", Version: "1.38.0"},
 		}
 	)
 
