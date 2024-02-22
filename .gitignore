@@ -94,3 +94,6 @@ testbin/*
 
 ### Bats
 chart/jenkins-operator/deploy.tmp
+
+### Nix
+result

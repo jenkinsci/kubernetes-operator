@@ -144,6 +144,7 @@ install: ## Installs the executable
 .PHONY: update-lts-version
 update-lts-version: ## Update the latest lts version
 	@echo "+ $@"
+	echo $(LATEST_LTS_VERSION)
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' chart/jenkins-operator/values.yaml
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/e2e/test_utility.go
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/helm/helm_test.go

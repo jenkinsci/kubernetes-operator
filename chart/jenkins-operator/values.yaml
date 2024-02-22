@@ -36,7 +36,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.414.1-lts
+  image: jenkins/jenkins:2.440.1-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -90,17 +90,17 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 4029.v5712230ccb_f8
+  #   version: 4186.v1d804571d5d4
   # - name: workflow-job
-  #   version: 1342.v046651d5b_dfe
+  #   version: 1385.vb_58b_86ea_fff1
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
   #   version: 5.2.1
   # - name: job-dsl
-  #   version: "1.85"
+  #   version: "1.87"
   # - name: configuration-as-code
-  #   version: 1647.ve39ca_b_829b_42
+  #   version: 11775.v810dc950b_514
   # - name: kubernetes-credentials-provider
   #   version: 1.234.vf3013b_35f5b_a
 
@@ -135,7 +135,7 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
-  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:4.10-3 will be used.
+  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3206.vb_15dcf73f6a_9-3 will be used.
   seedJobAgentImage: ""
 
   # Resource limit/request for Jenkins
