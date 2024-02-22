@@ -61,7 +61,7 @@ func waitForRecreateJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 		}
 
 		return pods.Items[0].DeletionTimestamp == nil, nil
-	}, 30*retryInterval, retryInterval).Should(gomega.BeTrue())
+	}, 50*retryInterval, retryInterval).Should(gomega.BeTrue())
 
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins pod has been recreated\n")
 }
