@@ -374,7 +374,7 @@ minikube-destroy: ## Stop and destroy minikube
 .PHONY: kind-setup
 kind-setup: ## Setup kind cluster
 	@echo "+ $@"
-	kind create cluster --name $(KIND_CLUSTER_NAME)
+	kind create cluster --config kind-cluster.yaml --name $(KIND_CLUSTER_NAME)
 
 .PHONY: kind-clean
 kind-clean: ## Delete kind cluster
