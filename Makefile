@@ -107,6 +107,7 @@ ifeq ($(strip $(HAS_HELM)),)
     rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
     rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
 else
+	mkdir -p $(PROJECT_DIR)/bin 
 	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
 endif
 
