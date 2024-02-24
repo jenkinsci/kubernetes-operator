@@ -94,12 +94,45 @@ e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
 
+## HELM Section
+
+.PHONY: helm
+HAS_HELM := $(shell command -v helm 2> /dev/null)
+helm: ## Download helm if it's not present, otherwise symlink
+	@echo "+ $@"
+ifeq ($(strip $(HAS_HELM)),)
+    mkdir -p $(PROJECT_DIR)/bin
+    curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
+    mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
+    rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
+    rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
+else
+    mkdir -p $(PROJECT_DIR)/bin
+	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
+endif
+
+.PHONY: helm-lint
+helm-lint: helm
+	bin/helm lint chart/jenkins-operator
+
+.PHONY: helm-release-latest
+helm-release-latest: helm
+	mkdir -p /tmp/jenkins-operator-charts
+	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
+	cd chart && ../bin/helm package jenkins-operator
+	mv chart/jenkins-operator-*.tgz chart/jenkins-operator/
+	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/ --merge chart/index.yaml
+	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
+
 .PHONY: helm-e2e
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 
 helm-e2e: helm container-runtime-build-amd64 ## Runs helm e2e tests, you can use EXTRA_ARGS
+	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
+
+## CODE CHECKS section
 
 .PHONY: vet
 vet: ## Verifies `go vet` passes
@@ -155,7 +188,7 @@ run: export WATCH_NAMESPACE = $(NAMESPACE)
 run: export OPERATOR_NAME = $(NAME)
 run: fmt vet install-crds build ## Run the executable, you can use EXTRA_ARGS
 	@echo "+ $@"
-ifeq ($(KUBERNETES_PROVIDER),minikube)
+ifeq ($(KUBERNETES_PROVIDER),kind)
 	kubectl config use-context $(KUBECTL_CONTEXT)
 endif
 ifeq ($(KUBERNETES_PROVIDER),crc)
@@ -294,12 +327,6 @@ container-runtime-run: ## Run the container in docker, you can use EXTRA_ARGS
 		--volume $(HOME)/.kube/config:/home/jenkins-operator/.kube/config \
 		quay.io/${QUAY_ORGANIZATION}/$(QUAY_REGISTRY):$(GITCOMMIT) /usr/bin/jenkins-operator $(OPERATOR_ARGS)
 
-.PHONY: minikube-run
-minikube-run: export WATCH_NAMESPACE = $(NAMESPACE)
-minikube-run: export OPERATOR_NAME = $(NAME)
-minikube-run: minikube-start run ## Run the operator locally and use minikube as Kubernetes cluster, you can use OPERATOR_ARGS
-	@echo "+ $@"
-
 .PHONY: crc-run
 crc-run: export WATCH_NAMESPACE = $(NAMESPACE)
 crc-run: export OPERATOR_NAME = $(NAME)
@@ -322,14 +349,6 @@ ifndef HAS_GEN_CRD_API_REFERENCE_DOCS
 endif
 	$(GEN_CRD_API)/$(GEN_CRD_API) -config gen-crd-api-config.json -api-dir $(PKG)/api/$(API_VERSION) -template-dir $(GEN_CRD_API)/template -out-file documentation/$(VERSION)/jenkins-$(API_VERSION)-scheme.md
 
-.PHONY: check-minikube
-check-minikube: ## Checks if KUBERNETES_PROVIDER is set to minikube
-	@echo "+ $@"
-	@echo "KUBERNETES_PROVIDER '$(KUBERNETES_PROVIDER)'"
-ifneq ($(KUBERNETES_PROVIDER),minikube)
-	$(error KUBERNETES_PROVIDER not set to 'minikube')
-endif
-
 .PHONY: check-crc
 check-crc: ## Checks if KUBERNETES_PROVIDER is set to crc
 	@echo "+ $@"
@@ -338,44 +357,10 @@ ifneq ($(KUBERNETES_PROVIDER),crc)
 	$(error KUBERNETES_PROVIDER not set to 'crc')
 endif
 
-.PHONY: helm
-HAS_HELM := $(shell which $(PROJECT_DIR)/bin/helm)
-helm: ## Download helm if it's not present
-	@echo "+ $@"
-ifndef HAS_HELM
-	mkdir -p $(PROJECT_DIR)/bin
-	curl -Lo bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
-endif
-
-.PHONY: minikube
-HAS_MINIKUBE := $(shell which $(PROJECT_DIR)/bin/minikube)
-minikube: ## Download minikube if it's not present
-	@echo "+ $@"
-ifndef HAS_MINIKUBE
-	mkdir -p $(PROJECT_DIR)/bin
-	wget -O $(PROJECT_DIR)/bin/minikube https://github.com/kubernetes/minikube/releases/download/v$(MINIKUBE_VERSION)/minikube-$(PLATFORM)-amd64
-	chmod +x $(PROJECT_DIR)/bin/minikube
-endif
-
-.PHONY: minikube-start
-minikube-start: minikube check-minikube ## Start minikube
-	@echo "+ $@"
-	bin/minikube status && exit 0 || \
-	bin/minikube start --kubernetes-version $(MINIKUBE_KUBERNETES_VERSION) --dns-domain=$(CLUSTER_DOMAIN) --extra-config=kubelet.cluster-domain=$(CLUSTER_DOMAIN) --driver=$(MINIKUBE_DRIVER) --memory $(MEMORY_AMOUNT) --cpus $(CPUS_NUMBER)
-
-.PHONY: minikube-destroy
-minikube-destroy: ## Stop and destroy minikube
-	@echo "+ $@"
-	bin/minikube stop
-	bin/minikube delete
-
 .PHONY: kind-setup
 kind-setup: ## Setup kind cluster
 	@echo "+ $@"
-	kind create cluster --name $(KIND_CLUSTER_NAME)
+	kind create cluster --config kind-cluster.yaml --name $(KIND_CLUSTER_NAME)
 
 .PHONY: kind-clean
 kind-clean: ## Delete kind cluster
@@ -464,20 +449,6 @@ endif
 	go mod vendor -v
 	@echo
 
-.PHONY: helm-lint
-helm-lint: helm
-	@echo "+ $@"
-	bin/helm lint chart/jenkins-operator
-
-.PHONY: helm-release-latest
-helm-release-latest: helm
-	@echo "+ $@"
-	mkdir -p /tmp/jenkins-operator-charts
-	mv chart/jenkins-operator/*.tgz /tmp/jenkins-operator-charts
-	cd chart && ../bin/helm package jenkins-operator
-	mv chart/jenkins-operator-*.tgz chart/jenkins-operator/
-	bin/helm repo index chart/ --url https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/ --merge chart/index.yaml
-	mv /tmp/jenkins-operator-charts/*.tgz chart/jenkins-operator/
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
@@ -601,12 +572,10 @@ kubebuilder:
 	source ${ENVTEST_ASSETS_DIR}/setup-envtest.sh; fetch_envtest_tools $(ENVTEST_ASSETS_DIR); setup_envtest_env $(ENVTEST_ASSETS_DIR);
 
 # install cert-manager v1.5.1
-.PHONY: install-cert-manager
-install-cert-manager: minikube-start
+install-cert-manager: kind-setup
 	kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
 
-.PHONY: uninstall-cert-manager
-uninstall-cert-manager: minikube-start
+uninstall-cert-manager: kind-setup
 	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
 
 # Deploy the operator locally along with webhook using helm charts

@@ -19,10 +19,6 @@ on:
       - 'backup/**'
       - '*.md'
 
-env:
-  MINIKUBE_CPUS_NUMBER: 2
-  MINIKUBE_MEMORY_AMOUNT: 6144
-
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
@@ -35,11 +31,9 @@ jobs:
       - name: Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
-          echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTUPDATENOTIFICATION=false" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTREPORTERRORPROMPT=false" >> $GITHUB_ENV
           echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
@@ -53,20 +47,21 @@ jobs:
       - name: Verify code formatting
         run: make verify
 
+      - name: Kind setup
+        uses: helm/kind-action@v1.9.0
+        with:
+          cluster_name: ${{env.KIND_CLUSTER_NAME}}
+          config: kind-cluster.yaml
+
       - name: Prepare environment for e2e
         run: |
           sudo apt-get update
           sudo apt-get install socat
-          sudo mkdir -p $HOME/.kube $HOME/.minikube
-          sudo chown -R $USER $HOME/.kube $HOME/.minikube
-          make minikube-start \
-            MINIKUBE_DRIVER='docker' \
-            MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
-            CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
+          sudo mkdir -p $HOME/.kube
+          sudo chown -R $USER $HOME/.kube
 
       - name: Jenkins Operator - Helm Chart tests
         run: |
           git reset --hard
           make helm-lint
-          eval $(bin/minikube docker-env)
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'

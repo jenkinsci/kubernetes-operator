@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	retryInterval = time.Second * 5
+	retryInterval = time.Second * 10
 )
 
 func WaitForJenkinsBaseConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
@@ -53,6 +53,8 @@ func waitForRecreateJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 		}
 		pods := &corev1.PodList{}
 		err := K8sClient.List(context.TODO(), pods, lo)
+		// debug print
+		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Pods: %+v\n", pods)
 		if err != nil {
 			return false, err
 		}

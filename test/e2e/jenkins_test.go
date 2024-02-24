@@ -145,6 +145,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 			Service: v1alpha2.Service{
 				Type: corev1.ServiceTypeNodePort,
 				Port: constants.DefaultHTTPPortInt32,
+				NodePort: 30303,
 			},
 		},
 	}
@@ -239,10 +240,12 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
+	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins pod: %+v\n", jenkinsPod)
 	Expect(K8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
 
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
+		fmt.Printf("Jenkins pod deletion timestamp: %v\n", jenkinsPod.DeletionTimestamp)
 		return jenkinsPod.DeletionTimestamp != nil, nil
 	}, 45*retryInterval, retryInterval).Should(BeTrue())
 
