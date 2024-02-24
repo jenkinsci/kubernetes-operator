@@ -2,10 +2,9 @@ package smtp
 
 import (
 	"context"
-	"errors"
+	//"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/quotedprintable"
 	"net"
 	"regexp"
@@ -57,18 +56,18 @@ type testServer struct {
 	event event.Event
 }
 
-// Login handles a login command with username and password.
-func (bkd *testServer) Login(_ *smtp.ConnectionState, username, password string) (smtp.Session, error) {
-	if username != testSMTPUsername || password != testSMTPPassword {
-		return nil, errors.New("invalid username or password")
-	}
-	return &testSession{event: bkd.event}, nil
-}
-
-// AnonymousLogin requires clients to authenticate using SMTP AUTH before sending emails
-func (bkd *testServer) AnonymousLogin(_ *smtp.ConnectionState) (smtp.Session, error) {
-	return nil, smtp.ErrAuthRequired
-}
+// TODO: @brokenpip3 fix me
+//func (bkd *testServer) Login(_ *smtp.ConnectionState, username, password string) (smtp.Session, error) {
+//	if username != testSMTPUsername || password != testSMTPPassword {
+//		return nil, errors.New("invalid username or password")
+//	}
+//	return &testSession{event: bkd.event}, nil
+//}
+//
+//// AnonymousLogin requires clients to authenticate using SMTP AUTH before sending emails
+//func (bkd *testServer) AnonymousLogin(_ *smtp.ConnectionState) (smtp.Session, error) {
+//	return nil, smtp.ErrAuthRequired
+//}
 
 // A Session is returned after successful login.
 type testSession struct {

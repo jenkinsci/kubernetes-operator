@@ -117,7 +117,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 							},
 						},
 						ReadinessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -131,7 +131,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 							PeriodSeconds:       int32(5),
 						},
 						LivenessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -210,8 +210,8 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 				},
 			},
 			Service: v1alpha2.Service{
-				Type: corev1.ServiceTypeNodePort,
-				Port: constants.DefaultHTTPPortInt32,
+				Type:     corev1.ServiceTypeNodePort,
+				Port:     constants.DefaultHTTPPortInt32,
 				NodePort: 30303,
 			},
 		},

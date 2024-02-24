@@ -97,7 +97,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 							},
 						},
 						ReadinessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -111,7 +111,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 							PeriodSeconds:       int32(1),
 						},
 						LivenessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -165,8 +165,8 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 			},
 			SeedJobs: seedJobs,
 			Service: v1alpha2.Service{
-				Type: corev1.ServiceTypeNodePort,
-				Port: constants.DefaultHTTPPortInt32,
+				Type:     corev1.ServiceTypeNodePort,
+				Port:     constants.DefaultHTTPPortInt32,
 				NodePort: 30303,
 			},
 			Roles: []rbacv1.RoleRef{
