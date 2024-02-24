@@ -19,10 +19,6 @@ on:
       - 'backup/**'
       - '*.md'
 
-env:
-  MINIKUBE_CPUS_NUMBER: 2
-  MINIKUBE_MEMORY_AMOUNT: 6144
-
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
@@ -30,20 +26,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
-          echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTUPDATENOTIFICATION=false" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTREPORTERRORPROMPT=false" >> $GITHUB_ENV
-          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
-          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -53,16 +47,30 @@ jobs:
       - name: Verify code formatting
         run: make verify
 
+      - name: Kind setup
+        uses: helm/kind-action@v1.9.0
+        with:
+          cluster_name: ${{env.KIND_CLUSTER_NAME}}
+          config: kind-cluster.yaml
+
       - name: Prepare environment for e2e
         run: |
           sudo apt-get update
           sudo apt-get install socat
-          sudo mkdir -p $HOME/.kube $HOME/.minikube
-          sudo chown -R $USER $HOME/.kube $HOME/.minikube
-          make minikube-start \
-            MINIKUBE_DRIVER='docker' \
-            MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
-            CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
+          sudo mkdir -p $HOME/.kube
+          sudo chown -R $USER $HOME/.kube
+
+      - name: Jenkins Operator - e2e - list tests
+        run: make e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.dryRun'
 
       - name: Jenkins Operator - e2e
         run: make e2e E2E_TEST_ARGS='-ginkgo.v'
+
+      - name: Debug
+        if: failure()
+        shell: bash
+        continue-on-error: true
+        run: |
+          randomns=$(kubectl get ns| grep -i 'ns[0-9]\+' |cut -d ' ' -f 1)
+          kubectl get pods -n ${randomns}
+          kubectl get events -n ${randomns}

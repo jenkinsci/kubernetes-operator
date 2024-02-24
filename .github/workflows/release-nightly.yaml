@@ -8,41 +8,33 @@ on:
         description: "Flag for skipping the tests. If set to true (without quotation marks), the workflow will skip tests and go straight to releasing the nightly build. Use with caution!"
         required: false
 
-env:
-  MINIKUBE_CPUS_NUMBER: 2
-  MINIKUBE_MEMORY_AMOUNT: 6144
-
 jobs:
   publish-image:
     name: Publish nightly snapshot
     runs-on: ubuntu-latest
     steps:
       - name: Prep - check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Prep - Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
-          echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTUPDATENOTIFICATION=false" >> $GITHUB_ENV
-          echo "MINIKUBE_WANTREPORTERRORPROMPT=false" >> $GITHUB_ENV
-          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
-          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env)" >> $GITHUB_ENV
-          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env)" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
-      - name: Prep - setup BATS
+      - name: Prep - setup Bats and bats libs
         if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: mig4/setup-bats@v1
+        uses: bats-core/bats-action@1.5.5
         with:
-          bats-version: 1.9.0
-
-      - name: Prep - setup Bats libs
-        if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: brokenpip3/setup-bats-libs@0.1.0
+          support-path: "${{ github.workspace }}/.bats/bats-support"
+          assert-path: "${{ github.workspace }}/.bats/bats-assert"
+          detik-path: "${{ github.workspace }}/.bats/bats-detik"
+          file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Prep - go environment
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -57,12 +49,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install socat
-          sudo mkdir -p $HOME/.kube $HOME/.minikube
-          sudo chown -R $USER $HOME/.kube $HOME/.minikube
-          make minikube-start \
-            MINIKUBE_DRIVER='docker'  \
-            MEMORY_AMOUNT=${{ env.MINIKUBE_MEMORY_AMOUNT }} \
-            CPUS_NUMBER=${{ env.MINIKUBE_CPUS_NUMBER }}
+          sudo mkdir -p $HOME/.kube
+          sudo chown -R $USER $HOME/.kube
+
+      - name: Prep - Kind setup
+        if: ${{ github.event.inputs.skipTests != 'true' }}
+        uses: helm/kind-action@v1.9.0
+        with:
+          cluster_name: ${{env.KIND_CLUSTER_NAME}}
+          config: kind-cluster.yaml
 
       - name: Test - e2e
         if: ${{ github.event.inputs.skipTests != 'true' }}
@@ -73,26 +68,14 @@ jobs:
         run: |
           git reset --hard
           make helm-lint
-          eval $(bin/minikube docker-env)
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
-
-      - name: Prep - Destroy minikube
-        if: ${{ github.event.inputs.skipTests != 'true' }}
-        run: |
-          make minikube-destroy
-
-      - name: Prep - Kind setup
-        if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: helm/kind-action@v1.5.0
-        with:
-          cluster_name: ${{env.KIND_CLUSTER_NAME}}
 
       - name: Test - bats
         if: ${{ github.event.inputs.skipTests != 'true' }}
         run: make bats-tests
 
       - name: Post - Login to Quay.io
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}

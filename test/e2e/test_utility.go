@@ -21,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
-const JenkinsTestImage = "jenkins/jenkins:2.414.1-lts"
+const JenkinsTestImage = "jenkins/jenkins:2.440.1-lts"
 
 var (
 	Cfg       *rest.Config
@@ -147,10 +147,10 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 					},
 				},
 				Plugins: []v1alpha2.Plugin{
-					{Name: "audit-trail", Version: "3.11"},
-					{Name: "simple-theme-plugin", Version: "136.v23a_15f86c53d"},
-					{Name: "github", Version: "1.36.0"},
-					{Name: "devoptics", Version: "1.1973", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/1.1973/devoptics.hpi"},
+					{Name: "audit-trail", Version: "361.v82cde86c784e"},
+					{Name: "simple-theme-plugin", Version: "176.v39740c03a_a_f5"},
+					{Name: "github", Version: "1.38.0"},
+					{Name: "devoptics", Version: "2.0", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/2.0/devoptics.hpi"},
 				},
 				PriorityClassName: priorityClassName,
 				NodeSelector:      map[string]string{"kubernetes.io/os": "linux"},
@@ -167,6 +167,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 			Service: v1alpha2.Service{
 				Type: corev1.ServiceTypeNodePort,
 				Port: constants.DefaultHTTPPortInt32,
+				NodePort: 30303,
 			},
 			Roles: []rbacv1.RoleRef{
 				{

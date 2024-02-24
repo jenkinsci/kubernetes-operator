@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := /usr/bin/env bash
 PATH  := $(GOPATH)/bin:$(PATH)
 
 OSFLAG 				:=
@@ -14,12 +14,17 @@ else
 	endif
 endif
 
-include config.base.env
+define strip_quotes
+$(shell echo $(1) | sed -e 's/^"//' -e 's/"$$//')
+endef
 
 # Import config
 # You can change the default config with `make config="config_special.env" build`
-config ?= config.minikube.env
+config ?= config.kind.env
 include $(config)
+
+include config.base.env
+$(foreach var,$(shell cat config.base.env),$(eval $(call strip_quotes,$(var))))
 
 # Set an output prefix, which is the local directory if not specified
 PREFIX?=$(shell pwd)

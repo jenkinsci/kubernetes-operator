@@ -125,10 +125,10 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 					},
 				},
 				Plugins: []v1alpha2.Plugin{
-					{Name: "audit-trail", Version: "3.11"},
-					{Name: "simple-theme-plugin", Version: "136.v23a_15f86c53d"},
-					{Name: "github", Version: "1.36.0"},
-					{Name: "devoptics", Version: "1.1973", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/1.1973/devoptics.hpi"},
+					{Name: "audit-trail", Version: "361.v82cde86c784e"},
+					{Name: "simple-theme-plugin", Version: "176.v39740c03a_a_f5"},
+					{Name: "github", Version: "1.38.0"},
+					{Name: "devoptics", Version: "2.0", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/2.0/devoptics.hpi"},
 				},
 				PriorityClassName: priorityClassName,
 				NodeSelector:      map[string]string{"kubernetes.io/os": "linux"},
@@ -145,6 +145,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 			Service: v1alpha2.Service{
 				Type: corev1.ServiceTypeNodePort,
 				Port: constants.DefaultHTTPPortInt32,
+				NodePort: 30303,
 			},
 		},
 	}
@@ -239,10 +240,12 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
+	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins pod: %+v\n", jenkinsPod)
 	Expect(K8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
 
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
+		fmt.Printf("Jenkins pod deletion timestamp: %v\n", jenkinsPod.DeletionTimestamp)
 		return jenkinsPod.DeletionTimestamp != nil, nil
 	}, 45*retryInterval, retryInterval).Should(BeTrue())
 

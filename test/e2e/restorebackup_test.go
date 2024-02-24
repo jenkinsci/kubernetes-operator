@@ -53,7 +53,7 @@ func createPVC(namespace string) {
 			Namespace: namespace,
 		},
 		Spec: corev1.PersistentVolumeClaimSpec{
-			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
 			Resources: corev1.ResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse("1Gi"),
@@ -212,6 +212,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 			Service: v1alpha2.Service{
 				Type: corev1.ServiceTypeNodePort,
 				Port: constants.DefaultHTTPPortInt32,
+				NodePort: 30303,
 			},
 		},
 	}
