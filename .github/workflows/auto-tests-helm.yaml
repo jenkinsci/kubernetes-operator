@@ -33,6 +33,7 @@ jobs:
           echo "GO111MODULE=on" >> $GITHUB_ENV
           echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
