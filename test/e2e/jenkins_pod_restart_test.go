@@ -47,7 +47,7 @@ var _ = Describe("Jenkins controller", func() {
 	})
 
 	Context("when restarting Jenkins master pod", func() {
-		It("new Jenkins Master pod should be created", func() {
+		It("new Jenkins pod should be created after a restart", func() {
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
@@ -96,7 +96,7 @@ var _ = Describe("Jenkins controller", func() {
 	})
 
 	Context("when running Jenkins safe restart", func() {
-		It("authorization strategy is not overwritten", func() {
+		It("authorization strategy is not overwritten after a restart", func() {
 			// TODO: @brokenpip3 temporary disable this flaky test
 			Skip("Temporary skipping this test")
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
