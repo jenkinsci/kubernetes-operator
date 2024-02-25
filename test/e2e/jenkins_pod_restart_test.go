@@ -99,16 +99,13 @@ var _ = Describe("Jenkins controller", func() {
 		It("authorization strategy is not overwritten after a restart", func() {
 			// TODO: @brokenpip3 temporary disable this flaky test
 			Skip("Temporary skipping this test")
-			WaitForJenkinsBaseConfigurationToComplete(jenkins)
 			WaitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()
 			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
-
 			err := jenkinsClient.SafeRestart()
 			Expect(err).NotTo(HaveOccurred())
 			waitForJenkinsSafeRestart(jenkinsClient)
-
 			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
 		})
 	})
