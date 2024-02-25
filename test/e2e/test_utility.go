@@ -165,8 +165,8 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 			},
 			SeedJobs: seedJobs,
 			Service: v1alpha2.Service{
-				Type: corev1.ServiceTypeNodePort,
-				Port: constants.DefaultHTTPPortInt32,
+				Type:     corev1.ServiceTypeNodePort,
+				Port:     constants.DefaultHTTPPortInt32,
 				NodePort: 30303,
 			},
 			Roles: []rbacv1.RoleRef{

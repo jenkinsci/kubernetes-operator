@@ -210,8 +210,8 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 				},
 			},
 			Service: v1alpha2.Service{
-				Type: corev1.ServiceTypeNodePort,
-				Port: constants.DefaultHTTPPortInt32,
+				Type:     corev1.ServiceTypeNodePort,
+				Port:     constants.DefaultHTTPPortInt32,
 				NodePort: 30303,
 			},
 		},
