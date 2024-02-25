@@ -61,7 +61,7 @@ jobs:
     name: ${{ matrix.test }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.create-tests-list.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.create-helm-list.outputs.matrix) }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4

@@ -1,4 +1,4 @@
-name: E2e tests
+name: e2e tests
 on:
   push:
     branches:
@@ -61,7 +61,7 @@ jobs:
     name: ${{ matrix.test }}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.create-tests-list.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.create-e2e-list.outputs.matrix) }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
