@@ -33,6 +33,11 @@
               pkgs.gnumake
               pkgs.wget
               pkgs.helm-docs
+              (pkgs.writeShellApplication {
+                name = "make_matrix";
+                runtimeInputs = with pkgs; [ bash gnugrep gawk ];
+                text = builtins.readFile ./test/make_matrix_ginkgo.sh;
+              })
               go_15_pkgs.go
               golangci_pkgs.golangci-lint
           ];
