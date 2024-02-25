@@ -1,4 +1,4 @@
-name: e2e tests
+name: E2e tests
 on:
   push:
     branches:
@@ -27,9 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: matrix
-      run: |
-        script=$(./test/make_matrix_ginkgo.sh e2e)
-        echo "matrix=${script}" >> $GITHUB_OUTPUT
+        run: |
+          script=$(./test/make_matrix_ginkgo.sh e2e)
+          echo "matrix=${script}" >> $GITHUB_OUTPUT
 
   verify-code:
     runs-on: ubuntu-latest
@@ -59,6 +59,9 @@ jobs:
     needs: [create-e2e-list, verify-code]
     if: github.event.pull_request.draft == false
     name: ${{ matrix.test }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.create-tests-list.outputs.matrix) }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -97,6 +100,7 @@ jobs:
           TLINE: ${{ matrix.line }}
         run: |
           git reset --hard
+          printf "\n \n > Running test: %s from file: $s line: %s\n" "${TNAME}" "${TFILE}" "${TLINE}"
           make e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.focus="${TNAME}"'
 
       - name: Debug

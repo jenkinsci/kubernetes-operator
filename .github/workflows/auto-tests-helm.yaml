@@ -104,3 +104,12 @@ jobs:
           make helm-lint
           printf "\n \n > Running test: %s from file: $s line: %s\n" "${TNAME}" "${TFILE}" "${TLINE}"
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.focus="${TNAME}"'
+
+      - name: Debug
+        if: failure()
+        shell: bash
+        continue-on-error: true
+        run: |
+          randomns=$(kubectl get ns| grep -i 'ns[0-9]\+' |cut -d ' ' -f 1)
+          kubectl get pods -n ${randomns}
+          kubectl get events -n ${randomns}
