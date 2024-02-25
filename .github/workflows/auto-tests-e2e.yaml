@@ -1,4 +1,4 @@
-name: Run e2e tests
+name: e2e tests
 on:
   push:
     branches:
@@ -20,20 +20,27 @@ on:
       - '*.md'
 
 jobs:
-  run-tests:
-    if: github.event.pull_request.draft == false
-    name: Run automated tests
+  create-e2e-list:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - id: matrix
+      run: |
+        script=$(./test/make_matrix_ginkgo.sh e2e)
+        echo "matrix=${script}" >> $GITHUB_OUTPUT
+
+  verify-code:
+    runs-on: ubuntu-latest
+    needs: [create-e2e-list]
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
           echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
-          echo "HELM_VERSION=v$(sed -n 's/HELM_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
-          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
@@ -47,6 +54,30 @@ jobs:
       - name: Verify code formatting
         run: make verify
 
+  run-e2e-tests:
+    runs-on: ubuntu-latest
+    needs: [create-e2e-list, verify-code]
+    if: github.event.pull_request.draft == false
+    name: ${{ matrix.test }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up env vars
+        run: |
+          echo "GO111MODULE=on" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
+
+      - name: Prepare go environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Ensure Golang runtime dependencies
+        run: make go-dependencies
+
       - name: Kind setup
         uses: helm/kind-action@v1.9.0
         with:
@@ -55,16 +86,18 @@ jobs:
 
       - name: Prepare environment for e2e
         run: |
-          sudo apt-get update
-          sudo apt-get install socat
+          sudo apt-get update && sudo apt-get install -y socat
           sudo mkdir -p $HOME/.kube
           sudo chown -R $USER $HOME/.kube
 
-      - name: Jenkins Operator - e2e - list tests
-        run: make e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.dryRun'
-
-      - name: Jenkins Operator - e2e
-        run: make e2e E2E_TEST_ARGS='-ginkgo.v'
+      - name: Jenkins Operator - e2e Chart tests
+        env:
+          TNAME: ${{ matrix.test }}
+          TFILE: ${{ matrix.file }}
+          TLINE: ${{ matrix.line }}
+        run: |
+          git reset --hard
+          make e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.focus="${TNAME}"'
 
       - name: Debug
         if: failure()

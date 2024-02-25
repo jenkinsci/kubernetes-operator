@@ -1,4 +1,4 @@
-name: Run Helm e2e tests
+name: Helm e2e tests
 on:
   push:
     branches:
@@ -20,7 +20,7 @@ on:
       - '*.md'
 
 jobs:
-  create-tests-list:
+  create-helm-list:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -33,7 +33,7 @@ jobs:
 
   verify-code:
     runs-on: ubuntu-latest
-    needs: [create-tests-list]
+    needs: [create-helm-list]
     steps:
     - uses: actions/checkout@v4
 
@@ -56,7 +56,7 @@ jobs:
 
   run-helm-tests:
     runs-on: ubuntu-latest
-    needs: [create-tests-list, verify-code]
+    needs: [create-helm-list, verify-code]
     if: github.event.pull_request.draft == false
     name: ${{ matrix.test }}
     strategy:
