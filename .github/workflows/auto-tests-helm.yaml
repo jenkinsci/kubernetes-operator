@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v4
     - id: matrix
       run: |
-        script=$(./test/make_matrix_ginkgo.sh)
+        script=$(./test/make_matrix_ginkgo.sh helm)
         echo "matrix=${script}" >> $GITHUB_OUTPUT
 
   run-helm-tests:
@@ -77,8 +77,11 @@ jobs:
 
       - name: Jenkins Operator - Helm Chart tests
         env:
-          TEST: ${{ matrix.test }}
+          TNAME: ${{ matrix.test }}
+          TFILE: ${{ matrix.test }}
+          TLINE: ${{ matrix.test }}
         run: |
           git reset --hard
           make helm-lint
-          make helm-e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.focus="${PKG}"'
+          echo "Running test: ${TNAME} from file: ${TFILE} line: ${TLINE}"
+          make helm-e2e E2E_TEST_ARGS='-ginkgo.v -ginkgo.focus="${TNAME}"'
