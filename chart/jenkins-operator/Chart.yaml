@@ -9,6 +9,6 @@ dependencies:
   version: "1.14.2"
   condition: cert-manager.enabled
   repository: https://charts.jetstack.io
-- name: cert-manager-crdts
+- name: cert-manager-crds
   version: "1.14.2"
   condition: cert-manager.enabled
