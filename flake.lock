@@ -73,6 +73,22 @@
         "type": "github"
       }
     },
+    "hugo_099": {
+      "locked": {
+        "lastModified": 1657975505,
+        "narHash": "sha256-juMbw+GY2ycTrg3QbdFfEQs6P3FJeoYEv8aMVl2EZsg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "d6df226c53d46821bd4773bd7ec3375f30238edb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "d6df226c53d46821bd4773bd7ec3375f30238edb",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1707451808,
@@ -95,6 +111,7 @@
         "go_15": "go_15",
         "golangci": "golangci",
         "gomod2nix": "gomod2nix",
+        "hugo_099": "hugo_099",
         "nixpkgs": "nixpkgs"
       }
     },
