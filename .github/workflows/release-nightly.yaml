@@ -71,6 +71,8 @@ jobs:
           make helm-e2e E2E_TEST_ARGS='-ginkgo.v'
 
       - name: Test - bats
+        env:
+          BATS_LIB_PATH: "${{ github.workspace }}/.bats"
         if: ${{ github.event.inputs.skipTests != 'true' }}
         run: make bats-tests
 
