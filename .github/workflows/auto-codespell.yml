@@ -1,4 +1,4 @@
-name: codespell
+name: CI Lint
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, ready_for_review, reopened]
 jobs:
   codespell:
-    name: codespell
+    name: Codespell
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,3 +19,13 @@ jobs:
           check_filenames: true
           ignore_words_list: aks,ags,startin
           skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
+  pre-commit:
+    name: PreCommit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-python@v5.0.0
+    - id: files
+      uses: tj-actions/files@v42
+    - uses: pre-commit/action@v3.0.1
+      with:
+        extra_args: --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure
