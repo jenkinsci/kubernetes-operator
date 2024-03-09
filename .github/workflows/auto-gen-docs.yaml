@@ -18,7 +18,7 @@ jobs:
   update-date:
     name: Auto update dates
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
       - uses: DeterminateSystems/nix-installer-action@v9
         with:
@@ -47,7 +47,7 @@ jobs:
   website-generate:
     name: Auto generate website
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
       - uses: DeterminateSystems/nix-installer-action@v9
         with:
