@@ -25,7 +25,7 @@ jobs:
     steps:
     - uses: actions/setup-python@v5.0.0
     - id: files
-      uses: tj-actions/files@v42
+      uses: tj-actions/changed-files@v42
     - uses: pre-commit/action@v3.0.1
       with:
         extra_args: --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure
