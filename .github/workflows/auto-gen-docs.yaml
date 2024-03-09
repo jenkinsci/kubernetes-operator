@@ -1,6 +1,5 @@
 name: Website
 
-# Run this workflow every time a new commit pushed to your repository
 on:
   push:
     branches:
@@ -11,6 +10,9 @@ on:
       - 'assets/**'
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
+    paths:
+      - 'website/**'
+      - 'assets/**'
 
 jobs:
   update-date:
@@ -80,7 +82,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: website-build
+    needs: website-generate
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
