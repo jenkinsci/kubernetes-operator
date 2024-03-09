@@ -2,17 +2,16 @@
 
 let
   devShellPackages = [
-    pkgs.go
     hugo_099_pkgs.hugo #hugo pre-v100
-    # docsy theme needs some node dep
     pkgs.nodejs_21 #Node 1.21
-    pkgs.nodePackages.postcss
-    pkgs.nodePackages.postcss-cli
-    pkgs.nodePackages.postcss-cli
   ];
+  baseUrl = ((builtins.fromTOML (builtins.readFile ../website/config.toml)).baseURL);
 in
 pkgs.mkShell {
   packages = devShellPackages;
   shellHook = ''
+    npm install --save-dev
+    npm list
   '';
+  BASE_URL = "${baseUrl}";
 }

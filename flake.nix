@@ -6,7 +6,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     go_15.url = "github:nixos/nixpkgs/4eccd6f731627ba5ad9915bcf600c9329a34ca78";
     golangci.url = "github:nixos/nixpkgs/e912fb83d2155a393e7146da98cda0e455a80fb6";
-    hugo_099.url= "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
+    hugo_099.url = "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,13 +56,17 @@
         };
 
         # nix shell .#website
-       devShells.website = pkgs.callPackage ./nix/website-shell.nix {
-            inherit pkgs system hugo_099_pkgs;
-       };
+        devShells.website = pkgs.callPackage ./nix/website-shell.nix {
+          inherit pkgs system hugo_099_pkgs;
+        };
 
         # nix build with gomod2nix
         packages.default = pkgs.callPackage ./nix {
           inherit (gomod2nix.legacyPackages.${system}) buildGoApplication;
+        };
+
+        packages.website = import ./nix/website-build.nix {
+          inherit pkgs system hugo_099_pkgs;
         };
 
       }
