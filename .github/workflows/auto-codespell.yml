@@ -11,19 +11,21 @@ jobs:
     name: Codespell
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Codespell
-        uses: codespell-project/actions-codespell@v2
-        with:
-          check_filenames: true
-          ignore_words_list: aks,ags,startin
-          skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Codespell
+      uses: codespell-project/actions-codespell@v2
+      with:
+        check_filenames: true
+        ignore_words_list: aks,ags,startin
+        skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
   pre-commit:
     name: PreCommit
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5.0.0
+    - name: Checkout
+      uses: actions/checkout@v4
     - id: files
       uses: tj-actions/changed-files@v42
     - uses: pre-commit/action@v3.0.1

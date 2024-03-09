@@ -9,12 +9,14 @@ on:
     paths:
       - 'website/**'
       - 'assets/**'
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
 
 jobs:
   update-date:
     name: Auto update dates
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.event_name == 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
       - uses: DeterminateSystems/nix-installer-action@v9
         with:
@@ -32,6 +34,7 @@ jobs:
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           commit-message: Auto-updated docs
           branch: docs-generator
