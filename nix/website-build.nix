@@ -18,4 +18,5 @@ pkgs.buildNpmPackage {
   nativeBuildInputs = buildPackages;
   buildPhase = "npm run build";
   installPhase = "cp -r public $out";
+  BASE_URL = "${baseUrl}";
 }
