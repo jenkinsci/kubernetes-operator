@@ -98,4 +98,6 @@ chart/jenkins-operator/deploy.tmp
 ### Nix
 result
 
-### website/node_modules
+### website
+website/node_modules
+website/public
