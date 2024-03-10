@@ -1,7 +1,7 @@
 {
   "name": "website",
     "scripts": {
-        "build": "hugo --minify"
+        "build": "echo $BASE_URL; hugo --minify --baseURL=${BASE_URL}"
     },
     "devDependencies": {
     "autoprefixer": "^10.4.18",
