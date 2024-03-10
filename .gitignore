@@ -101,3 +101,4 @@ result
 ### website
 website/node_modules
 website/public
+website/.hugo_build.lock
