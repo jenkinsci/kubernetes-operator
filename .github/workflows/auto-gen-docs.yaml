@@ -14,6 +14,19 @@ on:
       - 'website/**'
       - 'assets/**'
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "website"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   update-date:
     name: Auto update dates
@@ -29,14 +42,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check for changes
+        run: |
+          IS_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -Ec "^website*" || :)
+          [[ $IS_CHANGED -gt 0 ]] && echo "IS_CHANGED=true" >> $GITHUB_ENV || echo "IS_CHANGED=false" >> $GITHUB_ENV
+
       - name: Update last modified date in modified docs
+        if: env.IS_CHANGED == 'true'
         run: |
           git diff --name-only --diff-filter=d ${{ github.event.before }} ${{ github.sha }} | grep -E "^website*" \
           | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        if: env.IS_CHANGED == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         with:
           commit-message: Auto-updated docs
           branch: docs-generator
@@ -60,13 +79,13 @@ jobs:
       - name: nix checks
         run: nix flake check
       - name: nix build
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
         run: |
           cd website
           nix develop .#website
           hugo --minify --baseURL "${BASE_URL}"
-        env:
-          HUGO_ENVIRONMENT: production
-          HUGO_ENV: production
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
