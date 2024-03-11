@@ -45,7 +45,7 @@ VERSION_TAG := $(VERSION)
 LATEST_TAG := latest
 BUILD_TAG := $(GITBRANCH)-$(GITCOMMIT)
 
-BUILD_PATH := ./
+BUILD_PATH := ./cmd/main.go
 
 # CONTAINER_RUNTIME_COMMAND is Container Runtime - it could be docker or podman
 CONTAINER_RUNTIME_COMMAND := docker

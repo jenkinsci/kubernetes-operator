@@ -28,3 +28,12 @@ linters:
     - nakedret
     - nestif
     - godot
+    - ifshort
+    - structcheck
+    - deadcode
+    - golint
+    - nosnakecase
+    - exhaustivestruct
+    - varcheck
+    - interfacer
+    
