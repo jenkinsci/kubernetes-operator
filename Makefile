@@ -70,9 +70,13 @@ HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
 lint: ## Verifies `golint` passes
 	@echo "+ $@"
 ifndef HAS_GOLINT
-	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2
 endif
 	@bin/golangci-lint run
+
+.PHONY: lint-fix
+lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
+	@bin/golangci-lint run --fix
 
 .PHONY: goimports
 HAS_GOIMPORTS := $(shell which $(PROJECT_DIR)/bin/goimports)
@@ -371,7 +375,7 @@ kind-clean: ## Delete kind cluster
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
-bats-tests: container-runtime-build-amd64 ## Run bats tests
+bats-tests: container-runtime-build-amd64 kind-setup ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
 	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats

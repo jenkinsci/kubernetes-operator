@@ -1,39 +1,37 @@
 run:
   deadline: 10m
+  allow-parallel-runners: true
   skip-files:
     - api/v1alpha2/zz_generated.deepcopy.go
-linters-settings:
-  errcheck:
-    check-blank: false
-    ignore: fmt:.*,io/ioutil:^Read.*,Write
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: "api/*"
+      linters:
+        - lll
+    - path: "internal/*"
+      linters:
+        - dupl
+        - lll
 linters:
-  enable-all: true
-  disable:
-    - funlen
-    - gocognit
-    - godox
-    - gomnd
-    - gochecknoglobals
-    - gochecknoinits
-    - lll
-    - prealloc
-    - wsl
-    - gocyclo
-    - scopelint
+  disable-all: true
+  enable:
     - dupl
-    - gosec
-    - maligned
-    - testpackage
-    - goerr113
+    - errcheck
+    - exportloopref
+    - goconst
+    - gocyclo
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
     - nakedret
-    - nestif
-    - godot
-    - ifshort
-    - structcheck
-    - deadcode
-    - golint
-    - nosnakecase
-    - exhaustivestruct
-    - varcheck
-    - interfacer
-    
+    - prealloc
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused

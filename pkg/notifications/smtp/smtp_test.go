@@ -92,7 +92,7 @@ func (s *testSession) Data(r io.Reader) error {
 	contentRegex := regexp.MustCompile(`\t+<tr>\n\t+<td><b>(.*):</b></td>\n\t+<td>(.*)</td>\n\t+</tr>`)
 	headersRegex := regexp.MustCompile(`(.*):\s(.*)`)
 
-	b, err := ioutil.ReadAll(quotedprintable.NewReader(r))
+	b, err := io.ReadAll(quotedprintable.NewReader(r))
 	if err != nil {
 		return err
 	}
