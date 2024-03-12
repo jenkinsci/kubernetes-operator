@@ -8,7 +8,14 @@ diag() {
 }
 
 #bats test_tags=phase:setup
-@test "1.0 Create namespace" {
+@test "1.0" {
+  run ! helm repo list | grep -q "jenkins"
+  [ "$status" -eq 0 ] && run helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+  assert_success
+}
+
+#bats test_tags=phase:setup
+@test "1.1 Create namespace" {
   ${KUBECTL} get ns ${DETIK_CLIENT_NAMESPACE} && skip "Namespace ${DETIK_CLIENT_NAMESPACE} already exists"
   run ${KUBECTL} create ns ${DETIK_CLIENT_NAMESPACE}
   assert_success

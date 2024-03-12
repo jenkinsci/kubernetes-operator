@@ -202,11 +202,11 @@ func (jenkins *jenkins) GetNodeSecret(name string) (string, error) {
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-    defer func() {
-        if err := r.Body.Close(); err != nil {
-            errors.New("Failed to read response body")
-        }
-    }()
+	defer func() {
+		if err := r.Body.Close(); err != nil {
+			errors.Errorf("Failed to read response body: %s", err)
+		}
+	}()
 
 	match := regex.FindStringSubmatch(content)
 	if match == nil {
