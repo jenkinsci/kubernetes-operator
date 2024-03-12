@@ -7,8 +7,7 @@ description: >
     Jenkins security and hardening out of the box
 ---
 
-By default **Jenkins Operator** performs an initial security hardening of Jenkins instance
-via groovy scripts to prevent any security gaps.
+By default **Jenkins Operator** performs an initial security hardening of Jenkins instance via groovy scripts to prevent any security gaps.
 
 ## Jenkins Access Control
 

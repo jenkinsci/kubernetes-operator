@@ -107,7 +107,7 @@ ifeq ($(strip $(HAS_HELM)),)
     rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
     rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
 else
-	mkdir -p $(PROJECT_DIR)/bin 
+	mkdir -p $(PROJECT_DIR)/bin
 	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
 endif
 
@@ -451,7 +451,7 @@ endif
 
 # Download and build hugo extended locally if necessary
 HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.113.0
+HUGO_VERSION = v0.99.1
 HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
 hugo:
 ifeq ($(HAS_HUGO), )
