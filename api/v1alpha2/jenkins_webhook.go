@@ -267,7 +267,11 @@ func (in *SecurityValidator) download() error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		if err := out.Close(); err != nil {
+			jenkinslog.V(log.VDebug).Info("Failed to close file", err)
+		}
+	}()
 
 	req, err := http.NewRequest(http.MethodGet, Hosturl, nil)
 	if err != nil {
@@ -285,6 +289,10 @@ func (in *SecurityValidator) download() error {
 	}
 
 	defer response.Body.Close()
+
+	if err := out.Close(); err != nil {
+		jenkinslog.V(log.VDebug).Info("Failed to send file", err)
+	}
 
 	_, err = io.Copy(out, response.Body)
 	return err

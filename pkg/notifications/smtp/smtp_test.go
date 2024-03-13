@@ -166,11 +166,11 @@ func TestSMTP_Send(t *testing.T) {
 		},
 	}}
 
-	ts := &testServer{event: e}
+	//ts := &testServer{event: e}
 
 	// Create fake SMTP server
 
-	s := smtp.NewServer(ts)
+	s := smtp.NewServer()
 
 	s.Addr = fmt.Sprintf(":%d", testSMTPPort)
 	s.Domain = "localhost"

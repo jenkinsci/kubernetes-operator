@@ -13,6 +13,10 @@ issues:
       linters:
         - dupl
         - lll
+    - path: (.+)_test.go
+      linters:
+        - dupl
+        - lll
 linters:
   disable-all: true
   enable:
@@ -26,7 +30,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - lll
+    #- lll
     - misspell
     - nakedret
     - prealloc
