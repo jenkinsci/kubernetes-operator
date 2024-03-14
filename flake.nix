@@ -42,6 +42,14 @@
             })
             go_15_pkgs.go
             golangci_pkgs.golangci-lint
+
+            pkgs.kind
+            (pkgs.bats.withLibraries (p: [
+            p.bats-support
+            p.bats-assert
+            p.bats-file
+            p.bats-detik
+            ]))
           ];
           shellHook = ''
             echo Operator Version ${operatorVersion}
