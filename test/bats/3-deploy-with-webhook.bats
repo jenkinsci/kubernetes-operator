@@ -122,14 +122,14 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:webhook
-@test "3.10  Helm: check Jenkins crd again" {
+@test "3.10 Helm: check Jenkins crd again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run verify "there is 1 crd named 'jenkins.jenkins.io'"
   assert_success
 }
 
 #bats test_tags=phase:helm,scenario:webhook
-@test "3.11  Helm: check cert-manager crd again" {
+@test "3.11 Helm: check cert-manager crd again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run verify "there is 1 crd named 'certificates.cert-manager.io'"
   assert_success

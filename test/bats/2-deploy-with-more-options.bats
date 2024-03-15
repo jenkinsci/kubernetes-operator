@@ -20,7 +20,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.2  Install helm chart with options" {
+@test "2.2  Helm Install helm chart with options" {
   #assert_success
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
   run ${HELM} install options \
@@ -115,7 +115,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.10  Helm: check Jenkins operator pods status again" {
+@test "2.10 Helm: check Jenkins operator pods status again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run verify "there is 1 deployment named 'options-jenkins-operator'"
@@ -129,7 +129,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.11  Helm: check Jenkins Pod status again" {
+@test "2.11 Helm: check Jenkins Pod status again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
@@ -140,7 +140,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.12  Helm: check node selector again" {
+@test "2.12 Helm: check node selector again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   NODENAME=$(${KUBECTL} get pod jenkins-jenkins -o jsonpath={.spec.nodeName})
@@ -151,7 +151,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.13  Helm: check jenkins-plugin-cli command again" {
+@test "2.13 Helm: check jenkins-plugin-cli command again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
@@ -161,7 +161,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.14  Helm: clean" {
+@test "2.14 Helm: clean" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run ${HELM} uninstall options
