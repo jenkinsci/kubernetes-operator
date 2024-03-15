@@ -27,7 +27,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - id: files
-      uses: tj-actions/changed-files@v42
+      uses: tj-actions/changed-files@v43
     - uses: pre-commit/action@v3.0.1
       with:
         extra_args: --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure
