@@ -19,6 +19,7 @@ on:
       - 'backup/**'
       - '*.md'
 
+#TODO: create a matrix per earch bats file
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
