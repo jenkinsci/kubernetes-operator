@@ -24,6 +24,13 @@
             "version": "latest"
         },
         "ghcr.io/brokenpip3/devcontainers-bats/bats-libs:0": {
+        },
+        "ghcr.io/devcontainers/features/nix:1": {
+            "multiUser": "false",
+            "extraNixConfig": "experimental-features = nix-command flakes"
+        },
+        "ghcr.io/devcontainers/features/hugo:1": {
+            "version": "v0.99.1"
         }
     },
     // "forwardPorts": [],
