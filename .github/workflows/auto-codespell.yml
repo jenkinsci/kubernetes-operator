@@ -24,10 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5.0.0
+    - uses: DeterminateSystems/nix-installer-action@v10
+      with:
+        diagnostic-endpoint: ""
+    - uses: DeterminateSystems/magic-nix-cache-action@v4
+      with:
+        diagnostic-endpoint: ""
     - name: Checkout
       uses: actions/checkout@v4
     - id: files
       uses: tj-actions/changed-files@v43
-    - uses: pre-commit/action@v3.0.1
-      with:
-        extra_args: --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure
+    - name: nix checks
+      run: nix flake check
+    - name: nix pre-commit
+      run: nix develop . --command pre-commit run --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure

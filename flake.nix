@@ -35,6 +35,7 @@
             pkgs.gnumake
             pkgs.wget
             pkgs.helm-docs
+            pkgs.pre-commit
             (pkgs.writeShellApplication {
               name = "make_matrix";
               runtimeInputs = with pkgs; [ bash gnugrep gawk ];
