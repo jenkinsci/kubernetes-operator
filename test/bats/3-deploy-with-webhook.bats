@@ -32,7 +32,7 @@ setup() {
     --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
     --set webhook.enabled=true \
-    jenkins-operator/jenkins-operator --version=$(cat ../../VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
   assert ${HELM} status webhook
   touch "chart/jenkins-operator/deploy.tmp"
@@ -50,16 +50,16 @@ setup() {
 
   run try "at most 20 times every 10s to get pods named 'webhook-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
   assert_success
+
+  run ${KUBECTL} rollout restart deployment webhook-jenkins-operator
+  assert_success
 }
 
 #bats test_tags=phase:helm,scenario:webhook
 @test "3.4  Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
-  assert_success
-
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 30 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 
@@ -81,8 +81,7 @@ setup() {
 @test "3.7  Helm: upgrade from main branch same value" {
   run ${HELM} dependency update chart/jenkins-operator
   assert_success
-  ${HELM} status webhook && skip "Helm release 'webhook' already exists"
-  run ${HELM} install webhook \
+  run ${HELM} upgrade webhook \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
@@ -93,6 +92,7 @@ setup() {
     chart/jenkins-operator
   assert_success
   assert ${HELM} status webhook
+  sleep 10
   touch "chart/jenkins-operator/deploy.tmp"
 }
 
@@ -115,9 +115,6 @@ setup() {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
-  assert_success
-
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 
@@ -147,3 +144,5 @@ setup() {
 
   rm "chart/jenkins-operator/deploy.tmp"
 }
+
+#TODO: add another test scenario while installing from kubectl apply

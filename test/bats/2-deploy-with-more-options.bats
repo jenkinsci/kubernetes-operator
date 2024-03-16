@@ -20,9 +20,9 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.2  Helm Install helm chart with options" {
-  #assert_success
+@test "2.2  Helm: install helm chart with options" {
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
+  assert_success
   run ${HELM} install options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
@@ -31,7 +31,7 @@ setup() {
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    jenkins-operator/jenkins-operator --version=$(cat ../../VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
   assert ${HELM} status options
   touch "chart/jenkins-operator/deploy.tmp"
@@ -55,10 +55,10 @@ setup() {
 @test "2.4  Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"backup\")].ready' is 'true'"
   assert_success
 
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 

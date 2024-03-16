@@ -35,7 +35,7 @@ diag() {
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    jenkins-operator/jenkins-operator --version=$(cat ../../VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
   assert ${HELM} status default
   touch "chart/jenkins-operator/deploy.tmp"
