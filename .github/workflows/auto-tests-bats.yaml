@@ -1,4 +1,4 @@
-name: Run bats tests
+name: Tests BATS
 on:
   push:
     branches:
@@ -19,10 +19,11 @@ on:
       - 'backup/**'
       - '*.md'
 
+#TODO: create a matrix per earch bats file
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
-    name: Run automated bats tests
+    name: BATS Run tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out code

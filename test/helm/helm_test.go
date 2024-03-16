@@ -36,7 +36,7 @@ var _ = Describe("Jenkins Controller", func() {
 	})
 
 	Context("Deploys jenkins operator with helm charts with default values", func() {
-		It("Deploys Jenkins operator and configures default Jenkins instance", func() {
+		It("Deploys Jenkins operator and configures the default Jenkins instance", func() {
 			jenkins := &v1alpha2.Jenkins{
 				TypeMeta: v1alpha2.JenkinsTypeMeta(),
 				ObjectMeta: metav1.ObjectMeta{
@@ -99,7 +99,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 	})
 
 	Context("When Jenkins CR contains plugins with security warnings", func() {
-		It("Denies creating a jenkins CR with a warning", func() {
+		It("Denies creating a jenkins CR with a plugin contains security warning", func() {
 			By("Deploying the operator along with webhook and cert-manager")
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
@@ -121,7 +121,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 		})
 	})
 	Context("When Jenkins CR doesn't contain plugins with security warnings", func() {
-		It("Jenkins instance is successfully created", func() {
+		It("Permit creating a jenkins CR without security warning in plugins", func() {
 			By("Deploying the operator along with webhook and cert-manager")
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),

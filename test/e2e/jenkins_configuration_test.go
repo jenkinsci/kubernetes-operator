@@ -90,7 +90,7 @@ var _ = Describe("Jenkins controller configuration", func() {
 	})
 
 	Context("when deploying CR to cluster", func() {
-		It("creates Jenkins instance and configures it", func() {
+		It("creates vanilla Jenkins instance and configures it", func() {
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
 			verifyJenkinsMasterPodAttributes(jenkins)
 			verifyServices(jenkins)
@@ -138,7 +138,7 @@ var _ = Describe("Jenkins controller priority class", func() {
 	})
 
 	Context("when deploying CR with priority class to cluster", func() {
-		It("creates Jenkins instance and configures it", func() {
+		It("creates Jenkins instance with priority class and configures it", func() {
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
 			verifyJenkinsMasterPodAttributes(jenkins)
 		})

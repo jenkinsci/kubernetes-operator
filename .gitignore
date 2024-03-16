@@ -97,3 +97,8 @@ chart/jenkins-operator/deploy.tmp
 
 ### Nix
 result
+
+### website
+website/node_modules
+website/public
+website/.hugo_build.lock

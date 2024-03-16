@@ -240,13 +240,14 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
-	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins pod: %+v\n", jenkinsPod)
+	initialCreationTimestamp := jenkinsPod.CreationTimestamp.DeepCopy()
+
+	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins pod: %+v\n", jenkinsPod.Status.Phase)
 	Expect(K8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
 
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
-		fmt.Printf("Jenkins pod deletion timestamp: %v\n", jenkinsPod.DeletionTimestamp)
-		return jenkinsPod.DeletionTimestamp != nil, nil
+		return !jenkinsPod.CreationTimestamp.Equal(initialCreationTimestamp), nil
 	}, 45*retryInterval, retryInterval).Should(BeTrue())
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted\n")
