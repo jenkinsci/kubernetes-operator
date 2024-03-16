@@ -95,12 +95,6 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.9  Helm: upgrade from main branch same value" {
-  # The kind storage class provider needs some sec to delete the old pvc
-  sleep 30
-  #run ${HELM} dependency update chart/jenkins-operator
-  #assert_success
-  run ${KUBECTL} label node jenkins-control-plane batstest=yep
-  ${HELM} status options && skip "Helm release 'options' already exists"
   run ${HELM} upgrade options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
