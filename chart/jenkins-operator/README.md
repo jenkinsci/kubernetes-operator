@@ -8,7 +8,8 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.jetstack.io | cert-manager | 1.5.1 |
+|  | cert-manager-crds | 1.14.2 |
+| https://charts.jetstack.io | cert-manager | 1.14.2 |
 
 ## Values
 
