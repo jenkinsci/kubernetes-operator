@@ -23,7 +23,7 @@ jobs:
     name: PreCommit
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@v5.0.0
+    - uses: actions/setup-python@v5.1.0
     - uses: DeterminateSystems/nix-installer-action@v10
       with:
         diagnostic-endpoint: ""
@@ -33,7 +33,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - id: files
-      uses: tj-actions/changed-files@v43
+      uses: tj-actions/changed-files@v44
     - name: nix checks
       run: nix flake check
     - name: nix pre-commit
