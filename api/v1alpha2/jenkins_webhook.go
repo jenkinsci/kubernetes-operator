@@ -269,7 +269,7 @@ func (in *SecurityValidator) download() error {
 	}
 	defer func() {
 		if err := out.Close(); err != nil {
-			jenkinslog.V(log.VDebug).Info("Failed to close file", err)
+			jenkinslog.V(log.VDebug).Info("Failed to close file", "error", err)
 		}
 	}()
 

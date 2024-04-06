@@ -344,7 +344,7 @@ func (s *seedJobs) credentialValue(namespace string, seedJob v1alpha2.SeedJob) (
 }
 
 func (s *seedJobs) getAllSeedJobIDs(jenkins v1alpha2.Jenkins) []string {
-	var ids []string
+	ids := make([]string, 0, len(jenkins.Spec.SeedJobs))
 	for _, seedJob := range jenkins.Spec.SeedJobs {
 		ids = append(ids, seedJob.ID)
 	}

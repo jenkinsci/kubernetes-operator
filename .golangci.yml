@@ -39,3 +39,4 @@ linters:
     - unconvert
     - unparam
     - unused
+    - loggercheck
