@@ -46,7 +46,7 @@ jobs:
         run: make go-dependencies
 
       - name: Setup Bats and libs
-        uses: bats-core/bats-action@1.5.6
+        uses: bats-core/bats-action@2.0.0
         with:
           support-path: "${{ github.workspace }}/.bats/bats-support"
           assert-path: "${{ github.workspace }}/.bats/bats-assert"
@@ -54,7 +54,7 @@ jobs:
           file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Kind setup
-        uses: helm/kind-action@v1.9.0
+        uses: helm/kind-action@v1.10.0
         with:
           cluster_name: ${{env.KIND_CLUSTER_NAME}}
 
