@@ -15,6 +15,12 @@ Backup and restore is done by a container sidecar.
 
 ### PVC
 
+#### PVC Storage Size
+
+Please ensure that the size of the PVC (Persistent Volume Claim) is sufficient to accommodate `BACKUP_COUNT` + `1` backup **tar.gz** archives.
+
+The additional **+1** space is necessary to facilitate the creation of backups on the same filesystem and to prevent backup file corruption during copying between different filesystems. For further details, please refer to pr [#1000](https://github.com/jenkinsci/kubernetes-operator/pull/1000).
+
 #### Create PVC
 
 Save to the file named pvc.yaml:
