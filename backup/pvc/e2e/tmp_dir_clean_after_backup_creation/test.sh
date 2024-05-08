@@ -24,14 +24,6 @@ echo "Docker container ID '${cid}'"
 # Remove test directory and container afterwards
 trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR}" EXIT
 
-# check cleanup against empty backup dir
-sleep 2
-restart_count=$(docker inspect --format='{{.RestartCount}}' "$cid")
-if [ "$restart_count" -eq 0 ]; then
-    echo "The container has been restarted $restart_count times."
-    exit 1
-fi
-
 backup_number=1
 docker exec ${cid} /home/user/bin/backup.sh ${backup_number}
 
