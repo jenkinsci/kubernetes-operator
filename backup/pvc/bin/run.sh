@@ -39,9 +39,9 @@ find_exceeding_backups() {
     local backup_dir="$1"
     local backup_count="$2"
     # Check if we have any backup
-    if is_backup_not_exist "${BACKUP_DIR}"; then
-        echo "backups not found in ${BACKUP_DIR}"
-        return ""
+    if is_backup_not_exist "${backup_dir}"; then
+        echo "backups not found in ${backup_dir}"
+        return
     fi
     find "${backup_dir}"/*.tar.zstd -maxdepth 0 -exec basename {} \; | sort -gr | tail -n +$((backup_count +1))
 }
