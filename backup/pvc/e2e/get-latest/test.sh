@@ -43,9 +43,11 @@ trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${JENKINS_HOME}
 
 echo "Try to get latest against 11 backups and one in progress"
 latest=$(docker exec ${cid} /bin/bash -c "JENKINS_HOME=${RESTORE_FOLDER};/home/user/bin/get-latest.sh")
+
 rm ${BACKUP_DIR}/*.tar.zstd
 echo "Try to get latest against one in progress"
 empty_latest=$(docker exec ${cid} /bin/bash -c "JENKINS_HOME=${RESTORE_FOLDER};/home/user/bin/get-latest.sh")
+
 rmdir ${BACKUP_DIR}/lost+found
 rm ${BACKUP_TMP_DIR}/*.tar.zstd
 rmdir ${BACKUP_TMP_DIR}

@@ -13,7 +13,7 @@ check_env_var() {
     fi
 }
 
-check_backup_exist() {
+is_backup_not_exist() {
     local backup_dir="$1"
     # Save the current value of 'set -e'
     local previous_e=$(set +e; :; echo $?)
@@ -30,8 +30,8 @@ check_backup_exist() {
     # Restore the previous value of 'set -e'
     [ "$previous_e" = "0" ] && set -e
 
-    # Return true if ls command succeeded (files found), otherwise return false
-    return $ls_exit_status
+    # Return true if ls command succeeded (no files found), otherwise return false
+    [ $ls_exit_status -ne 0 ]
 }
 
 # Function to find exceeding backups
@@ -39,7 +39,7 @@ find_exceeding_backups() {
     local backup_dir="$1"
     local backup_count="$2"
     # Check if we have any backup
-    if check_backup_exist "${BACKUP_DIR}"; then
+    if is_backup_not_exist "${BACKUP_DIR}"; then
         # return ""
         echo "backups not found"
     fi
