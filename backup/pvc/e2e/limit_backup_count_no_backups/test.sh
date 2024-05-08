@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+echo "Running limit_backup_count_no_backups e2e test..."
+
 [[ "${DEBUG}" ]] && set -x
 
 # set current working directory to the directory of the script
@@ -28,7 +30,15 @@ trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${JENKINS_HOME}
 # container should be running
 echo 'Checking if container is running'
 sleep 3
+set +e
 docker exec ${cid} echo
+exit_code=$?
+set -e
+if [ $exit_code -ne 0 ]; then
+    echo "container terminated with following logs:"
+    docker logs "${cid}"
+    exit 1
+fi
 echo 'Container is running'
 
 echo PASS

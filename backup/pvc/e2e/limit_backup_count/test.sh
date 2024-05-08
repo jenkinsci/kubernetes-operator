@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+echo "Running limit_backup_count e2e test..."
+
 [[ "${DEBUG}" ]] && set -x
 
 # set current working directory to the directory of the script

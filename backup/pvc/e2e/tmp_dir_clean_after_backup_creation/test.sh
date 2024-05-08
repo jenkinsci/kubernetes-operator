@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+echo "Running tmp_dir_clean_after_backup_creation e2e test..."
+
 [[ "${DEBUG}" ]] && set -x
 
 # set current working directory to the directory of the script
