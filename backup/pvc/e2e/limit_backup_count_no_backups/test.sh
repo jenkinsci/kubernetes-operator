@@ -19,7 +19,7 @@ mkdir -p ${BACKUP_DIR}
 mkdir -p ${JENKINS_HOME}
 
 # Create an instance of the container under testing
-cid="$(docker run -e BACKUP_COUNT=2 -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
+cid="$(docker run -e BACKUP_CLEANUP_INTERVAL=1 -e BACKUP_COUNT=2 -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
 echo "Docker container ID '${cid}'"
 
 # Remove test directory and container afterwards
@@ -27,7 +27,7 @@ trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${JENKINS_HOME}
 
 # container should be running
 echo 'Checking if container is running'
-sleep 11
+sleep 3
 docker exec ${cid} echo
 echo 'Container is running'
 

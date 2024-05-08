@@ -18,16 +18,26 @@ BACKUP_DIR="$(pwd)/backup"
 mkdir -p ${BACKUP_DIR}
 
 # Create an instance of the container under testing
-cid="$(docker run -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
+cid="$(docker run -e BACKUP_CLEANUP_INTERVAL=1 -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
 echo "Docker container ID '${cid}'"
 
 # Remove test directory and container afterwards
 trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR}" EXIT
 
+# check cleanup against empty backup dir
+sleep 2
+restart_count=$(docker inspect --format='{{.RestartCount}}' "$cid")
+if [ "$restart_count" -eq 0 ]; then
+    echo "The container has been restarted $restart_count times."
+    exit 1
+fi
+
 backup_number=1
 docker exec ${cid} /home/user/bin/backup.sh ${backup_number}
 
 [ "$(docker exec ${cid} ls /tmp | grep 'tmp')" ] && echo "tmp directory not empty" && exit 1;
+# We should also check backup directory, since after #1000 we create temp directory at backup filesystem
+[ "$(docker exec ${cid} ls ${BACKUP_DIR} | grep 'tmp')" ] && echo "backup dir consists temp directory" && exit 1;
 
 backup_file="${BACKUP_DIR}/${backup_number}.tar.zstd"
 [[ ! -f ${backup_file} ]] && echo "Backup file ${backup_file} not found" && exit 1;

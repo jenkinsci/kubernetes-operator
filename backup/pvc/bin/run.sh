@@ -2,7 +2,8 @@
 
 set -eo pipefail
 
-INTERVAL=60
+# Use 60 as default in case BACKUP_CLEANUP_INTERVAL did not set
+BACKUP_CLEANUP_INTERVAL=${BACKUP_CLEANUP_INTERVAL:=60}
 
 # Ensure required environment variables are set
 check_env_var() {
@@ -12,10 +13,36 @@ check_env_var() {
     fi
 }
 
+check_backup_exist() {
+    local backup_dir="$1"
+    # Save the current value of 'set -e'
+    local previous_e=$(set +e; :; echo $?)
+
+    # Temporarily turn off 'set -e'
+    set +e
+
+    # Run ls command to check if any files matching the pattern exist
+    ls "${backup_dir}"/*.tar.* 1> /dev/null 2>&1
+
+    # Store the exit status of the ls command
+    local ls_exit_status=$?
+
+    # Restore the previous value of 'set -e'
+    [ "$previous_e" = "0" ] && set -e
+
+    # Return true if ls command succeeded (files found), otherwise return false
+    return $ls_exit_status
+}
+
 # Function to find exceeding backups
 find_exceeding_backups() {
     local backup_dir="$1"
     local backup_count="$2"
+    # Check if we have any backup
+    if check_backup_exist "${BACKUP_DIR}"; then
+        # return ""
+        echo "backups not found"
+    fi
     find "${backup_dir}"/*.tar.zstd -maxdepth 0 -exec basename {} \; | sort -gr | tail -n +$((backup_count +1))
 }
 
@@ -25,12 +52,12 @@ check_env_var "JENKINS_HOME"
 if [[ -z "${BACKUP_COUNT}" ]]; then
     echo "ATTENTION! No BACKUP_COUNT set, it means you MUST delete old backups manually or by custom script"
 else
-    echo "Retaining only the ${BACKUP_COUNT} most recent backups, cleanup occurs every ${INTERVAL} seconds"
+    echo "Retaining only the ${BACKUP_COUNT} most recent backups, cleanup occurs every ${BACKUP_CLEANUP_INTERVAL} seconds"
 fi
 
 while true;
 do
-    sleep $INTERVAL
+    sleep $BACKUP_CLEANUP_INTERVAL
     if [[ -n "${BACKUP_COUNT}" ]]; then
         exceeding_backups=$(find_exceeding_backups "${BACKUP_DIR}" "${BACKUP_COUNT}")
         if [[ -n "$exceeding_backups" ]]; then
