@@ -5,7 +5,8 @@ set -eo pipefail
 is_backup_not_exist() {
     local backup_dir="$1"
     # Save the current value of 'set -e'
-    local previous_e=$(set +e; :; echo $?)
+    local previous_e
+    previous_e=$(set +e; :; echo $?)
 
     # Temporarily turn off 'set -e'
     set +e
@@ -23,7 +24,7 @@ is_backup_not_exist() {
     [ $ls_exit_status -ne 0 ]
 }
 
-[[ -z "${BACKUP_DIR}" ]] && echo "Required 'BACKUP_DIR' env not set" && exit 1
+[[ -z "${BACKUP_DIR}" ]] && { echo "Required 'BACKUP_DIR' env not set"; exit 1; }
 
 # Check if we have any backup
 if is_backup_not_exist "${BACKUP_DIR}"; then

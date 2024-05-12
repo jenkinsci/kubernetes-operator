@@ -16,7 +16,8 @@ check_env_var() {
 is_backup_not_exist() {
     local backup_dir="$1"
     # Save the current value of 'set -e'
-    local previous_e=$(set +e; :; echo $?)
+    local previous_e
+    previous_e=$(set +e; :; echo $?)
 
     # Temporarily turn off 'set -e'
     set +e
@@ -57,7 +58,7 @@ fi
 
 while true;
 do
-    sleep $BACKUP_CLEANUP_INTERVAL
+    sleep "$BACKUP_CLEANUP_INTERVAL"
     if [[ -n "${BACKUP_COUNT}" ]]; then
         exceeding_backups=$(find_exceeding_backups "${BACKUP_DIR}" "${BACKUP_COUNT}")
         if [[ -n "$exceeding_backups" ]]; then
