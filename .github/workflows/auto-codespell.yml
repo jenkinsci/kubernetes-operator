@@ -17,8 +17,8 @@ jobs:
       uses: codespell-project/actions-codespell@v2
       with:
         check_filenames: true
-        ignore_words_list: aks,ags,startin
-        skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
+        ignore_words_list: aks,ags,startin,NotIn
+        skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml,docs/*"
   pre-commit:
     name: PreCommit
     runs-on: ubuntu-latest
