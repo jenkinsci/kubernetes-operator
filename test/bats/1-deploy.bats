@@ -33,7 +33,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
@@ -126,7 +126,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     chart/jenkins-operator
   assert_success
