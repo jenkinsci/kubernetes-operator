@@ -409,10 +409,6 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 }
 
 func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string, kubernetesDomainName string) (*appsv1.Deployment, error) {
-	jenkinsSlavesServiceFQDN, err := resources.GetJenkinsSlavesServiceFQDN(jenkins, kubernetesDomainName)
-	if err != nil {
-		return nil, err
-	}
 	jenkinsHTTPServiceFQDN, err := resources.GetJenkinsHTTPServiceFQDN(jenkins, kubernetesDomainName)
 	if err != nil {
 		return nil, err
