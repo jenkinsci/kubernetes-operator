@@ -89,10 +89,17 @@ test: ## Runs the go tests
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
 
 .PHONY: e2e
-e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: deepcopy-gen manifests backup-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+## Backup Section
+
+.PHONY: backup-kind-load
+backup-kind-load: ## Load latest backup image in the cluster
+	@echo "+ $@"
+	make -C backup/pvc backup-kind-load
 
 ## HELM Section
 
@@ -368,6 +375,12 @@ kind-setup: ## Setup kind cluster
 .PHONY: kind-clean
 kind-clean: ## Delete kind cluster
 	@echo "+ $@"
+	kind delete cluster --name $(KIND_CLUSTER_NAME)
+
+.PHONY: kind-load-backup
+kind-load-backup:
+	@echo "+ $@"
+	make -C
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
 
 .PHONY: bats-tests

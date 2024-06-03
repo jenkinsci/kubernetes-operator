@@ -210,7 +210,7 @@ jenkins:
 
     # image used by backup feature
     # By default using prebuilt backup PVC image
-    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.7
+    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.6
 
     # containerName is backup container name
     containerName: backup
