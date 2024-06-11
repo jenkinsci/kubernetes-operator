@@ -67,7 +67,7 @@ jenkins:
 
   # Optional duration in seconds the pod needs to terminate gracefully.
   # Default 30sec
-  terminationGracePeriodSecond: 30
+  terminationGracePeriodSeconds: 30
 
   # validateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
   validateSecurityWarnings: false

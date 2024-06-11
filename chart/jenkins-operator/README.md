@@ -90,7 +90,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.seedJobAgentImage | string | `""` |  |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
-| jenkins.terminationGracePeriodSecond | int | `30` |  |
+| jenkins.terminationGracePeriodSeconds | int | `30` |  |
 | jenkins.tolerations | list | `[]` |  |
 | jenkins.validateSecurityWarnings | bool | `false` |  |
 | jenkins.volumeMounts | list | `[]` |  |

@@ -115,8 +115,8 @@ spec:
     {{- with .Values.jenkins.hostAliases }}
     hostAliases: {{ toYaml . | nindent 4 }}
     {{- end }}
-    {{- if .Values.jenkins.terminationGracePeriodSecond }}
-    terminationGracePeriodSecond: {{ .Values.jenkins.terminationGracePeriodSecond }}
+    {{- if .Values.jenkins.terminationGracePeriodSeconds }}
+    terminationGracePeriodSeconds: {{ .Values.jenkins.terminationGracePeriodSeconds }}
     {{- end }}
     containers:
       - name:  jenkins-master
