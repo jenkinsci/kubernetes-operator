@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v10
+      - uses: DeterminateSystems/nix-installer-action@v12
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
@@ -68,10 +68,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v10
+      - uses: DeterminateSystems/nix-installer-action@v12
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
