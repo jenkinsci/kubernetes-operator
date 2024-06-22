@@ -136,7 +136,9 @@ diag() {
   run verify "there is 1 pod named 'seed-job-agent-jenkins-'"
   assert_success
 
-  run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=100
+  sleep 5
+
+  run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=20000
   assert_success
   assert_output --partial 'INFO: Connected'
 
