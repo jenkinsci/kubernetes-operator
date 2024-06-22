@@ -113,7 +113,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		var agentDeployment appsv1.Deployment
 		err = fakeClient.Get(ctx, types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, &agentDeployment)
 		assert.NoError(t, err)
-		assert.Equal(t, "jenkins/inbound-agent:3248.v65ecb_254c298-4", agentDeployment.Spec.Template.Spec.Containers[0].Image)
+		assert.Equal(t, "jenkins/inbound-agent:3248.v65ecb_254c298-6", agentDeployment.Spec.Template.Spec.Containers[0].Image)
 		assert.Equal(t, "JENKINS_WEB_SOCKET", agentDeployment.Spec.Template.Spec.Containers[0].Env[0].Name)
 		assert.Equal(t, "true", agentDeployment.Spec.Template.Spec.Containers[0].Env[0].Value)
 	})

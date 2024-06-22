@@ -8,7 +8,7 @@ const (
 	// SeedJobSuffix is a suffix added for all seed jobs
 	SeedJobSuffix = "job-dsl-seed"
 	// DefaultJenkinsMasterImage is the default Jenkins master docker image
-	DefaultJenkinsMasterImage = "jenkins/jenkins:2.452.1-lts"
+	DefaultJenkinsMasterImage = "jenkins/jenkins:2.452.2-lts"
 	// DefaultHTTPPortInt32 is the default Jenkins HTTP port
 	DefaultHTTPPortInt32 = int32(8080)
 	// DefaultSlavePortInt32 is the default Jenkins port for slaves

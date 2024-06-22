@@ -29,7 +29,7 @@ setup() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set webhook.enabled=true \
@@ -49,7 +49,7 @@ setup() {
   run verify "there is 1 pod named 'webhook-jenkins-operator-'"
   assert_success
 
-  run try "at most 20 times every 10s to get pods named 'webhook-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
+  run try "at most 50 times every 5s to get pod named 'webhook-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
   assert_success
 
   run ${KUBECTL} rollout restart deployment webhook-jenkins-operator
@@ -60,7 +60,7 @@ setup() {
 @test "3.4  Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run try "at most 30 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 30 times every 10s to get pod named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 
@@ -87,7 +87,7 @@ setup() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set webhook.enabled=true \
