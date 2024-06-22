@@ -2,7 +2,6 @@
 
 set -eo pipefail
 source "$(dirname "$0")/utils.sh"
-set -x
 
 [[ ! $# -eq 1 ]] && _log "ERROR" "Usage: $0 BACKUP_NUMBER" && exit 1
 [[ -z "${BACKUP_DIR}" ]] && _log "ERROR" "Required 'BACKUP_DIR' env not set" && exit 1
