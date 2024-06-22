@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -eo pipefail
+source "$(dirname "$0")/utils.sh"
 
 # Use 60 as default in case BACKUP_CLEANUP_INTERVAL did not set
 BACKUP_CLEANUP_INTERVAL=${BACKUP_CLEANUP_INTERVAL:=60}
@@ -8,7 +9,7 @@ BACKUP_CLEANUP_INTERVAL=${BACKUP_CLEANUP_INTERVAL:=60}
 # Ensure required environment variables are set
 check_env_var() {
     if [[ -z "${!1}" ]]; then
-        echo "Required '$1' environment variable is not set"
+        _log "ERROR" "Required '$1' environment variable is not set"
         exit 1
     fi
 }
@@ -41,7 +42,7 @@ find_exceeding_backups() {
     local backup_count="$2"
     # Check if we have any backup
     if is_backup_not_exist "${backup_dir}"; then
-        echo "backups not found in ${backup_dir}" >&2
+        _log "ERROR" "backups not found in ${backup_dir}"
         return
     fi
     find "${backup_dir}"/*.tar.zstd -maxdepth 0 -exec basename {} \; | sort -gr | tail -n +$((backup_count +1))
@@ -51,9 +52,9 @@ check_env_var "BACKUP_DIR"
 check_env_var "JENKINS_HOME"
 
 if [[ -z "${BACKUP_COUNT}" ]]; then
-    echo "ATTENTION! No BACKUP_COUNT set, it means you MUST delete old backups manually or by custom script"
+    _log "WARNING" "No BACKUP_COUNT set, it means you MUST delete old backups manually or by custom script"
 else
-    echo "Retaining only the ${BACKUP_COUNT} most recent backups, cleanup occurs every ${BACKUP_CLEANUP_INTERVAL} seconds"
+    _log "INFO" "Retaining only the ${BACKUP_COUNT} most recent backups, cleanup occurs every ${BACKUP_CLEANUP_INTERVAL} seconds"
 fi
 
 while true;
@@ -62,7 +63,7 @@ do
     if [[ -n "${BACKUP_COUNT}" ]]; then
         exceeding_backups=$(find_exceeding_backups "${BACKUP_DIR}" "${BACKUP_COUNT}")
         if [[ -n "$exceeding_backups" ]]; then
-            echo "Removing backups: $(echo "$exceeding_backups" | tr '\n' ', ' | sed 's/,$//')"
+            _log "INFO" "Removing backups: $(echo "$exceeding_backups" | tr '\n' ', ' | sed 's/,$//')"
             echo "$exceeding_backups" | while read -r file; do
                 rm "${BACKUP_DIR}/${file}"
             done
