@@ -18,7 +18,7 @@ for ((i=0; i<RETRY_COUNT; i++)); do
     _log "INFO" "Backup is already running. Waiting for ${RETRY_INTERVAL} seconds..."
     sleep "${RETRY_INTERVAL}"
 done
-[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "Backup is stil running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
+[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "Backup is still running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
 # --< Done
 
 _log "INFO" "Running backup ${BACKUP_NUMBER}"
