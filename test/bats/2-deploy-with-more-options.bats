@@ -29,7 +29,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
@@ -101,7 +101,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     chart/jenkins-operator
   assert_success

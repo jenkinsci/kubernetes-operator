@@ -33,7 +33,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.seedJobs[0].id=seed-job \
     --set jenkins.seedJobs[0].targets="cicd/jobs/*.jenkins" \
@@ -150,7 +150,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     chart/jenkins-operator
   assert_success
