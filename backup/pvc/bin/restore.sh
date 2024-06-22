@@ -15,31 +15,31 @@ TRAP_FILE="${BACKUP_DIR}/_restore_${BACKUP_NUMBER}_is_running"
 trap "rm -f ${TRAP_FILE}" SIGINT SIGTERM
 
 for ((i=0; i<RETRY_COUNT; i++)); do
-    [[ ! -f "${TRAP_FILE}" ]] && _log "INFO" "Restore: No other process are running, restoring" && break
-    _log "INFO" "Restore is already running. Waiting for ${RETRY_INTERVAL} seconds..."
+    [[ ! -f "${TRAP_FILE}" ]] && _log "INFO" "[restore] no other process are running, restoring" && break
+    _log "INFO" "[restore] is already running. Waiting for ${RETRY_INTERVAL} seconds..."
     sleep "${RETRY_INTERVAL}"
 done
-[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "Restore is still running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
+[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "[restore] is still running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
 # --< Done
 
-_log "INFO" "Running restore backup with backup number #${BACKUP_NUMBER}"
+_log "INFO" "[restore] restore backup with backup number #${BACKUP_NUMBER}"
 touch "${TRAP_FILE}"
 BACKUP_FILE="${BACKUP_DIR}/${BACKUP_NUMBER}"
 
 if [[ -f "$BACKUP_FILE.tar.gz" ]]; then
-    _log "INFO" "Restore: ld format tar.gz found, restoring it"
+    _log "INFO" "[restore] old format tar.gz found, restoring it"
     OPTS=""
     EXT="tar.gz"
 elif [[ -f "$BACKUP_FILE.tar.zstd" ]]; then
-    _log "INFO" "Restore: Backup file found, proceeding"
+    _log "INFO" "[restore] Backup file found, proceeding"
     OPTS="--zstd"
     EXT="tar.zstd"
 else
-  _log "ERROR" "Restore: Backup file not found: $BACKUP_FILE"
+  _log "ERROR" "[restore] backup file not found: $BACKUP_FILE"
   exit 1
 fi
 
 tar $OPTS -C "${JENKINS_HOME}" -xf "${BACKUP_DIR}/${BACKUP_NUMBER}.${EXT}"
 
-_log "INFO" "Restore: ${BACKUP_NUMBER} Done"
+_log "INFO" "[restore] restoring ${BACKUP_NUMBER} Done"
 exit 0
