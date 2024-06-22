@@ -30,7 +30,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.env[2].name | string | `"BACKUP_COUNT"` |  |
 | jenkins.backup.env[2].value | string | `"3"` |  |
 | jenkins.backup.getLatestAction[0] | string | `"/home/user/bin/get-latest.sh"` |  |
-| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.6"` |  |
+| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.3.1"` |  |
 | jenkins.backup.interval | int | `30` |  |
 | jenkins.backup.makeBackupBeforePodDeletion | bool | `true` |  |
 | jenkins.backup.pvc.className | string | `""` |  |
