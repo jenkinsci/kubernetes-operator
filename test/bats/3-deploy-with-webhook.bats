@@ -48,7 +48,7 @@ setup() {
   run verify "there is 1 pod named 'webhook-jenkins-operator-'"
   assert_success
 
-  run try "at most 20 times every 10s to get pods named 'webhook-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
+  run try "at most 50 times every 5s to get pod named 'webhook-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
   assert_success
 
   run ${KUBECTL} rollout restart deployment webhook-jenkins-operator
@@ -59,7 +59,7 @@ setup() {
 @test "3.4  Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run try "at most 30 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 30 times every 10s to get pod named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 

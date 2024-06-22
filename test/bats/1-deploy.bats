@@ -126,16 +126,16 @@ diag() {
 #bats test_tags=phase:helm,scenario:vanilla
 @test "1.10 Helm: check Jenkins seed job status and logs" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run try "at most 20 times every 10s to get pods named 'seed-job-agent-jenkins-' and verify that '.status.containerStatuses[?(@.name==\"jnlp\")].ready' is 'true'"
+  assert_success
+
   run verify "there is 1 deployment named 'seed-job-agent-jenkins'"
   assert_success
 
   run verify "there is 1 pod named 'seed-job-agent-jenkins-'"
   assert_success
 
-  run try "at most 20 times every 10s to get pods named 'seed-job-agent-jenkins-' and verify that '.status.containerStatuses[?(@.name==\"jnlp\")].ready' is 'true'"
-  assert_success
-
-  run ${KUBECTL} logs -l app=seed-job-agent-selector
+  run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=100
   assert_success
   assert_output --partial 'INFO: Connected'
 
