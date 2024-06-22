@@ -35,6 +35,7 @@ diag() {
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set jenkins.seedJobs[0].id=seed-job \
     --set jenkins.seedJobs[0].targets="cicd/jobs/*.jenkins" \
     --set jenkins.seedJobs[0].description="jobs-from-operator-repo" \
@@ -152,6 +153,7 @@ diag() {
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator
   assert_success
   assert ${HELM} status default

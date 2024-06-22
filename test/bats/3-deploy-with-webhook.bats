@@ -31,6 +31,7 @@ setup() {
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set webhook.enabled=true \
     jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
   assert_success
@@ -88,6 +89,7 @@ setup() {
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set webhook.enabled=true \
     chart/jenkins-operator
   assert_success
