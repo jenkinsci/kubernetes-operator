@@ -6,18 +6,18 @@ source "$(dirname "$0")/utils.sh"
 [[ ! $# -eq 1 ]] && _log "ERROR" "Usage: $0 BACKUP_NUMBER" && exit 1
 [[ -z "${BACKUP_DIR}" ]] && _log "ERROR" "Required 'BACKUP_DIR' env not set" && exit 1
 [[ -z "${JENKINS_HOME}" ]] && _log "ERROR" "Required 'JENKINS_HOME' env not set" && exit 1
-RETRY_COUNT=${RETRY_COUNT:-3}
-RETRY_INTERVAL=${RETRY_INTERVAL:-60}
+BACKUP_RETRY_COUNT=${BACKUP_RETRY_COUNT:-3}
+BACKUP_RETRY_INTERVAL=${BACKUP_RETRY_INTERVAL:-60}
 BACKUP_NUMBER=$1
 TRAP_FILE="/tmp/_backup_${BACKUP_NUMBER}_is_running"
 
 # --> Check if another backup process is running (operator restart/crash)
-for ((i=0; i<RETRY_COUNT; i++)); do
+for ((i=0; i<BACKUP_RETRY_COUNT; i++)); do
     [[ ! -f "${TRAP_FILE}" ]] && _log "INFO" "[backup] no other backup process are running" && break
-    _log "INFO" "[backup] backup is already running. Waiting for ${RETRY_INTERVAL} seconds..."
-    sleep "${RETRY_INTERVAL}"
+    _log "INFO" "[backup] backup is already running. Waiting for ${BACKUP_RETRY_INTERVAL} seconds..."
+    sleep "${BACKUP_RETRY_INTERVAL}"
 done
-[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "[backup] backup is still running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
+[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "[backup] backup is still running after waiting ${BACKUP_RETRY_COUNT} time ${BACKUP_RETRY_INTERVAL}s. Exiting."; exit 1; }
 # --< Done
 
 _log "INFO" "[backup] running backup ${BACKUP_NUMBER}"

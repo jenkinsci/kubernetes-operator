@@ -7,19 +7,19 @@ source "$(dirname "$0")/utils.sh"
 [[ -z "${BACKUP_DIR}" ]] && _log "ERROR" "Required 'BACKUP_DIR' env not set" && exit 1
 [[ -z "${JENKINS_HOME}" ]] && _log "ERROR" "Required 'JENKINS_HOME' env not set" && exit 1
 BACKUP_NUMBER=$1
-RETRY_COUNT=${RETRY_COUNT:-10}
-RETRY_INTERVAL=${RETRY_INTERVAL:-10}
+RESTORE_RETRY_COUNT=${RESTORE_RETRY_COUNT:-10}
+RESTORE_RETRY_INTERVAL=${RESTORE_RETRY_INTERVAL:-10}
 
 # --> Check if another restore process is running (operator restart/crash)
 TRAP_FILE="/tmp/_restore_${BACKUP_NUMBER}_is_running"
 trap "rm -f ${TRAP_FILE}" SIGINT SIGTERM
 
-for ((i=0; i<RETRY_COUNT; i++)); do
+for ((i=0; i<RESTORE_RETRY_COUNT; i++)); do
     [[ ! -f "${TRAP_FILE}" ]] && _log "INFO" "[restore] no other process are running, restoring" && break
-    _log "INFO" "[restore] is already running. Waiting for ${RETRY_INTERVAL} seconds..."
-    sleep "${RETRY_INTERVAL}"
+    _log "INFO" "[restore] is already running. Waiting for ${RESTORE_RETRY_INTERVAL} seconds..."
+    sleep "${RESTORE_RETRY_INTERVAL}"
 done
-[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "[restore] is still running after waiting ${RETRY_COUNT} time ${RETRY_INTERVAL}s. Exiting."; exit 1; }
+[[ -f "${TRAP_FILE}" ]] && { _log "ERROR" "[restore] is still running after waiting ${RESTORE_RETRY_COUNT} time ${RESTORE_RETRY_INTERVAL}s. Exiting."; exit 1; }
 # --< Done
 
 _log "INFO" "[restore] restore backup with backup number #${BACKUP_NUMBER}"
