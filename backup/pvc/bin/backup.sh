@@ -9,7 +9,7 @@ source "$(dirname "$0")/utils.sh"
 RETRY_COUNT=${RETRY_COUNT:-3}
 RETRY_INTERVAL=${RETRY_INTERVAL:-60}
 BACKUP_NUMBER=$1
-TRAP_FILE="${BACKUP_DIR}/_backup_${BACKUP_NUMBER}_is_running"
+TRAP_FILE="/tmp/_backup_${BACKUP_NUMBER}_is_running"
 
 # --> Check if another backup process is running (operator restart/crash)
 for ((i=0; i<RETRY_COUNT; i++)); do

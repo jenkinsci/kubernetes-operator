@@ -7,11 +7,11 @@ source "$(dirname "$0")/utils.sh"
 [[ -z "${BACKUP_DIR}" ]] && _log "ERROR" "Required 'BACKUP_DIR' env not set" && exit 1
 [[ -z "${JENKINS_HOME}" ]] && _log "ERROR" "Required 'JENKINS_HOME' env not set" && exit 1
 BACKUP_NUMBER=$1
-RETRY_COUNT=${RETRY_COUNT:-3}
-RETRY_INTERVAL=${RETRY_INTERVAL:-60}
+RETRY_COUNT=${RETRY_COUNT:-10}
+RETRY_INTERVAL=${RETRY_INTERVAL:-10}
 
 # --> Check if another restore process is running (operator restart/crash)
-TRAP_FILE="${BACKUP_DIR}/_restore_${BACKUP_NUMBER}_is_running"
+TRAP_FILE="/tmp/_restore_${BACKUP_NUMBER}_is_running"
 trap "rm -f ${TRAP_FILE}" SIGINT SIGTERM
 
 for ((i=0; i<RETRY_COUNT; i++)); do
@@ -41,5 +41,7 @@ fi
 
 tar $OPTS -C "${JENKINS_HOME}" -xf "${BACKUP_DIR}/${BACKUP_NUMBER}.${EXT}"
 
+_log "INFO" "[restore] deleting lock file ${TRAP_FILE}"
+test -f "${TRAP_FILE}" && rm -f "${TRAP_FILE}"
 _log "INFO" "[restore] restoring ${BACKUP_NUMBER} Done"
 exit 0
