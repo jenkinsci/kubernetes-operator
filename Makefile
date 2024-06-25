@@ -89,10 +89,17 @@ test: ## Runs the go tests
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
 
 .PHONY: e2e
-e2e: deepcopy-gen manifests ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: deepcopy-gen manifests backup-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+## Backup Section
+
+.PHONY: backup-kind-load
+backup-kind-load: ## Load latest backup image in the cluster
+	@echo "+ $@"
+	make -C backup/pvc backup-kind-load
 
 ## HELM Section
 
@@ -374,12 +381,12 @@ kind-clean: ## Delete kind cluster
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
-bats-tests: container-runtime-build-amd64 ## Run bats tests
+bats-tests: backup-kind-load container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
 	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 else
-bats-tests: ## Run bats tests
+bats-tests: backup-kind-load
 	@echo "+ $@"
 	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
 endif

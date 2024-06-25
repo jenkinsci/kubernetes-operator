@@ -33,8 +33,9 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set jenkins.seedJobs[0].id=seed-job \
     --set jenkins.seedJobs[0].targets="cicd/jobs/*.jenkins" \
     --set jenkins.seedJobs[0].description="jobs-from-operator-repo" \
@@ -126,16 +127,18 @@ diag() {
 #bats test_tags=phase:helm,scenario:vanilla
 @test "1.10 Helm: check Jenkins seed job status and logs" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run try "at most 20 times every 10s to get pods named 'seed-job-agent-jenkins-' and verify that '.status.containerStatuses[?(@.name==\"jnlp\")].ready' is 'true'"
+  assert_success
+
   run verify "there is 1 deployment named 'seed-job-agent-jenkins'"
   assert_success
 
   run verify "there is 1 pod named 'seed-job-agent-jenkins-'"
   assert_success
 
-  run try "at most 20 times every 10s to get pods named 'seed-job-agent-jenkins-' and verify that '.status.containerStatuses[?(@.name==\"jnlp\")].ready' is 'true'"
-  assert_success
+  sleep 5
 
-  run ${KUBECTL} logs -l app=seed-job-agent-selector
+  run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=20000
   assert_success
   assert_output --partial 'INFO: Connected'
 
@@ -150,8 +153,9 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.452.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator
   assert_success
   assert ${HELM} status default

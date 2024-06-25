@@ -46,7 +46,7 @@ const (
 	AgentName = "seed-job-agent"
 
 	// DefaultAgentImage is the default image used for the seed-job agent
-	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-4"
+	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6"
 
 	creatingGroovyScriptName = "seed-job-groovy-script.groovy"
 
