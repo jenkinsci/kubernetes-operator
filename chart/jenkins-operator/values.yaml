@@ -214,7 +214,7 @@ jenkins:
 
     # image used by backup feature
     # By default using prebuilt backup PVC image
-    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.3.1
+    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.4.1
 
     # containerName is backup container name
     containerName: backup
@@ -262,6 +262,11 @@ jenkins:
     # BACKUP_DIR - path for storing backup files (default: "/backup")
     # JENKINS_HOME - path to jenkins home (default: "/jenkins-home")
     # BACKUP_COUNT - define how much recent backups will be kept
+    # Optional in case you want to modify the backup and restore retry logic
+    # BACKUP_RETRY_COUNT
+    # BACKUP_RETRY_INTERVAL
+    # RESTORE_RETRY_COUNT
+    # RESTORE_RETRY_INTERVAL
     env:
       - name: BACKUP_DIR
         value: /backup
@@ -269,6 +274,15 @@ jenkins:
         value: /jenkins-home
       - name: BACKUP_COUNT
         value: "3" # keep only the 3 most recent backups
+      #- name: BACKUP_RETRY_COUNT
+      #  value: "3"
+      #- name: BACKUP_RETRY_INTERVAL
+      #  value: "60"
+      #- name: RESTORE_RETRY_COUNT
+      #  value: "10"
+      #- name: RESTORE_RETRY_INTERVAL
+      #  value: "10"
+
 
     # volumeMounts holds the mount points for volumes
     volumeMounts:

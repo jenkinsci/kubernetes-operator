@@ -2,7 +2,7 @@
 title: "Configuring backup and restore"
 linkTitle: "Configuring backup and restore"
 weight: 5
-date: 2023-01-08
+date: 2024-06-25
 description: >
   Prevent loss of job history
 ---
@@ -115,3 +115,19 @@ spec:
         command:
           - /home/user/bin/get-latest.sh # this command is invoked on "backup" container to get last backup number before pod deletion; not having it in the CR may cause loss of data
 ```
+
+#### Customizing pvc backup behaviour
+
+To prevent situations where the operator crashes or gets killed during a backup and restore process, a retry logic has been implemented.
+
+This logic can be customized by adjusting the following environment variables:
+
+* **Backup**: total time wait until giving up by default: 180s
+  * `BACKUP_RETRY_COUNT`: by default is `3`
+  * `BACKUP_RETRY_INTERVAL`: by default is `60`
+
+* **Restore**: total time wait until giving up by default: 100s
+  * `RESTORE_RETRY_COUNT`: by default is `10`
+  * `RESTORE_RETRY_INTERVAL`: by default is `10`
+
+You can adjust the retry logic based on the size of your backup and the duration of the restore process.
