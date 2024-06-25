@@ -180,17 +180,18 @@ func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error 
 		if err != nil {
 			return err
 		}
-		//TODO fix me because we're doing two saves unatomically
-		jenkins.Spec.Restore.RecoveryOnce = 0
-		err = bar.Client.Update(context.TODO(), jenkins)
-		if err != nil {
-			return err
-		}
+
 		key := types.NamespacedName{
 			Namespace: jenkins.Namespace,
 			Name:      jenkins.Name,
 		}
 		err = bar.Client.Get(context.TODO(), key, jenkins)
+		if err != nil {
+			return err
+		}
+
+		jenkins.Spec.Restore.RecoveryOnce = 0
+		err = bar.Client.Update(context.TODO(), jenkins)
 		if err != nil {
 			return err
 		}
@@ -223,6 +224,15 @@ func (bar *BackupAndRestore) Backup(setBackupDoneBeforePodDeletion bool) error {
 	_, _, err := bar.Exec(podName, jenkins.Spec.Backup.ContainerName, command)
 
 	if err == nil {
+		key := types.NamespacedName{
+			Namespace: jenkins.Namespace,
+			Name:      jenkins.Name,
+		}
+		err = bar.Client.Get(context.TODO(), key, jenkins)
+		if err != nil {
+			return err
+		}
+
 		bar.logger.V(log.VDebug).Info(fmt.Sprintf("Backup completed '%d', updating status", backupNumber))
 		if jenkins.Status.RestoredBackup == 0 {
 			jenkins.Status.RestoredBackup = backupNumber
