@@ -1,10 +1,11 @@
 package client
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
-	"regexp"
 	"strings"
 	"time"
 
@@ -14,7 +15,6 @@ import (
 
 var (
 	errorNotFound = errors.New("404")
-	regex         = regexp.MustCompile("(<application-desc><argument>)(?P<secret>[a-z0-9]*)")
 )
 
 // Jenkins defines Jenkins API.
@@ -197,27 +197,34 @@ func isNotFoundError(err error) bool {
 }
 
 func (jenkins *jenkins) GetNodeSecret(name string) (string, error) {
-	var content string
-	r, err := jenkins.Requester.GetXML(fmt.Sprintf("/computer/%s/slave-agent.jnlp", name), &content, nil)
+	url := fmt.Sprintf("%s/scriptText", jenkins.Server)
+	script := fmt.Sprintf(`println(jenkins.model.Jenkins.getInstance().getComputer("%s").getJnlpMac())`, name)
+	payload := bytes.NewBufferString(fmt.Sprintf("script=%s", script))
+
+	req, err := http.NewRequest("POST", url, payload)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	defer r.Body.Close()
+	req.SetBasicAuth(jenkins.Requester.BasicAuth.Username, jenkins.Requester.BasicAuth.Password)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	match := regex.FindStringSubmatch(content)
-	if match == nil {
-		return "", errors.New("Node secret cannot be parsed")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
 	}
 
-	result := make(map[string]string)
-
-	for i, name := range regex.SubexpNames() {
-		if i != 0 && name != "" {
-			result[name] = match[i]
-		}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to get node secret: %s", string(body))
 	}
 
-	return result["secret"], nil
+	return string(body), nil
 }
 
 // Returns the list of all plugins installed on the Jenkins server.
