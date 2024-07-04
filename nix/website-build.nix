@@ -13,10 +13,10 @@ in
 pkgs.buildNpmPackage {
   name = "jenkins-kubernetes-operator-website";
   src = ../website;
-  version = "0.0.1";
-  npmDepsHash = "sha256-NcspVYF+9dCrGxH/cGNhD+TxLZm6ZDX523mKm9smAAA=";
+  version = "0.0.2";
+  npmDepsHash = "sha256-VrHuyqTPUzVJSjah+BWfg7R9yiarJQ2MDvEdqkOWddM=";
   nativeBuildInputs = buildPackages;
-  buildPhase = "npm run build";
+  buildPhase = "${pkgs.nodejs_21}/bin/npm run build";
   installPhase = "cp -r public $out";
   BASE_URL = "${baseUrl}";
 }
