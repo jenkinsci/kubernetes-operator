@@ -32,7 +32,7 @@ setup() {
     --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
-    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
   assert_success
   assert ${HELM} status options
   touch "chart/jenkins-operator/deploy.tmp"

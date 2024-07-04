@@ -11,3 +11,7 @@ _common_setup() {
     export KUBECTL="kubectl --context=${CONTEXT} -n ${DETIK_CLIENT_NAMESPACE}"
     export HELM="helm --kube-context=${CONTEXT} -n ${DETIK_CLIENT_NAMESPACE}"
 }
+
+get_latest_chart_version() {
+    helm search repo jenkins-operator/jenkins --versions | awk 'NR==2 {print $2}' | sed 's/v//'
+}

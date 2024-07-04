@@ -33,7 +33,7 @@ setup() {
     --set jenkins.backup.makeBackupBeforePodDeletion=true \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set webhook.enabled=true \
-    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
   assert_success
   assert ${HELM} status webhook
   touch "chart/jenkins-operator/deploy.tmp"

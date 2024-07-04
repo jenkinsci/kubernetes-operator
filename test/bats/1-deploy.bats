@@ -42,7 +42,7 @@ diag() {
     --set jenkins.seedJobs[0].repositoryBranch=master \
     --set jenkins.seedJobs[0].repositoryUrl=https://github.com/jenkinsci/kubernetes-operator \
     --set jenkins.seedJobs[0].buildPeriodically="10 * * * *" \
-    jenkins-operator/jenkins-operator --version=$(cat VERSION.txt | sed 's/v//')
+    jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
   assert_success
   assert ${HELM} status default
   touch "chart/jenkins-operator/deploy.tmp"
@@ -136,7 +136,7 @@ diag() {
   run verify "there is 1 pod named 'seed-job-agent-jenkins-'"
   assert_success
 
-  sleep 5
+  sleep 10
 
   run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=20000
   assert_success
