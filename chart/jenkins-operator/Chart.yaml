@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: "0.8.0"
+appVersion: "0.8.1"
 description: Kubernetes native operator which fully manages Jenkins on Kubernetes
 name: jenkins-operator
-version: 0.8.0
+version: 0.8.1
 icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
 dependencies:
 - name: cert-manager

@@ -2,6 +2,25 @@ apiVersion: v1
 entries:
   jenkins-operator:
   - apiVersion: v2
+    appVersion: 0.8.1
+    created: "2024-07-05T15:26:01.708923805Z"
+    dependencies:
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.14.2
+    - condition: cert-manager.enabled
+      name: cert-manager-crds
+      repository: ""
+      version: 1.14.2
+    description: Kubernetes native operator which fully manages Jenkins on Kubernetes
+    digest: 82c061ff42bbf2dbcf942939ffbd5b63508c9d8490fc06672a474af1cad14a5d
+    icon: https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/assets/jenkins-operator-icon.png
+    name: jenkins-operator
+    urls:
+    - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.8.1.tgz
+    version: 0.8.1
+  - apiVersion: v2
     appVersion: 0.8.0
     created: "2023-09-13T06:54:41.369295961Z"
     dependencies:
@@ -378,4 +397,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart/jenkins-operator/jenkins-operator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-09-13T06:54:41.354056045Z"
+generated: "2024-07-05T15:26:01.702900485Z"
