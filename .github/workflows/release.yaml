@@ -16,7 +16,7 @@ jobs:
       - name: Set up env vars
         run: |
           echo "GO111MODULE=on" >> $GITHUB_ENV
-          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env)" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
