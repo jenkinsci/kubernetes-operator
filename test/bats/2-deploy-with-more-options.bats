@@ -30,6 +30,7 @@ setup() {
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
@@ -103,9 +104,10 @@ setup() {
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
-    chart/jenkins-operator
+    chart/jenkins-operator --wait
   assert_success
   assert ${HELM} status options
 }
@@ -160,9 +162,9 @@ setup() {
 @test "2.14 Helm: clean" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run ${HELM} uninstall options
+  run ${HELM} uninstall options --wait
   assert_success
-  sleep 30
+  sleep 10
 
   run verify "there is 0 pvc named 'jenkins backup'"
   assert_success

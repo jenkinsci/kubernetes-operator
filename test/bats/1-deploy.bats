@@ -34,6 +34,7 @@ diag() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     --set jenkins.seedJobs[0].id=seed-job \
@@ -154,9 +155,10 @@ diag() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
-    chart/jenkins-operator
+    chart/jenkins-operator --wait
   assert_success
   assert ${HELM} status default
 }
@@ -199,10 +201,10 @@ diag() {
 
 #bats test_tags=phase:helm,scenario:vanilla
 @test "1.15 Helm: clean" {
-  run ${HELM} uninstall default
+  run ${HELM} uninstall default --wait
   assert_success
   # Wait for the complete removal
-  sleep 30
+  sleep 10
 
   run verify "there is 0 pvc named 'jenkins backup'"
   assert_success
