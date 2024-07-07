@@ -134,7 +134,7 @@ helm-release-latest: helm
 .PHONY: helm-e2e
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 
-helm-e2e: helm container-runtime-build-amd64 ## Runs helm e2e tests, you can use EXTRA_ARGS
+helm-e2e: helm container-runtime-build-amd64 backup-kind-load ## Runs helm e2e tests, you can use EXTRA_ARGS
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/helm/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" -image-name=$(IMAGE_NAME) $(E2E_TEST_ARGS)
