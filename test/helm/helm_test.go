@@ -48,7 +48,9 @@ var _ = Describe("Jenkins Controller", func() {
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
 				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.452.2-lts"),
-				"--set-string", fmt.Sprintf("operator.image=%s", *imageName), "--install")
+				"--set-string", fmt.Sprintf("operator.image=%s", *imageName),
+				"--set-string", fmt.Sprintf("backup.image=%s", "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"),
+				"--set-string", fmt.Sprintf("jenkins.imagePullPolicy=%s", "IfNotPresent"), "--install")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
 
