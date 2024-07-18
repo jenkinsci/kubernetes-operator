@@ -33,9 +33,17 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    jenkins-operator/jenkins-operator --version=$(cat ../../VERSION.txt | sed 's/v//')
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
+    --set jenkins.seedJobs[0].id=seed-job \
+    --set jenkins.seedJobs[0].targets="cicd/jobs/*.jenkins" \
+    --set jenkins.seedJobs[0].description="jobs-from-operator-repo" \
+    --set jenkins.seedJobs[0].repositoryBranch=master \
+    --set jenkins.seedJobs[0].repositoryUrl=https://github.com/jenkinsci/kubernetes-operator \
+    --set jenkins.seedJobs[0].buildPeriodically="10 * * * *" \
+    jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
   assert_success
   assert ${HELM} status default
   touch "chart/jenkins-operator/deploy.tmp"
@@ -118,7 +126,27 @@ diag() {
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.10 Helm: upgrade from main branch same values" {
+@test "1.10 Helm: check Jenkins seed job status and logs" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+  run try "at most 20 times every 10s to get pods named 'seed-job-agent-jenkins-' and verify that '.status.containerStatuses[?(@.name==\"jnlp\")].ready' is 'true'"
+  assert_success
+
+  run verify "there is 1 deployment named 'seed-job-agent-jenkins'"
+  assert_success
+
+  run verify "there is 1 pod named 'seed-job-agent-jenkins-'"
+  assert_success
+
+  sleep 10
+
+  run ${KUBECTL} logs -l app=seed-job-agent-selector --tail=20000
+  assert_success
+  assert_output --partial 'INFO: Connected'
+
+}
+
+#bats test_tags=phase:helm,scenario:vanilla
+@test "1.11 Helm: upgrade from main branch same values" {
   run echo ${DETIK_CLIENT_NAMESPACE}
   run echo ${OPERATOR_IMAGE}
   run ${HELM} upgrade default \
@@ -126,15 +154,17 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    chart/jenkins-operator
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
+    chart/jenkins-operator --wait
   assert_success
   assert ${HELM} status default
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.11 Helm: check Jenkins operator pods status again" {
+@test "1.12 Helm: check Jenkins operator pods status again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run verify "there is 1 deployment named 'default-jenkins-operator'"
   assert_success
@@ -147,7 +177,7 @@ diag() {
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.12 Helm: check Jenkins operator pods status" {
+@test "1.13 Helm: check Jenkins operator pods status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run verify "there is 1 deployment named 'default-jenkins-operator'"
   assert_success
@@ -160,7 +190,7 @@ diag() {
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.13 Helm: check Jenkins Pod status" {
+@test "1.14 Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
@@ -170,11 +200,11 @@ diag() {
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.14 Helm: clean" {
-  run ${HELM} uninstall default
+@test "1.15 Helm: clean" {
+  run ${HELM} uninstall default --wait
   assert_success
   # Wait for the complete removal
-  sleep 30
+  sleep 10
 
   run verify "there is 0 pvc named 'jenkins backup'"
   assert_success

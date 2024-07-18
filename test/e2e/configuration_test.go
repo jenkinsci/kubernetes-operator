@@ -24,13 +24,13 @@ import (
 const e2e = "e2e"
 
 var expectedBasePluginsList = []plugins.Plugin{
-	plugins.Must(plugins.New("configuration-as-code:1775.v810dc950b_514")),
-	plugins.Must(plugins.New("git:5.2.1")),
-	plugins.Must(plugins.New("kubernetes:4186.v1d804571d5d4")),
-	plugins.Must(plugins.New("kubernetes-credentials-provider:1.258.v95949f923a_a_e")),
+	plugins.Must(plugins.New("configuration-as-code:1810.v9b_c30a_249a_4c")),
+	plugins.Must(plugins.New("git:5.2.2")),
+	plugins.Must(plugins.New("kubernetes:4246.v5a_12b_1fe120e")),
+	plugins.Must(plugins.New("kubernetes-credentials-provider:1.262.v2670ef7ea_0c5")),
 	plugins.Must(plugins.New("job-dsl:1.87")),
 	plugins.Must(plugins.New("workflow-aggregator:596.v8c21c963d92d")),
-	plugins.Must(plugins.New("workflow-job:1385.vb_58b_86ea_fff1")),
+	plugins.Must(plugins.New("workflow-job:1400.v7fd111b_ec82f")),
 }
 
 func createUserConfigurationSecret(namespace string, stringData map[string]string) {
@@ -111,6 +111,8 @@ func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {
 	jenkinsPod := getJenkinsMasterPod(jenkins)
 	jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 
+	defaultGracePeriod := constants.DefaultTerminationGracePeriodSeconds
+
 	assertMapContainsElementsFromAnotherMap(jenkins.Spec.Master.Annotations, jenkinsPod.ObjectMeta.Annotations)
 	Expect(jenkinsPod.Spec.NodeSelector).Should(Equal(jenkins.Spec.Master.NodeSelector))
 
@@ -125,6 +127,7 @@ func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {
 
 	Expect(jenkinsPod.Labels).Should(Equal(resources.GetJenkinsMasterPodLabels(*jenkins)))
 	Expect(jenkinsPod.Spec.PriorityClassName).Should(Equal(jenkins.Spec.Master.PriorityClassName))
+	Expect(jenkinsPod.Spec.TerminationGracePeriodSeconds).Should(Equal(&defaultGracePeriod))
 
 	for _, actualContainer := range jenkinsPod.Spec.Containers {
 		if actualContainer.Name == resources.JenkinsMasterContainerName {

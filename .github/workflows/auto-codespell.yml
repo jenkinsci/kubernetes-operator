@@ -17,17 +17,24 @@ jobs:
       uses: codespell-project/actions-codespell@v2
       with:
         check_filenames: true
-        ignore_words_list: aks,ags,startin
-        skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml"
+        ignore_words_list: aks,ags,startin,NotIn
+        skip: "*.js,package-lock.json,*.lock,*/Font-Awesome/*,*.toml,*.svg,*assets/vendor/bootstrap*,cert-manager.crds.yaml,*/docs/*"
   pre-commit:
     name: PreCommit
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@v5.0.0
+    - uses: actions/setup-python@v5.1.0
+    - uses: DeterminateSystems/nix-installer-action@v12
+      with:
+        diagnostic-endpoint: ""
+    - uses: DeterminateSystems/magic-nix-cache-action@v7
+      with:
+        diagnostic-endpoint: ""
     - name: Checkout
       uses: actions/checkout@v4
     - id: files
-      uses: tj-actions/changed-files@v42
-    - uses: pre-commit/action@v3.0.1
-      with:
-        extra_args: --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure
+      uses: tj-actions/changed-files@v44
+    - name: nix checks
+      run: nix flake check
+    - name: nix pre-commit
+      run: nix develop . --command pre-commit run --files ${{ steps.files.outputs.all_changed_files }} --show-diff-on-failure

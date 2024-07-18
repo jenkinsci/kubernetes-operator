@@ -36,7 +36,7 @@ jenkins:
   # image is the name (and tag) of the Jenkins instance
   # Default: jenkins/jenkins:lts
   # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.440.1-lts
+  image: jenkins/jenkins:2.452.2-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -65,6 +65,10 @@ jenkins:
   #   - "foo.remote"
   #   - "bar.remote"
 
+  # Optional duration in seconds the pod needs to terminate gracefully.
+  # Default 30sec
+  terminationGracePeriodSeconds: 30
+
   # validateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
   validateSecurityWarnings: false
 
@@ -90,19 +94,19 @@ jenkins:
   #
   # basePlugins:
   # - name: kubernetes
-  #   version: 4186.v1d804571d5d4
+  #   version: 4246.v5a_12b_1fe120e
   # - name: workflow-job
-  #   version: 1385.vb_58b_86ea_fff1
+  #   version: 1400.v7fd111b_ec82f
   # - name: workflow-aggregator
   #   version: 596.v8c21c963d92d
   # - name: git
-  #   version: 5.2.1
+  #   version: 5.2.2
   # - name: job-dsl
   #   version: "1.87"
   # - name: configuration-as-code
-  #   version: 11775.v810dc950b_514
+  #   version: 1810.v9b_c30a_249a_4c
   # - name: kubernetes-credentials-provider
-  #   version: 1.234.vf3013b_35f5b_a
+  #   version: 1.262.v2670ef7ea_0c5
 
   basePlugins: []
 
@@ -135,7 +139,7 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
-  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3206.vb_15dcf73f6a_9-3 will be used.
+  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3248.v65ecb_254c298-6 will be used.
   seedJobAgentImage: ""
 
   # Resource limit/request for Jenkins
@@ -210,7 +214,7 @@ jenkins:
 
     # image used by backup feature
     # By default using prebuilt backup PVC image
-    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.6
+    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.4.1
 
     # containerName is backup container name
     containerName: backup
@@ -258,6 +262,11 @@ jenkins:
     # BACKUP_DIR - path for storing backup files (default: "/backup")
     # JENKINS_HOME - path to jenkins home (default: "/jenkins-home")
     # BACKUP_COUNT - define how much recent backups will be kept
+    # Optional in case you want to modify the backup and restore retry logic
+    # BACKUP_RETRY_COUNT
+    # BACKUP_RETRY_INTERVAL
+    # RESTORE_RETRY_COUNT
+    # RESTORE_RETRY_INTERVAL
     env:
       - name: BACKUP_DIR
         value: /backup
@@ -265,6 +274,15 @@ jenkins:
         value: /jenkins-home
       - name: BACKUP_COUNT
         value: "3" # keep only the 3 most recent backups
+      #- name: BACKUP_RETRY_COUNT
+      #  value: "3"
+      #- name: BACKUP_RETRY_INTERVAL
+      #  value: "60"
+      #- name: RESTORE_RETRY_COUNT
+      #  value: "10"
+      #- name: RESTORE_RETRY_INTERVAL
+      #  value: "10"
+
 
     # volumeMounts holds the mount points for volumes
     volumeMounts:
@@ -294,7 +312,7 @@ operator:
   replicaCount: 1
 
   # image is the name (and tag) of the Jenkins Operator image
-  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+  image: quay.io/jenkins-kubernetes-operator/operator:v0.8.1
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
@@ -330,8 +348,11 @@ webhook:
   # enable or disable the validation webhook
   enabled: false
 
-# This startupapicheck is a Helm post-install hook that waits for the webhook
-# endpoints to become available.
 cert-manager:
+  # cert-manager is required to generate certificates for webhook. If you don't have cert-manager installed in your cluster,
+  # you can install it as a subordinate chart
+  enabled: false
+  # This startupapicheck is a Helm post-install hook that waits for the webhook
+  # endpoints to become available.
   startupapicheck:
     enabled: false

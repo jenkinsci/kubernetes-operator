@@ -8,12 +8,14 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.jetstack.io | cert-manager | 1.5.1 |
+|  | cert-manager-crds | 1.14.2 |
+| https://charts.jetstack.io | cert-manager | 1.14.2 |
 
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| cert-manager.enabled | bool | `false` |  |
 | cert-manager.startupapicheck.enabled | bool | `false` |  |
 | jenkins.annotations | object | `{}` |  |
 | jenkins.apiVersion | string | `"jenkins.io/v1alpha2"` |  |
@@ -28,7 +30,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.env[2].name | string | `"BACKUP_COUNT"` |  |
 | jenkins.backup.env[2].value | string | `"3"` |  |
 | jenkins.backup.getLatestAction[0] | string | `"/home/user/bin/get-latest.sh"` |  |
-| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.6"` |  |
+| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.4.1"` |  |
 | jenkins.backup.interval | int | `30` |  |
 | jenkins.backup.makeBackupBeforePodDeletion | bool | `true` |  |
 | jenkins.backup.pvc.className | string | `""` |  |
@@ -52,7 +54,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.440.1-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.452.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
@@ -88,6 +90,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.seedJobAgentImage | string | `""` |  |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
+| jenkins.terminationGracePeriodSeconds | int | `30` |  |
 | jenkins.tolerations | list | `[]` |  |
 | jenkins.validateSecurityWarnings | bool | `false` |  |
 | jenkins.volumeMounts | list | `[]` |  |
@@ -95,7 +98,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.0"` |  |
+| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.8.1"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
+echo "Running limit_backup_count e2e test..."
+
 [[ "${DEBUG}" ]] && set -x
 
 # set current working directory to the directory of the script
@@ -30,17 +32,20 @@ touch ${BACKUP_DIR}/8.tar.zstd
 touch ${BACKUP_DIR}/9.tar.zstd
 touch ${BACKUP_DIR}/10.tar.zstd
 touch ${BACKUP_DIR}/11.tar.zstd
+# Emulate backup creation
+BACKUP_TMP_DIR=$(mktemp -d --tmpdir="${BACKUP_DIR}")
+touch ${BACKUP_TMP_DIR}/12.tar.zstd
 
 # Create an instance of the container under testing
-cid="$(docker run -e BACKUP_COUNT=2 -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
+cid="$(docker run -e BACKUP_CLEANUP_INTERVAL=1 -e BACKUP_COUNT=2 -e JENKINS_HOME=${JENKINS_HOME} -v ${JENKINS_HOME}:${JENKINS_HOME}:ro -e BACKUP_DIR=${BACKUP_DIR} -v ${BACKUP_DIR}:${BACKUP_DIR}:rw -d ${docker_image})"
 echo "Docker container ID '${cid}'"
 
 # Remove test directory and container afterwards
 trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${JENKINS_HOME}" EXIT
 
-sleep 11
-touch ${BACKUP_DIR}/12.tar.zstd
-sleep 11
+sleep 2
+mv ${BACKUP_TMP_DIR}/12.tar.zstd ${BACKUP_DIR}/
+sleep 2
 
 if [[ "${DEBUG}" ]]; then
     docker logs ${cid}

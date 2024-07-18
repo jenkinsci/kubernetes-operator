@@ -115,6 +115,9 @@ spec:
     {{- with .Values.jenkins.hostAliases }}
     hostAliases: {{ toYaml . | nindent 4 }}
     {{- end }}
+    {{- if .Values.jenkins.terminationGracePeriodSeconds }}
+    terminationGracePeriodSeconds: {{ .Values.jenkins.terminationGracePeriodSeconds }}
+    {{- end }}
     containers:
       - name:  jenkins-master
         image: {{ .Values.jenkins.image }}
@@ -137,7 +140,7 @@ spec:
       {{- if .Values.jenkins.backup.enabled }}
       - name: {{ .Values.jenkins.backup.containerName }}
         image: {{ .Values.jenkins.backup.image }}
-        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }} 
+        imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
         {{- with .Values.jenkins.backup.resources }}
         resources: {{ toYaml . | nindent 10 }}
         {{- end }}

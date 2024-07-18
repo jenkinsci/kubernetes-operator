@@ -1330,6 +1330,10 @@ spec:
                             type: string
                         type: object
                     type: object
+                  terminationGracePeriodSeconds:
+                    description: 'Optional duration in seconds the pod needs to terminate gracefully.'
+                    type: integer
+                    default: 30
                   tolerations:
                     description: If specified, the pod's tolerations.
                     items:

@@ -232,8 +232,8 @@ metadata:
   name: jenkins-operator
   labels:
     app.kubernetes.io/name: jenkins-operator
-    helm.sh/chart: jenkins-operator-0.8.0
-    app.kubernetes.io/version: "0.8.0"
+    helm.sh/chart: jenkins-operator-0.8.1
+    app.kubernetes.io/version: "0.8.1"
 spec:
   replicas: 1
   selector:
@@ -247,7 +247,7 @@ spec:
       serviceAccountName: jenkins-operator
       containers:
         - name: jenkins-operator
-          image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+          image: quay.io/jenkins-kubernetes-operator/operator:v0.8.1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

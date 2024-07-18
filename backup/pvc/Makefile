@@ -118,6 +118,12 @@ docker-release-latest: docker-build ## Release image with latest tags (in additi
 docker-release: docker-release-version docker-release-latest ## Release image with version and latest tags (in addition to build tag)
 	@echo "+ $@"
 
+.PHONY: backup-kind-load
+backup-kind-load: docker-build ## Build and load backup img in kind with e2e-test tag
+	@echo "+ $@"
+	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):e2e-test
+	kind load docker-image quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):e2e-test --name $(KIND_CLUSTER_NAME)
+
 # if this session isn't interactive, then we don't want to allocate a
 # TTY, which would fail, but if it is interactive, we do want to attach
 # so that the user can send e.g. ^C through.
@@ -127,7 +133,7 @@ ifeq ($(INTERACTIVE), 1)
 endif
 
 .PHONY: docker-run
-docker-run: docker-build ## Run the container in docker, you can use EXTRA_ARGS
+docker-run: docker-build
 	@echo "+ $@"
 	docker run --rm -i $(DOCKER_FLAGS) \
 		quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) $(ARGS)

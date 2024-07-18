@@ -46,7 +46,7 @@ const (
 	AgentName = "seed-job-agent"
 
 	// DefaultAgentImage is the default image used for the seed-job agent
-	defaultAgentImage = "jenkins/inbound-agent:3206.vb_15dcf73f6a_9-3"
+	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6"
 
 	creatingGroovyScriptName = "seed-job-groovy-script.groovy"
 
@@ -409,10 +409,6 @@ func agentDeploymentName(jenkins v1alpha2.Jenkins, agentName string) string {
 }
 
 func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName string, secret string, kubernetesDomainName string) (*appsv1.Deployment, error) {
-	jenkinsSlavesServiceFQDN, err := resources.GetJenkinsSlavesServiceFQDN(jenkins, kubernetesDomainName)
-	if err != nil {
-		return nil, err
-	}
 	jenkinsHTTPServiceFQDN, err := resources.GetJenkinsHTTPServiceFQDN(jenkins, kubernetesDomainName)
 	if err != nil {
 		return nil, err
@@ -455,10 +451,8 @@ func agentDeployment(jenkins *v1alpha2.Jenkins, namespace string, agentName stri
 							Image: agentImage,
 							Env: []corev1.EnvVar{
 								{
-									Name: "JENKINS_TUNNEL",
-									Value: fmt.Sprintf("%s:%d",
-										jenkinsSlavesServiceFQDN,
-										jenkins.Spec.SlaveService.Port),
+									Name:  "JENKINS_WEB_SOCKET",
+									Value: "true",
 								},
 								{
 									Name:  "JENKINS_SECRET",

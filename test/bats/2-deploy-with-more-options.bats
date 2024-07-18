@@ -20,18 +20,20 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.2  Helm Install helm chart with options" {
-  #assert_success
+@test "2.2  Helm: install helm chart with options" {
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
+  assert_success
   run ${HELM} install options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    jenkins-operator/jenkins-operator --version=$(cat ../../VERSION.txt | sed 's/v//')
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
+    jenkins-operator/jenkins-operator --version=$(get_latest_chart_version)
   assert_success
   assert ${HELM} status options
   touch "chart/jenkins-operator/deploy.tmp"
@@ -55,10 +57,10 @@ setup() {
 @test "2.4  Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"backup\")].ready' is 'true'"
   assert_success
 
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 }
 
@@ -95,21 +97,17 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.9  Helm: upgrade from main branch same value" {
-  # The kind storage class provider needs some sec to delete the old pvc
-  sleep 30
-  #run ${HELM} dependency update chart/jenkins-operator
-  #assert_success
-  run ${KUBECTL} label node jenkins-control-plane batstest=yep
-  ${HELM} status options && skip "Helm release 'options' already exists"
   run ${HELM} upgrade options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.440.1-lts" \
+    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    chart/jenkins-operator
+    --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
+    chart/jenkins-operator --wait
   assert_success
   assert ${HELM} status options
 }
@@ -164,9 +162,9 @@ setup() {
 @test "2.14 Helm: clean" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run ${HELM} uninstall options
+  run ${HELM} uninstall options --wait
   assert_success
-  sleep 30
+  sleep 10
 
   run verify "there is 0 pvc named 'jenkins backup'"
   assert_success
