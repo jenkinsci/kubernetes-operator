@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 
@@ -19,13 +20,13 @@ import (
 // enqueueRequestForJenkins enqueues a Request for Secrets and ConfigMaps created by jenkins-operator.
 type enqueueRequestForJenkins struct{}
 
-func (e *enqueueRequestForJenkins) Create(evt event.CreateEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Create(ctx context.Context, evt event.CreateEvent, q workqueue.RateLimitingInterface) {
 	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
-func (e *enqueueRequestForJenkins) Update(evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
 	req1 := e.getOwnerReconcileRequests(evt.ObjectOld)
 	req2 := e.getOwnerReconcileRequests(evt.ObjectNew)
 
@@ -51,13 +52,13 @@ func (e *enqueueRequestForJenkins) Update(evt event.UpdateEvent, q workqueue.Rat
 	}
 }
 
-func (e *enqueueRequestForJenkins) Delete(evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Delete(ctx context.Context, evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
 	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
-func (e *enqueueRequestForJenkins) Generic(evt event.GenericEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Generic(ctx context.Context, evt event.GenericEvent, q workqueue.RateLimitingInterface) {
 	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
 		q.Add(*req)
 	}
@@ -79,24 +80,24 @@ type jenkinsDecorator struct {
 	handler handler.EventHandler
 }
 
-func (e *jenkinsDecorator) Create(evt event.CreateEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Create(ctx context.Context, evt event.CreateEvent, q workqueue.RateLimitingInterface) {
 	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was created", evt.Object, evt.Object.GetName()))
-	e.handler.Create(evt, q)
+	e.handler.Create(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Update(evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Update(ctx context.Context, evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
 	if !reflect.DeepEqual(evt.ObjectOld.(*v1alpha2.Jenkins).Spec, evt.ObjectNew.(*v1alpha2.Jenkins).Spec) {
 		log.Log.WithValues("cr", evt.ObjectNew.GetName()).Info(
 			fmt.Sprintf("%T/%s has been updated", evt.ObjectNew, evt.ObjectNew.GetName()))
 	}
-	e.handler.Update(evt, q)
+	e.handler.Update(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Delete(evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Delete(ctx context.Context, evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
 	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was deleted", evt.Object, evt.Object.GetName()))
-	e.handler.Delete(evt, q)
+	e.handler.Delete(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Generic(evt event.GenericEvent, q workqueue.RateLimitingInterface) {
-	e.handler.Generic(evt, q)
+func (e *jenkinsDecorator) Generic(ctx context.Context, evt event.GenericEvent, q workqueue.RateLimitingInterface) {
+	e.handler.Generic(ctx, evt, q)
 }
