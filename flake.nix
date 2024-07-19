@@ -2,7 +2,8 @@
   description = "Jenkins Kubernetes Operator";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.05";
+    nixpkgs-rolling.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     hugo_099.url = "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
     gomod2nix = {
@@ -12,11 +13,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, gomod2nix, hugo_099, ... }:
+  outputs = { self, nixpkgs, flake-utils, gomod2nix, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        hugo_099_pkgs = hugo_099.legacyPackages.${system};
+        rolling = inputs.nixpkgs-rolling.legacyPackages.${system};
+        hugo_099_pkgs = inputs.hugo_099.legacyPackages.${system};
         operatorVersion = builtins.readFile ./VERSION.txt;
         sdkVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).OPERATOR_SDK_VERSION);
         jenkinsLtsVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).LATEST_LTS_VERSION);
@@ -34,7 +36,8 @@
             pkgs.pre-commit
             pkgs.kind
             pkgs.golangci-lint
-            pkgs.go_1_20
+            pkgs.go_1_21
+            rolling.operator-sdk #1.35.0
 
             (pkgs.bats.withLibraries (p: [
             p.bats-support

@@ -34,6 +34,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 var (
@@ -61,27 +62,28 @@ func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
 // +kubebuilder:webhook:path=/validate-jenkins-io-jenkins-io-v1alpha2-jenkins,mutating=false,failurePolicy=fail,sideEffects=None,groups=jenkins.io.jenkins.io,resources=jenkins,verbs=create;update,versions=v1alpha2,name=vjenkins.kb.io,admissionReviewVersions={v1}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (in *Jenkins) ValidateCreate() error {
+func (in *Jenkins) ValidateCreate() (admission.Warnings, error) {
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate create", "name", in.Name)
-		return Validate(*in)
+		err := Validate(*in)
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (in *Jenkins) ValidateUpdate(old runtime.Object) error {
+func (in *Jenkins) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate update", "name", in.Name)
-		return Validate(*in)
+		return nil, Validate(*in)
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (in *Jenkins) ValidateDelete() error {
-	return nil
+func (in *Jenkins) ValidateDelete() (admission.Warnings, error) {
+	return nil, nil
 }
 
 type SecurityValidator struct {

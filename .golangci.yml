@@ -1,22 +1,17 @@
 run:
-  deadline: 10m
+  deadline: 5m
   allow-parallel-runners: true
   skip-files:
     - api/v1alpha2/zz_generated.deepcopy.go
 issues:
   exclude-use-default: false
   exclude-rules:
-    - path: "api/*"
-      linters:
-        - lll
     - path: "internal/*"
       linters:
         - dupl
-        - lll
     - path: (.+)_test.go
       linters:
         - dupl
-        - lll
 linters:
   disable-all: true
   enable:
@@ -30,7 +25,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    #- lll
+    - loggercheck
     - misspell
     - nakedret
     - prealloc
@@ -39,4 +34,8 @@ linters:
     - unconvert
     - unparam
     - unused
-    - loggercheck
+output:
+  sort-order:
+    - file
+    - severity
+    - linter
