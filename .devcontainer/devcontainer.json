@@ -14,8 +14,8 @@
             "minikube": "none"
         },
         "ghcr.io/devcontainers/features/go:1": {
-            "version": "1.20",
-            "golangciLintVersion": "1.55.2"
+            "version": "1.21",
+            "golangciLintVersion": "1.58.2"
         },
         "ghcr.io/mpriscella/features/kind:1": {
             "version": "latest"
