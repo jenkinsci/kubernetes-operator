@@ -79,7 +79,8 @@ type JenkinsReconciler struct {
 // SetupWithManager sets up the controller with the Manager.
 func (r *JenkinsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	jenkinsHandler := &enqueueRequestForJenkins{}
-	configMapResource := &source.Kind{Type: &corev1.ConfigMap{TypeMeta: metav1.TypeMeta{APIVersion: APIVersion, Kind: ConfigMapKind}}}
+	// configMapResource := &source.Kind{Type: &corev1.ConfigMap{TypeMeta: metav1.TypeMeta{APIVersion: APIVersion, Kind: ConfigMapKind}}}
+	configMapResource := source.Kind(mgr.GetCache(), internal.Kind())
 	secretResource := &source.Kind{Type: &corev1.Secret{TypeMeta: metav1.TypeMeta{APIVersion: APIVersion, Kind: SecretKind}}}
 	decorator := jenkinsDecorator{handler: &handler.EnqueueRequestForObject{}}
 	return ctrl.NewControllerManagedBy(mgr).
