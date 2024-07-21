@@ -97,8 +97,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0])
 		assert.NoError(t, err)
 
-		jenkinsClient.EXPECT().GetNode(AgentName).Return(nil, nil).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).Return(nil, nil).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 		jenkinsClient.EXPECT().ExecuteScript(seedJobCreatingScript).AnyTimes()
 
@@ -139,8 +139,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Jenkins:       jenkins,
 		}
 
-		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		seedJobsClient := New(jenkinsClient, config)
@@ -180,8 +180,8 @@ func TestCreateAgent(t *testing.T) {
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
-		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		config := configuration.Configuration{
