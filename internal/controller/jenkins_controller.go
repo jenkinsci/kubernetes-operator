@@ -46,7 +46,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 type reconcileError struct {
@@ -79,10 +78,22 @@ type JenkinsReconciler struct {
 // SetupWithManager sets up the controller with the Manager.
 func (r *JenkinsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	jenkinsHandler := &enqueueRequestForJenkins{}
-	// configMapResource := &source.Kind{Type: &corev1.ConfigMap{TypeMeta: metav1.TypeMeta{APIVersion: APIVersion, Kind: ConfigMapKind}}}
-	configMapResource := source.Kind(mgr.GetCache(), internal.Kind())
-	secretResource := &source.Kind{Type: &corev1.Secret{TypeMeta: metav1.TypeMeta{APIVersion: APIVersion, Kind: SecretKind}}}
-	decorator := jenkinsDecorator{handler: &handler.EnqueueRequestForObject{}}
+	configMapResource := &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: APIVersion,
+			Kind:       SecretKind,
+		},
+	}
+	secretResource := &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: APIVersion,
+			Kind:       SecretKind,
+		},
+	}
+	decorator := jenkinsDecorator{
+		handler: &handler.EnqueueRequestForObject{},
+	}
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1alpha2.Jenkins{}).
 		Owns(&corev1.Pod{}).
@@ -90,7 +101,7 @@ func (r *JenkinsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.ConfigMap{}).
 		Watches(secretResource, jenkinsHandler).
 		Watches(configMapResource, jenkinsHandler).
-		Watches(&source.Kind{Type: &v1alpha2.Jenkins{}}, &decorator).
+		Watches(&v1alpha2.Jenkins{}, &decorator).
 		Complete(r)
 }
 
