@@ -87,7 +87,7 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 	ginkgo.By("waiting for Jenkins safe restart")
 
 	gomega.Eventually(func() (bool, error) {
-		status, err := jenkinsClient.Poll()
+		status, err := jenkinsClient.Poll(context.TODO())
 		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Safe restart status: %+v, err: %s\n", status, err)
 		if err != nil {
 			return false, err

@@ -68,7 +68,7 @@ func verifyJenkinsSeedJobs(jenkinsClient jenkinsclient.Jenkins, seedJobs []seedJ
 
 		for _, requireJobName := range seedJob.JobNames {
 			err = try.Until(func() (end bool, err error) {
-				_, err = jenkinsClient.GetJob(requireJobName)
+				_, err = jenkinsClient.GetJob(context.TODO(), requireJobName)
 				return err == nil, err
 			}, time.Second*2, time.Minute*2)
 			Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Jenkins job '%s' not created by seed job ID '%s'\n", requireJobName, seedJob.ID))
@@ -244,11 +244,11 @@ for (BuildStep step : jobRef.getBuildersList()) {
 
 func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("retrieving created Jenkins job")
-	job, err := jenkinsClient.GetJob(jobID)
+	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
 	Expect(err).To(BeNil())
 
 	By("running Jenkins job")
-	_, err = job.InvokeSimple(map[string]string{})
+	_, err = job.InvokeSimple(context.TODO(), map[string]string{})
 	Expect(err).To(BeNil())
 
 	// FIXME: waitForJobToFinish use
@@ -265,12 +265,12 @@ func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID str
 	)
 
 	Eventually(func() (bool, error) {
-		job, err = jenkinsClient.GetJob(jobID)
+		job, err = jenkinsClient.GetJob(context.TODO(), jobID)
 		Expect(err).To(BeNil())
-		build, err = job.GetLastBuild()
+		build, err = job.GetLastBuild(context.TODO())
 		Expect(err).To(BeNil())
 
 		By("evaluating correctness of the outcome")
-		return build.IsGood(), err
+		return build.IsGood(context.TODO()), err
 	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
 }

@@ -5,6 +5,7 @@
 package client
 
 import (
+	"context"
 	"reflect"
 
 	"github.com/bndr/gojenkins"
@@ -63,7 +64,7 @@ func (mr *MockJenkinsMockRecorder) GenerateToken(userName, tokenName interface{}
 }
 
 // Info mocks base method
-func (m *MockJenkins) Info() (*gojenkins.ExecutorResponse, error) {
+func (m *MockJenkins) Info(context.Context) (*gojenkins.ExecutorResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Info")
 	ret0, _ := ret[0].(*gojenkins.ExecutorResponse)
@@ -78,7 +79,7 @@ func (mr *MockJenkinsMockRecorder) Info() *gomock.Call {
 }
 
 // SafeRestart mocks base method
-func (m *MockJenkins) SafeRestart() error {
+func (m *MockJenkins) SafeRestart(context.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SafeRestart")
 	ret0, _ := ret[0].(error)
@@ -92,7 +93,7 @@ func (mr *MockJenkinsMockRecorder) SafeRestart() *gomock.Call {
 }
 
 // CreateNode mocks base method
-func (m *MockJenkins) CreateNode(name string, numExecutors int, description, remoteFS, label string, options ...interface{}) (*gojenkins.Node, error) {
+func (m *MockJenkins) CreateNode(ctx context.Context,name string, numExecutors int, description, remoteFS, label string, options ...interface{}) (*gojenkins.Node, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{name, numExecutors, description, remoteFS, label}
 	for _, a := range options {
@@ -112,7 +113,7 @@ func (mr *MockJenkinsMockRecorder) CreateNode(name, numExecutors, description, r
 }
 
 // DeleteNode mocks base method
-func (m *MockJenkins) DeleteNode(name string) (bool, error) {
+func (m *MockJenkins) DeleteNode(ctx context.Context,name string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteNode", name)
 	ret0, _ := ret[0].(bool)
@@ -127,7 +128,7 @@ func (mr *MockJenkinsMockRecorder) DeleteNode(name interface{}) *gomock.Call {
 }
 
 // CreateFolder mocks base method
-func (m *MockJenkins) CreateFolder(name string, parents ...string) (*gojenkins.Folder, error) {
+func (m *MockJenkins) CreateFolder(ctx context.Context,name string, parents ...string) (*gojenkins.Folder, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{name}
 	for _, a := range parents {
@@ -147,7 +148,7 @@ func (mr *MockJenkinsMockRecorder) CreateFolder(name interface{}, parents ...int
 }
 
 // CreateJobInFolder mocks base method
-func (m *MockJenkins) CreateJobInFolder(config, jobName string, parentIDs ...string) (*gojenkins.Job, error) {
+func (m *MockJenkins) CreateJobInFolder(ctx context.Context,config, jobName string, parentIDs ...string) (*gojenkins.Job, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{config, jobName}
 	for _, a := range parentIDs {
@@ -160,14 +161,14 @@ func (m *MockJenkins) CreateJobInFolder(config, jobName string, parentIDs ...str
 }
 
 // CreateJobInFolder indicates an expected call of CreateJobInFolder
-func (mr *MockJenkinsMockRecorder) CreateJobInFolder(config, jobName interface{}, parentIDs ...interface{}) *gomock.Call {
+func (mr *MockJenkinsMockRecorder) CreateJobInFolder(ctx context.Context,config, jobName interface{}, parentIDs ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{config, jobName}, parentIDs...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateJobInFolder", reflect.TypeOf((*MockJenkins)(nil).CreateJobInFolder), varargs...)
 }
 
 // CreateJob mocks base method
-func (m *MockJenkins) CreateJob(config string, options ...interface{}) (*gojenkins.Job, error) {
+func (m *MockJenkins) CreateJob(ctx context.Context,config string, options ...interface{}) (*gojenkins.Job, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{config}
 	for _, a := range options {

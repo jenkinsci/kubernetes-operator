@@ -369,11 +369,11 @@ func (s *seedJobs) isRecreatePodNeeded(jenkins v1alpha2.Jenkins) bool {
 
 // createAgent deploys Jenkins agent to Kubernetes cluster
 func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient client.Client, jenkinsManifest *v1alpha2.Jenkins, namespace string, agentName string) error {
-	_, err := jenkinsClient.GetNode(agentName)
+	_, err := jenkinsClient.GetNode(context.TODO(), agentName)
 
 	// Create node if not exists
 	if err != nil && err.Error() == "No node found" {
-		_, err = jenkinsClient.CreateNode(agentName, 5, "The jenkins-operator generated agent", "/home/jenkins", agentName)
+		_, err = jenkinsClient.CreateNode(context.TODO(), agentName, 5, "The jenkins-operator generated agent", "/home/jenkins", agentName)
 		if err != nil {
 			return stackerr.WithStack(err)
 		}
