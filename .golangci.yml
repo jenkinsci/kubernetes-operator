@@ -35,6 +35,7 @@ linters:
     - unparam
     - unused
 output:
+  sort-results: true
   sort-order:
     - file
     - severity
