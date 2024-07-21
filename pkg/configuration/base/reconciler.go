@@ -264,7 +264,7 @@ func compareMap(expected, actual map[string]string) bool {
 }
 
 func compareEnv(expected, actual []corev1.EnvVar) bool {
-	var actualEnv []corev1.EnvVar
+	actualEnv := []corev1.EnvVar{}
 	for _, env := range actual {
 		if env.Name == "KUBERNETES_PORT_443_TCP_ADDR" || env.Name == "KUBERNETES_PORT" ||
 			env.Name == "KUBERNETES_PORT_443_TCP" || env.Name == "KUBERNETES_SERVICE_HOST" {
@@ -289,7 +289,7 @@ func CompareContainerVolumeMounts(expected corev1.Container, actual corev1.Conta
 
 // compareVolumes returns true if Jenkins pod and Jenkins CR volumes are the same
 func (r *JenkinsBaseConfigurationReconciler) compareVolumes(actualPod corev1.Pod) bool {
-	var toCompare []corev1.Volume
+	toCompare := []corev1.Volume{}
 	for _, volume := range actualPod.Spec.Volumes {
 		// filter out service account
 		if strings.HasPrefix(volume.Name, actualPod.Spec.ServiceAccountName) {

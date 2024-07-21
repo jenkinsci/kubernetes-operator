@@ -56,6 +56,11 @@ type testServer struct {
 	event event.Event
 }
 
+// NewSession implements smtp.Backend.
+func (t *testServer) NewSession(c *smtp.Conn) (smtp.Session, error) {
+	return testSession{}, nil
+}
+
 // TODO: @brokenpip3 fix me
 //func (bkd *testServer) Login(_ *smtp.ConnectionState, username, password string) (smtp.Session, error) {
 //	if username != testSMTPUsername || password != testSMTPPassword {
@@ -74,21 +79,21 @@ type testSession struct {
 	event event.Event
 }
 
-func (s *testSession) Mail(from string) error {
+func (s testSession) Mail(from string, mop *smtp.MailOptions) error {
 	if from != testFrom {
 		return fmt.Errorf("`From` header is not equal: '%s', expected '%s'", from, testFrom)
 	}
 	return nil
 }
 
-func (s *testSession) Rcpt(to string) error {
+func (s testSession) Rcpt(to string, mop *smtp.RcptOptions) error {
 	if to != testTo {
 		return fmt.Errorf("`To` header is not equal: '%s', expected '%s'", to, testTo)
 	}
 	return nil
 }
 
-func (s *testSession) Data(r io.Reader) error {
+func (s testSession) Data(r io.Reader) error {
 	contentRegex := regexp.MustCompile(`\t+<tr>\n\t+<td><b>(.*):</b></td>\n\t+<td>(.*)</td>\n\t+</tr>`)
 	headersRegex := regexp.MustCompile(`(.*):\s(.*)`)
 
@@ -120,9 +125,9 @@ func (s *testSession) Data(r io.Reader) error {
 	return nil
 }
 
-func (s *testSession) Reset() {}
+func (s testSession) Reset() {}
 
-func (s *testSession) Logout() error {
+func (s testSession) Logout() error {
 	return nil
 }
 
@@ -166,11 +171,11 @@ func TestSMTP_Send(t *testing.T) {
 		},
 	}}
 
-	//ts := &testServer{event: e}
+	ts := &testServer{event: e}
 
 	// Create fake SMTP server
-	be := *new(smtp.Backend)
-	s := smtp.NewServer(be)
+	// be := *new(smtp.Backend)
+	s := smtp.NewServer(ts)
 
 	s.Addr = fmt.Sprintf(":%d", testSMTPPort)
 	s.Domain = "localhost"

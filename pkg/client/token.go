@@ -40,7 +40,11 @@ func (jenkins *jenkins) GenerateToken(userName, tokenName string) (*UserToken, e
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't generate API token")
 	}
-	defer r.Body.Close()
+	defer func() {
+		if err := r.Body.Close(); err != nil {
+			log.Log.Error(err, "failed to close http response body")
+		}
+	}()
 	if err := r.Body.Close(); err != nil {
 		log.Log.Error(err, "failed to close jenkins.GenerateToken.Requester")
 	}
