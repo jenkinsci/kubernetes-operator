@@ -112,11 +112,11 @@ HAS_HELM := $(shell command -v helm 2> /dev/null)
 helm: ## Download helm if it's not present, otherwise symlink
 	@echo "+ $@"
 ifeq ($(strip $(HAS_HELM)),)
-    mkdir -p $(PROJECT_DIR)/bin
-    curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-    mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-    rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-    rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
+	mkdir -p $(PROJECT_DIR)/bin
+	curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
+	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
+	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
+	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
 else
 	mkdir -p $(PROJECT_DIR)/bin
 	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
@@ -332,7 +332,7 @@ container-runtime-release: container-runtime-release-version container-runtime-r
 # so that the user can send e.g. ^C through.
 INTERACTIVE := $(shell [ -t 0 ] && echo 1 || echo 0)
 ifeq ($(INTERACTIVE), 1)
-    DOCKER_FLAGS += -t
+	DOCKER_FLAGS += -t
 endif
 
 .PHONY: container-runtime-run
