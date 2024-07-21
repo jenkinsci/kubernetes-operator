@@ -144,9 +144,10 @@ func NewBearerTokenAuthorization(url, token string) (Jenkins, error) {
 }
 
 func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
-	if strings.HasSuffix(url, "/") {
-		url = url[:len(url)-1]
-	}
+	// if strings.HasSuffix(url, "/") {
+	// url = url[:len(url)-1]
+	url = strings.TrimSuffix(url, "/")
+	// }
 
 	jenkinsClient := &jenkins{}
 	jenkinsClient.Server = url

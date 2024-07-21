@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/pkg/errors"
 )
 
@@ -40,7 +41,9 @@ func (jenkins *jenkins) GenerateToken(userName, tokenName string) (*UserToken, e
 		return nil, errors.Wrap(err, "couldn't generate API token")
 	}
 	defer r.Body.Close()
-
+	if err := r.Body.Close(); err != nil {
+		log.Log.Error(err, "failed to close jenkins.GenerateToken.Requester")
+	}
 	if r.StatusCode == http.StatusOK {
 		if token.raw.Status == "ok" {
 			return token, nil

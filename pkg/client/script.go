@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/bndr/gojenkins"
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/pkg/errors"
 )
 
@@ -49,8 +50,9 @@ func (jenkins *jenkins) executeScript(script string, verifier string) (string, e
 	if err != nil {
 		return "", errors.Wrapf(err, "couldn't execute groovy script, logs '%s'", output)
 	}
-	defer r.Body.Close()
-
+	if err := r.Body.Close(); err != nil {
+		log.Log.Error(err, "failed to close jenkins.executeScript.Requester")
+	}
 	if r.StatusCode != http.StatusOK {
 		return output, errors.Errorf("invalid status code '%d', logs '%s'", r.StatusCode, output)
 	}

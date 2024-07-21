@@ -59,7 +59,7 @@ func (g *Groovy) EnsureSingle(source, name, hash, groovyScript string) (requeue 
 		return true, err
 	}
 
-	var appliedGroovyScripts []v1alpha2.AppliedGroovyScript
+	appliedGroovyScripts := []v1alpha2.AppliedGroovyScript{}
 
 	for _, ags := range g.jenkins.Status.AppliedGroovyScripts {
 		if g.configurationType == ags.ConfigurationType && ags.Source == source && ags.Name == name {
@@ -182,7 +182,7 @@ func (g *Groovy) isGroovyScriptAlreadyApplied(source, name, hash string) bool {
 func (g *Groovy) calculateHash(data map[string]string) (string, error) {
 	hash := sha256.New()
 
-	var keys []string
+	keys := []string{}
 	for key := range data {
 		keys = append(keys, key)
 	}
