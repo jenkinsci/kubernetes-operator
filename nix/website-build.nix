@@ -3,7 +3,7 @@
 let
   buildPackages = [
     hugo_099_pkgs.hugo #hugo pre-v100
-    pkgs.nodejs_21 #Node 1.21
+    pkgs.nodejs_22 #Node 1.22
     pkgs.nodePackages.autoprefixer
     pkgs.nodePackages.postcss
     pkgs.nodePackages.postcss-cli
@@ -16,7 +16,7 @@ pkgs.buildNpmPackage {
   version = "0.0.2";
   npmDepsHash = "sha256-VrHuyqTPUzVJSjah+BWfg7R9yiarJQ2MDvEdqkOWddM=";
   nativeBuildInputs = buildPackages;
-  buildPhase = "${pkgs.nodejs_21}/bin/npm run build";
+  buildPhase = "${pkgs.nodejs_22}/bin/npm run build";
   installPhase = "cp -r public $out";
   BASE_URL = "${baseUrl}";
 }
