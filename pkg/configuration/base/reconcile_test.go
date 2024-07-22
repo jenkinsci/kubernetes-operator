@@ -445,7 +445,6 @@ func Test_compareEnv(t *testing.T) {
 		var actual []corev1.EnvVar
 
 		got := compareEnv(expected, actual)
-
 		assert.True(t, got)
 	})
 	t.Run("same", func(t *testing.T) {
