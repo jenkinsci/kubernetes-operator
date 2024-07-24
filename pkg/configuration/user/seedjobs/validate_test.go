@@ -107,7 +107,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid without id", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -178,7 +178,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid ed25519 private key in secret", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -261,7 +261,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid RSA private key in secret", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -508,7 +508,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid with empty username", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -715,7 +715,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid with empty app id", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -914,7 +914,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid with set githubPushTrigger and not installed github plugin", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -984,7 +984,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 	t.Run("Invalid with set bitbucketPushTrigger and not installed bitbucket plugin", func(t *testing.T) {
 		jenkins := v1alpha2.Jenkins{
@@ -1054,7 +1054,7 @@ func TestValidateSeedJobs(t *testing.T) {
 		result, err := seedJobs.ValidateSeedJobs(jenkins)
 
 		assert.NoError(t, err)
-		assert.Nil(t, result)
+		assert.Empty(t, result)
 	})
 }
 

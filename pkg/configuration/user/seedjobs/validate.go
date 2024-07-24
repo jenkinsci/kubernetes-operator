@@ -88,17 +88,16 @@ func (s *seedJobs) ValidateSeedJobs(jenkins v1alpha2.Jenkins) ([]string, error) 
 			}
 		}
 
-		s.setSeedJobPushTriggers(seedJob, messages, jenkins)
+		s.setSeedJobPushTriggers(seedJob, &messages, jenkins)
 	}
-
 	return messages, nil
 }
 
-func (s *seedJobs) setSeedJobPushTriggers(seedJob v1alpha2.SeedJob, messages []string, jenkins v1alpha2.Jenkins) {
+func (s *seedJobs) setSeedJobPushTriggers(seedJob v1alpha2.SeedJob, messages *[]string, jenkins v1alpha2.Jenkins) {
 	if seedJob.GitHubPushTrigger {
 		if msg := s.validateGitHubPushTrigger(jenkins); len(msg) > 0 {
 			for _, m := range msg {
-				messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
+				*messages = append(*messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
 			}
 		}
 	}
@@ -106,10 +105,11 @@ func (s *seedJobs) setSeedJobPushTriggers(seedJob v1alpha2.SeedJob, messages []s
 	if seedJob.BitbucketPushTrigger {
 		if msg := s.validateBitbucketPushTrigger(jenkins); len(msg) > 0 {
 			for _, m := range msg {
-				messages = append(messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
+				*messages = append(*messages, fmt.Sprintf("seedJob `%s` %s", seedJob.ID, m))
 			}
 		}
 	}
+
 }
 
 func (s *seedJobs) validateGitHubPushTrigger(jenkins v1alpha2.Jenkins) []string {
@@ -129,6 +129,7 @@ func (s *seedJobs) validateBitbucketPushTrigger(jenkins v1alpha2.Jenkins) []stri
 }
 
 func checkPluginExists(jenkins v1alpha2.Jenkins, name string) error {
+
 	exists := false
 	for _, plugin := range jenkins.Spec.Master.BasePlugins {
 		if plugin.Name == name {
