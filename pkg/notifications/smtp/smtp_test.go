@@ -101,10 +101,12 @@ func (s testSession) Data(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-
 	content := contentRegex.FindAllStringSubmatch(string(b), -1)
 	headers := headersRegex.FindAllStringSubmatch(string(b), -1)
+	fmt.Println(content)
+	if len(content[0]) > 0 {
 
+	}
 	if s.event.Jenkins.Name == content[0][1] {
 		return fmt.Errorf("jenkins CR not identical: %s, expected: %s", content[0][1], s.event.Jenkins.Name)
 	} else if string(s.event.Phase) == content[1][1] {
@@ -172,7 +174,6 @@ func TestSMTP_Send(t *testing.T) {
 	}}
 
 	ts := &testServer{event: e}
-
 	// Create fake SMTP server
 	// be := *new(smtp.Backend)
 	s := smtp.NewServer(ts)
@@ -200,7 +201,6 @@ func TestSMTP_Send(t *testing.T) {
 
 	err := fakeClient.Create(context.TODO(), secret)
 	assert.NoError(t, err)
-
 	l, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", testSMTPPort))
 	assert.NoError(t, err)
 

@@ -218,6 +218,7 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 		})
 
 		if err != nil && !apierrors.IsNotFound(err) {
+
 			return false, stackerr.WithStack(err)
 		}
 	}
@@ -236,6 +237,7 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 
 	seedJobIDs := s.getAllSeedJobIDs(*jenkins)
 	if !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
+		// @ansh-devs fixed : calls to Update and Patch will not alter its status.
 		jenkins.Status.CreatedSeedJobs = seedJobIDs
 		return false, stackerr.WithStack(s.Client.Status().Update(context.TODO(), jenkins))
 	}
@@ -303,6 +305,7 @@ func (s *seedJobs) createJobs(jenkins *v1alpha2.Jenkins) (requeue bool, err erro
 // Operator will able to watch any changes made to them
 func (s *seedJobs) ensureLabelsForSecrets(jenkins v1alpha2.Jenkins) error {
 	for _, seedJob := range jenkins.Spec.SeedJobs {
+
 		if seedJob.JenkinsCredentialType == v1alpha2.BasicSSHCredentialType || seedJob.JenkinsCredentialType == v1alpha2.UsernamePasswordCredentialType {
 			requiredLabels := resources.BuildLabelsForWatchedResources(jenkins)
 			requiredLabels[JenkinsCredentialTypeLabelName] = string(seedJob.JenkinsCredentialType)

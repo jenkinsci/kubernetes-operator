@@ -77,7 +77,7 @@ func (g *Groovy) EnsureSingle(source, name, hash, groovyScript string) (requeue 
 
 	g.jenkins.Status.AppliedGroovyScripts = appliedGroovyScripts
 
-	return true, g.k8sClient.Status().Update(context.TODO(), g.jenkins)
+	return true, g.k8sClient.Update(context.TODO(), g.jenkins)
 }
 
 // WaitForSecretSynchronization runs groovy script which waits to synchronize secrets in pod by k8s
@@ -114,7 +114,10 @@ func (g *Groovy) WaitForSecretSynchronization(secretsPath string) (requeue bool,
 func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(groovyScript string) string) (requeue bool, err error) {
 	secret := &corev1.Secret{}
 	if len(g.customization.Secret.Name) > 0 {
-		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: g.customization.Secret.Name, Namespace: g.jenkins.ObjectMeta.Namespace}, secret)
+		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{
+			Name:      g.customization.Secret.Name,
+			Namespace: g.jenkins.ObjectMeta.Namespace,
+		}, secret)
 		if err != nil {
 			return true, err
 		}
