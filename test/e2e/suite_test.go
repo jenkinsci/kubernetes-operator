@@ -13,7 +13,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications"
 	e "github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 
-	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"

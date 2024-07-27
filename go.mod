@@ -12,8 +12,8 @@ require (
 	github.com/go-logr/zapr v1.3.0
 	github.com/golang/mock v1.6.0
 	github.com/mailgun/mailgun-go/v3 v3.6.4
-	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/ginkgo/v2 v2.19.0
+	github.com/onsi/ginkgo v1.14.1
+	github.com/onsi/ginkgo/v2 v2.17.2
 	github.com/onsi/gomega v1.33.1
 	github.com/openshift/api v3.9.0+incompatible
 	github.com/pkg/errors v0.9.1

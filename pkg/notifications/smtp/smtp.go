@@ -72,7 +72,13 @@ func (s SMTP) generateMessage(e event.Event) *gomail.Message {
 	statusMessage.WriteString(reasons)
 	statusMessage.WriteString("</ul>")
 
-	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+	htmlMessage := fmt.Sprintf(
+		content,
+		s.getStatusColor(e.Level),
+		provider.NotificationTitle(e),
+		statusMessage.String(),
+		e.Jenkins.Name, e.Phase,
+	)
 	message := gomail.NewMessage()
 
 	message.SetHeader("From", s.config.SMTP.From)
@@ -90,12 +96,20 @@ func (s SMTP) Send(e event.Event) error {
 	usernameSelector := s.config.SMTP.UsernameSecretKeySelector
 	passwordSelector := s.config.SMTP.PasswordSecretKeySelector
 
-	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: usernameSelector.Name, Namespace: e.Jenkins.Namespace}, usernameSecret)
+	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{
+		Name:      usernameSelector.Name,
+		Namespace: e.Jenkins.Namespace,
+	}, usernameSecret,
+	)
 	if err != nil {
 		return err
 	}
 
-	err = s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: passwordSelector.Name, Namespace: e.Jenkins.Namespace}, passwordSecret)
+	err = s.k8sClient.Get(context.TODO(), types.NamespacedName{
+		Name:      passwordSelector.Name,
+		Namespace: e.Jenkins.Namespace,
+	}, passwordSecret,
+	)
 	if err != nil {
 		return err
 	}
