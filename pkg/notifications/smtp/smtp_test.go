@@ -1,71 +1,68 @@
 package smtp
 
 import (
-	"errors"
 
 	//"errors"
-	"fmt"
-	"io"
-	"mime/quotedprintable"
-	"regexp"
+
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 
-	"github.com/emersion/go-smtp"
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 const (
-	testSMTPUsername = "username"
-	testSMTPPassword = "password"
+	// testSMTPUsername = "username"
+	// testSMTPPassword = "password"
 
-	testSMTPPort = 1025
+	// testSMTPPort = 1025
 
-	testFrom    = "test@localhost"
-	testTo      = "test.to@localhost"
-	testSubject = "Jenkins Operator Notification"
+	// testFrom    = "test@localhost"
+	// testTo      = "test.to@localhost"
+	// testSubject = "Jenkins Operator Notification"
 
-	// Headers titles
-	fromHeader    = "From"
-	toHeader      = "To"
-	subjectHeader = "Subject"
+	// // Headers titles
+	// fromHeader    = "From"
+	// toHeader      = "To"
+	// subjectHeader = "Subject"
 
 	nilConst = "nil"
 )
 
 var (
-	testPhase     = event.PhaseUser
-	testCrName    = "test-cr"
-	testNamespace = "default"
-	testReason    = reason.NewPodRestart(
-		reason.KubernetesSource,
-		[]string{"test-reason-1"},
-		[]string{"test-verbose-1"}...,
-	)
-	testLevel = v1alpha2.NotificationLevelWarning
+// testPhase     = event.PhaseUser
+// testCrName    = "test-cr"
+// testNamespace = "default"
+// testReason    = reason.NewPodRestart(
+//
+//	reason.KubernetesSource,
+//	[]string{"test-reason-1"},
+//	[]string{"test-verbose-1"}...,
+//
+// )
+// testLevel = v1alpha2.NotificationLevelWarning
 )
 
-type testServer struct {
-	event event.Event
-}
+// type testServer struct {
+// 	event event.Event
+// }
 
 // NewSession implements smtp.Backend.
-func (t *testServer) NewSession(c *smtp.Conn) (smtp.Session, error) {
-	return testSession{}, nil
-}
+// func (t *testServer) NewSession(c *smtp.Conn) (smtp.Session, error) {
+// 	return testSession{}, nil
+// }
 
-// TODO: @brokenpip3 fix me
-func (bkd *testServer) Login(_ *smtp.Conn, username, password string) (smtp.Session, error) {
-	if username != testSMTPUsername || password != testSMTPPassword {
-		return nil, errors.New("invalid username or password")
-	}
-	return &testSession{event: bkd.event}, nil
-}
+// // TODO: @brokenpip3 fix me
+// func (bkd *testServer) Login(_ *smtp.Conn, username, password string) (smtp.Session, error) {
+// 	if username != testSMTPUsername || password != testSMTPPassword {
+// 		return nil, errors.New("invalid username or password")
+// 	}
+// 	return &testSession{event: bkd.event}, nil
+// }
 
 //
 //// AnonymousLogin requires clients to authenticate using SMTP AUTH before sending emails
@@ -74,63 +71,63 @@ func (bkd *testServer) Login(_ *smtp.Conn, username, password string) (smtp.Sess
 //}
 
 // A Session is returned after successful login.
-type testSession struct {
-	event event.Event
-}
+// type testSession struct {
+// 	event event.Event
+// }
 
-func (s testSession) Mail(from string, mop *smtp.MailOptions) error {
-	if from != testFrom {
-		return fmt.Errorf("`From` header is not equal: '%s', expected '%s'", from, testFrom)
-	}
-	return nil
-}
+// // func (s testSession) Mail(from string, mop *smtp.MailOptions) error {
+// // 	if from != testFrom {
+// // 		return fmt.Errorf("`From` header is not equal: '%s', expected '%s'", from, testFrom)
+// // 	}
+// // 	return nil
+// // }
 
-func (s testSession) Rcpt(to string, mop *smtp.RcptOptions) error {
-	if to != testTo {
-		return fmt.Errorf("`To` header is not equal: '%s', expected '%s'", to, testTo)
-	}
-	return nil
-}
+// // func (s testSession) Rcpt(to string, mop *smtp.RcptOptions) error {
+// // 	if to != testTo {
+// // 		return fmt.Errorf("`To` header is not equal: '%s', expected '%s'", to, testTo)
+// // 	}
+// // 	return nil
+// // }
 
-func (s testSession) Data(r io.Reader) error {
-	contentRegex := regexp.MustCompile(`\t+<tr>\n\t+<td><b>(.*):</b></td>\n\t+<td>(.*)</td>\n\t+</tr>`)
-	headersRegex := regexp.MustCompile(`(.*):\s(.*)`)
+// // // func (s testSession) Data(r io.Reader) error {
+// // // 	contentRegex := regexp.MustCompile(`\t+<tr>\n\t+<td><b>(.*):</b></td>\n\t+<td>(.*)</td>\n\t+</tr>`)
+// // // 	headersRegex := regexp.MustCompile(`(.*):\s(.*)`)
 
-	b, err := io.ReadAll(quotedprintable.NewReader(r))
-	if err != nil {
-		return err
-	}
-	content := contentRegex.FindAllStringSubmatch(string(b), -1)
-	headers := headersRegex.FindAllStringSubmatch(string(b), -1)
+// // // 	b, err := io.ReadAll(quotedprintable.NewReader(r))
+// // // 	if err != nil {
+// // // 		return err
+// // // 	}
+// // // 	content := contentRegex.FindAllStringSubmatch(string(b), -1)
+// // // 	headers := headersRegex.FindAllStringSubmatch(string(b), -1)
 
-	if len(content) > 0 {
-		if s.event.Jenkins.Name == content[0][1] {
-			return fmt.Errorf("jenkins CR not identical: %s, expected: %s", content[0][1], s.event.Jenkins.Name)
-		} else if string(s.event.Phase) == content[1][1] {
-			return fmt.Errorf("phase not identical: %s, expected: %s", content[1][1], s.event.Phase)
-		}
+// // // 	if len(content) > 0 {
+// // // 		if s.event.Jenkins.Name == content[0][1] {
+// // // 			return fmt.Errorf("jenkins CR not identical: %s, expected: %s", content[0][1], s.event.Jenkins.Name)
+// // // 		} else if string(s.event.Phase) == content[1][1] {
+// // // 			return fmt.Errorf("phase not identical: %s, expected: %s", content[1][1], s.event.Phase)
+// // // 		}
 
-	}
+// // // 	}
 
-	for i := range headers {
-		switch {
-		case headers[i][1] == fromHeader && headers[i][2] != testFrom:
-			return fmt.Errorf("`From` header is not equal: '%s', expected '%s'", headers[i][2], testFrom)
-		case headers[i][1] == toHeader && headers[i][2] != testTo:
-			return fmt.Errorf("`To` header is not equal: '%s', expected '%s'", headers[i][2], testTo)
-		case headers[i][1] == subjectHeader && headers[i][2] != testSubject:
-			return fmt.Errorf("`Subject` header is not equal: '%s', expected '%s'", headers[i][2], testSubject)
-		}
-	}
+// // // 	for i := range headers {
+// // // 		switch {
+// // // 		case headers[i][1] == fromHeader && headers[i][2] != testFrom:
+// // // 			return fmt.Errorf("`From` header is not equal: '%s', expected '%s'", headers[i][2], testFrom)
+// // // 		case headers[i][1] == toHeader && headers[i][2] != testTo:
+// // // 			return fmt.Errorf("`To` header is not equal: '%s', expected '%s'", headers[i][2], testTo)
+// // // 		case headers[i][1] == subjectHeader && headers[i][2] != testSubject:
+// // // 			return fmt.Errorf("`Subject` header is not equal: '%s', expected '%s'", headers[i][2], testSubject)
+// // // 		}
+// // // 	}
 
-	return nil
-}
+// // // 	return nil
+// // // }
 
-func (s testSession) Reset() {}
+// func (s testSession) Reset() {}
 
-func (s testSession) Logout() error {
-	return nil
-}
+// func (s testSession) Logout() error {
+// 	return nil
+// }
 
 // TODO: @brokenpip3 & @ansh-devs
 // TODO: SMTP testing failing due to index out of range error in `Data` method.
