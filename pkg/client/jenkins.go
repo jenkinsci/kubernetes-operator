@@ -3,7 +3,7 @@ package client
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"strings"
@@ -93,7 +93,6 @@ func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkin
 	job, err = jenkins.GetJob(jobName)
 	if isNotFoundError(err) {
 		job, err = jenkins.CreateJob(config, jobName)
-		created = true
 		return job, true, errors.WithStack(err)
 	} else if err != nil {
 		return job, false, errors.WithStack(err)
@@ -213,9 +212,13 @@ func (jenkins *jenkins) GetNodeSecret(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}

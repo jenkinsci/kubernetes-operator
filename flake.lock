@@ -18,38 +18,6 @@
         "type": "github"
       }
     },
-    "go_15": {
-      "locked": {
-        "lastModified": 1610974077,
-        "narHash": "sha256-kfU2R7Q6eMU34VooazWvCqxOKwQOApCYh9TH79oZ8VA=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "4eccd6f731627ba5ad9915bcf600c9329a34ca78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "4eccd6f731627ba5ad9915bcf600c9329a34ca78",
-        "type": "github"
-      }
-    },
-    "golangci": {
-      "locked": {
-        "lastModified": 1593485095,
-        "narHash": "sha256-cgfJfZKqPgqQ1fdFWdpNnDEO2HmIVIDCvBTGke2LpnI=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e912fb83d2155a393e7146da98cda0e455a80fb6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e912fb83d2155a393e7146da98cda0e455a80fb6",
-        "type": "github"
-      }
-    },
     "gomod2nix": {
       "inputs": {
         "flake-utils": [
@@ -91,11 +59,27 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1707451808,
-        "narHash": "sha256-UwDBUNHNRsYKFJzyTMVMTF5qS4xeJlWoeyJf+6vvamU=",
+        "lastModified": 1721226092,
+        "narHash": "sha256-UBvzVpo5sXSi2S/Av+t+Q+C2mhMIw/LBEZR+d6NMjws=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "442d407992384ed9c0e6d352de75b69079904e4e",
+        "rev": "c716603a63aca44f39bef1986c13402167450e0a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-24.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-rolling": {
+      "locked": {
+        "lastModified": 1721303309,
+        "narHash": "sha256-/+Yw4tW/mcTRKmkEAO64ObzCQClpSUZpk2flUD9GDHE=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "7e2fb8e0eb807e139d42b05bf8e28da122396bed",
         "type": "github"
       },
       "original": {
@@ -108,11 +92,10 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "go_15": "go_15",
-        "golangci": "golangci",
         "gomod2nix": "gomod2nix",
         "hugo_099": "hugo_099",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-rolling": "nixpkgs-rolling"
       }
     },
     "systems": {
