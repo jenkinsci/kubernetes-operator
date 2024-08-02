@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,41 +21,41 @@ var (
 // Jenkins defines Jenkins API.
 type Jenkins interface {
 	GenerateToken(userName, tokenName string) (*UserToken, error)
-	Info() (*gojenkins.ExecutorResponse, error)
-	SafeRestart() error
-	CreateNode(name string, numExecutors int, description string, remoteFS string, label string, options ...interface{}) (*gojenkins.Node, error)
-	DeleteNode(name string) (bool, error)
-	CreateFolder(name string, parents ...string) (*gojenkins.Folder, error)
-	CreateJobInFolder(config string, jobName string, parentIDs ...string) (*gojenkins.Job, error)
-	CreateJob(config string, options ...interface{}) (*gojenkins.Job, error)
+	Info(ctx context.Context) (*gojenkins.ExecutorResponse, error)
+	SafeRestart(ctx context.Context) error
+	CreateNode(ctx context.Context, name string, numExecutors int, description string, remoteFS string, label string, options ...interface{}) (*gojenkins.Node, error)
+	DeleteNode(ctx context.Context, name string) (bool, error)
+	CreateFolder(ctx context.Context, name string, parents ...string) (*gojenkins.Folder, error)
+	CreateJobInFolder(ctx context.Context, config string, jobName string, parentIDs ...string) (*gojenkins.Job, error)
+	CreateJob(ctx context.Context, config string, options ...interface{}) (*gojenkins.Job, error)
 	CreateOrUpdateJob(config, jobName string) (*gojenkins.Job, bool, error)
-	RenameJob(job string, name string) *gojenkins.Job
-	CopyJob(copyFrom string, newName string) (*gojenkins.Job, error)
-	DeleteJob(name string) (bool, error)
-	BuildJob(name string, options ...interface{}) (int64, error)
-	GetNode(name string) (*gojenkins.Node, error)
-	GetLabel(name string) (*gojenkins.Label, error)
+	RenameJob(ctx context.Context, job string, name string) *gojenkins.Job
+	CopyJob(ctx context.Context, copyFrom string, newName string) (*gojenkins.Job, error)
+	CreateView(ctx context.Context, name string, viewType string) (*gojenkins.View, error)
+	DeleteJob(ctx context.Context, name string) (bool, error)
+	BuildJob(ctx context.Context, name string, options map[string]string) (int64, error)
+	GetNode(ctx context.Context, name string) (*gojenkins.Node, error)
+	GetLabel(ctx context.Context, name string) (*gojenkins.Label, error)
 	GetBuild(jobName string, number int64) (*gojenkins.Build, error)
-	GetJob(id string, parentIDs ...string) (*gojenkins.Job, error)
-	GetSubJob(parentID string, childID string) (*gojenkins.Job, error)
-	GetFolder(id string, parents ...string) (*gojenkins.Folder, error)
-	GetAllNodes() ([]*gojenkins.Node, error)
-	GetAllBuildIds(job string) ([]gojenkins.JobBuild, error)
-	GetAllJobNames() ([]gojenkins.InnerJob, error)
-	GetAllJobs() ([]*gojenkins.Job, error)
-	GetQueue() (*gojenkins.Queue, error)
+	GetJob(ctx context.Context, id string, parentIDs ...string) (*gojenkins.Job, error)
+	GetSubJob(ctx context.Context, parentID string, childID string) (*gojenkins.Job, error)
+	GetFolder(ctx context.Context, id string, parents ...string) (*gojenkins.Folder, error)
+	GetAllNodes(ctx context.Context) ([]*gojenkins.Node, error)
+	GetAllBuildIds(ctx context.Context, job string) ([]gojenkins.JobBuild, error)
+	GetAllJobNames(context.Context) ([]gojenkins.InnerJob, error)
+	GetAllJobs(context.Context) ([]*gojenkins.Job, error)
+	GetQueue(context.Context) (*gojenkins.Queue, error)
 	GetQueueUrl() string
-	GetQueueItem(id int64) (*gojenkins.Task, error)
-	GetArtifactData(id string) (*gojenkins.FingerPrintResponse, error)
+	GetQueueItem(ctx context.Context, id int64) (*gojenkins.Task, error)
+	GetArtifactData(ctx context.Context, id string) (*gojenkins.FingerPrintResponse, error)
 	GetPlugins(depth int) (*gojenkins.Plugins, error)
-	UninstallPlugin(name string) error
-	HasPlugin(name string) (*gojenkins.Plugin, error)
-	InstallPlugin(name string, version string) error
-	ValidateFingerPrint(id string) (bool, error)
-	GetView(name string) (*gojenkins.View, error)
-	GetAllViews() ([]*gojenkins.View, error)
-	CreateView(name string, viewType string) (*gojenkins.View, error)
-	Poll() (int, error)
+	UninstallPlugin(ctx context.Context, name string) error
+	HasPlugin(ctx context.Context, name string) (*gojenkins.Plugin, error)
+	InstallPlugin(ctx context.Context, name string, version string) error
+	ValidateFingerPrint(ctx context.Context, id string) (bool, error)
+	GetView(ctx context.Context, name string) (*gojenkins.View, error)
+	GetAllViews(context.Context) ([]*gojenkins.View, error)
+	Poll(ctx context.Context) (int, error)
 	ExecuteScript(groovyScript string) (logs string, err error)
 	GetNodeSecret(name string) (string, error)
 }
@@ -90,15 +91,15 @@ func (t *setBearerToken) RoundTrip(r *http.Request) (*http.Response, error) {
 // CreateOrUpdateJob creates or updates a job from config.
 func (jenkins *jenkins) CreateOrUpdateJob(config, jobName string) (job *gojenkins.Job, created bool, err error) {
 	// create or update
-	job, err = jenkins.GetJob(jobName)
+	job, err = jenkins.GetJob(context.TODO(), jobName)
 	if isNotFoundError(err) {
-		job, err = jenkins.CreateJob(config, jobName)
+		job, err = jenkins.CreateJob(context.TODO(), config, jobName)
 		return job, true, errors.WithStack(err)
 	} else if err != nil {
 		return job, false, errors.WithStack(err)
 	}
 
-	err = job.UpdateConfig(config)
+	err = job.UpdateConfig(context.TODO(), config)
 	return job, false, errors.WithStack(err)
 }
 
@@ -143,9 +144,10 @@ func NewBearerTokenAuthorization(url, token string) (Jenkins, error) {
 }
 
 func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
-	if strings.HasSuffix(url, "/") {
-		url = url[:len(url)-1]
-	}
+	// if strings.HasSuffix(url, "/") {
+	// url = url[:len(url)-1]
+	url = strings.TrimSuffix(url, "/")
+	// }
 
 	jenkinsClient := &jenkins{}
 	jenkinsClient.Server = url
@@ -173,11 +175,11 @@ func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
 		Client:    httpClient,
 		BasicAuth: basicAuth,
 	}
-	if _, err := jenkinsClient.Init(); err != nil {
+	if _, err := jenkinsClient.Init(context.TODO()); err != nil {
 		return nil, errors.Wrap(err, "couldn't init Jenkins API client")
 	}
 
-	status, err := jenkinsClient.Poll()
+	status, err := jenkinsClient.Poll(context.TODO())
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't poll data from Jenkins API")
 	}
@@ -234,7 +236,7 @@ func (jenkins *jenkins) GetNodeSecret(name string) (string, error) {
 // You can supply depth parameter, to limit how much data is returned.
 func (jenkins *jenkins) GetPlugins(depth int) (*gojenkins.Plugins, error) {
 	p := gojenkins.Plugins{Jenkins: &jenkins.Jenkins, Raw: new(gojenkins.PluginResponse), Base: "/pluginManager", Depth: depth}
-	statusCode, err := p.Poll()
+	statusCode, err := p.Poll(context.TODO())
 	if err != nil {
 		return nil, err
 	}

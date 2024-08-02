@@ -40,7 +40,10 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -126,14 +129,23 @@ func main() {
 		fatal(errors.Wrap(err, "failed to get config"), *debug)
 	}
 
+	cacheNamespace := map[string]cache.Config{}
+	cacheNamespace[namespace] = cache.Config{}
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:                 scheme,
-		MetricsBindAddress:     fmt.Sprintf("%s:%d", metricsHost, metricsPort),
-		Port:                   9443,
+		// MetricsBindAddress:      fmt.Sprintf("%s:%d", metricsHost, metricsPort),
+		Metrics: server.Options{
+			BindAddress: fmt.Sprintf("%s:%d", metricsHost, metricsPort),
+		},
+		Scheme: scheme,
+		// Port:                    9443,
+		WebhookServer: webhook.NewServer(webhook.Options{
+			Port: 9443,
+		}),
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "c674355f.jenkins.io",
-		Namespace:              namespace,
+		// Namespace:              namespace,
+		Cache: cache.Options{DefaultNamespaces: cacheNamespace},
 	})
 	if err != nil {
 		fatal(errors.Wrap(err, "unable to start manager"), *debug)

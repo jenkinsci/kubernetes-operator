@@ -25,7 +25,7 @@ func waitForJobCreation(jenkinsClient client.Jenkins, jobID string) {
 
 	var err error
 	Eventually(func() (bool, error) {
-		_, err = jenkinsClient.GetJob(jobID)
+		_, err = jenkinsClient.GetJob(context.TODO(), jobID)
 		if err != nil {
 			return false, err
 		}
@@ -38,9 +38,9 @@ func waitForJobCreation(jenkinsClient client.Jenkins, jobID string) {
 func verifyJobBuildsAfterRestoreBackup(jenkinsClient client.Jenkins, jobID string) {
 	By("checking if job builds after restoring backup")
 
-	job, err := jenkinsClient.GetJob(jobID)
+	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
 	Expect(err).NotTo(HaveOccurred())
-	build, err := job.GetLastBuild()
+	build, err := job.GetLastBuild(context.TODO())
 	Expect(err).NotTo(HaveOccurred())
 
 	Expect(build.GetBuildNumber()).To(Equal(int64(1)))
@@ -54,7 +54,7 @@ func createPVC(namespace string) {
 		},
 		Spec: corev1.PersistentVolumeClaimSpec{
 			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
-			Resources: corev1.ResourceRequirements{
+			Resources: corev1.VolumeResourceRequirements{
 				Requests: corev1.ResourceList{
 					corev1.ResourceStorage: resource.MustParse("1Gi"),
 				},

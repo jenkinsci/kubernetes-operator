@@ -41,6 +41,7 @@ func CreateNamespace() *corev1.Namespace {
 			Name: fmt.Sprintf("ns%d", time.Now().Unix()),
 		},
 	}
+
 	gomega.Expect(K8sClient.Create(context.TODO(), namespace)).Should(gomega.Succeed())
 	return namespace
 }
