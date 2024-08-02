@@ -156,7 +156,7 @@ staticcheck: ## Verifies `staticcheck` passes
 	@echo "+ $@"
 ifndef HAS_STATICCHECK
 	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2020.1.3/staticcheck_$(PLATFORM)_amd64.tar.gz
+	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
 	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
 	mkdir -p $(PROJECT_DIR)/bin
 	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
