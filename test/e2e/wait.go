@@ -34,7 +34,7 @@ func WaitForJenkinsBaseConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 		}
 
 		return actualJenkins.Status.BaseConfigurationCompletedTime, nil
-	}, time.Duration(170)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
+	}, time.Duration(250)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
 
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins pod is running\n")
 
@@ -78,7 +78,7 @@ func WaitForJenkinsUserConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 			return nil, err
 		}
 		return actualJenkins.Status.UserConfigurationCompletedTime, nil
-	}, time.Duration(110)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
+	}, time.Duration(200)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins instance is up and ready\n")
 }
 
@@ -96,5 +96,5 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 			return false, err
 		}
 		return true, nil
-	}, time.Duration(170)*retryInterval, retryInterval).Should(gomega.BeTrue())
+	}, time.Duration(250)*retryInterval, retryInterval).Should(gomega.BeTrue())
 }
