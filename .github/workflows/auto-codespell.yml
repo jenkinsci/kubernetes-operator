@@ -33,7 +33,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - id: files
-      uses: tj-actions/changed-files@v44
+      uses: tj-actions/changed-files@v45
     - name: nix checks
       run: nix flake check
     - name: nix pre-commit
