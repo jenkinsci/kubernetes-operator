@@ -14,7 +14,7 @@ type JenkinsSpec struct {
 	Master JenkinsMaster `json:"master"`
 
 	// SeedJobs defines list of Jenkins Seed Job configurations
-	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines
+	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/
 	// +optional
 	SeedJobs []SeedJob `json:"seedJobs,omitempty"`
 
