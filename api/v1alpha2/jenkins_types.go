@@ -376,6 +376,12 @@ type JenkinsMaster struct {
 	// +optional
 	LatestPlugins *bool `json:"latestPlugins,omitempty"`
 
+	// Allow to skip installation of both BasePlugins and Plugins.
+	// Requires using a custom image which includes the BasePlugins.
+	// Defaults to false.
+	// +optional
+	SkipPlugins *bool `json:"skipPlugins,omitempty"`
+
 	// DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins
 	DisableCSRFProtection bool `json:"disableCSRFProtection"`
 

@@ -36,6 +36,7 @@ mkdir -p {{ .JenkinsHomePath }}/scripts
 cp {{ .JenkinsScriptsVolumePath }}/*.sh {{ .JenkinsHomePath }}/scripts
 chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
 
+{{if not .SkipPlugins }}
 {{- $jenkinsHomePath := .JenkinsHomePath }}
 {{- $installPluginsCommand := .InstallPluginsCommand }}
 
@@ -58,6 +59,7 @@ EOF
 
 {{ $installPluginsCommand }} --verbose --latest {{ .LatestPlugins }} -f {{ .JenkinsHomePath }}/user-plugins.txt
 echo "Installing plugins required by user - end"
+{{end}}
 `))
 
 func buildConfigMapTypeMeta() metav1.TypeMeta {
@@ -73,6 +75,11 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		latestP = new(bool)
 		*latestP = true
 	}
+	skipPlugins := jenkins.Spec.Master.SkipPlugins
+	if skipPlugins == nil {
+		skipPlugins = new(bool)
+		*skipPlugins = false
+	}
 	data := struct {
 		JenkinsHomePath          string
 		InitConfigurationPath    string
@@ -81,6 +88,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		BasePlugins              []v1alpha2.Plugin
 		UserPlugins              []v1alpha2.Plugin
 		LatestPlugins            bool
+		SkipPlugins              bool
 	}{
 		JenkinsHomePath:          getJenkinsHomePath(jenkins),
 		InitConfigurationPath:    jenkinsInitConfigurationVolumePath,
@@ -89,6 +97,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		InstallPluginsCommand:    installPluginsCommand,
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
 		LatestPlugins:            *latestP,
+		SkipPlugins:              *skipPlugins,
 	}
 
 	output, err := render.Render(initBashTemplate, data)
