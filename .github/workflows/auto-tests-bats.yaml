@@ -46,7 +46,7 @@ jobs:
         run: make go-dependencies
 
       - name: Setup Bats and libs
-        uses: bats-core/bats-action@2.0.0
+        uses: bats-core/bats-action@3.0.0
         with:
           support-path: "${{ github.workspace }}/.bats/bats-support"
           assert-path: "${{ github.workspace }}/.bats/bats-assert"

@@ -33,10 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/nix-installer-action@v14
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
@@ -54,7 +54,7 @@ jobs:
           | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         if: env.IS_CHANGED == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         with:
           commit-message: Auto-updated docs
@@ -68,10 +68,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/nix-installer-action@v14
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
