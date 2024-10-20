@@ -243,6 +243,7 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 		Image:           jenkinsContainer.Image,
 		ImagePullPolicy: jenkinsContainer.ImagePullPolicy,
 		Command:         jenkinsContainer.Command,
+		Lifecycle:       jenkinsContainer.Lifecycle,
 		LivenessProbe:   jenkinsContainer.LivenessProbe,
 		ReadinessProbe:  jenkinsContainer.ReadinessProbe,
 		Ports: []corev1.ContainerPort{
