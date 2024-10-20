@@ -15,20 +15,3 @@ review them:
 - [ ] Commit messages follow [commit message best practices](https://github.com/jenkinsci/kubernetes-operator/blob/master/CONTRIBUTING.md#commit-messages)
 
 _See [the contribution guide](https://github.com/jenkinsci/kubernetes-operator/blob/master/CONTRIBUTING.md) for more details._
-
-
-## Reviewer Notes
-
-If API changes are included, additive changes must be approved by at least two [OWNERS](https://github.com/jenkinsci/kubernetes-operator/blob/master/OWNERS) and backwards incompatible changes must be approved by [more than 50% of the OWNERS](https://github.com/jenkinsci/kubernetes-operator/blob/master/OWNERS).
-
-# Release Notes
-
-```
-Describe any user facing changes here, or delete this block.
-
-Examples of user facing changes:
-- API changes
-- Bug fixes
-- Any changes in behavior
-
-```
