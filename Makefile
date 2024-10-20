@@ -70,7 +70,7 @@ HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
 lint: ## Verifies `golint` passes
 	@echo "+ $@"
 ifndef HAS_GOLINT
-	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2
+	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0
 endif
 	@bin/golangci-lint run
 
@@ -112,11 +112,11 @@ HAS_HELM := $(shell command -v helm 2> /dev/null)
 helm: ## Download helm if it's not present, otherwise symlink
 	@echo "+ $@"
 ifeq ($(strip $(HAS_HELM)),)
-    mkdir -p $(PROJECT_DIR)/bin
-    curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-    mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-    rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-    rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
+	mkdir -p $(PROJECT_DIR)/bin
+	curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
+	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
+	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
+	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
 else
 	mkdir -p $(PROJECT_DIR)/bin
 	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
@@ -156,7 +156,7 @@ staticcheck: ## Verifies `staticcheck` passes
 	@echo "+ $@"
 ifndef HAS_STATICCHECK
 	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2020.1.3/staticcheck_$(PLATFORM)_amd64.tar.gz
+	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
 	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
 	mkdir -p $(PROJECT_DIR)/bin
 	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
@@ -332,7 +332,7 @@ container-runtime-release: container-runtime-release-version container-runtime-r
 # so that the user can send e.g. ^C through.
 INTERACTIVE := $(shell [ -t 0 ] && echo 1 || echo 0)
 ifeq ($(INTERACTIVE), 1)
-    DOCKER_FLAGS += -t
+	DOCKER_FLAGS += -t
 endif
 
 .PHONY: container-runtime-run
@@ -538,8 +538,8 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 ## Tool Versions
-KUSTOMIZE_VERSION ?= v3.8.7
-CONTROLLER_TOOLS_VERSION ?= v0.9.2
+KUSTOMIZE_VERSION ?= v5.3.0
+CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize

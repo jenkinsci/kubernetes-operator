@@ -72,14 +72,19 @@ func (s SMTP) generateMessage(e event.Event) *gomail.Message {
 	statusMessage.WriteString(reasons)
 	statusMessage.WriteString("</ul>")
 
-	htmlMessage := fmt.Sprintf(content, s.getStatusColor(e.Level), provider.NotificationTitle(e), statusMessage.String(), e.Jenkins.Name, e.Phase)
+	htmlMessage := fmt.Sprintf(
+		content,
+		s.getStatusColor(e.Level),
+		provider.NotificationTitle(e),
+		statusMessage.String(),
+		e.Jenkins.Name, e.Phase,
+	)
 	message := gomail.NewMessage()
 
 	message.SetHeader("From", s.config.SMTP.From)
 	message.SetHeader("To", s.config.SMTP.To)
 	message.SetHeader("Subject", mailSubject)
 	message.SetBody("text/html", htmlMessage)
-
 	return message
 }
 
@@ -91,16 +96,23 @@ func (s SMTP) Send(e event.Event) error {
 	usernameSelector := s.config.SMTP.UsernameSecretKeySelector
 	passwordSelector := s.config.SMTP.PasswordSecretKeySelector
 
-	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: usernameSelector.Name, Namespace: e.Jenkins.Namespace}, usernameSecret)
+	err := s.k8sClient.Get(context.TODO(), types.NamespacedName{
+		Name:      usernameSelector.Name,
+		Namespace: e.Jenkins.Namespace,
+	}, usernameSecret,
+	)
 	if err != nil {
 		return err
 	}
 
-	err = s.k8sClient.Get(context.TODO(), types.NamespacedName{Name: passwordSelector.Name, Namespace: e.Jenkins.Namespace}, passwordSecret)
+	err = s.k8sClient.Get(context.TODO(), types.NamespacedName{
+		Name:      passwordSelector.Name,
+		Namespace: e.Jenkins.Namespace,
+	}, passwordSecret,
+	)
 	if err != nil {
 		return err
 	}
-
 	usernameSecretValue := string(usernameSecret.Data[usernameSelector.Key])
 	if usernameSecretValue == "" {
 		return errors.Errorf("SMTP username is empty in secret '%s/%s[%s]", e.Jenkins.Namespace, usernameSelector.Name, usernameSelector.Key)
@@ -110,15 +122,19 @@ func (s SMTP) Send(e event.Event) error {
 	if passwordSecretValue == "" {
 		return errors.Errorf("SMTP password is empty in secret '%s/%s[%s]", e.Jenkins.Namespace, passwordSelector.Name, passwordSelector.Key)
 	}
-
-	mailer := gomail.NewDialer(s.config.SMTP.Server, s.config.SMTP.Port, usernameSecretValue, passwordSecretValue)
+	mailer := gomail.NewDialer(
+		s.config.SMTP.Server,
+		s.config.SMTP.Port,
+		usernameSecretValue,
+		passwordSecretValue,
+	)
 	mailer.TLSConfig = &tls.Config{InsecureSkipVerify: s.config.SMTP.TLSInsecureSkipVerify}
 
 	message := s.generateMessage(e)
+
 	if err := mailer.DialAndSend(message); err != nil {
 		return err
 	}
-
 	return nil
 }
 

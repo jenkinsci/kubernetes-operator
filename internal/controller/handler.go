@@ -21,14 +21,14 @@ import (
 type enqueueRequestForJenkins struct{}
 
 func (e *enqueueRequestForJenkins) Create(ctx context.Context, evt event.CreateEvent, q workqueue.RateLimitingInterface) {
-	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
+	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
 func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
-	req1 := e.getOwnerReconcileRequests(evt.ObjectOld)
-	req2 := e.getOwnerReconcileRequests(evt.ObjectNew)
+	req1 := e.getOwnerReconcileRequests(ctx, evt.ObjectOld)
+	req2 := e.getOwnerReconcileRequests(ctx, evt.ObjectNew)
 
 	if req1 != nil || req2 != nil {
 		jenkinsName := "unknown"
@@ -53,18 +53,18 @@ func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.UpdateE
 }
 
 func (e *enqueueRequestForJenkins) Delete(ctx context.Context, evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
-	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
+	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
 func (e *enqueueRequestForJenkins) Generic(ctx context.Context, evt event.GenericEvent, q workqueue.RateLimitingInterface) {
-	if req := e.getOwnerReconcileRequests(evt.Object); req != nil {
+	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
-func (e *enqueueRequestForJenkins) getOwnerReconcileRequests(object metav1.Object) *reconcile.Request {
+func (e *enqueueRequestForJenkins) getOwnerReconcileRequests(_ context.Context, object metav1.Object) *reconcile.Request {
 	if object.GetLabels()[constants.LabelAppKey] == constants.LabelAppValue &&
 		object.GetLabels()[constants.LabelWatchKey] == constants.LabelWatchValue &&
 		len(object.GetLabels()[constants.LabelJenkinsCRKey]) > 0 {

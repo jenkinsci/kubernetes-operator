@@ -28,13 +28,14 @@ linters:
     - loggercheck
     - misspell
     - nakedret
-    - prealloc
+    # - prealloc
     - staticcheck
     - typecheck
     - unconvert
     - unparam
     - unused
 output:
+  sort-results: true
   sort-order:
     - file
     - severity

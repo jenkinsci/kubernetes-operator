@@ -11,7 +11,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 	"github.com/jenkinsci/kubernetes-operator/pkg/plugins"
 
-	docker "github.com/docker/distribution/reference"
+	docker "github.com/distribution/reference"
 	stackerr "github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
