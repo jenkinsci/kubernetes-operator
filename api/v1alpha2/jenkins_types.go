@@ -14,7 +14,7 @@ type JenkinsSpec struct {
 	Master JenkinsMaster `json:"master"`
 
 	// SeedJobs defines list of Jenkins Seed Job configurations
-	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines
+	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/
 	// +optional
 	SeedJobs []SeedJob `json:"seedJobs,omitempty"`
 
@@ -46,12 +46,12 @@ type JenkinsSpec struct {
 	SlaveService Service `json:"slaveService,omitempty"`
 
 	// Backup defines configuration of Jenkins backup
-	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/
+	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/
 	// +optional
 	Backup Backup `json:"backup,omitempty"`
 
 	// Backup defines configuration of Jenkins backup restore
-	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configure-backup-and-restore/
+	// More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/
 	// +optional
 	Restore Restore `json:"restore,omitempty"`
 
