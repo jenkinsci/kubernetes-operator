@@ -97,8 +97,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 		seedJobCreatingScript, err := seedJobCreatingGroovyScript(jenkins.Spec.SeedJobs[0])
 		assert.NoError(t, err)
 
-		jenkinsClient.EXPECT().GetNode(AgentName).Return(nil, nil).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).Return(nil, nil).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 		jenkinsClient.EXPECT().ExecuteScript(seedJobCreatingScript).AnyTimes()
 
@@ -128,7 +128,11 @@ func TestEnsureSeedJobs(t *testing.T) {
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewClientBuilder().Build()
+		// DONE: @ansh-devs fixed `jenkinses.jenkins` not found
+		fakeClient := fake.NewClientBuilder().
+			WithRuntimeObjects(jenkins).
+			WithStatusSubresource(jenkins).
+			Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -139,8 +143,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 			Jenkins:       jenkins,
 		}
 
-		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(ctx, AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(ctx, AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		seedJobsClient := New(jenkinsClient, config)
@@ -155,13 +159,14 @@ func TestEnsureSeedJobs(t *testing.T) {
 
 		// when
 		_, err = seedJobsClient.EnsureSeedJobs(jenkins)
-
 		// then
 		assert.NoError(t, err)
 
 		var deployment appsv1.Deployment
-		err = fakeClient.Get(ctx, types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, &deployment)
-
+		err = fakeClient.Get(ctx, types.NamespacedName{
+			Namespace: jenkins.Namespace,
+			Name:      agentDeploymentName(*jenkins, AgentName),
+		}, &deployment)
 		assert.True(t, errors.IsNotFound(err), "Agent deployment hasn't been deleted")
 	})
 }
@@ -180,8 +185,8 @@ func TestCreateAgent(t *testing.T) {
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
-		jenkinsClient.EXPECT().GetNode(AgentName).AnyTimes()
-		jenkinsClient.EXPECT().CreateNode(AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).AnyTimes()
+		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		config := configuration.Configuration{

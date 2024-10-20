@@ -29,7 +29,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -103,7 +103,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.452.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \

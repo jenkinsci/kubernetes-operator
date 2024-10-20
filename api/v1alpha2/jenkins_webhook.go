@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -271,7 +270,7 @@ func (in *SecurityValidator) download() error {
 	}
 	defer func() {
 		if err := out.Close(); err != nil {
-			jenkinslog.V(log.VDebug).Info("Failed to close file", "error", err)
+			jenkinslog.V(log.VDebug).Info("Failed to close SecurityValidator.download io", "error", err)
 		}
 	}()
 
@@ -290,10 +289,10 @@ func (in *SecurityValidator) download() error {
 		return err
 	}
 
-	defer response.Body.Close()
+	defer httpResponseCloser(response)
 
 	if err := out.Close(); err != nil {
-		jenkinslog.V(log.VDebug).Info("Failed to send file", err)
+		jenkinslog.V(log.VDebug).Info("Failed to send file", "error", err.Error())
 	}
 
 	_, err = io.Copy(out, response.Body)
@@ -306,18 +305,32 @@ func (in *SecurityValidator) extract() error {
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer func() {
+		if err := reader.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.reader ")
+		}
+	}()
+
 	archive, err := gzip.NewReader(reader)
 	if err != nil {
 		return err
 	}
 
-	defer archive.Close()
+	defer func() {
+		if err := archive.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.archive ")
+		}
+	}()
 	writer, err := os.Create(PluginDataFile)
 	if err != nil {
 		return err
 	}
-	defer writer.Close()
+
+	defer func() {
+		if err := writer.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.writer")
+		}
+	}()
 
 	_, err = io.Copy(writer, archive)
 	return err
@@ -329,8 +342,12 @@ func (in *SecurityValidator) cache() error {
 	if err != nil {
 		return err
 	}
-	defer jsonFile.Close()
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	defer func() {
+		if err := jsonFile.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.cache.jsonFile")
+		}
+	}()
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return err
 	}
@@ -355,4 +372,10 @@ func compareVersions(firstVersion string, lastVersion string, pluginVersion stri
 		return false
 	}
 	return true
+}
+
+func httpResponseCloser(response *http.Response) {
+	if err := response.Body.Close(); err != nil {
+		log.Log.Error(err, "failed to close http response body")
+	}
 }

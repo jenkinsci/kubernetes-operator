@@ -98,7 +98,7 @@ func setupPortForwardToPod(namespace, podName string, podPort int) (port int, cl
 		close(stopCh)
 	}
 
-	return
+	return port, cleanUpFunc, waitFunc, portForwardFunc, err
 }
 
 func portForwardToPod(req portForwardToPodRequest) error {
