@@ -31,7 +31,7 @@ jobs:
 
       # Creates pull request with new chart version
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: Release Helm chart ${{ github.event.inputs.chartVersion }}
           branch: helm-chart-release-${{ github.event.inputs.chartVersion }}
