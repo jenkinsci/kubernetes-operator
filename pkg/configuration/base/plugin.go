@@ -13,6 +13,9 @@ import (
 )
 
 func (r *JenkinsBaseConfigurationReconciler) verifyPlugins(jenkinsClient jenkinsclient.Jenkins) (bool, error) {
+	if r.Configuration.Jenkins.Spec.Master.SkipPlugins != nil && *r.Configuration.Jenkins.Spec.Master.SkipPlugins {
+		return true, nil
+	}
 	allPluginsInJenkins, err := jenkinsClient.GetPlugins(fetchAllPlugins)
 	if err != nil {
 		return false, stackerr.WithStack(err)
