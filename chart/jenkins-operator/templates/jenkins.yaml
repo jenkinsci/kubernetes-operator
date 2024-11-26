@@ -171,4 +171,7 @@ spec:
   {{- if .Values.jenkins.seedJobAgentImage }}
   seedJobAgentImage: {{ .Values.jenkins.seedJobAgentImage }}
   {{- end }}
+  {{- if .Values.jenkins.seedJobRestrictJobsToLabel }}
+  seedJobRestrictJobsToLabel: {{ .Values.jenkins.seedJobRestrictJobsToLabel }}
+  {{- end }}
 {{- end }}
