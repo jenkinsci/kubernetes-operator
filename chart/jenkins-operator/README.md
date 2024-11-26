@@ -88,6 +88,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.securityContext.fsGroup | int | `1000` |  |
 | jenkins.securityContext.runAsUser | int | `1000` |  |
 | jenkins.seedJobAgentImage | string | `""` |  |
+| jenkins.seedJobRestrictJobsToLabel | boolean | `false` |  |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
 | jenkins.terminationGracePeriodSeconds | int | `30` |  |
