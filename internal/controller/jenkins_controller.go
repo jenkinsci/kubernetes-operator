@@ -205,7 +205,7 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 		return reconcile.Result{Requeue: true}, nil
 	}
 	if result.Requeue && result.RequeueAfter == 0 {
-		result.RequeueAfter = time.Duration(rand.Intn(10)) * time.Millisecond
+		result.RequeueAfter = time.Duration(rand.Intn(10)) * time.Second
 	}
 	return result, nil
 }

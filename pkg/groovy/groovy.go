@@ -77,7 +77,7 @@ func (g *Groovy) EnsureSingle(source, name, hash, groovyScript string) (requeue 
 
 	g.jenkins.Status.AppliedGroovyScripts = appliedGroovyScripts
 
-	return true, g.k8sClient.Update(context.TODO(), g.jenkins)
+	return true, g.k8sClient.Status().Update(context.TODO(), g.jenkins)
 }
 
 // WaitForSecretSynchronization runs groovy script which waits to synchronize secrets in pod by k8s

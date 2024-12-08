@@ -382,6 +382,10 @@ kind-clean: ## Delete kind cluster
 	@echo "+ $@"
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
 
+.PHONY: kind-revamp
+kind-revamp: kind-clean kind-setup## Delete and recreate kind cluster
+	@echo "+ $@"
+
 .PHONY: bats-tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
@@ -555,7 +559,7 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 .PHONY: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
 $(ENVTEST): $(LOCALBIN)
-	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.17
 
 .PHONY: operator-sdk
 HAS_OPERATOR_SDK := $(shell which $(PROJECT_DIR)/bin/operator-sdk)
