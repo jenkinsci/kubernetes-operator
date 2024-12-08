@@ -21,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
-const JenkinsTestImage = "jenkins/jenkins:2.452.2-lts"
+const JenkinsTestImage = "jenkins/jenkins:2.479.2-lts"
 
 var (
 	Cfg       *rest.Config
@@ -41,6 +41,7 @@ func CreateNamespace() *corev1.Namespace {
 			Name: fmt.Sprintf("ns%d", time.Now().Unix()),
 		},
 	}
+
 	gomega.Expect(K8sClient.Create(context.TODO(), namespace)).Should(gomega.Succeed())
 	return namespace
 }

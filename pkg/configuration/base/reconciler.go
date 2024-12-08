@@ -121,6 +121,9 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 	}
 
 	result, err = r.ensureBaseConfiguration(jenkinsClient)
+	if err != nil {
+		return reconcile.Result{}, nil, err
+	}
 
 	return result, jenkinsClient, err
 }
