@@ -22,6 +22,10 @@ type JenkinsSpec struct {
 	// +optional
 	SeedJobAgentImage string `json:"seedJobAgentImage,omitempty"`
 
+	// SeedJobRestrictJobsToLabel defines whether to set restrict node to label setting on the agent
+	// +optional
+	SeedJobRestrictJobsToLabel bool `json:"seedJobRestrictJobsToLabel,omitempty"`
+
 	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
 	//+optional
 	ValidateSecurityWarnings bool `json:"validateSecurityWarnings,omitempty"`

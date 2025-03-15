@@ -3135,6 +3135,10 @@ spec:
                   by the seed job agent. If not defined jenkins/inbound-agent:4.9-1
                   will be used.
                 type: string
+              seedJobRestrictJobsToLabel:
+                description: SeedJobRestrictJobsToLabel defines whether the seed job agent
+                  will be restricted to only running jobs with the seed job label.
+                type: boolean
               seedJobs:
                 description: 'SeedJobs defines list of Jenkins Seed Job configurations
                   More info: https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration#configure-seed-jobs-and-pipelines'
