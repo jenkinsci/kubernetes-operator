@@ -44,11 +44,11 @@ var (
 )
 
 const (
-	Hosturl                 = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
-	CompressedFilePath      = "/tmp/plugins.json.gzip"
-	PluginDataFile          = "/tmp/plugins.json"
-	shortenedCheckingPeriod = 1 * time.Hour
-	defaultCheckingPeriod   = 12 * time.Minute
+	Hosturl                      = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
+	PluginDataFileCompressedPath = "/tmp/plugins.json.gzip"
+	PluginDataFile               = "/tmp/plugins.json"
+	shortenedCheckingPeriod      = 1 * time.Hour
+	defaultCheckingPeriod        = 12 * time.Minute
 )
 
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
@@ -264,12 +264,14 @@ func (in *SecurityValidator) fetchPluginData() error {
 }
 
 func (in *SecurityValidator) download() error {
-	out, err := os.Create(CompressedFilePath)
+	pluginDataFileCompressed, err := os.Create(PluginDataFileCompressedPath)
 	if err != nil {
 		return err
 	}
+
+	// ensure pluginDataFileCompressed is closed
 	defer func() {
-		if err := out.Close(); err != nil {
+		if err := pluginDataFileCompressed.Close(); err != nil {
 			jenkinslog.V(log.VDebug).Info("Failed to close SecurityValidator.download io", "error", err)
 		}
 	}()
@@ -291,16 +293,13 @@ func (in *SecurityValidator) download() error {
 
 	defer httpResponseCloser(response)
 
-	if err := out.Close(); err != nil {
-		jenkinslog.V(log.VDebug).Info("Failed to send file", "error", err.Error())
-	}
+	_, err = io.Copy(pluginDataFileCompressed, response.Body)
 
-	_, err = io.Copy(out, response.Body)
 	return err
 }
 
 func (in *SecurityValidator) extract() error {
-	reader, err := os.Open(CompressedFilePath)
+	reader, err := os.Open(PluginDataFileCompressedPath)
 
 	if err != nil {
 		return err
