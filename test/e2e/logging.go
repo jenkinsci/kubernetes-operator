@@ -9,7 +9,7 @@ import (
 
 	"github.com/onsi/ginkgo"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/api/events/v1beta1"
+	eventsv1 "k8s.io/api/events/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -81,13 +81,13 @@ func printOperatorLogs(namespace string) {
 	}
 }
 
-func getKubernetesEvents(namespace string) ([]v1beta1.Event, error) {
+func getKubernetesEvents(namespace string) ([]eventsv1.Event, error) {
 	listOptions := &client.ListOptions{
 		Limit:     kubernetesEventsLimit,
 		Namespace: namespace,
 	}
 
-	events := &v1beta1.EventList{}
+	events := &eventsv1.EventList{}
 	err := K8sClient.List(context.TODO(), events, listOptions)
 	if err != nil {
 		return nil, err
