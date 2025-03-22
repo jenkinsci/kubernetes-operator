@@ -165,7 +165,7 @@ func (c *Configuration) Exec(podName, containerName string, command []string) (s
 		return stdout, stderr, stackerr.Wrapf(err, "pod exec error operation on stream: stdout '%s' stderr '%s'", stdout.String(), stderr.String())
 	}
 
-	return bytes.Buffer{}, bytes.Buffer{}, nil
+	return stdout, stderr, nil
 }
 
 // GetJenkinsMasterContainer returns the Jenkins master container from the CR.
