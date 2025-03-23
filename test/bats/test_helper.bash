@@ -3,7 +3,7 @@ _common_setup() {
     bats_load_library bats-support
     bats_load_library bats-assert
     bats_load_library bats-file
-    bats_load_library bats-detik/lib/detik.bash
+    bats_load_library bats-detik/detik.bash
 
     CONTEXT="kind-jenkins"
     export DETIK_CLIENT_NAME="kubectl"
