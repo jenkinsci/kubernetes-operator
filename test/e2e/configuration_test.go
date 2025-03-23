@@ -24,15 +24,16 @@ import (
 const e2e = "e2e"
 
 // Plugin versions should be the same as in
-// github.com/jenkinsci/kubernetes-operator/pkg/plugins
+// github.com/jenkinsci/kubernetes-operator/pkg/plugins/base_plugins.go
 const (
 	configurationAsCodePlugin           = "configuration-as-code:1932.v75cb_b_f1b_698d"
 	gitPlugin                           = "git:5.7.0"
 	jobDslPlugin                        = "job-dsl:1.89"
 	kubernetesPlugin                    = "kubernetes:4295.v7fa_01b_309c95"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.262.v2670ef7ea_0c5"
-	workflowAggregatorPlugin            = "workflow-aggregator:600.vb_57cdd26fdd7"
-	workflowJobPlugin                   = "workflow-job:1436.vfa_244484591f"
+	// Depends on workflow-job which should be automatically downloaded
+	// Hardcoding the workflow-job version leads to frequent breakage
+	workflowAggregatorPlugin = "workflow-aggregator:600.vb_57cdd26fdd7"
 )
 
 var expectedBasePluginsList = []plugins.Plugin{
@@ -42,7 +43,6 @@ var expectedBasePluginsList = []plugins.Plugin{
 	plugins.Must(plugins.New(kubernetesPlugin)),
 	plugins.Must(plugins.New(kubernetesCredentialsProviderPlugin)),
 	plugins.Must(plugins.New(workflowAggregatorPlugin)),
-	plugins.Must(plugins.New(workflowJobPlugin)),
 }
 
 func createUserConfigurationSecret(namespace string, stringData map[string]string) {
