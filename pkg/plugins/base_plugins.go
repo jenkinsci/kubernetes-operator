@@ -6,8 +6,8 @@ const (
 	jobDslPlugin                        = "job-dsl:1.89"
 	kubernetesPlugin                    = "kubernetes:4295.v7fa_01b_309c95"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.262.v2670ef7ea_0c5"
-	// Depends on workflow-job which should be automatically downloaded
-	workflowAggregatorPlugin = "workflow-aggregator:600.vb_57cdd26fdd7"
+	workflowAggregatorPlugin            = "workflow-aggregator:600.vb_57cdd26fdd7"
+	workflowJobPlugin                   = "workflow-job:1436.vfa_244484591f"
 )
 
 // basePluginsList contains plugins to install by operator.
@@ -18,6 +18,7 @@ var basePluginsList = []Plugin{
 	Must(New(kubernetesPlugin)),
 	Must(New(kubernetesCredentialsProviderPlugin)),
 	Must(New(workflowAggregatorPlugin)),
+	Must(New(workflowJobPlugin)),
 }
 
 // BasePlugins returns list of plugins to install by operator.

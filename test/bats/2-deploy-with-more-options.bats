@@ -109,6 +109,7 @@ setup() {
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.479.2-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
+    --set jenkins.lifecycle.preStop.command='["echo bats test"]' \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator --wait
@@ -139,6 +140,15 @@ setup() {
 
   run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
+}
+
+#bats test_tags=phase:helm,scenario:more-options
+@test "2.5  Helm: check lifecycle" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+
+  run ${KUBECTL} get pod jenkins-jenkins -o jsonpath={.spec.containers[0].lifecycle.preStop.exec.command[0]}
+  assert_success
+  assert_output "echo 'bats test'"
 }
 
 #bats test_tags=phase:helm,scenario:more-options
