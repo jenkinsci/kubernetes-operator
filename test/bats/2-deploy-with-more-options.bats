@@ -161,10 +161,25 @@ setup() {
 @test "2.14 Helm: check jenkins-plugin-cli command again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
+  # Check logs for jenkins-plugin-cli command with retry.
+  # Retry is necessary here to reduce flakiness due to additional delays
+  # from reconciling and recreating jenkins pods after helm upgrade.
+  # We assert success only after the retry loop to reduce noise.
+  LOG_CMD="${KUBECTL} logs -c jenkins-master jenkins-jenkins"
+
+  EXPECTED_LOG_LINE_BASE_PLUGINS="jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/base-plugins.txt"
+  retry 10 10 "${LOG_CMD} | grep -e '${EXPECTED_LOG_LINE_BASE_PLUGINS}'"
+
+  run $LOG_CMD
   assert_success
-  assert_output --partial 'jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/base-plugins.txt'
-  assert_output --partial 'jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/user-plugins.txt'
+  assert_output --partial "${EXPECTED_LOG_LINE_BASE_PLUGINS}"
+
+  EXPECTED_LOG_LINE_USER_PLUGINS="jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/user-plugins.txt"
+  retry 10 10 "${LOG_CMD} | grep -e '${EXPECTED_LOG_LINE_USER_PLUGINS}'"
+
+  run $LOG_CMD
+  assert_success
+  assert_output --partial "${EXPECTED_LOG_LINE_USER_PLUGINS}"
 }
 
 #bats test_tags=phase:helm,scenario:more-options
