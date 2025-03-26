@@ -105,7 +105,7 @@ setup() {
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
-    --set jenkins.lifecycle.preStop.command='["echo bats test"]' \
+    --set jenkins.lifecycle.preStop.exec.command="{echo bats-test}" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator --wait
@@ -139,16 +139,15 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.5  Helm: check lifecycle" {
+@test "2.12  Helm: check lifecycle hook injection" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run ${KUBECTL} get pod jenkins-jenkins -o jsonpath={.spec.containers[0].lifecycle.preStop.exec.command[0]}
+  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.spec.containers[?(@.name==\"jenkins-master\")].lifecycle.preStop.exec.command[0]' is 'echo bats-test'"
   assert_success
-  assert_output "echo 'bats test'"
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.12 Helm: check node selector again" {
+@test "2.13 Helm: check node selector again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   NODENAME=$(${KUBECTL} get pod jenkins-jenkins -o jsonpath={.spec.nodeName})
@@ -159,7 +158,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.13 Helm: check jenkins-plugin-cli command again" {
+@test "2.14 Helm: check jenkins-plugin-cli command again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
@@ -169,7 +168,7 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.14 Helm: clean" {
+@test "2.15 Helm: clean" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run ${HELM} uninstall options --wait
