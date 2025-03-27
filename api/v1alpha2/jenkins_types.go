@@ -311,6 +311,7 @@ type JenkinsMaster struct {
 	//     periodSeconds: 10
 	//     successThreshold: 1
 	//     timeoutSeconds: 5
+	//   lifecycle: {}
 	//   name: jenkins-master
 	//   readinessProbe:
 	//     failureThreshold: 3

@@ -44,6 +44,9 @@ jenkins:
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: Always
 
+  # lifecycle is used if you want to specify lifecycle hooks for the master container
+  lifecycle: {}
+
   # priorityClassName indicates the importance of a Pod relative to other Pods
   # See: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
   priorityClassName: ""

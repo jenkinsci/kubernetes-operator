@@ -15,3 +15,36 @@ _common_setup() {
 get_latest_chart_version() {
     helm search repo jenkins-operator/jenkins --versions | awk 'NR==2 {print $2}' | sed 's/v//'
 }
+
+retry() {
+    # based on bats-detik's try function
+
+    if [[ $# -ne 3 ]]; then
+        echo "[ERROR] Usage: retry <times> <delay> <command>"
+        return 1
+    fi
+
+    local times="$1"
+    local delay="$2"
+    local cmd="$3"
+
+    code=0
+    for ((i=1; i<=times; i++)); do
+
+        # Run the command
+        eval "$cmd" && code=$? || code=$?
+
+        # Break the loop prematurely?
+        if [[ "$code" == "0" ]]; then
+            break
+        elif [[ "$i" != "1" ]]; then
+            code=3
+            sleep "$delay"
+        else
+            code=3
+        fi
+    done
+
+    ## Error code
+    return $code
+}

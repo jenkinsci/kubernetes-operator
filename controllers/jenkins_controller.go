@@ -378,6 +378,11 @@ func (r *JenkinsReconciler) setDefaults(jenkins *v1alpha2.Jenkins) (requeue bool
 		changed = true
 		jenkinsContainer.LivenessProbe = resources.NewProbe(containerProbeURI, containerProbePortName, corev1.URISchemeHTTP, 80, 5, 12)
 	}
+	if jenkinsContainer.Lifecycle == nil {
+		logger.Info("Setting default Jenkins lifecycle")
+		changed = true
+		jenkinsContainer.Lifecycle = &corev1.Lifecycle{}
+	}
 	if len(jenkinsContainer.Command) == 0 {
 		logger.Info("Setting default Jenkins container command")
 		changed = true

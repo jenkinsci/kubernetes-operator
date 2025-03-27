@@ -105,6 +105,7 @@ setup() {
     --set jenkins.nodeSelector.batstest=yep \
     --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
+    --set jenkins.lifecycle.preStop.exec.command="{echo bats-test}" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator --wait
@@ -138,7 +139,15 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.12 Helm: check node selector again" {
+@test "2.12  Helm: check lifecycle hook injection" {
+  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
+
+  run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.spec.containers[?(@.name==\"jenkins-master\")].lifecycle.preStop.exec.command[0]' is 'echo bats-test'"
+  assert_success
+}
+
+#bats test_tags=phase:helm,scenario:more-options
+@test "2.13 Helm: check node selector again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   NODENAME=$(${KUBECTL} get pod jenkins-jenkins -o jsonpath={.spec.nodeName})
@@ -149,17 +158,32 @@ setup() {
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.13 Helm: check jenkins-plugin-cli command again" {
+@test "2.14 Helm: check jenkins-plugin-cli command again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  run ${KUBECTL} logs -c jenkins-master jenkins-jenkins
+  # Check logs for jenkins-plugin-cli command with retry.
+  # Retry is necessary here to reduce flakiness due to additional delays
+  # from reconciling and recreating jenkins pods after helm upgrade.
+  # We assert success only after the retry loop to reduce noise.
+  LOG_CMD="${KUBECTL} logs -c jenkins-master jenkins-jenkins"
+
+  EXPECTED_LOG_LINE_BASE_PLUGINS="jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/base-plugins.txt"
+  retry 10 10 "${LOG_CMD} | grep -e '${EXPECTED_LOG_LINE_BASE_PLUGINS}'"
+
+  run $LOG_CMD
   assert_success
-  assert_output --partial 'jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/base-plugins.txt'
-  assert_output --partial 'jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/user-plugins.txt'
+  assert_output --partial "${EXPECTED_LOG_LINE_BASE_PLUGINS}"
+
+  EXPECTED_LOG_LINE_USER_PLUGINS="jenkins-plugin-cli --verbose --latest true -f /var/lib/jenkins/user-plugins.txt"
+  retry 10 10 "${LOG_CMD} | grep -e '${EXPECTED_LOG_LINE_USER_PLUGINS}'"
+
+  run $LOG_CMD
+  assert_success
+  assert_output --partial "${EXPECTED_LOG_LINE_USER_PLUGINS}"
 }
 
 #bats test_tags=phase:helm,scenario:more-options
-@test "2.14 Helm: clean" {
+@test "2.15 Helm: clean" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
   run ${HELM} uninstall options --wait
