@@ -186,7 +186,7 @@ if (jobRef == null) {
 }
 
 if (!jobRef.getDisplayName().equals("Seed Job from {{ .ID }}")) {
-	throw new Exception("Display name is not equal")	
+	throw new Exception("Display name is not equal")
 }
 
 if (jobRef.getScm() == null) {
@@ -194,7 +194,7 @@ if (jobRef.getScm() == null) {
 }
 
 if (jobRef.getScm().getBranches().find { val -> val.getName() == "{{ .RepositoryBranch }}" } == null) {
-	throw new Exception("Specified SCM branch not found")	
+	throw new Exception("Specified SCM branch not found")
 }
 
 if(jobRef.getScm().getRepositories().find { it.getURIs().find { uri -> uri.toString().equals("https://github.com/jenkinsci/kubernetes-operator.git") } } == null) {
@@ -221,7 +221,7 @@ if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "T
 
 for (BuildStep step : jobRef.getBuildersList()) {
 	if (!step.getTargets().equals("{{ .Targets }}")) {
-		throw new Exception("Targets are not equals'")	
+		throw new Exception("Targets are not equals'")
 	}
 
 	if (!step.getAdditionalClasspath().equals(null)) {
@@ -266,9 +266,14 @@ func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID str
 
 	Eventually(func() (bool, error) {
 		job, err = jenkinsClient.GetJob(context.TODO(), jobID)
-		Expect(err).To(BeNil())
+		if err != nil {
+			return false, err
+		}
+
 		build, err = job.GetLastBuild(context.TODO())
-		Expect(err).To(BeNil())
+		if err != nil {
+			return false, err
+		}
 
 		By("evaluating correctness of the outcome")
 		return build.IsGood(context.TODO()), err

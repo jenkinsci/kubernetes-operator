@@ -30,7 +30,7 @@ func waitForJobCreation(jenkinsClient client.Jenkins, jobID string) {
 			return false, err
 		}
 		return err == nil, err
-	}, time.Minute*3, time.Second*2).Should(BeTrue())
+	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
 
 	Expect(err).NotTo(HaveOccurred())
 }
