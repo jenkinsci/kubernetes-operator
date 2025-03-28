@@ -29,7 +29,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
+    --set jenkins.image="jenkins/jenkins:2.479.2-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -89,7 +89,11 @@ setup() {
 @test "2.8  Helm: check backup" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   sleep 120
-  run ${KUBECTL} logs -l app.kubernetes.io/name=jenkins-operator --tail 10000
+
+  # use --tail -1 to get all logs and reduce flakiness
+  # using -l to select a label usually sets --tail 10
+  run ${KUBECTL} logs -l app.kubernetes.io/name=jenkins-operator --tail -1
+
   assert_success
   assert_output --partial "Performing backup '1'"
   assert_output --partial "Backup completed '1', updating status"
@@ -103,7 +107,7 @@ setup() {
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
     --set jenkins.nodeSelector.batstest=yep \
-    --set jenkins.image="jenkins/jenkins:2.462.3-lts" \
+    --set jenkins.image="jenkins/jenkins:2.479.2-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.lifecycle.preStop.exec.command="{echo bats-test}" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \

@@ -70,16 +70,20 @@ HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
 lint: ## Verifies `golint` passes
 	@echo "+ $@"
 ifndef HAS_GOLINT
-	$(call go-get-tool,$(PROJECT_DIR)/bin/golangci-lint,github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0)
+	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0
 endif
 	@bin/golangci-lint run
+
+.PHONY: lint-fix
+lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
+	@bin/golangci-lint run --fix
 
 .PHONY: goimports
 HAS_GOIMPORTS := $(shell which $(PROJECT_DIR)/bin/goimports)
 goimports: ## Verifies `goimports` passes
 	@echo "+ $@"
 ifndef HAS_GOIMPORTS
-	$(call go-get-tool,$(PROJECT_DIR)/bin/goimports,golang.org/x/tools/cmd/goimports@v0.1.0)
+	$(call GOBIN=$(PROJECT_DIR)/bin go install golang.org/x/tools/cmd/goimports@v0.1.0)
 endif
 	@bin/goimports -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
@@ -108,11 +112,11 @@ HAS_HELM := $(shell command -v helm 2> /dev/null)
 helm: ## Download helm if it's not present, otherwise symlink
 	@echo "+ $@"
 ifeq ($(strip $(HAS_HELM)),)
-    mkdir -p $(PROJECT_DIR)/bin
-    curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-    mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-    rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-    rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
+	mkdir -p $(PROJECT_DIR)/bin
+	curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
+	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
+	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
+	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
 else
 	mkdir -p $(PROJECT_DIR)/bin
 	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
@@ -152,7 +156,7 @@ staticcheck: ## Verifies `staticcheck` passes
 	@echo "+ $@"
 ifndef HAS_STATICCHECK
 	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2020.1.3/staticcheck_$(PLATFORM)_amd64.tar.gz
+	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
 	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
 	mkdir -p $(PROJECT_DIR)/bin
 	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
@@ -164,7 +168,8 @@ endif
 cover: ## Runs go test with coverage
 	@echo "" > coverage.txt
 	@for d in $(PACKAGES); do \
-		IMG_RUNNING_TESTS=1 go test -race -coverprofile=profile.out -covermode=atomic "$$d"; \
+		ENVTEST_K8S_VERSION = 1.26
+		KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" IMG_RUNNING_TESTS=1 go test -race -coverprofile=profile.out -covermode=atomic "$$d"; \
 		if [ -f profile.out ]; then \
 			cat profile.out >> coverage.txt; \
 			rm profile.out; \
@@ -327,7 +332,7 @@ container-runtime-release: container-runtime-release-version container-runtime-r
 # so that the user can send e.g. ^C through.
 INTERACTIVE := $(shell [ -t 0 ] && echo 1 || echo 0)
 ifeq ($(INTERACTIVE), 1)
-    DOCKER_FLAGS += -t
+	DOCKER_FLAGS += -t
 endif
 
 .PHONY: container-runtime-run
@@ -376,6 +381,10 @@ kind-setup: ## Setup kind cluster
 kind-clean: ## Delete kind cluster
 	@echo "+ $@"
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
+
+.PHONY: kind-revamp
+kind-revamp: kind-clean kind-setup## Delete and recreate kind cluster
+	@echo "+ $@"
 
 .PHONY: bats-tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
@@ -452,7 +461,7 @@ ifneq ($(GITUNTRACKEDCHANGES),)
 endif
 ifneq ($(GITIGNOREDBUTTRACKEDCHANGES),)
 	@echo "Ignored but tracked files:"
-	@git ls-files -i -c --exclude-standard
+	@git ls-files -i -o --exclude-standard
 	@echo
 endif
 	@echo "Dependencies:"
@@ -464,6 +473,7 @@ endif
 HUGO_PATH = $(shell pwd)/bin/hugo
 HUGO_VERSION = v0.99.1
 HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
+.PHONY: hugo
 hugo:
 ifeq ($(HAS_HUGO), )
 	@echo "Installing Hugo $(HUGO_VERSION)"
@@ -486,59 +496,77 @@ run-docs: hugo
 
 ##################### FROM OPERATOR SDK ########################
 # Install CRDs into a cluster
+.PHONY: install-crds
 install-crds: manifests kustomize
 	$(KUSTOMIZE) build config/crd | kubectl apply -f -
 
 # Uninstall CRDs from a cluster
+ifndef ignore-not-found
+  ignore-not-found = false
+endif
+.PHONY: uninstall-crds
 uninstall-crds: manifests kustomize
-	$(KUSTOMIZE) build config/crd | kubectl delete -f -
+	$(KUSTOMIZE) build config/crd | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
+.PHONY: deploy
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config
+.PHONY: undeploy
 undeploy:
-	$(KUSTOMIZE) build config/default | kubectl delete -f -
+	$(KUSTOMIZE) build config/default | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
+.PHONY: manifests
 manifests: controller-gen
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
 # Generate code
+.PHONY: generate
 generate: controller-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
-# Download controller-gen locally if necessary
-CONTROLLER_GEN = $(shell pwd)/bin/controller-gen
-controller-gen:
-	$(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)
+##@ Build Dependencies
 
-# Download kustomize locally if necessary
-KUSTOMIZE = $(shell pwd)/bin/kustomize
-kustomize:
-	$(call go-get-tool,$(KUSTOMIZE),sigs.k8s.io/kustomize/kustomize/v3@v3.8.7)
+## Location to install dependencies to
+LOCALBIN ?= $(shell pwd)/bin
+$(LOCALBIN):
+	mkdir -p $(LOCALBIN)
 
-# go-get-tool will 'go get' any package $2 and install it to $1.
-define go-get-tool
-@[ -f $(1) ] || { \
-set -e ;\
-TMP_DIR=$$(mktemp -d) ;\
-cd $$TMP_DIR ;\
-go mod init tmp ;\
-echo "Downloading $(2)" ;\
-GOBIN=$(PROJECT_DIR)/bin go get $(2) ;\
-rm -rf $$TMP_DIR ;\
-}
-endef
+## Tool Binaries
+KUSTOMIZE ?= $(LOCALBIN)/kustomize
+CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
+ENVTEST ?= $(LOCALBIN)/setup-envtest
+
+## Tool Versions
+KUSTOMIZE_VERSION ?= v5.3.0
+CONTROLLER_TOOLS_VERSION ?= v0.14.0
+
+KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
+.PHONY: kustomize
+kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
+$(KUSTOMIZE): $(LOCALBIN)
+	test -s $(LOCALBIN)/kustomize || { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }
+
+.PHONY: controller-gen
+controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
+$(CONTROLLER_GEN): $(LOCALBIN)
+	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
+
+.PHONY: envtest
+envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
+$(ENVTEST): $(LOCALBIN)
+	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.17
 
 .PHONY: operator-sdk
 HAS_OPERATOR_SDK := $(shell which $(PROJECT_DIR)/bin/operator-sdk)
 operator-sdk: # Download operator-sdk locally if necessary
 	@echo "+ $@"
 ifndef HAS_OPERATOR_SDK
-	wget -O $(PROJECT_DIR)/bin/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/v1.3.0/operator-sdk_$(PLATFORM)_amd64
+	wget -O $(PROJECT_DIR)/bin/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/v${OPERATOR_SDK_VERSION}/operator-sdk_$(PLATFORM)_amd64
 	chmod +x $(PROJECT_DIR)/bin/operator-sdk
 endif
 
@@ -547,7 +575,7 @@ endif
 bundle: manifests operator-sdk kustomize
 	bin/operator-sdk generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
-	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle $(BUNDLE_GEN_FLAGS)
 	bin/operator-sdk bundle validate ./bundle
 
 # Build the bundle image.
@@ -556,6 +584,7 @@ bundle-build:
 	docker build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 # Download kubebuilder
+.PHONY: kubebuilder
 kubebuilder:
 	mkdir -p ${ENVTEST_ASSETS_DIR}
 	test -f ${ENVTEST_ASSETS_DIR}/setup-envtest.sh || curl -sSLo ${ENVTEST_ASSETS_DIR}/setup-envtest.sh https://raw.githubusercontent.com/kubernetes-sigs/controller-runtime/v0.7.0/hack/setup-envtest.sh
@@ -569,6 +598,50 @@ uninstall-cert-manager: kind-setup
 	kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
 
 # Deploy the operator locally along with webhook using helm charts
+.PHONY: deploy-webhook
 deploy-webhook: container-runtime-build-amd64
 	@echo "+ $@"
 	bin/helm upgrade jenkins chart/jenkins-operator --install --set-string operator.image=${IMAGE_NAME} --set webhook.enabled=true --set jenkins.enabled=false
+
+# https://sdk.operatorframework.io/docs/upgrading-sdk-version/v1.6.1/#gov2-gov3-ansiblev1-helmv1-add-opm-and-catalog-build-makefile-targets
+.PHONY: opm
+OPM = ./bin/opm
+opm:
+ifeq (,$(wildcard $(OPM)))
+ifeq (,$(shell which opm 2>/dev/null))
+	@{ \
+	set -e ;\
+	mkdir -p $(dir $(OPM)) ;\
+	curl -sSLo $(OPM) https://github.com/operator-framework/operator-registry/releases/download/v1.23.0/$${OS}-$${ARCH}-opm ;\
+	chmod +x $(OPM) ;\
+	}
+else
+OPM = $(shell which opm)
+endif
+endif
+BUNDLE_IMGS ?= $(BUNDLE_IMG)
+CATALOG_IMG ?= $(IMAGE_TAG_BASE)-catalog:v$(VERSION) ifneq ($(origin CATALOG_BASE_IMG), undefined) FROM_INDEX_OPT := --from-index $(CATALOG_BASE_IMG) endif
+.PHONY: catalog-build
+catalog-build: opm
+	$(OPM) index add --container-tool docker --mode semver --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
+
+.PHONY: catalog-push
+catalog-push: ## Push the catalog image.
+	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+# PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
+# architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
+# - able to use docker buildx . More info: https://docs.docker.com/build/buildx/
+# - have enable BuildKit, More info: https://docs.docker.com/develop/develop-images/build_enhancements/
+# - be able to push the image for your registry (i.e. if you do not inform a valid value via IMG=<myregistry/image:<tag>> than the export will fail)
+# To properly provided solutions that supports more than one platform you should use this option.
+PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
+.PHONY: docker-buildx
+docker-buildx: test ## Build and push docker image for the manager for cross-platform support
+	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
+	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
+	- docker buildx create --name project-v3-builder
+	docker buildx use project-v3-builder
+	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross
+	- docker buildx rm project-v3-builder
+	rm Dockerfile.cross

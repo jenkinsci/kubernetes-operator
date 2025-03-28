@@ -16,12 +16,12 @@ var jenkins = v1alpha2.Jenkins{
 				{
 					Env: []corev1.EnvVar{},
 					ReadinessProbe: &corev1.Probe{
-						Handler: corev1.Handler{
+						ProbeHandler: corev1.ProbeHandler{
 							HTTPGet: &corev1.HTTPGetAction{},
 						},
 					},
 					LivenessProbe: &corev1.Probe{
-						Handler: corev1.Handler{
+						ProbeHandler: corev1.ProbeHandler{
 							HTTPGet: &corev1.HTTPGetAction{},
 						},
 					},
@@ -118,7 +118,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].ReadinessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/login",
 					},
@@ -127,7 +127,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].LivenessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/login",
 					},
@@ -148,7 +148,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].ReadinessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/login",
 					},
@@ -157,7 +157,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].LivenessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/login",
 					},
@@ -178,7 +178,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].ReadinessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/jenkins/login",
 					},
@@ -187,7 +187,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].LivenessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/jenkins/login",
 					},
@@ -205,7 +205,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].ReadinessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/jenkins/login",
 					},
@@ -214,7 +214,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		jenkins.Spec.Master.Containers[0].LivenessProbe =
 			&corev1.Probe{
-				Handler: corev1.Handler{
+				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
 						Path: "/jenkins/login",
 					},

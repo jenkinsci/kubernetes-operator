@@ -21,7 +21,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -34,6 +33,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 var (
@@ -44,11 +44,11 @@ var (
 )
 
 const (
-	Hosturl                 = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
-	CompressedFilePath      = "/tmp/plugins.json.gzip"
-	PluginDataFile          = "/tmp/plugins.json"
-	shortenedCheckingPeriod = 1 * time.Hour
-	defaultCheckingPeriod   = 12 * time.Minute
+	Hosturl                      = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
+	PluginDataFileCompressedPath = "/tmp/plugins.json.gzip"
+	PluginDataFile               = "/tmp/plugins.json"
+	shortenedCheckingPeriod      = 1 * time.Hour
+	defaultCheckingPeriod        = 12 * time.Minute
 )
 
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
@@ -58,30 +58,31 @@ func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:path=/validate-jenkins-io-jenkins-io-v1alpha2-jenkins,mutating=false,failurePolicy=fail,sideEffects=None,groups=jenkins.io.jenkins.io,resources=jenkins,verbs=create;update,versions=v1alpha2,name=vjenkins.kb.io,admissionReviewVersions={v1,v1beta1}
+// +kubebuilder:webhook:path=/validate-jenkins-io-jenkins-io-v1alpha2-jenkins,mutating=false,failurePolicy=fail,sideEffects=None,groups=jenkins.io.jenkins.io,resources=jenkins,verbs=create;update,versions=v1alpha2,name=vjenkins.kb.io,admissionReviewVersions={v1}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (in *Jenkins) ValidateCreate() error {
+func (in *Jenkins) ValidateCreate() (admission.Warnings, error) {
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate create", "name", in.Name)
-		return Validate(*in)
+		err := Validate(*in)
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (in *Jenkins) ValidateUpdate(old runtime.Object) error {
+func (in *Jenkins) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate update", "name", in.Name)
-		return Validate(*in)
+		return nil, Validate(*in)
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (in *Jenkins) ValidateDelete() error {
-	return nil
+func (in *Jenkins) ValidateDelete() (admission.Warnings, error) {
+	return nil, nil
 }
 
 type SecurityValidator struct {
@@ -263,11 +264,17 @@ func (in *SecurityValidator) fetchPluginData() error {
 }
 
 func (in *SecurityValidator) download() error {
-	out, err := os.Create(CompressedFilePath)
+	pluginDataFileCompressed, err := os.Create(PluginDataFileCompressedPath)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+
+	// ensure pluginDataFileCompressed is closed
+	defer func() {
+		if err := pluginDataFileCompressed.Close(); err != nil {
+			jenkinslog.V(log.VDebug).Info("Failed to close SecurityValidator.download io", "error", err)
+		}
+	}()
 
 	req, err := http.NewRequest(http.MethodGet, Hosturl, nil)
 	if err != nil {
@@ -284,30 +291,45 @@ func (in *SecurityValidator) download() error {
 		return err
 	}
 
-	defer response.Body.Close()
+	defer httpResponseCloser(response)
 
-	_, err = io.Copy(out, response.Body)
+	_, err = io.Copy(pluginDataFileCompressed, response.Body)
+
 	return err
 }
 
 func (in *SecurityValidator) extract() error {
-	reader, err := os.Open(CompressedFilePath)
+	reader, err := os.Open(PluginDataFileCompressedPath)
 
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer func() {
+		if err := reader.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.reader ")
+		}
+	}()
+
 	archive, err := gzip.NewReader(reader)
 	if err != nil {
 		return err
 	}
 
-	defer archive.Close()
+	defer func() {
+		if err := archive.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.archive ")
+		}
+	}()
 	writer, err := os.Create(PluginDataFile)
 	if err != nil {
 		return err
 	}
-	defer writer.Close()
+
+	defer func() {
+		if err := writer.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.extract.writer")
+		}
+	}()
 
 	_, err = io.Copy(writer, archive)
 	return err
@@ -319,8 +341,12 @@ func (in *SecurityValidator) cache() error {
 	if err != nil {
 		return err
 	}
-	defer jsonFile.Close()
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	defer func() {
+		if err := jsonFile.Close(); err != nil {
+			log.Log.Error(err, "failed to close SecurityValidator.cache.jsonFile")
+		}
+	}()
+	byteValue, err := io.ReadAll(jsonFile)
 	if err != nil {
 		return err
 	}
@@ -345,4 +371,10 @@ func compareVersions(firstVersion string, lastVersion string, pluginVersion stri
 		return false
 	}
 	return true
+}
+
+func httpResponseCloser(response *http.Response) {
+	if err := response.Body.Close(); err != nil {
+		log.Log.Error(err, "failed to close http response body")
+	}
 }

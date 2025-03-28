@@ -149,7 +149,7 @@ func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error 
 
 		backupNumberString := strings.TrimSuffix(backupNumberRaw.String(), "\n")
 		if backupNumberString == noBackup {
-			bar.logger.V(log.VDebug).Info("Skipping restore backup, get latest action returned -1")
+			bar.logger.V(log.VDebug).Info("Skipping restore backup, get latest action returned -1 (no backups found)")
 			jenkins.Status.LastBackup = 0
 			jenkins.Status.PendingBackup = 1
 			return bar.Client.Status().Update(context.TODO(), jenkins)
@@ -209,7 +209,7 @@ func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error 
 func (bar *BackupAndRestore) Backup(setBackupDoneBeforePodDeletion bool) error {
 	jenkins := bar.Configuration.Jenkins
 	if len(jenkins.Spec.Backup.ContainerName) == 0 || jenkins.Spec.Backup.Action.Exec == nil {
-		bar.logger.V(log.VDebug).Info("Skipping restore backup, backup restore not configured")
+		bar.logger.V(log.VDebug).Info("Skipping backup, backup creation not configured")
 		return nil
 	}
 	if jenkins.Status.PendingBackup == jenkins.Status.LastBackup {

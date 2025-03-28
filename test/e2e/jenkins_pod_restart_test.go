@@ -103,7 +103,7 @@ var _ = Describe("Jenkins controller", func() {
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()
 			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)
-			err := jenkinsClient.SafeRestart()
+			err := jenkinsClient.SafeRestart(context.TODO())
 			Expect(err).NotTo(HaveOccurred())
 			waitForJenkinsSafeRestart(jenkinsClient)
 			checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient)

@@ -21,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
-const JenkinsTestImage = "jenkins/jenkins:2.462.3-lts"
+const JenkinsTestImage = "jenkins/jenkins:2.479.2-lts"
 
 var (
 	Cfg       *rest.Config
@@ -41,6 +41,7 @@ func CreateNamespace() *corev1.Namespace {
 			Name: fmt.Sprintf("ns%d", time.Now().Unix()),
 		},
 	}
+
 	gomega.Expect(K8sClient.Create(context.TODO(), namespace)).Should(gomega.Succeed())
 	return namespace
 }
@@ -97,7 +98,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 							},
 						},
 						ReadinessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -111,7 +112,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 							PeriodSeconds:       int32(1),
 						},
 						LivenessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),

@@ -68,7 +68,7 @@ func verifyJenkinsSeedJobs(jenkinsClient jenkinsclient.Jenkins, seedJobs []seedJ
 
 		for _, requireJobName := range seedJob.JobNames {
 			err = try.Until(func() (end bool, err error) {
-				_, err = jenkinsClient.GetJob(requireJobName)
+				_, err = jenkinsClient.GetJob(context.TODO(), requireJobName)
 				return err == nil, err
 			}, time.Second*2, time.Minute*2)
 			Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Jenkins job '%s' not created by seed job ID '%s'\n", requireJobName, seedJob.ID))
@@ -186,7 +186,7 @@ if (jobRef == null) {
 }
 
 if (!jobRef.getDisplayName().equals("Seed Job from {{ .ID }}")) {
-	throw new Exception("Display name is not equal")	
+	throw new Exception("Display name is not equal")
 }
 
 if (jobRef.getScm() == null) {
@@ -194,7 +194,7 @@ if (jobRef.getScm() == null) {
 }
 
 if (jobRef.getScm().getBranches().find { val -> val.getName() == "{{ .RepositoryBranch }}" } == null) {
-	throw new Exception("Specified SCM branch not found")	
+	throw new Exception("Specified SCM branch not found")
 }
 
 if(jobRef.getScm().getRepositories().find { it.getURIs().find { uri -> uri.toString().equals("https://github.com/jenkinsci/kubernetes-operator.git") } } == null) {
@@ -221,7 +221,7 @@ if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "T
 
 for (BuildStep step : jobRef.getBuildersList()) {
 	if (!step.getTargets().equals("{{ .Targets }}")) {
-		throw new Exception("Targets are not equals'")	
+		throw new Exception("Targets are not equals'")
 	}
 
 	if (!step.getAdditionalClasspath().equals(null)) {
@@ -244,11 +244,11 @@ for (BuildStep step : jobRef.getBuildersList()) {
 
 func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("retrieving created Jenkins job")
-	job, err := jenkinsClient.GetJob(jobID)
+	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
 	Expect(err).To(BeNil())
 
 	By("running Jenkins job")
-	_, err = job.InvokeSimple(map[string]string{})
+	_, err = job.InvokeSimple(context.TODO(), map[string]string{})
 	Expect(err).To(BeNil())
 
 	// FIXME: waitForJobToFinish use
@@ -265,12 +265,17 @@ func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID str
 	)
 
 	Eventually(func() (bool, error) {
-		job, err = jenkinsClient.GetJob(jobID)
-		Expect(err).To(BeNil())
-		build, err = job.GetLastBuild()
-		Expect(err).To(BeNil())
+		job, err = jenkinsClient.GetJob(context.TODO(), jobID)
+		if err != nil {
+			return false, err
+		}
+
+		build, err = job.GetLastBuild(context.TODO())
+		if err != nil {
+			return false, err
+		}
 
 		By("evaluating correctness of the outcome")
-		return build.IsGood(), err
+		return build.IsGood(context.TODO()), err
 	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
 }

@@ -24,6 +24,7 @@ is_backup_not_exist() {
 
 # Check if we have any backup
 if is_backup_not_exist "${BACKUP_DIR}"; then
+  _log "No backups exist in ${BACKUP_DIR}"
   echo "-1"
   exit 0
 fi
@@ -32,6 +33,7 @@ fi
 latest=$(find "${BACKUP_DIR}"/*.tar.* -maxdepth 0 -exec basename {} \; | sort -g | tail -n 1)
 
 if [[ "${latest}" == "" ]]; then
+  _log "Could not get the latest backup."
   echo "-1"
 else
   echo "${latest%%.*}"

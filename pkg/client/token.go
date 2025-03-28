@@ -1,9 +1,11 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/pkg/errors"
 )
 
@@ -34,12 +36,18 @@ func (jenkins *jenkins) GenerateToken(userName, tokenName string) (*UserToken, e
 		base: fmt.Sprintf("/user/%s/descriptorByName/jenkins.security.ApiTokenProperty/generateNewToken", userName)}
 	endpoint := token.base
 	data := map[string]string{"newTokenName": tokenName}
-	r, err := jenkins.Requester.Post(endpoint, nil, token.raw, data)
+	r, err := jenkins.Requester.Post(context.TODO(), endpoint, nil, token.raw, data)
 	if err != nil {
 		return nil, errors.Wrap(err, "couldn't generate API token")
 	}
-	defer r.Body.Close()
-
+	defer func() {
+		if err := r.Body.Close(); err != nil {
+			log.Log.Error(err, "failed to close http response body")
+		}
+	}()
+	if err := r.Body.Close(); err != nil {
+		log.Log.Error(err, "failed to close jenkins.GenerateToken.Requester")
+	}
 	if r.StatusCode == http.StatusOK {
 		if token.raw.Status == "ok" {
 			return token, nil

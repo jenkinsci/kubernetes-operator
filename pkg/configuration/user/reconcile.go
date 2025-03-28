@@ -60,19 +60,20 @@ func (r *reconcileUserConfiguration) ReconcileOthers() (reconcile.Result, error)
 		return reconcile.Result{}, err
 	}
 
+	if err := backupAndRestore.Backup(false); err != nil {
+		return reconcile.Result{}, err
+	}
+
+	if err := backupAndRestore.EnsureBackupTrigger(); err != nil {
+		return reconcile.Result{}, err
+	}
+
 	result, err := r.ensureSeedJobs()
 	if err != nil {
 		return reconcile.Result{}, err
 	}
 	if result.Requeue {
 		return result, nil
-	}
-
-	if err := backupAndRestore.Backup(false); err != nil {
-		return reconcile.Result{}, err
-	}
-	if err := backupAndRestore.EnsureBackupTrigger(); err != nil {
-		return reconcile.Result{}, err
 	}
 
 	return reconcile.Result{}, nil
