@@ -25,7 +25,7 @@ RUN apt update \
     "$USER"
 
 COPY bin/*.sh /home/user/bin/
-RUN chmod +x /home/user/bin/*.sh
+RUN chmod -R a+rx /home/user
 WORKDIR /home/user/bin
 USER user
 
