@@ -2,55 +2,64 @@
   description = "Jenkins Kubernetes Operator";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs-rolling.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    go_15.url = "github:nixos/nixpkgs/4eccd6f731627ba5ad9915bcf600c9329a34ca78";
-    golangci.url = "github:nixos/nixpkgs/e912fb83d2155a393e7146da98cda0e455a80fb6";
     hugo_099.url = "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-rolling";
       inputs.flake-utils.follows = "flake-utils";
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, go_15, golangci, gomod2nix, hugo_099, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      gomod2nix,
+      ...
+    }@inputs:
+    inputs.flake-utils.lib.eachDefaultSystem (
+      system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
-        go_15_pkgs = go_15.legacyPackages.${system};
-        golangci_pkgs = golangci.legacyPackages.${system};
-        hugo_099_pkgs = hugo_099.legacyPackages.${system};
+        pkgs = inputs.nixpkgs.legacyPackages.${system};
+        rolling = inputs.nixpkgs-rolling.legacyPackages.${system};
+        hugo_099_pkgs = inputs.hugo_099.legacyPackages.${system};
         operatorVersion = builtins.readFile ./VERSION.txt;
         sdkVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).OPERATOR_SDK_VERSION);
         jenkinsLtsVersion = ((builtins.fromTOML (builtins.readFile ./config.base.env)).LATEST_LTS_VERSION);
       in
       {
         # Nix fmt
-        formatter = nixpkgs.legacyPackages.${system}.nixpkgs-fmt;
+        formatter = pkgs.nixpkgs-fmt;
 
         # shell in nix develop
-        devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
+        devShells.default = pkgs.mkShell {
           packages = [
             pkgs.gnumake
             pkgs.wget
             pkgs.helm-docs
             pkgs.pre-commit
+            pkgs.kind
+            pkgs.golangci-lint
+            pkgs.go_1_22
+            rolling.operator-sdk # 1.39.2
+
+            (pkgs.bats.withLibraries (p: [
+              p.bats-support
+              p.bats-assert
+              p.bats-file
+              p.bats-detik
+            ]))
+
             (pkgs.writeShellApplication {
               name = "make_matrix";
-              runtimeInputs = with pkgs; [ bash gnugrep gawk ];
+              runtimeInputs = with pkgs; [
+                bash
+                gnugrep
+                gawk
+              ];
               text = builtins.readFile ./test/make_matrix_ginkgo.sh;
             })
-            go_15_pkgs.go
-            golangci_pkgs.golangci-lint
-
-            pkgs.kind
-            (pkgs.bats.withLibraries (p: [
-            p.bats-support
-            p.bats-assert
-            p.bats-file
-            p.bats-detik
-            ]))
           ];
           shellHook = ''
             echo Operator Version ${operatorVersion}

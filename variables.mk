@@ -45,7 +45,7 @@ VERSION_TAG := $(VERSION)
 LATEST_TAG := latest
 BUILD_TAG := $(GITBRANCH)-$(GITCOMMIT)
 
-BUILD_PATH := ./
+BUILD_PATH := ./cmd/main.go
 
 # CONTAINER_RUNTIME_COMMAND is Container Runtime - it could be docker or podman
 CONTAINER_RUNTIME_COMMAND := docker
@@ -80,7 +80,18 @@ MEMORY_AMOUNT = 4096
 ##################### FROM OPERATOR SDK ########################
 
 # Default bundle image tag
-BUNDLE_IMG ?= controller-bundle:$(VERSION)
+IMAGE_TAG_BASE ?= quay.io/jenkins-kubernetes-operator
+# BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
+BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+
+# USE_IMAGE_DIGESTS defines if images are resolved via tags or digests
+# You can enable this value if you would like to use SHA Based Digests
+# To enable set flag to true
+USE_IMAGE_DIGESTS ?= false
+ifeq ($(USE_IMAGE_DIGESTS), true)
+    BUNDLE_GEN_FLAGS += --use-image-digests
+endif
+BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 # Options for 'bundle-build'
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
@@ -93,7 +104,6 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true,preserveUnknownFields=false"
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -101,7 +111,15 @@ GOBIN=$(shell go env GOPATH)/bin
 else
 GOBIN=$(shell go env GOBIN)
 endif
+# Setting SHELL to bash allows bash commands to be executed by recipes.
+# This is a requirement for 'setup-envtest.sh' in the test target.
+# Options are set to exit when a recipe line exits non-zero or a piped command fails.
+SHELL = /usr/bin/env bash -o pipefail
+.SHELLFLAGS = -ec
+all: build
 
 ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+OS = $(shell go env GOOS)
+ARCH = $(shell go env GOARCH)

@@ -75,7 +75,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 							},
 						},
 						ReadinessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),
@@ -89,7 +89,7 @@ func createJenkinsCRSafeRestart(name, namespace string, seedJob *[]v1alpha2.Seed
 							PeriodSeconds:       int32(10),
 						},
 						LivenessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
+							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
 									Path:   "/login",
 									Port:   intstr.FromString("http"),

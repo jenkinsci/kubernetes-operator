@@ -33,14 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/nix-installer-action@ab6bcb2d5af0e904d04aea750e2089e9dc4cbfdd # v13
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@b46e247b898aa56e6d2d2e728dc6df6c84fdb738 # v7
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Check for changes
         run: |
@@ -54,7 +54,7 @@ jobs:
           | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         if: env.IS_CHANGED == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         with:
           commit-message: Auto-updated docs
@@ -68,14 +68,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/nix-installer-action@ab6bcb2d5af0e904d04aea750e2089e9dc4cbfdd # v13
         with:
           diagnostic-endpoint: ""
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@b46e247b898aa56e6d2d2e728dc6df6c84fdb738 # v7
         with:
           diagnostic-endpoint: ""
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: nix checks
         run: nix flake check
       - name: nix build
@@ -85,9 +85,9 @@ jobs:
         run: nix build .#website
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: ./result
 
@@ -102,4 +102,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

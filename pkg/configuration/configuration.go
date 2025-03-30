@@ -155,7 +155,7 @@ func (c *Configuration) Exec(podName, containerName string, command []string) (s
 		return stdout, stderr, stackerr.Wrap(err, "pod exec error while creating Executor")
 	}
 
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
 		Stdin:  nil,
 		Stdout: &stdout,
 		Stderr: &stderr,
@@ -165,7 +165,7 @@ func (c *Configuration) Exec(podName, containerName string, command []string) (s
 		return stdout, stderr, stackerr.Wrapf(err, "pod exec error operation on stream: stdout '%s' stderr '%s'", stdout.String(), stderr.String())
 	}
 
-	return
+	return stdout, stderr, nil
 }
 
 // GetJenkinsMasterContainer returns the Jenkins master container from the CR.

@@ -3,6 +3,7 @@ package slack
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -80,7 +81,7 @@ func TestSlack_Send(t *testing.T) {
 			case "":
 				message := ""
 				for _, msg := range e.Reason.Short() {
-					message = message + "\n - " + msg + "\n"
+					message = message + fmt.Sprintf("\n - %s \n", msg)
 				}
 				assert.Equal(t, field.Value, message)
 			case provider.LevelFieldName:
@@ -148,7 +149,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		var messageStringBuilder strings.Builder
 		for _, msg := range e.Reason.Verbose() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 
 		mainAttachment := message.Attachments[0]
@@ -194,7 +195,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		var messageStringBuilder strings.Builder
 		for _, msg := range e.Reason.Verbose() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 
 		mainAttachment := message.Attachments[0]
@@ -240,7 +241,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		var messageStringBuilder strings.Builder
 		for _, msg := range e.Reason.Verbose() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 
 		mainAttachment := message.Attachments[0]
@@ -286,7 +287,7 @@ func TestGenerateMessage(t *testing.T) {
 
 		var messageStringBuilder strings.Builder
 		for _, msg := range e.Reason.Verbose() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 
 		mainAttachment := message.Attachments[0]
