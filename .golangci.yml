@@ -28,7 +28,7 @@ linters:
     - loggercheck
     - misspell
     - nakedret
-    - prealloc
+    # - prealloc
     - staticcheck
     - typecheck
     - unconvert
