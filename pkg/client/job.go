@@ -1,13 +1,14 @@
 package client
 
 import (
+	"context"
 	"net/url"
 
 	"github.com/bndr/gojenkins"
 )
 
 func (jenkins *jenkins) GetBuild(jobName string, number int64) (*gojenkins.Build, error) {
-	job, err := jenkins.GetJob(jobName)
+	job, err := jenkins.GetJob(context.TODO(), jobName)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +22,7 @@ func (jenkins *jenkins) GetBuild(jobName string, number int64) (*gojenkins.Build
 	job.Raw.URL = jobURL.RequestURI()
 	// workaround end
 
-	build, err := job.GetBuild(number)
+	build, err := job.GetBuild(context.TODO(), number)
 
 	if err != nil {
 		return nil, err

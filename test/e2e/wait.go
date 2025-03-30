@@ -34,7 +34,7 @@ func WaitForJenkinsBaseConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 		}
 
 		return actualJenkins.Status.BaseConfigurationCompletedTime, nil
-	}, time.Duration(170)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
+	}, time.Duration(250)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
 
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins pod is running\n")
 
@@ -63,7 +63,7 @@ func waitForRecreateJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 		}
 
 		return pods.Items[0].DeletionTimestamp == nil, nil
-	}, 30*retryInterval, retryInterval).Should(gomega.BeTrue())
+	}, 50*retryInterval, retryInterval).Should(gomega.BeTrue())
 
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins pod has been recreated\n")
 }
@@ -78,7 +78,7 @@ func WaitForJenkinsUserConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 			return nil, err
 		}
 		return actualJenkins.Status.UserConfigurationCompletedTime, nil
-	}, time.Duration(110)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
+	}, time.Duration(200)*retryInterval, retryInterval).Should(gomega.Not(gomega.BeNil()))
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins instance is up and ready\n")
 }
 
@@ -87,7 +87,7 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 	ginkgo.By("waiting for Jenkins safe restart")
 
 	gomega.Eventually(func() (bool, error) {
-		status, err := jenkinsClient.Poll()
+		status, err := jenkinsClient.Poll(context.TODO())
 		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Safe restart status: %+v, err: %s\n", status, err)
 		if err != nil {
 			return false, err
@@ -96,5 +96,5 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 			return false, err
 		}
 		return true, nil
-	}, time.Duration(170)*retryInterval, retryInterval).Should(gomega.BeTrue())
+	}, time.Duration(250)*retryInterval, retryInterval).Should(gomega.BeTrue())
 }

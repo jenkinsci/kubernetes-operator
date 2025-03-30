@@ -1,21 +1,26 @@
 repos:
   - repo: https://github.com/sirosen/check-jsonschema
-    rev: 0.28.0
+    rev: a167de9d5f4e87e1cdb16cb560aa704b79b6f655  # frozen: 0.32.1
     hooks:
       - id: check-github-workflows
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # frozen: v5.0.0
     hooks:
       - id: detect-private-key
       - id: trailing-whitespace
       - id: end-of-file-fixer
   - repo: https://github.com/gruntwork-io/pre-commit
-    rev: "v0.1.19"
+    rev: "d9196b3a0a6fbc530f2bacea36c11a3b0214ff13"  # frozen: v0.1.28
     hooks:
       - id: helmlint
   - repo: https://github.com/norwoodj/helm-docs
-    rev: "v1.11.0"
+    rev: "37d3055fece566105cf8cff7c17b7b2355a01677"  # frozen: v1.14.2
     hooks:
       - id: helm-docs
         args:
           - --chart-search-root=chart/jenkins-operator
+  - repo: https://github.com/brokenpip3/pre-commit-hooks
+    rev: dd7b3821637ba3c3a8628ad487fd84edec8006f2  # frozen: 0.0.1
+    hooks:
+      - id: github-actions-hash
+        files: ^.github/workflows/.*\.(yml|yaml)$ # limit only to github workflows

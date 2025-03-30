@@ -1,14 +1,21 @@
 domain: jenkins.io
-layout: go.kubebuilder.io/v3
+layout: go.kubebuilder.io/v4
 projectName: jenkins-operator
 repo: github.com/jenkinsci/kubernetes-operator
 resources:
-- crdVersion: v1
+- api:
+    crdVersion: v1
+    namespaced: true
+  # TODO(user): Uncomment the below line if this resource implements a controller, else delete it.
+  # controller: true
+  domain: jenkins.io
   group: jenkins.io
   kind: Jenkins
+  path: github.com/jenkinsci/kubernetes-operator/api/v1alpha2
   version: v1alpha2
-  webhookVersion: v1
-version: 3-alpha
+  webhooks:
+    webhookVersion: v1
+version: "3"
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}

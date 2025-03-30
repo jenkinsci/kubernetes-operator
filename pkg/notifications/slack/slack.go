@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -74,11 +75,11 @@ func (s Slack) generateMessage(e event.Event) Message {
 	var messageStringBuilder strings.Builder
 	if s.config.Verbose {
 		for _, msg := range e.Reason.Verbose() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 	} else {
 		for _, msg := range e.Reason.Short() {
-			messageStringBuilder.WriteString("\n - " + msg + "\n")
+			messageStringBuilder.WriteString(fmt.Sprintf("\n - %s \n", msg))
 		}
 	}
 

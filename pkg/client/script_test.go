@@ -35,7 +35,6 @@ func Test_ExecuteScript(t *testing.T) {
 			Client:    client,
 			BasicAuth: &gojenkins.BasicAuth{Username: "unused", Password: "unused"},
 		}
-
 		logs, err := jenkinsClient.executeScript(script, verifier)
 		assert.NoError(t, err, logs)
 	})
