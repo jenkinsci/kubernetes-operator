@@ -128,7 +128,6 @@ func TestEnsureSeedJobs(t *testing.T) {
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		// DONE: @ansh-devs fixed `jenkinses.jenkins` not found
 		fakeClient := fake.NewClientBuilder().
 			WithRuntimeObjects(jenkins).
 			WithStatusSubresource(jenkins).
