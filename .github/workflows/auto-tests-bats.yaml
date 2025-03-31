@@ -19,12 +19,15 @@ on:
       - 'backup/**'
       - '*.md'
 
-#TODO: create a matrix per earch bats file
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
-    name: BATS Run tests
+    name: BATS test {{ matrix.test-file }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-file: ["1-deploy.bats", "2-deploy-with-more-options.bats", "3-deploy-with-webhook.bats"]
     steps:
       - name: Check out code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -61,4 +64,4 @@ jobs:
       - name: Jenkins Operator - bats tests
         env:
           BATS_LIB_PATH: "${{ github.workspace }}/.bats"
-        run: make bats-tests
+        run: BATS_TEST_PATH={{matrix.test-file}} make bats-tests

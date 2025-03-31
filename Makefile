@@ -383,21 +383,21 @@ kind-clean: ## Delete kind cluster
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
 
 .PHONY: kind-revamp
-kind-revamp: kind-clean kind-setup## Delete and recreate kind cluster
+kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
-.PHONY: bats-tests
+.PHONY: bats-tests ## Run bats tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
 bats-tests: backup-kind-load container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 else
 bats-tests: backup-kind-load
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 endif
 
 .PHONY: crc-start
