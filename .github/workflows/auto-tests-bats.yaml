@@ -22,7 +22,7 @@ on:
 jobs:
   run-tests:
     if: github.event.pull_request.draft == false
-    name: BATS test {{ matrix.test-file }}
+    name: BATS test ${{ matrix.test-file }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -64,4 +64,4 @@ jobs:
       - name: Jenkins Operator - bats tests
         env:
           BATS_LIB_PATH: "${{ github.workspace }}/.bats"
-        run: BATS_TEST_PATH={{matrix.test-file}} make bats-tests
+        run: BATS_TEST_PATH=${{matrix.test-file}} make bats-tests
