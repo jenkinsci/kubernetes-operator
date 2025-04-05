@@ -151,7 +151,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 					{Name: "audit-trail", Version: "361.v82cde86c784e"},
 					{Name: "simple-theme-plugin", Version: "176.v39740c03a_a_f5"},
 					{Name: "github", Version: "1.38.0"},
-					{Name: "devoptics", Version: "2.0", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/devoptics/2.0/devoptics.hpi"},
+					{Name: "cloudbees-disk-usage-simple", Version: "239.v6a_f1a_c1c8046", DownloadURL: "https://jenkins-updates.cloudbees.com/download/plugins/cloudbees-disk-usage-simple/239.v6a_f1a_c1c8046/cloudbees-disk-usage-simple.hpi"},
 				},
 				PriorityClassName: priorityClassName,
 				NodeSelector:      map[string]string{"kubernetes.io/os": "linux"},

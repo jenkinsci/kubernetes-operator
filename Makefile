@@ -93,10 +93,16 @@ test: ## Runs the go tests
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
 
 .PHONY: e2e
-e2e: deepcopy-gen manifests backup-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+.PHONY: jenkins-kind-load
+jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
+	@echo "+ $@"
+	docker pull jenkins/jenkins:$(LATEST_LTS_VERSION)
+	kind load docker-image jenkins/jenkins:$(LATEST_LTS_VERSION) --name $(KIND_CLUSTER_NAME)
 
 ## Backup Section
 
