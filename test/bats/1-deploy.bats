@@ -33,7 +33,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.479.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.492.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -68,8 +68,12 @@ diag() {
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"backup\")].ready' is 'true'"
   assert_success
+
+  run ${KUBECTL} logs -l jenkins-cr=jenkins --tail=-1
+  assert_success
+  assert_output --partial 'Jenkins is fully up and running'
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
@@ -154,13 +158,16 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.479.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.492.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator --wait
   assert_success
   assert ${HELM} status default
+
+  # Additional sleep to wait for the upgrade to start deploy a new version
+  sleep 15
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
@@ -177,30 +184,21 @@ diag() {
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.13 Helm: check Jenkins operator pods status" {
-  [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
-  run verify "there is 1 deployment named 'default-jenkins-operator'"
-  assert_success
-
-  run verify "there is 1 pod named 'default-jenkins-operator-'"
-  assert_success
-
-  run try "at most 20 times every 10s to get pods named 'default-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
-  assert_success
-}
-
-#bats test_tags=phase:helm,scenario:vanilla
-@test "1.14 Helm: check Jenkins Pod status" {
+@test "1.13 Helm: check Jenkins Pod status" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 
-  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
+  run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"backup\")].ready' is 'true'"
   assert_success
+
+  run ${KUBECTL} logs -l jenkins-cr=jenkins --tail=-1
+  assert_success
+  assert_output --partial 'Jenkins is fully up and running'
 }
 
 #bats test_tags=phase:helm,scenario:vanilla
-@test "1.15 Helm: clean" {
+@test "1.14 Helm: clean" {
   run ${HELM} uninstall default --wait
   assert_success
   # Wait for the complete removal

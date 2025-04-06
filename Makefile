@@ -93,10 +93,16 @@ test: ## Runs the go tests
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
 
 .PHONY: e2e
-e2e: deepcopy-gen manifests backup-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
+e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+.PHONY: jenkins-kind-load
+jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
+	@echo "+ $@"
+	docker pull jenkins/jenkins:$(LATEST_LTS_VERSION)
+	kind load docker-image jenkins/jenkins:$(LATEST_LTS_VERSION) --name $(KIND_CLUSTER_NAME)
 
 ## Backup Section
 
@@ -383,21 +389,21 @@ kind-clean: ## Delete kind cluster
 	kind delete cluster --name $(KIND_CLUSTER_NAME)
 
 .PHONY: kind-revamp
-kind-revamp: kind-clean kind-setup## Delete and recreate kind cluster
+kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
-.PHONY: bats-tests
+.PHONY: bats-tests ## Run bats tests
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
 bats-tests: backup-kind-load container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 else
 bats-tests: backup-kind-load
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats
+	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 endif
 
 .PHONY: crc-start
