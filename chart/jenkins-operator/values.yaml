@@ -145,6 +145,9 @@ jenkins:
   # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3248.v65ecb_254c298-6 will be used.
   seedJobAgentImage: ""
 
+  # SeedJobRestrictJobsToLabel defines whether the seed job agent will be restricted to only running jobs with the seed job label.
+  seedJobRestrictJobsToLabel: false
+
   # Resource limit/request for Jenkins
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"text/template"
 
+	"github.com/go-logr/logr"
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/internal/render"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -17,8 +18,6 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
-
-	"github.com/go-logr/logr"
 	stackerr "github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -48,7 +47,8 @@ const (
 	// DefaultAgentImage is the default image used for the seed-job agent
 	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6"
 
-	creatingGroovyScriptName = "seed-job-groovy-script.groovy"
+	creatingGroovyScriptName  = "seed-job-groovy-script.groovy"
+	agentModeGroovyScriptName = "seed-job-agent-mode-groovy-script.groovy"
 
 	homeVolumeName = "home"
 	homeVolumePath = "/home/jenkins/agent"
@@ -56,6 +56,18 @@ const (
 	workspaceVolumeName = "workspace"
 	workspaceVolumePath = "/home/jenkins/workspace"
 )
+
+var seedAgentSetModeScriptTemplate = template.Must(template.New(agentModeGroovyScriptName).Parse(`
+import hudson.model.*
+import jenkins.model.*
+import hudson.slaves.*
+import hudson.slaves.EnvironmentVariablesNodeProperty.Entry
+import jenkins.model.Jenkins;
+
+Jenkins jenkins = Jenkins.instance
+def agent = jenkins.getNode("{{.AgentName}}")
+agent.setMode(Node.Mode.EXCLUSIVE)
+`))
 
 var seedJobGroovyScriptTemplate = template.Must(template.New(creatingGroovyScriptName).Parse(`
 import hudson.model.FreeStyleProject;
@@ -382,6 +394,18 @@ func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cl
 		}
 	} else if err != nil {
 		return stackerr.WithStack(err)
+	}
+
+	if s.Configuration.Jenkins.Spec.SeedJobRestrictJobsToLabel {
+		data := struct{ AgentName string }{AgentName: agentName}
+		setAgentModeScript, err := render.Render(seedAgentSetModeScriptTemplate, data)
+		if err != nil {
+			return err
+		}
+		_, err = jenkinsClient.ExecuteScript(setAgentModeScript)
+		if err != nil {
+			return err
+		}
 	}
 
 	secret, err := jenkinsClient.GetNodeSecret(agentName)
