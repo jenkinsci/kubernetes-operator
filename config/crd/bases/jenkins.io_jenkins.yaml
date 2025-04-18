@@ -1674,6 +1674,10 @@ spec:
                             type: string
                         type: object
                     type: object
+                  skipPlugins:
+                    description: Allow to skip installation of both BasePlugins and Plugins. Requires using a custom
+                      image which includes the BasePlugins. Defaults to false.
+                    type: boolean
                   terminationGracePeriodSeconds:
                     description: |-
                       The grace period is the duration in seconds after the processes running in the pod are sent

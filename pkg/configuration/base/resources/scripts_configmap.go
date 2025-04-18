@@ -2,6 +2,7 @@ package resources
 
 import (
 	"fmt"
+	"strings"
 	"text/template"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -13,6 +14,8 @@ import (
 )
 
 const installPluginsCommand = "jenkins-plugin-cli"
+
+var requiredBasePlugins = []string{"configuration-as-code", "git", "job-dsl", "kubernetes", "kubernetes-credentials-provider", "workflow-aggregator"}
 
 var initBashTemplate = template.Must(template.New(InitScriptName).Parse(`#!/usr/bin/env bash
 set -e
@@ -36,6 +39,7 @@ mkdir -p {{ .JenkinsHomePath }}/scripts
 cp {{ .JenkinsScriptsVolumePath }}/*.sh {{ .JenkinsHomePath }}/scripts
 chmod +x {{ .JenkinsHomePath }}/scripts/*.sh
 
+{{if not .SkipPlugins }}
 {{- $jenkinsHomePath := .JenkinsHomePath }}
 {{- $installPluginsCommand := .InstallPluginsCommand }}
 
@@ -58,6 +62,19 @@ EOF
 
 {{ $installPluginsCommand }} --verbose --latest {{ .LatestPlugins }} -f {{ .JenkinsHomePath }}/user-plugins.txt
 echo "Installing plugins required by user - end"
+{{else}}
+echo "Skipping installation if plugins"
+echo "Checking if required base plugins are installed"
+installedPlugins=$(jenkins-plugin-cli --list 2> /dev/null)
+for plugin in {{ .RequiredBasePlugins }}; do
+	if ! echo "$installedPlugins" | grep -q "^$plugin "; then
+		echo "Required base plugin $plugin not installed, exiting"
+		exit 1
+	else
+		echo "Found $plugin"
+	fi
+done
+{{end}}
 `))
 
 func buildConfigMapTypeMeta() metav1.TypeMeta {
@@ -73,22 +90,31 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		latestP = new(bool)
 		*latestP = true
 	}
+	skipPlugins := jenkins.Spec.Master.SkipPlugins
+	if skipPlugins == nil {
+		skipPlugins = new(bool)
+		*skipPlugins = false
+	}
 	data := struct {
 		JenkinsHomePath          string
 		InitConfigurationPath    string
 		InstallPluginsCommand    string
+		RequiredBasePlugins      string
 		JenkinsScriptsVolumePath string
 		BasePlugins              []v1alpha2.Plugin
 		UserPlugins              []v1alpha2.Plugin
 		LatestPlugins            bool
+		SkipPlugins              bool
 	}{
 		JenkinsHomePath:          getJenkinsHomePath(jenkins),
 		InitConfigurationPath:    jenkinsInitConfigurationVolumePath,
 		BasePlugins:              jenkins.Spec.Master.BasePlugins,
 		UserPlugins:              jenkins.Spec.Master.Plugins,
 		InstallPluginsCommand:    installPluginsCommand,
+		RequiredBasePlugins:      strings.Join(requiredBasePlugins, " "),
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
 		LatestPlugins:            *latestP,
+		SkipPlugins:              *skipPlugins,
 	}
 
 	output, err := render.Render(initBashTemplate, data)

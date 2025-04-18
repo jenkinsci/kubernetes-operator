@@ -145,6 +145,11 @@ jenkins:
   # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3248.v65ecb_254c298-6 will be used.
   seedJobAgentImage: ""
 
+  # skipPlugins allows to skip installation of both BasePlugins and Plugins.
+  # Requires using a custom image which includes the BasePlugins.
+  # Defaults to false.
+  skipPlugins: false
+
   # Resource limit/request for Jenkins
   # See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/ for details
   resources:
