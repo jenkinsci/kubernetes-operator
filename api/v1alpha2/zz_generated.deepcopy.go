@@ -361,6 +361,11 @@ func (in *JenkinsMaster) DeepCopyInto(out *JenkinsMaster) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.SkipPlugins != nil {
+		in, out := &in.SkipPlugins, &out.SkipPlugins
+		*out = new(bool)
+		**out = **in
+	}
 	if in.HostAliases != nil {
 		in, out := &in.HostAliases, &out.HostAliases
 		*out = make([]corev1.HostAlias, len(*in))

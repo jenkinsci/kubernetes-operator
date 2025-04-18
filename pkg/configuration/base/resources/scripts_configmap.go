@@ -2,6 +2,7 @@ package resources
 
 import (
 	"fmt"
+	"strings"
 	"text/template"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -13,6 +14,8 @@ import (
 )
 
 const installPluginsCommand = "jenkins-plugin-cli"
+
+var requiredBasePlugins = []string{"configuration-as-code", "git", "job-dsl", "kubernetes", "kubernetes-credentials-provider", "workflow-aggregator"}
 
 var initBashTemplate = template.Must(template.New(InitScriptName).Parse(`#!/usr/bin/env bash
 set -e
@@ -59,6 +62,18 @@ EOF
 
 {{ $installPluginsCommand }} --verbose --latest {{ .LatestPlugins }} -f {{ .JenkinsHomePath }}/user-plugins.txt
 echo "Installing plugins required by user - end"
+{{else}}
+echo "Skipping installation if plugins"
+echo "Checking if required base plugins are installed"
+installedPlugins=$(jenkins-plugin-cli --list 2> /dev/null)
+for plugin in {{ .RequiredBasePlugins }}; do
+	if ! echo "$installedPlugins" | grep -q "^$plugin "; then
+		echo "Required base plugin $plugin not installed, exiting"
+		exit 1
+	else
+		echo "Found $plugin"
+	fi
+done
 {{end}}
 `))
 
@@ -84,6 +99,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		JenkinsHomePath          string
 		InitConfigurationPath    string
 		InstallPluginsCommand    string
+		RequiredBasePlugins      string
 		JenkinsScriptsVolumePath string
 		BasePlugins              []v1alpha2.Plugin
 		UserPlugins              []v1alpha2.Plugin
@@ -95,6 +111,7 @@ func buildInitBashScript(jenkins *v1alpha2.Jenkins) (*string, error) {
 		BasePlugins:              jenkins.Spec.Master.BasePlugins,
 		UserPlugins:              jenkins.Spec.Master.Plugins,
 		InstallPluginsCommand:    installPluginsCommand,
+		RequiredBasePlugins:      strings.Join(requiredBasePlugins, " "),
 		JenkinsScriptsVolumePath: JenkinsScriptsVolumePath,
 		LatestPlugins:            *latestP,
 		SkipPlugins:              *skipPlugins,
