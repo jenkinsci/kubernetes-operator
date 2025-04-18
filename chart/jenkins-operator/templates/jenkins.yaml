@@ -115,6 +115,7 @@ spec:
     {{- with .Values.jenkins.hostAliases }}
     hostAliases: {{ toYaml . | nindent 4 }}
     {{- end }}
+    skipPlugins: {{ .Values.jenkins.skipPlugins }}
     {{- if .Values.jenkins.terminationGracePeriodSeconds }}
     terminationGracePeriodSeconds: {{ .Values.jenkins.terminationGracePeriodSeconds }}
     {{- end }}
