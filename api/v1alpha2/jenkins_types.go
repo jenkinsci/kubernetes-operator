@@ -400,6 +400,10 @@ type JenkinsMaster struct {
 	// Defaults to 30 seconds.
 	// +optional
 	TerminationGracePeriodSeconds *int64 `json:"terminationGracePeriodSeconds,omitempty"`
+
+	// IgnoredVolumes defines the list of volume names that should be excluded from processing or consideration.
+	// +optional
+	IgnoredVolumes []string `json:"ignoredVolumes,omitempty"`
 }
 
 // Service defines Kubernetes service attributes
