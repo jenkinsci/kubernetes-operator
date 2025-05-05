@@ -160,6 +160,47 @@ func TestCompareVolumes(t *testing.T) {
 
 		assert.True(t, got)
 	})
+
+	t.Run("different - additional workspace identity volume", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{},
+			},
+		}
+		pod := corev1.Pod{
+			Spec: corev1.PodSpec{
+				ServiceAccountName: "service-account-name",
+				Volumes:            append(resources.GetJenkinsMasterPodBaseVolumes(jenkins), corev1.Volume{Name: "azure-identity-token"}),
+			},
+		}
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})
+
+		got := reconciler.compareVolumes(pod)
+
+		assert.False(t, got)
+	})
+
+	t.Run("additional workspace identity volume but ignored", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{
+			Spec: v1alpha2.JenkinsSpec{
+				Master: v1alpha2.JenkinsMaster{
+					IgnoredVolumes: []string{"azure-identity-token"},
+				},
+			},
+		}
+		pod := corev1.Pod{
+			Spec: corev1.PodSpec{
+				ServiceAccountName: "service-account-name",
+				Volumes:            append(resources.GetJenkinsMasterPodBaseVolumes(jenkins), corev1.Volume{Name: "azure-identity-token"}),
+			},
+		}
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})
+
+		got := reconciler.compareVolumes(pod)
+
+		assert.True(t, got)
+	})
+
 }
 
 func TestJenkinsBaseConfigurationReconciler_verifyPlugins(t *testing.T) {
