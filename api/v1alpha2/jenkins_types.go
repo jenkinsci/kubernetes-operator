@@ -415,22 +415,6 @@ type JenkinsMaster struct {
 	// Defaults to 30 seconds.
 	// +optional
 	TerminationGracePeriodSeconds *int64 `json:"terminationGracePeriodSeconds,omitempty"`
-
-	// IgnoredVolumes defines the list of volume names that should be excluded from processing or consideration.
-	// +optional
-	IgnoredVolumes []string `json:"ignoredVolumes,omitempty"`
-
-	// IgnoredAnnotations specifies a list of annotation keys that should be ignored during configuration updates.
-	// +optional
-	IgnoredAnnotations []string `json:"ignoredAnnotations,omitempty"`
-
-	// IgnoredEnvVars defines the list of environment variable names that should be excluded from the Jenkins master pod.
-	// +optional
-	IgnoredEnvVars []string `json:"ignoredEnvVars,omitempty"`
-
-	// IgnoredLabels specifies the list of labels to be excluded from configuration or processing in the Jenkins master.
-	// +optional
-	IgnoredLabels []string `json:"ignoredLabels,omitempty"`
 }
 
 // Service defines Kubernetes service attributes
