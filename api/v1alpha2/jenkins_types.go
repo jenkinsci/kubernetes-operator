@@ -73,6 +73,21 @@ type JenkinsSpec struct {
 
 	// JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API
 	JenkinsAPISettings JenkinsAPISettings `json:"jenkinsAPISettings"`
+
+	// +optional
+	Lifecycle JenkinsLifecycle `json:"lifecycle,omitempty"`
+}
+
+type JenkinsLifecycle struct {
+	// +optional
+	Ignore JenkinsLifecycleIgnore `json:"ignore,omitempty"`
+}
+
+type JenkinsLifecycleIgnore struct {
+	IgnoredVolumes     []string `json:"volumes,omitempty"`
+	IgnoredEnvs        []string `json:"envs,omitempty"`
+	IgnoredAnnotations []string `json:"annotations,omitempty"`
+	IgnoredLabels      []string `json:"labels,omitempty"`
 }
 
 // AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API
@@ -404,6 +419,18 @@ type JenkinsMaster struct {
 	// IgnoredVolumes defines the list of volume names that should be excluded from processing or consideration.
 	// +optional
 	IgnoredVolumes []string `json:"ignoredVolumes,omitempty"`
+
+	// IgnoredAnnotations specifies a list of annotation keys that should be ignored during configuration updates.
+	// +optional
+	IgnoredAnnotations []string `json:"ignoredAnnotations,omitempty"`
+
+	// IgnoredEnvVars defines the list of environment variable names that should be excluded from the Jenkins master pod.
+	// +optional
+	IgnoredEnvVars []string `json:"ignoredEnvVars,omitempty"`
+
+	// IgnoredLabels specifies the list of labels to be excluded from configuration or processing in the Jenkins master.
+	// +optional
+	IgnoredLabels []string `json:"ignoredLabels,omitempty"`
 }
 
 // Service defines Kubernetes service attributes

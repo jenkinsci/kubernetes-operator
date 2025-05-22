@@ -182,9 +182,12 @@ func TestCompareVolumes(t *testing.T) {
 
 	t.Run("additional workspace identity volume but ignored", func(t *testing.T) {
 		jenkins := &v1alpha2.Jenkins{
+
 			Spec: v1alpha2.JenkinsSpec{
-				Master: v1alpha2.JenkinsMaster{
-					IgnoredVolumes: []string{"azure-identity-token"},
+				Lifecycle: v1alpha2.JenkinsLifecycle{
+					Ignore: v1alpha2.JenkinsLifecycleIgnore{
+						IgnoredVolumes: []string{"azure-identity-token"},
+					},
 				},
 			},
 		}
@@ -192,6 +195,30 @@ func TestCompareVolumes(t *testing.T) {
 			Spec: corev1.PodSpec{
 				ServiceAccountName: "service-account-name",
 				Volumes:            append(resources.GetJenkinsMasterPodBaseVolumes(jenkins), corev1.Volume{Name: "azure-identity-token"}),
+			},
+		}
+		reconciler := New(configuration.Configuration{Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})
+
+		got := reconciler.compareVolumes(pod)
+
+		assert.True(t, got)
+	})
+
+	t.Run("additional multiple volumes added but ignored", func(t *testing.T) {
+		jenkins := &v1alpha2.Jenkins{
+
+			Spec: v1alpha2.JenkinsSpec{
+				Lifecycle: v1alpha2.JenkinsLifecycle{
+					Ignore: v1alpha2.JenkinsLifecycleIgnore{
+						IgnoredVolumes: []string{"volume-present", "volume-absent"},
+					},
+				},
+			},
+		}
+		pod := corev1.Pod{
+			Spec: corev1.PodSpec{
+				ServiceAccountName: "service-account-name",
+				Volumes:            append(resources.GetJenkinsMasterPodBaseVolumes(jenkins), corev1.Volume{Name: "volume-present"}),
 			},
 		}
 		reconciler := New(configuration.Configuration{Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})

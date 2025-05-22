@@ -429,7 +429,7 @@ func (r *JenkinsBaseConfigurationReconciler) ensureBaseConfiguration(jenkinsClie
 
 // isVolumeIgnored checks if the given volume name is in the list of ignored volumes
 func (r *JenkinsBaseConfigurationReconciler) isVolumeIgnored(volumeName string) bool {
-	for _, ignoredVolume := range r.Jenkins.Spec.Master.IgnoredVolumes {
+	for _, ignoredVolume := range r.Jenkins.Spec.Lifecycle.Ignore.IgnoredVolumes {
 		if ignoredVolume == volumeName {
 			return true
 		}
