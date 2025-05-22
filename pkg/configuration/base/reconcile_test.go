@@ -97,6 +97,114 @@ func TestCompareContainerVolumeMounts(t *testing.T) {
 	})
 }
 
+func TestCompareAnnotations(t *testing.T) {
+	type testCase struct {
+		name                string
+		jenkinsAnnotations  map[string]string
+		ignoredAnnotations  []string
+		podAnnotations      map[string]string
+		expectedShouldMatch bool
+	}
+
+	runTest := func(t *testing.T, tc testCase) {
+
+		t.Run(tc.name, func(t *testing.T) {
+			jenkins := &v1alpha2.Jenkins{
+				Spec: v1alpha2.JenkinsSpec{
+					Master: v1alpha2.JenkinsMaster{
+						Annotations: tc.jenkinsAnnotations,
+					},
+				},
+			}
+
+			if len(tc.ignoredAnnotations) > 0 {
+				jenkins.Spec.Lifecycle = v1alpha2.JenkinsLifecycle{
+					Ignore: v1alpha2.JenkinsLifecycleIgnore{
+						IgnoredAnnotations: tc.ignoredAnnotations,
+					},
+				}
+			}
+
+			pod := corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Annotations: tc.podAnnotations,
+				},
+			}
+
+			reconciler := New(configuration.Configuration{Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})
+			result := reconciler.compareAnnotations(pod)
+
+			assert.Equal(t, tc.expectedShouldMatch, result,
+				"Expected compareAnnotations to return %v but got %v", tc.expectedShouldMatch, result)
+		})
+	}
+
+	testCases := []testCase{
+		{
+			name:                "no annotation - additional annotations - not different",
+			jenkinsAnnotations:  map[string]string{},
+			ignoredAnnotations:  nil,
+			podAnnotations:      map[string]string{"one": "two"},
+			expectedShouldMatch: true,
+		},
+		{
+			name:                "one additional annotation - change not ignored - not different",
+			jenkinsAnnotations:  map[string]string{"one": "two"},
+			ignoredAnnotations:  nil,
+			podAnnotations:      map[string]string{"one": "two", "additional": "annotation"},
+			expectedShouldMatch: true,
+		},
+		{
+
+			name:                "annotations different - different",
+			jenkinsAnnotations:  map[string]string{"one": "two"},
+			ignoredAnnotations:  nil,
+			podAnnotations:      map[string]string{"two": "three"},
+			expectedShouldMatch: false,
+		},
+
+		{
+			name:                "annotations different - ignored - not different",
+			jenkinsAnnotations:  map[string]string{"one": "two"},
+			ignoredAnnotations:  []string{"one"},
+			podAnnotations:      map[string]string{"two": "three"},
+			expectedShouldMatch: true,
+		},
+		{
+			name:                "one annotation different - change not ignored - different",
+			jenkinsAnnotations:  map[string]string{"one": "two"},
+			ignoredAnnotations:  nil,
+			podAnnotations:      map[string]string{"one": "different"},
+			expectedShouldMatch: false,
+		},
+		{
+			name:                "one annotation different - change ignored - not different",
+			jenkinsAnnotations:  map[string]string{"one": "two"},
+			ignoredAnnotations:  []string{"one"},
+			podAnnotations:      map[string]string{"one": "different"},
+			expectedShouldMatch: true,
+		},
+		{
+			name:                "one additional annotation - different",
+			jenkinsAnnotations:  map[string]string{"one": "two", "ignore": "me"},
+			ignoredAnnotations:  nil,
+			podAnnotations:      map[string]string{"one": "two", "ignore": "this"},
+			expectedShouldMatch: false,
+		},
+		{
+			name:                "one additional annotation - change ignored - not different",
+			jenkinsAnnotations:  map[string]string{"one": "two", "ignore": "me"},
+			ignoredAnnotations:  []string{"ignore"},
+			podAnnotations:      map[string]string{"one": "two", "ignore": "this"},
+			expectedShouldMatch: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		runTest(t, tc)
+	}
+}
+
 func TestCompareVolumes(t *testing.T) {
 	t.Run("defaults", func(t *testing.T) {
 		jenkins := &v1alpha2.Jenkins{}
