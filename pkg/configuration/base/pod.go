@@ -3,14 +3,15 @@ package base
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"slices"
+
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/backuprestore"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
 	"github.com/jenkinsci/kubernetes-operator/version"
-	"reflect"
-	"slices"
 
 	stackerr "github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
