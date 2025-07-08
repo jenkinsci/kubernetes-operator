@@ -39,7 +39,17 @@ else
   exit 1
 fi
 
-tar $OPTS -C "${JENKINS_HOME}" -xf "${BACKUP_DIR}/${BACKUP_NUMBER}.${EXT}"
+tar $OPTS -C "${JENKINS_HOME}" -xf "${BACKUP_DIR}/${BACKUP_NUMBER}.${EXT}" || ret=$?
+
+if [[ "$ret" -eq 0 ]]; then
+  _log "INFO" "[backup] backup ${BACKUP_NUMBER} was completed without warnings"
+elif [[ "$ret" -eq 1 ]]; then
+  _log "INFO" "[backup] backup ${BACKUP_NUMBER} was completed with some warnings"
+else
+  _log "ERROR" "[backup] backup ${BACKUP_NUMBER} failed with error code: $ret"
+  exit "$ret"
+fi
+
 
 _log "INFO" "[restore] deleting lock file ${TRAP_FILE}"
 test -f "${TRAP_FILE}" && rm -f "${TRAP_FILE}"

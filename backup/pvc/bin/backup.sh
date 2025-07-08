@@ -51,6 +51,10 @@ if [[ "$ret" -eq 0 ]]; then
   _log "INFO" "[backup] backup ${BACKUP_NUMBER} was completed without warnings"
 elif [[ "$ret" -eq 1 ]]; then
   _log "INFO" "[backup] backup ${BACKUP_NUMBER} was completed with some warnings"
+else
+  _log "ERROR" "[backup] backup ${BACKUP_NUMBER} failed with error code: $ret"
+  _clean
+  exit "$ret"
 fi
 
 mv "${BACKUP_TMP_DIR}/${BACKUP_NUMBER}.tar.zstd" "${BACKUP_DIR}/${BACKUP_NUMBER}.tar.zstd"
