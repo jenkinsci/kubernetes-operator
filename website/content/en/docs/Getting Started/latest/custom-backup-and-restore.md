@@ -15,7 +15,7 @@ for the Jenkins Operator.
 Two commands (e.g. scripts) are required:
 
 - a backup command, e.g. `backup.sh` that takes one argument, a **backup number**
-- a restore command, e.g. `backup.sh` that takes one argument, a **backup number**
+- a restore command, e.g. `restore.sh` that takes one argument, a **backup number**
 
 Both scripts need to return an exit code of `0` on success and `1` or greater for failure.
 
