@@ -281,7 +281,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
