@@ -191,6 +191,36 @@ install: ## Installs the executable
 	@echo "+ $@"
 	go install -tags "$(BUILDTAGS)" ${GO_LDFLAGS} $(BUILD_PATH)
 
+.PHONY: update-plugins
+update-plugins: ## Update jenkins base plugins
+	@echo "+ $@"
+	@JENKINS_VERSION=$$(sed -n 's/LATEST_LTS_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"'); \
+	echo "updating plugins for Jenkins $$JENKINS_VERSION"; \
+	./.github/workflows/update-plugins.sh "$$JENKINS_VERSION"
+
+.PHONY: update-plugins-dry-run
+update-plugins-dry-run: ## Update jenkins base plugin -- dry run
+	@echo "+ $@"
+	@JENKINS_VERSION=$$(sed -n 's/LATEST_LTS_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"'); \
+	echo "checking plugins for Jenkins $$JENKINS_VERSION -- dry run"; \
+	./.github/workflows/update-plugins.sh "$$JENKINS_VERSION" --dry-run
+
+.PHONY: update-jenkins-lts
+update-jenkins-lts: ## Fetch latest Jenkins lts version and update if necessary
+	@echo "+ $@"
+	@LATEST_VERSION=$$(curl -s https://www.jenkins.io/changelog-stable/ | grep -oP 'changelog/\K\d+\.\d+\.\d+' | head -1); \
+	CURRENT_VERSION=$$(sed -n 's/LATEST_LTS_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"'); \
+	echo "current version: $$CURRENT_VERSION"; \
+	echo "latest version:  $$LATEST_VERSION"; \
+	if [ "$$CURRENT_VERSION" != "$$LATEST_VERSION" ]; then \
+		echo "updating Jenkins lts version from $$CURRENT_VERSION to $$LATEST_VERSION"; \
+		sed -i "s/LATEST_LTS_VERSION=\".*\"/LATEST_LTS_VERSION=\"$$LATEST_VERSION\"/" config.base.env; \
+		$(MAKE) update-lts-version LATEST_LTS_VERSION=$$LATEST_VERSION; \
+		echo "updated Jenkins LTS version to $$LATEST_VERSION"; \
+	else \
+		echo "up to date"; \
+	fi
+
 .PHONY: update-lts-version
 update-lts-version: ## Update the latest lts version
 	@echo "+ $@"
