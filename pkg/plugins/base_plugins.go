@@ -1,14 +1,14 @@
 package plugins
 
 const (
-	configurationAsCodePlugin           = "configuration-as-code:1932.v75cb_b_f1b_698d"
+	configurationAsCodePlugin           = "configuration-as-code:1998.v3e50e6e9d9d3"
 	gitPlugin                           = "git:5.7.0"
-	jobDslPlugin                        = "job-dsl:1.89"
-	kubernetesPlugin                    = "kubernetes:4295.v7fa_01b_309c95"
-	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.262.v2670ef7ea_0c5"
+	jobDslPlugin                        = "job-dsl:1.93"
+	kubernetesPlugin                    = "kubernetes:4384.v1b_6367f393d9"
+	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.299.v610fa_e76761a_"
 	// Depends on workflow-job which should be automatically downloaded
 	// Hardcoding the workflow-job version leads to frequent breakage
-	workflowAggregatorPlugin = "workflow-aggregator:600.vb_57cdd26fdd7"
+	workflowAggregatorPlugin = "workflow-aggregator:608.v67378e9d3db_1"
 )
 
 // basePluginsList contains plugins to install by operator.

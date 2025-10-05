@@ -1,0 +1,72 @@
+name: auto-update-jenkins-lts
+
+on:
+  schedule:
+    - cron: '0 7 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-and-update-jenkins-lts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Set up env vars
+        run: |
+          echo "GO111MODULE=on" >> $GITHUB_ENV
+          echo "GO_VERSION=v$(sed -n 's/GO_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "KIND_CLUSTER_NAME=$(sed -n 's/KIND_CLUSTER_NAME=//p' config.base.env | tr -d '\n' | tr -d '"')" >> $GITHUB_ENV
+          echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
+
+      - name: Check if update needed
+        id: check
+        run: |
+          CURRENT=$(sed -n 's/LATEST_LTS_VERSION=//p' config.base.env | tr -d '\n' | tr -d '"')
+          LATEST=$(curl -s https://www.jenkins.io/changelog-stable/ | grep -oP 'changelog/\K\d+\.\d+\.\d+' | head -1)
+
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+
+          if [ "$CURRENT" != "$LATEST" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Prepare go environment
+        if: steps.check.outputs.needs_update == 'true'
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Ensure Golang runtime dependencies
+        if: steps.check.outputs.needs_update == 'true'
+        run: make go-dependencies
+
+      - name: Update Jenkins lts version
+        if: steps.check.outputs.needs_update == 'true'
+        run: make update-jenkins-lts
+
+      - name: Update Jenkins base plugins
+        if: steps.check.outputs.needs_update == 'true'
+        run: make update-plugins
+
+      - name: Run verify
+        if: steps.check.outputs.needs_update == 'true'
+        run: make verify
+
+      - name: Create Pull Request
+        if: steps.check.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update Jenkins lts version to ${{ steps.check.outputs.latest }}"
+          title: "chore: update Jenkins lts version to ${{ steps.check.outputs.latest }}"
+          body: "auto-update Jenkins lts version from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
+          branch: auto-update-jenkins-lts-${{ steps.check.outputs.latest }}
+          delete-branch: true
