@@ -72,13 +72,6 @@ def jenkins = Jenkins.instance
 
 println("Disabling insecure Jenkins features...")
 
-println("Disabling insecure protocols...")
-println("Old protocols: [" + jenkins.getAgentProtocols().join(", ") + "]")
-HashSet<String> newProtocols = new HashSet<>(jenkins.getAgentProtocols())
-newProtocols.removeAll(Arrays.asList("JNLP3-connect", "JNLP2-connect", "JNLP-connect", "CLI-connect"))
-println("New protocols: [" + newProtocols.join(", ") + "]")
-jenkins.setAgentProtocols(newProtocols)
-
 println("Disabling CLI access of /cli URL...")
 def remove = { list ->
     list.each { item ->
