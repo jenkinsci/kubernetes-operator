@@ -73,6 +73,21 @@ type JenkinsSpec struct {
 
 	// JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API
 	JenkinsAPISettings JenkinsAPISettings `json:"jenkinsAPISettings"`
+
+	// +optional
+	Lifecycle JenkinsLifecycle `json:"lifecycle,omitempty"`
+}
+
+type JenkinsLifecycle struct {
+	// +optional
+	Ignore JenkinsLifecycleIgnore `json:"ignore,omitempty"`
+}
+
+type JenkinsLifecycleIgnore struct {
+	IgnoredVolumes     []string `json:"volumes,omitempty"`
+	IgnoredEnvs        []string `json:"envs,omitempty"`
+	IgnoredAnnotations []string `json:"annotations,omitempty"`
+	IgnoredLabels      []string `json:"labels,omitempty"`
 }
 
 // AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API
