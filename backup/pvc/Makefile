@@ -186,3 +186,18 @@ endif
 	@echo "Dependencies:"
 	dep status
 	@echo
+
+# Multi-arch (buildx) support mirroring root Makefile
+PLATFORMS ?= linux/arm64,linux/amd64,linux/s390x,linux/ppc64le
+
+.PHONY: docker-buildx
+docker-buildx: check-env ## Build and push multi-arch image (set IMG=quay.io/...:tag)
+	@echo "+ $@"
+	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' Dockerfile > Dockerfile.cross
+	- docker buildx create --name backup-pvc-builder
+	docker buildx use backup-pvc-builder
+	- docker buildx build --push --platform=$(PLATFORMS) \
+		--build-arg UID=$(UID) --build-arg GID=$(GID) \
+		--tag ${IMG} -f Dockerfile.cross .
+	- docker buildx rm backup-pvc-builder
+	rm Dockerfile.cross
