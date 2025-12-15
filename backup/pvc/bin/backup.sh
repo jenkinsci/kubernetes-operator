@@ -44,8 +44,9 @@ trap '_trap' SIGQUIT SIGINT SIGTERM
 ret=0
 tar --zstd -C "${JENKINS_HOME}" -cf "${BACKUP_TMP_DIR}/${BACKUP_NUMBER}.tar.zstd" \
     --exclude 'jobs/*/workspace*' \
-    --no-wildcards-match-slash \
+    --no-wildcards-match-slash --anchored \
     --ignore-failed-read \
+    --exclude-ignore=.jenkinsbackupignore \
     --exclude 'jobs/*/config.xml' -c jobs || ret=$?
 
 if [[ "$ret" -eq 0 ]]; then
