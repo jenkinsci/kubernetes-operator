@@ -2,7 +2,7 @@
   description = "Jenkins Kubernetes Operator";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
     nixpkgs-rolling.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     hugo_099.url = "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
