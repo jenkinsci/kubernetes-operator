@@ -247,7 +247,7 @@ spec:
       serviceAccountName: jenkins-operator
       containers:
         - name: jenkins-operator
-          image: quay.io/jenkins-kubernetes-operator/operator:v0.9.0-beta1
+          image: quay.io/jenkins-kubernetes-operator/operator:v0.9.0-beta2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
