@@ -125,7 +125,7 @@ func verifyJenkinsMasterPodAttributes(jenkins *v1alpha2.Jenkins) {
 
 	defaultGracePeriod := constants.DefaultTerminationGracePeriodSeconds
 
-	assertMapContainsElementsFromAnotherMap(jenkins.Spec.Master.Annotations, jenkinsPod.ObjectMeta.Annotations)
+	assertMapContainsElementsFromAnotherMap(jenkins.Spec.Master.Annotations, jenkinsPod.Annotations)
 	Expect(jenkinsPod.Spec.NodeSelector).Should(Equal(jenkins.Spec.Master.NodeSelector))
 
 	Expect(jenkinsPod.Spec.Containers[0].Name).Should(Equal(resources.JenkinsMasterContainerName))

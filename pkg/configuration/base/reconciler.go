@@ -50,7 +50,7 @@ func New(config configuration.Configuration, jenkinsAPIConnectionSettings jenkin
 
 // Reconcile takes care of base configuration.
 func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenkinsclient.Jenkins, error) {
-	metaObject := resources.NewResourceObjectMeta(r.Configuration.Jenkins)
+	metaObject := resources.NewResourceObjectMeta(r.Jenkins)
 
 	// Create Necessary Resources
 	err := r.ensureResourcesRequiredForJenkinsPod(metaObject)
@@ -59,12 +59,12 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 	}
 	r.logger.V(log.VDebug).Info("Kubernetes resources are present")
 
-	if useDeploymentForJenkinsMaster(r.Configuration.Jenkins) {
+	if useDeploymentForJenkinsMaster(r.Jenkins) {
 		result, err := r.ensureJenkinsDeployment(metaObject)
 		if err != nil {
 			return reconcile.Result{}, nil, err
 		}
-		if result.Requeue {
+		if result.RequeueAfter > 0 {
 			return result, nil, nil
 		}
 		r.logger.V(log.VDebug).Info("Jenkins Deployment is present")
@@ -76,7 +76,7 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil, nil
 	}
 	r.logger.V(log.VDebug).Info("Jenkins master pod is present")
@@ -86,19 +86,19 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 		return reconcile.Result{}, nil, err
 	}
 	if stopReconcileLoop {
-		return reconcile.Result{Requeue: false}, nil, nil
+		return reconcile.Result{}, nil, nil
 	}
 
 	result, err = r.waitForJenkins()
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil, nil
 	}
 	r.logger.V(log.VDebug).Info("Jenkins master pod is ready")
 
-	jenkinsClient, err := r.Configuration.GetJenkinsClient()
+	jenkinsClient, err := r.GetJenkinsClient()
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
@@ -117,7 +117,7 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 			reason.OperatorSource,
 			[]string{message},
 		)
-		return reconcile.Result{Requeue: true}, nil, r.Configuration.RestartJenkinsMasterPod(restartReason)
+		return reconcile.Result{Requeue: true}, nil, r.RestartJenkinsMasterPod(restartReason)
 	}
 
 	result, err = r.ensureBaseConfiguration(jenkinsClient)
@@ -158,12 +158,12 @@ func (r *JenkinsBaseConfigurationReconciler) ensureResourcesRequiredForJenkinsPo
 	}
 	r.logger.V(log.VDebug).Info("Base configuration config map is present")
 
-	if err := r.addLabelForWatchesResources(r.Configuration.Jenkins.Spec.GroovyScripts.Customization); err != nil {
+	if err := r.addLabelForWatchesResources(r.Jenkins.Spec.GroovyScripts.Customization); err != nil {
 		return err
 	}
 	r.logger.V(log.VDebug).Info("GroovyScripts Secret and ConfigMap added watched labels")
 
-	if err := r.addLabelForWatchesResources(r.Configuration.Jenkins.Spec.ConfigurationAsCode.Customization); err != nil {
+	if err := r.addLabelForWatchesResources(r.Jenkins.Spec.ConfigurationAsCode.Customization); err != nil {
 		return err
 	}
 	r.logger.V(log.VDebug).Info("ConfigurationAsCode Secret and ConfigMap added watched labels")
@@ -178,20 +178,20 @@ func (r *JenkinsBaseConfigurationReconciler) ensureResourcesRequiredForJenkinsPo
 	}
 	r.logger.V(log.VDebug).Info("Extra role bindings are present")
 
-	httpServiceName := resources.GetJenkinsHTTPServiceName(r.Configuration.Jenkins)
-	if err := r.createService(metaObject, httpServiceName, r.Configuration.Jenkins.Spec.Service, constants.DefaultHTTPPortInt32); err != nil {
+	httpServiceName := resources.GetJenkinsHTTPServiceName(r.Jenkins)
+	if err := r.createService(metaObject, httpServiceName, r.Jenkins.Spec.Service, constants.DefaultHTTPPortInt32); err != nil {
 		return err
 	}
 	r.logger.V(log.VDebug).Info("Jenkins HTTP Service is present")
 
-	if err := r.createService(metaObject, resources.GetJenkinsSlavesServiceName(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.SlaveService, constants.DefaultSlavePortInt32); err != nil {
+	if err := r.createService(metaObject, resources.GetJenkinsSlavesServiceName(r.Jenkins), r.Jenkins.Spec.SlaveService, constants.DefaultSlavePortInt32); err != nil {
 		return err
 	}
 	r.logger.V(log.VDebug).Info("Jenkins slave Service is present")
 
 	if resources.IsRouteAPIAvailable(&r.ClientSet) {
 		r.logger.V(log.VDebug).Info("Route API is available. Now creating route.")
-		if err := r.createRoute(metaObject, httpServiceName, r.Configuration.Jenkins); err != nil {
+		if err := r.createRoute(metaObject, httpServiceName, r.Jenkins); err != nil {
 			return err
 		}
 		r.logger.V(log.VDebug).Info("Jenkins Route is present")
@@ -202,10 +202,10 @@ func (r *JenkinsBaseConfigurationReconciler) ensureResourcesRequiredForJenkinsPo
 
 func (r *JenkinsBaseConfigurationReconciler) createOperatorCredentialsSecret(meta metav1.ObjectMeta) error {
 	found := &corev1.Secret{}
-	err := r.Configuration.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(r.Configuration.Jenkins), Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, found)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(r.Jenkins), Namespace: r.Jenkins.Namespace}, found)
 
 	if err != nil && apierrors.IsNotFound(err) {
-		return stackerr.WithStack(r.CreateResource(resources.NewOperatorCredentialsSecret(meta, r.Configuration.Jenkins)))
+		return stackerr.WithStack(r.CreateResource(resources.NewOperatorCredentialsSecret(meta, r.Jenkins)))
 	} else if err != nil && !apierrors.IsNotFound(err) {
 		return stackerr.WithStack(err)
 	}
@@ -214,12 +214,12 @@ func (r *JenkinsBaseConfigurationReconciler) createOperatorCredentialsSecret(met
 		found.Data[resources.OperatorCredentialsSecretPasswordKey] != nil {
 		return nil
 	}
-	return stackerr.WithStack(r.UpdateResource(resources.NewOperatorCredentialsSecret(meta, r.Configuration.Jenkins)))
+	return stackerr.WithStack(r.UpdateResource(resources.NewOperatorCredentialsSecret(meta, r.Jenkins)))
 }
 
 func (r *JenkinsBaseConfigurationReconciler) calculateUserAndPasswordHash() (string, error) {
 	credentialsSecret := &corev1.Secret{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(r.Configuration.Jenkins), Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, credentialsSecret)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(r.Jenkins), Namespace: r.Jenkins.Namespace}, credentialsSecret)
 	if err != nil {
 		return "", stackerr.WithStack(err)
 	}
@@ -309,27 +309,27 @@ func (r *JenkinsBaseConfigurationReconciler) compareVolumes(actualPod corev1.Pod
 	}
 
 	return reflect.DeepEqual(
-		append(resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Master.Volumes...),
+		append(resources.GetJenkinsMasterPodBaseVolumes(r.Jenkins), r.Jenkins.Spec.Master.Volumes...),
 		toCompare,
 	)
 }
 
 func (r *JenkinsBaseConfigurationReconciler) detectJenkinsMasterPodStartingIssues() (stopReconcileLoop bool, err error) {
-	jenkinsMasterPod, err := r.Configuration.GetJenkinsMasterPod()
+	jenkinsMasterPod, err := r.GetJenkinsMasterPod()
 	if err != nil {
 		return false, err
 	}
 
-	if r.Configuration.Jenkins.Status.ProvisionStartTime == nil {
+	if r.Jenkins.Status.ProvisionStartTime == nil {
 		return true, nil
 	}
 
 	if jenkinsMasterPod.Status.Phase == corev1.PodPending {
-		timeout := r.Configuration.Jenkins.Status.ProvisionStartTime.Add(time.Minute * 2).UTC()
+		timeout := r.Jenkins.Status.ProvisionStartTime.Add(time.Minute * 2).UTC()
 		now := time.Now().UTC()
 		if now.After(timeout) {
 			events := &corev1.EventList{}
-			err = r.Client.List(context.TODO(), events, client.InNamespace(r.Configuration.Jenkins.Namespace))
+			err = r.Client.List(context.TODO(), events, client.InNamespace(r.Jenkins.Namespace))
 			if err != nil {
 				return false, stackerr.WithStack(err)
 			}
@@ -351,13 +351,13 @@ func (r *JenkinsBaseConfigurationReconciler) detectJenkinsMasterPodStartingIssue
 func (r *JenkinsBaseConfigurationReconciler) filterEvents(source corev1.EventList, jenkinsMasterPod corev1.Pod) []string {
 	events := []string{}
 	for _, eventItem := range source.Items {
-		if r.Configuration.Jenkins.Status.ProvisionStartTime.UTC().After(eventItem.LastTimestamp.UTC()) {
+		if r.Jenkins.Status.ProvisionStartTime.UTC().After(eventItem.LastTimestamp.UTC()) {
 			continue
 		}
 		if eventItem.Type == corev1.EventTypeNormal {
 			continue
 		}
-		if !strings.HasPrefix(eventItem.ObjectMeta.Name, jenkinsMasterPod.Name) {
+		if !strings.HasPrefix(eventItem.Name, jenkinsMasterPod.Name) {
 			continue
 		}
 		events = append(events, fmt.Sprintf("Message: %s Subobject: %s", eventItem.Message, eventItem.InvolvedObject.FieldPath))
@@ -366,7 +366,7 @@ func (r *JenkinsBaseConfigurationReconciler) filterEvents(source corev1.EventLis
 }
 
 func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result, error) {
-	jenkinsMasterPod, err := r.Configuration.GetJenkinsMasterPod()
+	jenkinsMasterPod, err := r.GetJenkinsMasterPod()
 	if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -391,7 +391,7 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 				reason.KubernetesSource,
 				[]string{message},
 			)
-			return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
+			return reconcile.Result{Requeue: true}, r.RestartJenkinsMasterPod(restartReason)
 		}
 		if !containerStatus.Ready {
 			r.logger.V(log.VDebug).Info(fmt.Sprintf("Container '%s' not ready, readiness probe failed", containerStatus.Name))
@@ -410,10 +410,10 @@ func (r *JenkinsBaseConfigurationReconciler) ensureBaseConfiguration(jenkinsClie
 	customization := v1alpha2.GroovyScripts{
 		Customization: v1alpha2.Customization{
 			Secret:         v1alpha2.SecretRef{Name: ""},
-			Configurations: []v1alpha2.ConfigMapRef{{Name: resources.GetBaseConfigurationConfigMapName(r.Configuration.Jenkins)}},
+			Configurations: []v1alpha2.ConfigMapRef{{Name: resources.GetBaseConfigurationConfigMapName(r.Jenkins)}},
 		},
 	}
-	groovyClient := groovy.New(jenkinsClient, r.Client, r.Configuration.Jenkins, "base-groovy", customization.Customization)
+	groovyClient := groovy.New(jenkinsClient, r.Client, r.Jenkins, "base-groovy", customization.Customization)
 	requeue, err := groovyClient.Ensure(func(name string) bool {
 		return strings.HasSuffix(name, ".groovy")
 	}, func(groovyScript string) string {

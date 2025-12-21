@@ -8,7 +8,7 @@ import (
 )
 
 func (r *JenkinsBaseConfigurationReconciler) createScriptsConfigMap(meta metav1.ObjectMeta) error {
-	configMap, err := resources.NewScriptsConfigMap(meta, r.Configuration.Jenkins)
+	configMap, err := resources.NewScriptsConfigMap(meta, r.Jenkins)
 	if err != nil {
 		return err
 	}
@@ -16,7 +16,7 @@ func (r *JenkinsBaseConfigurationReconciler) createScriptsConfigMap(meta metav1.
 }
 
 func (r *JenkinsBaseConfigurationReconciler) createInitConfigurationConfigMap(meta metav1.ObjectMeta) error {
-	configMap, err := resources.NewInitConfigurationConfigMap(meta, r.Configuration.Jenkins)
+	configMap, err := resources.NewInitConfigurationConfigMap(meta, r.Jenkins)
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func (r *JenkinsBaseConfigurationReconciler) createInitConfigurationConfigMap(me
 }
 
 func (r *JenkinsBaseConfigurationReconciler) createBaseConfigurationConfigMap(meta metav1.ObjectMeta) error {
-	configMap, err := resources.NewBaseConfigurationConfigMap(meta, r.Configuration.Jenkins, r.KubernetesClusterDomain)
+	configMap, err := resources.NewBaseConfigurationConfigMap(meta, r.Jenkins, r.KubernetesClusterDomain)
 	if err != nil {
 		return err
 	}
