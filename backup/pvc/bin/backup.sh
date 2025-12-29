@@ -22,8 +22,17 @@ done
 
 _log "INFO" "[backup] running backup ${BACKUP_NUMBER}"
 touch "${TRAP_FILE}"
+
+# since at this point we are sure that no other backup process is running, we can clean up stale tmp dirs
+if [[ ! -z "${BACKUP_TMP_PREFIX}" ]]; then
+    find "${BACKUP_DIR}" -mindepth 1 -maxdepth 1 -name "${BACKUP_TMP_PREFIX}.*" -type d -exec rm -rf {} +
+else
+    _log "WARNING" "[backup] BACKUP_TMP_PREFIX is empty, refusing to run 'rm -rf'"
+fi
+
+
 # create temp dir on the same filesystem with a BACKUP_DIR to be able use atomic mv enstead of copy
-BACKUP_TMP_DIR=$(mktemp -d --tmpdir="${BACKUP_DIR}")
+BACKUP_TMP_DIR=$(mktemp -d --tmpdir="${BACKUP_DIR}" "${BACKUP_TMP_PATTERN}")
 
 _clean(){
     test -d "${BACKUP_TMP_DIR}" && rm -fr "${BACKUP_TMP_DIR}"

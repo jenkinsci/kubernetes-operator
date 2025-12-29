@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Common utils
 
+# Explicitly specify default tmp prefix used by mktemp for compatibility
+# see https://www.gnu.org/software/autogen/mktemp.html
+BACKUP_TMP_PREFIX="tmp"
+BACKUP_TMP_PATTERN="$BACKUP_TMP_PREFIX.XXXXXXXXXX"
+
 _log() {
     local level="$1"
     local message="$2"
