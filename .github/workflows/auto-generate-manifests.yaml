@@ -51,7 +51,7 @@ jobs:
           cp chart/jenkins-operator/crds/jenkins-crd.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@98357b18bf14b5342f975ff684046ec3b2a07725 # v6
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v6
         with:
           commit-message: Auto-updated Kubernetes Manifests
           branch: manifest-deploy-update
