@@ -44,7 +44,7 @@ var (
 )
 
 const (
-	Hosturl                      = "https://ci.jenkins.io/job/Infra/job/plugin-site-api/job/generate-data/lastSuccessfulBuild/artifact/plugins.json.gzip"
+	Hosturl                      = "https://reports.jenkins.io/plugin-site-api/plugins.json.gzip"
 	PluginDataFileCompressedPath = "/tmp/plugins.json.gzip"
 	PluginDataFile               = "/tmp/plugins.json"
 	shortenedCheckingPeriod      = 1 * time.Hour
