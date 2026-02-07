@@ -26,11 +26,11 @@ const e2e = "e2e"
 // Plugin versions should be the same as in
 // github.com/jenkinsci/kubernetes-operator/pkg/plugins/base_plugins.go
 const (
-	configurationAsCodePlugin           = "configuration-as-code:2006.v001a_2ca_6b_574"
-	gitPlugin                           = "git:5.8.1"
+	configurationAsCodePlugin           = "configuration-as-code:2037.v8e5349845172"
+	gitPlugin                           = "git:5.9.0"
 	jobDslPlugin                        = "job-dsl:1.93"
-	kubernetesPlugin                    = "kubernetes:4398.vb_b_33d9e7fe23"
-	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.299.v610fa_e76761a_"
+	kubernetesPlugin                    = "kubernetes:4423.vb_59f230b_ce53"
+	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.303.vdfcf47fb_b_fef"
 	// Depends on workflow-job which should be automatically downloaded
 	// Hardcoding the workflow-job version leads to frequent breakage
 	workflowAggregatorPlugin = "workflow-aggregator:608.v67378e9d3db_1"
