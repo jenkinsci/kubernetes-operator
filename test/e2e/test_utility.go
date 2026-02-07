@@ -21,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
-const JenkinsTestImage = "jenkins/jenkins:2.528.3-lts"
+const JenkinsTestImage = "jenkins/jenkins:2.541.1-lts"
 
 var (
 	Cfg       *rest.Config
