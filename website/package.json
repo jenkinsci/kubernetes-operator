@@ -4,7 +4,7 @@
         "build": "echo $BASE_URL; hugo --minify --baseURL=${BASE_URL}"
     },
     "devDependencies": {
-    "autoprefixer": "^10.4.23",
+    "autoprefixer": "^10.4.24",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1"
   }
