@@ -74,11 +74,11 @@ func New(configuration configuration.Configuration, logger logr.Logger) *BackupA
 func (bar *BackupAndRestore) Validate() []string {
 	var messages []string
 	allContainers := map[string]v1alpha2.Container{}
-	for _, container := range bar.Configuration.Jenkins.Spec.Master.Containers {
+	for _, container := range bar.Jenkins.Spec.Master.Containers {
 		allContainers[container.Name] = container
 	}
 
-	restore := bar.Configuration.Jenkins.Spec.Restore
+	restore := bar.Jenkins.Spec.Restore
 	if len(restore.ContainerName) > 0 {
 		_, found := allContainers[restore.ContainerName]
 		if !found {
@@ -89,7 +89,7 @@ func (bar *BackupAndRestore) Validate() []string {
 		}
 	}
 
-	backup := bar.Configuration.Jenkins.Spec.Backup
+	backup := bar.Jenkins.Spec.Backup
 	if len(backup.ContainerName) > 0 {
 		_, found := allContainers[backup.ContainerName]
 		if !found {
@@ -118,7 +118,7 @@ const noBackup = "-1"
 
 // Restore performs Jenkins restore backup operation
 func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error {
-	jenkins := bar.Configuration.Jenkins
+	jenkins := bar.Jenkins
 	if len(jenkins.Spec.Restore.ContainerName) == 0 || jenkins.Spec.Restore.Action.Exec == nil {
 		bar.logger.V(log.VDebug).Info("Skipping restore backup, backup restore not configured")
 		return nil
@@ -195,7 +195,7 @@ func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error 
 		if err != nil {
 			return err
 		}
-		bar.Configuration.Jenkins = jenkins
+		bar.Jenkins = jenkins
 
 		jenkins.Status.RestoredBackup = backupNumber
 		jenkins.Status.PendingBackup = backupNumber + 1
@@ -207,7 +207,7 @@ func (bar *BackupAndRestore) Restore(jenkinsClient jenkinsclient.Jenkins) error 
 
 // Backup performs Jenkins backup operation
 func (bar *BackupAndRestore) Backup(setBackupDoneBeforePodDeletion bool) error {
-	jenkins := bar.Configuration.Jenkins
+	jenkins := bar.Jenkins
 	if len(jenkins.Spec.Backup.ContainerName) == 0 || jenkins.Spec.Backup.Action.Exec == nil {
 		bar.logger.V(log.VDebug).Info("Skipping backup, backup creation not configured")
 		return nil
@@ -268,9 +268,9 @@ func triggerBackup(ticker *time.Ticker, k8sClient k8s.Client, logger logr.Logger
 
 // EnsureBackupTrigger creates or update trigger which update CR to make backup
 func (bar *BackupAndRestore) EnsureBackupTrigger() error {
-	trigger, found := triggers.get(bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
+	trigger, found := triggers.get(bar.Jenkins.Namespace, bar.Jenkins.Name)
 
-	isBackupConfigured := len(bar.Configuration.Jenkins.Spec.Backup.ContainerName) > 0 && bar.Configuration.Jenkins.Spec.Backup.Interval > 0
+	isBackupConfigured := len(bar.Jenkins.Spec.Backup.ContainerName) > 0 && bar.Jenkins.Spec.Backup.Interval > 0
 	if found && !isBackupConfigured {
 		bar.StopBackupTrigger()
 		return nil
@@ -282,7 +282,7 @@ func (bar *BackupAndRestore) EnsureBackupTrigger() error {
 		return nil
 	}
 
-	if found && isBackupConfigured && bar.Configuration.Jenkins.Spec.Backup.Interval != trigger.interval {
+	if found && isBackupConfigured && bar.Jenkins.Spec.Backup.Interval != trigger.interval {
 		bar.StopBackupTrigger()
 		bar.startBackupTrigger()
 	}
@@ -292,21 +292,21 @@ func (bar *BackupAndRestore) EnsureBackupTrigger() error {
 
 // StopBackupTrigger stops trigger which update CR to make backup
 func (bar *BackupAndRestore) StopBackupTrigger() {
-	triggers.stop(bar.logger, bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
+	triggers.stop(bar.logger, bar.Jenkins.Namespace, bar.Jenkins.Name)
 }
 
 // IsBackupTriggerEnabled returns true if the backup trigger is enabled
 func (bar *BackupAndRestore) IsBackupTriggerEnabled() bool {
-	_, enabled := triggers.get(bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
+	_, enabled := triggers.get(bar.Jenkins.Namespace, bar.Jenkins.Name)
 	return enabled
 }
 
 func (bar *BackupAndRestore) startBackupTrigger() {
 	bar.logger.Info("Starting backup trigger")
-	ticker := time.NewTicker(time.Duration(bar.Configuration.Jenkins.Spec.Backup.Interval) * time.Second)
-	triggers.add(bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name, backupTrigger{
-		interval: bar.Configuration.Jenkins.Spec.Backup.Interval,
+	ticker := time.NewTicker(time.Duration(bar.Jenkins.Spec.Backup.Interval) * time.Second)
+	triggers.add(bar.Jenkins.Namespace, bar.Jenkins.Name, backupTrigger{
+		interval: bar.Jenkins.Spec.Backup.Interval,
 		ticker:   ticker,
 	})
-	go triggerBackup(ticker, bar.Client, bar.logger, bar.Configuration.Jenkins.Namespace, bar.Configuration.Jenkins.Name)
+	go triggerBackup(ticker, bar.Client, bar.logger, bar.Jenkins.Namespace, bar.Jenkins.Name)
 }

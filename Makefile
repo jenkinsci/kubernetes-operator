@@ -70,7 +70,7 @@ HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
 lint: ## Verifies `golint` passes
 	@echo "+ $@"
 ifndef HAS_GOLINT
-	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0
+	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0
 endif
 	@bin/golangci-lint run
 
@@ -162,7 +162,7 @@ staticcheck: ## Verifies `staticcheck` passes
 	@echo "+ $@"
 ifndef HAS_STATICCHECK
 	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
+	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2025.1.1/staticcheck_$(PLATFORM)_amd64.tar.gz
 	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
 	mkdir -p $(PROJECT_DIR)/bin
 	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
@@ -174,7 +174,7 @@ endif
 cover: ## Runs go test with coverage
 	@echo "" > coverage.txt
 	@for d in $(PACKAGES); do \
-		ENVTEST_K8S_VERSION = 1.26
+		ENVTEST_K8S_VERSION = 1.33
 		KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" IMG_RUNNING_TESTS=1 go test -race -coverprofile=profile.out -covermode=atomic "$$d"; \
 		if [ -f profile.out ]; then \
 			cat profile.out >> coverage.txt; \
@@ -578,8 +578,8 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 
 ## Tool Versions
-KUSTOMIZE_VERSION ?= v5.3.0
-CONTROLLER_TOOLS_VERSION ?= v0.14.0
+KUSTOMIZE_VERSION ?= v5.4.2
+CONTROLLER_TOOLS_VERSION ?= v0.18.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize

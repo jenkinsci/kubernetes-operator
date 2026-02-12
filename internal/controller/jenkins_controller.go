@@ -19,7 +19,6 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"reflect"
 	"time"
 
@@ -200,13 +199,11 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 					[]string{fmt.Sprintf("%s Source '%s' Name '%s' groovy script execution failed, logs: %+v", groovyErr.ConfigurationType, groovyErr.Source, groovyErr.Name, groovyErr.Logs)}...,
 				),
 			}
-			return reconcile.Result{Requeue: false}, nil
+			return reconcile.Result{}, nil
 		}
-		return reconcile.Result{Requeue: true}, nil
+		return reconcile.Result{RequeueAfter: time.Second}, nil
 	}
-	if result.Requeue && result.RequeueAfter == 0 {
-		result.RequeueAfter = time.Duration(rand.Intn(10)) * time.Second
-	}
+	// Random delay logic removed as result.Requeue is deprecated
 	return result, nil
 }
 
@@ -265,11 +262,11 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 	if jenkinsClient == nil {
-		return reconcile.Result{Requeue: false}, jenkins, nil
+		return reconcile.Result{}, jenkins, nil
 	}
 
 	if jenkins.Status.BaseConfigurationCompletedTime == nil {
@@ -320,7 +317,7 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 
@@ -329,7 +326,7 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 

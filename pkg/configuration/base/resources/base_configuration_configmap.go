@@ -154,7 +154,7 @@ GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).save()
 
 // GetBaseConfigurationConfigMapName returns name of Kubernetes config map used to base configuration.
 func GetBaseConfigurationConfigMapName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-base-configuration-%s", constants.OperatorName, jenkins.ObjectMeta.Name)
+	return fmt.Sprintf("%s-base-configuration-%s", constants.OperatorName, jenkins.Name)
 }
 
 // NewBaseConfigurationConfigMap builds Kubernetes config map used to base configuration.
@@ -183,7 +183,7 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		disableInsecureFeaturesGroovyScriptName: disableInsecureFeatures,
 		configureKubernetesPluginGroovyScriptName: fmt.Sprintf(configureKubernetesPluginFmt,
 			clusterDomain,
-			jenkins.ObjectMeta.Namespace,
+			jenkins.Namespace,
 			fmt.Sprintf("http://%s:%d%s", jenkinsServiceFQDN, jenkins.Spec.Service.Port, suffix),
 			fmt.Sprintf("%s:%d", jenkinsSlavesServiceFQDN, jenkins.Spec.SlaveService.Port),
 		),

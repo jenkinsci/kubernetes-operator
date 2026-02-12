@@ -1,41 +1,47 @@
+version: "2"
 run:
-  deadline: 5m
   allow-parallel-runners: true
-  skip-files:
-    - api/v1alpha2/zz_generated.deepcopy.go
-issues:
-  exclude-use-default: false
-  exclude-rules:
-    - path: "internal/*"
-      linters:
-        - dupl
-    - path: (.+)_test.go
-      linters:
-        - dupl
+output:
+  sort-order:
+    - file
+    - severity
+    - linter
 linters:
-  disable-all: true
+  default: none
   enable:
     - dupl
     - errcheck
-    - exportloopref
     - goconst
     - gocyclo
-    - gofmt
-    - goimports
-    - gosimple
     - govet
     - ineffassign
     - loggercheck
     - misspell
     - nakedret
     - staticcheck
-    - typecheck
     - unconvert
     - unparam
     - unused
-output:
-  sort-results: true
-  sort-order:
-    - file
-    - severity
-    - linter
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - dupl
+        path: internal/*
+      - linters:
+          - dupl
+        path: (.+)_test.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

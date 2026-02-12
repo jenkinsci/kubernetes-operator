@@ -17,7 +17,7 @@ import (
 func (r *JenkinsBaseConfigurationReconciler) createServiceAccount(meta metav1.ObjectMeta) error {
 	serviceAccount := &corev1.ServiceAccount{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: meta.Name, Namespace: meta.Namespace}, serviceAccount)
-	annotations := r.Configuration.Jenkins.Spec.ServiceAccount.Annotations
+	annotations := r.Jenkins.Spec.ServiceAccount.Annotations
 	msg := fmt.Sprintf("createServiceAccount with annotations %v", annotations)
 	r.logger.V(log.VDebug).Info(msg)
 	if err != nil && apierrors.IsNotFound(err) {

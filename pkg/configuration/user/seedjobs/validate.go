@@ -166,21 +166,21 @@ func validateBasicSSHSecret(secret v1.Secret) []string {
 	var messages []string
 	username, exists := secret.Data[UsernameSecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.Name))
 	}
 	if len(username) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.Name))
 	}
 
 	privateKey, exists := secret.Data[PrivateKeySecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.Name))
 	}
 	if len(string(privateKey)) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.Name))
 	}
 	if err := validatePrivateKey(string(privateKey)); err != nil {
-		messages = append(messages, fmt.Sprintf("private key '%s' invalid in secret '%s': %s", PrivateKeySecretKey, secret.ObjectMeta.Name, err))
+		messages = append(messages, fmt.Sprintf("private key '%s' invalid in secret '%s': %s", PrivateKeySecretKey, secret.Name, err))
 	}
 
 	return messages
@@ -190,17 +190,17 @@ func validateUsernamePasswordSecret(secret v1.Secret) []string {
 	var messages []string
 	username, exists := secret.Data[UsernameSecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", UsernameSecretKey, secret.Name))
 	}
 	if len(username) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", UsernameSecretKey, secret.Name))
 	}
 	password, exists := secret.Data[PasswordSecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PasswordSecretKey, secret.Name))
 	}
 	if len(password) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PasswordSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PasswordSecretKey, secret.Name))
 	}
 
 	return messages
@@ -210,17 +210,17 @@ func validateGithubAppSecret(secret v1.Secret) []string {
 	var messages []string
 	appid, exists := secret.Data[AppIDSecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", AppIDSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", AppIDSecretKey, secret.Name))
 	}
 	if len(appid) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", AppIDSecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", AppIDSecretKey, secret.Name))
 	}
 	pkey, exists := secret.Data[PrivateKeySecretKey]
 	if !exists {
-		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' not found in secret '%s'", PrivateKeySecretKey, secret.Name))
 	}
 	if len(pkey) == 0 {
-		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PrivateKeySecretKey, secret.ObjectMeta.Name))
+		messages = append(messages, fmt.Sprintf("required data '%s' is empty in secret '%s'", PrivateKeySecretKey, secret.Name))
 	}
 
 	return messages

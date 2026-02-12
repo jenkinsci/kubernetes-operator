@@ -2,6 +2,7 @@ package user
 
 import (
 	"strings"
+	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -45,7 +46,7 @@ func (r *reconcileUserConfiguration) ReconcileCasc() (reconcile.Result, error) {
 	if err != nil {
 		return reconcile.Result{}, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil
 	}
 
@@ -72,7 +73,7 @@ func (r *reconcileUserConfiguration) ReconcileOthers() (reconcile.Result, error)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil
 	}
 
@@ -81,19 +82,19 @@ func (r *reconcileUserConfiguration) ReconcileOthers() (reconcile.Result, error)
 
 func (r *reconcileUserConfiguration) ensureSeedJobs() (reconcile.Result, error) {
 	seedJobs := seedjobs.New(r.jenkinsClient, r.Configuration)
-	done, err := seedJobs.EnsureSeedJobs(r.Configuration.Jenkins)
+	done, err := seedJobs.EnsureSeedJobs(r.Jenkins)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
 	if !done {
-		return reconcile.Result{Requeue: true}, nil
+		return reconcile.Result{RequeueAfter: time.Second * 30}, nil
 	}
 	return reconcile.Result{}, nil
 }
 
 func (r *reconcileUserConfiguration) ensureCasc(jenkinsClient jenkinsclient.Jenkins) (reconcile.Result, error) {
-	configurationAsCodeClient := casc.New(jenkinsClient, r.Client, r.Configuration.Jenkins)
-	requeue, err := configurationAsCodeClient.Ensure(r.Configuration.Jenkins)
+	configurationAsCodeClient := casc.New(jenkinsClient, r.Client, r.Jenkins)
+	requeue, err := configurationAsCodeClient.Ensure(r.Jenkins)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
@@ -101,7 +102,7 @@ func (r *reconcileUserConfiguration) ensureCasc(jenkinsClient jenkinsclient.Jenk
 		return reconcile.Result{Requeue: true}, nil
 	}
 
-	groovyClient := groovy.New(jenkinsClient, r.Client, r.Configuration.Jenkins, "user-groovy", r.Configuration.Jenkins.Spec.GroovyScripts.Customization)
+	groovyClient := groovy.New(jenkinsClient, r.Client, r.Jenkins, "user-groovy", r.Jenkins.Spec.GroovyScripts.Customization)
 	requeue, err = groovyClient.WaitForSecretSynchronization(resources.GroovyScriptsSecretVolumePath)
 	if err != nil {
 		return reconcile.Result{}, err
