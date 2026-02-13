@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"slices"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/backuprestore"
@@ -82,7 +83,7 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 			currentJenkinsMasterPod.Labels, r.Configuration.Jenkins.Spec.Master.Labels))
 	}
 
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.Annotations, currentJenkinsMasterPod.ObjectMeta.Annotations) {
+	if !r.compareAnnotations(currentJenkinsMasterPod) {
 		messages = append(messages, "Jenkins pod annotations have changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod annotations have changed, actual '%+v' required '%+v'",
 			currentJenkinsMasterPod.ObjectMeta.Annotations, r.Configuration.Jenkins.Spec.Master.Annotations))
@@ -144,6 +145,20 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 	}
 
 	return reason.NewPodRestart(reason.OperatorSource, messages, verbose...)
+}
+
+func (r *JenkinsBaseConfigurationReconciler) compareAnnotations(currentJenkinsMasterPod corev1.Pod) bool {
+	ignoredAnnotations := r.Jenkins.Spec.Lifecycle.Ignore.IgnoredAnnotations
+	annotations := r.Configuration.Jenkins.Spec.Master.Annotations
+
+	res := make(map[string]string)
+	for key, val := range annotations {
+		if slices.Contains(ignoredAnnotations, key) {
+			continue
+		}
+		res[key] = val
+	}
+	return compareMap(res, currentJenkinsMasterPod.ObjectMeta.Annotations)
 }
 
 func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.ObjectMeta) (reconcile.Result, error) {
