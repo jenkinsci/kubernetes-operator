@@ -41,11 +41,13 @@ trap '_trap' SIGQUIT SIGINT SIGTERM
 # config.xml in child directories is state that should. For example-
 # branches/myorg/branches/myrepo/branches/master/config.xml should be retained while
 # branches/myorg/config.xml should not
+ret=0
 tar --zstd -C "${JENKINS_HOME}" -cf "${BACKUP_TMP_DIR}/${BACKUP_NUMBER}.tar.zstd" \
-    --exclude jobs/*/workspace* \
+    --exclude 'jobs/*/workspace*' \
     --no-wildcards-match-slash --anchored \
     --ignore-failed-read \
-    --exclude jobs/*/config.xml -c jobs || ret=$?
+    --exclude-ignore=.jenkinsbackupignore \
+    --exclude 'jobs/*/config.xml' -c jobs || ret=$?
 
 if [[ "$ret" -eq 0 ]]; then
   _log "INFO" "[backup] backup ${BACKUP_NUMBER} was completed without warnings"
