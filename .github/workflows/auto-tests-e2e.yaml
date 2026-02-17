@@ -26,7 +26,7 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
       - id: matrix
         run: |
           script=$(./test/make_matrix_ginkgo.sh e2e)
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [create-e2e-list]
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: Set up env vars
         run: |
@@ -46,7 +46,7 @@ jobs:
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
-        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
+        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -66,7 +66,7 @@ jobs:
       matrix: ${{ fromJSON(needs.create-e2e-list.outputs.matrix) }}
     steps:
       - name: Check out code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: Set up env vars
         run: |
@@ -76,7 +76,7 @@ jobs:
           echo "GOPATH=/home/runner/go" >> $GITHUB_ENV
 
       - name: Prepare go environment
-        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
+        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v5
         with:
           go-version: ${{ env.GO_VERSION }}
 
