@@ -33,7 +33,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.528.3-lts" \
+    --set jenkins.image="jenkins/jenkins:2.541.1-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -158,7 +158,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.528.3-lts" \
+    --set jenkins.image="jenkins/jenkins:2.541.1-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
