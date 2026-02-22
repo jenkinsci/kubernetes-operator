@@ -27,8 +27,8 @@ const e2e = "e2e"
 // github.com/jenkinsci/kubernetes-operator/pkg/plugins/base_plugins.go
 const (
 	configurationAsCodePlugin           = "configuration-as-code:2037.v8e5349845172"
-	gitPlugin                           = "git:5.9.0"
-	jobDslPlugin                        = "job-dsl:1.93"
+	gitPlugin                           = "git:5.10.0"
+	jobDslPlugin                        = "job-dsl:3654.vdf58f53e2d15"
 	kubernetesPlugin                    = "kubernetes:4423.vb_59f230b_ce53"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.303.vdfcf47fb_b_fef"
 	// Depends on workflow-job which should be automatically downloaded
