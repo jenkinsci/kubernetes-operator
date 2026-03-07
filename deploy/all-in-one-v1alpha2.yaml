@@ -232,7 +232,7 @@ metadata:
   name: jenkins-operator
   labels:
     app.kubernetes.io/name: jenkins-operator
-    helm.sh/chart: jenkins-operator-0.9.0-beta1
+    helm.sh/chart: jenkins-operator-0.9.0-beta2
     app.kubernetes.io/version: "0.9.0-beta1"
 spec:
   replicas: 1
