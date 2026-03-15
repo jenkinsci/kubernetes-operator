@@ -21,15 +21,13 @@ import (
 )
 
 const (
-	nilConst = "nil"
-
 	testSMTPPort = 1025
 
 	testFrom = "test@localhost"
 	testTo   = "test.to@localhost"
 
-	testUsername = "username"
-	testPassword = "password"
+	testSMTPUsername = "username"
+	testSMTPPassword = "password"
 
 	testNamespace = "default"
 )
@@ -111,8 +109,8 @@ func TestSMTP_Send(t *testing.T) {
 			Namespace: testNamespace,
 		},
 		Data: map[string][]byte{
-			"username": []byte(testUsername),
-			"password": []byte(testPassword),
+			"username": []byte(testSMTPUsername),
+			"password": []byte(testSMTPPassword),
 		},
 	}
 
