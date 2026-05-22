@@ -1,9 +1,11 @@
 package e2e
 
 import (
+	"context"
 	"flag"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	controllers "github.com/jenkinsci/kubernetes-operator/internal/controller"
@@ -21,8 +23,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	// +kubebuilder:scaffold:imports
 )
+
+var managerCancel context.CancelFunc
 
 func init() {
 	hostname = flag.String("jenkins-api-hostname", "", "Hostname or IP of Jenkins API. It can be service name, node IP or localhost.")
@@ -60,6 +65,9 @@ var _ = BeforeSuite(func(done Done) {
 	// setup manager
 	k8sManager, err := ctrl.NewManager(Cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
+		Metrics: metricsserver.Options{
+			BindAddress: "0", // Disable metrics server to avoid port conflicts
+		},
 	})
 	Expect(err).NotTo(HaveOccurred())
 
@@ -90,18 +98,32 @@ var _ = BeforeSuite(func(done Done) {
 	}).SetupWithManager(k8sManager)
 	Expect(err).NotTo(HaveOccurred())
 
+	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
-		err = k8sManager.Start(ctrl.SetupSignalHandler())
+		defer GinkgoRecover()
+		err = k8sManager.Start(ctx)
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
+	// Give the manager time to start up
+	time.Sleep(2 * time.Second)
+
 	K8sClient = k8sManager.GetClient()
 	Expect(K8sClient).NotTo(BeNil())
+
+	// Store cancel function for cleanup in AfterSuite
+	managerCancel = cancel
+
+	// Store cancel function for cleanup in AfterSuite
+	// The cancel function will be called in AfterSuite
 	close(done)
 }, 60)
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")
+	if managerCancel != nil {
+		managerCancel()
+	}
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
 })

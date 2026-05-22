@@ -40,9 +40,9 @@
             pkgs.helm-docs
             pkgs.pre-commit
             pkgs.kind
-            pkgs.golangci-lint
-            pkgs.go_1_22
-            rolling.operator-sdk # 1.39.2
+            rolling.golangci-lint
+            rolling.go_1_24
+            pkgs.operator-sdk # 1.39.2
 
             (pkgs.bats.withLibraries (p: [
               p.bats-support

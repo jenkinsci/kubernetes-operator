@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/util/workqueue"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -20,13 +21,15 @@ import (
 // enqueueRequestForJenkins enqueues a Request for Secrets and ConfigMaps created by jenkins-operator.
 type enqueueRequestForJenkins struct{}
 
-func (e *enqueueRequestForJenkins) Create(ctx context.Context, evt event.CreateEvent, q workqueue.RateLimitingInterface) {
+var _ handler.TypedEventHandler[client.Object, reconcile.Request] = &enqueueRequestForJenkins{}
+
+func (e *enqueueRequestForJenkins) Create(ctx context.Context, evt event.TypedCreateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
-func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.TypedUpdateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	req1 := e.getOwnerReconcileRequests(ctx, evt.ObjectOld)
 	req2 := e.getOwnerReconcileRequests(ctx, evt.ObjectNew)
 
@@ -52,13 +55,13 @@ func (e *enqueueRequestForJenkins) Update(ctx context.Context, evt event.UpdateE
 	}
 }
 
-func (e *enqueueRequestForJenkins) Delete(ctx context.Context, evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Delete(ctx context.Context, evt event.TypedDeleteEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
 }
 
-func (e *enqueueRequestForJenkins) Generic(ctx context.Context, evt event.GenericEvent, q workqueue.RateLimitingInterface) {
+func (e *enqueueRequestForJenkins) Generic(ctx context.Context, evt event.TypedGenericEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	if req := e.getOwnerReconcileRequests(ctx, evt.Object); req != nil {
 		q.Add(*req)
 	}
@@ -77,15 +80,17 @@ func (e *enqueueRequestForJenkins) getOwnerReconcileRequests(_ context.Context, 
 }
 
 type jenkinsDecorator struct {
-	handler handler.EventHandler
+	handler handler.TypedEventHandler[client.Object, reconcile.Request]
 }
 
-func (e *jenkinsDecorator) Create(ctx context.Context, evt event.CreateEvent, q workqueue.RateLimitingInterface) {
+var _ handler.TypedEventHandler[client.Object, reconcile.Request] = &jenkinsDecorator{}
+
+func (e *jenkinsDecorator) Create(ctx context.Context, evt event.TypedCreateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was created", evt.Object, evt.Object.GetName()))
 	e.handler.Create(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Update(ctx context.Context, evt event.UpdateEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Update(ctx context.Context, evt event.TypedUpdateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	if !reflect.DeepEqual(evt.ObjectOld.(*v1alpha2.Jenkins).Spec, evt.ObjectNew.(*v1alpha2.Jenkins).Spec) {
 		log.Log.WithValues("cr", evt.ObjectNew.GetName()).Info(
 			fmt.Sprintf("%T/%s has been updated", evt.ObjectNew, evt.ObjectNew.GetName()))
@@ -93,11 +98,11 @@ func (e *jenkinsDecorator) Update(ctx context.Context, evt event.UpdateEvent, q 
 	e.handler.Update(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Delete(ctx context.Context, evt event.DeleteEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Delete(ctx context.Context, evt event.TypedDeleteEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	log.Log.WithValues("cr", evt.Object.GetName()).Info(fmt.Sprintf("%T/%s was deleted", evt.Object, evt.Object.GetName()))
 	e.handler.Delete(ctx, evt, q)
 }
 
-func (e *jenkinsDecorator) Generic(ctx context.Context, evt event.GenericEvent, q workqueue.RateLimitingInterface) {
+func (e *jenkinsDecorator) Generic(ctx context.Context, evt event.TypedGenericEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
 	e.handler.Generic(ctx, evt, q)
 }

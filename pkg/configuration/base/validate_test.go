@@ -137,7 +137,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			Spec: v1alpha2.JenkinsSpec{
 				Master: v1alpha2.JenkinsMaster{
 					ImagePullSecrets: []corev1.LocalObjectReference{
-						{Name: secret.ObjectMeta.Name},
+						{Name: secret.Name},
 					},
 				},
 			},
@@ -197,7 +197,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			Spec: v1alpha2.JenkinsSpec{
 				Master: v1alpha2.JenkinsMaster{
 					ImagePullSecrets: []corev1.LocalObjectReference{
-						{Name: secret.ObjectMeta.Name},
+						{Name: secret.Name},
 					},
 				},
 			},
@@ -233,7 +233,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			Spec: v1alpha2.JenkinsSpec{
 				Master: v1alpha2.JenkinsMaster{
 					ImagePullSecrets: []corev1.LocalObjectReference{
-						{Name: secret.ObjectMeta.Name},
+						{Name: secret.Name},
 					},
 				},
 			},
@@ -269,7 +269,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			Spec: v1alpha2.JenkinsSpec{
 				Master: v1alpha2.JenkinsMaster{
 					ImagePullSecrets: []corev1.LocalObjectReference{
-						{Name: secret.ObjectMeta.Name},
+						{Name: secret.Name},
 					},
 				},
 			},
@@ -305,7 +305,7 @@ func TestReconcileJenkinsBaseConfiguration_validateImagePullSecrets(t *testing.T
 			Spec: v1alpha2.JenkinsSpec{
 				Master: v1alpha2.JenkinsMaster{
 					ImagePullSecrets: []corev1.LocalObjectReference{
-						{Name: secret.ObjectMeta.Name},
+						{Name: secret.Name},
 					},
 				},
 			},
@@ -616,7 +616,8 @@ func TestValidateConfigMapVolume(t *testing.T) {
 
 		assert.NoError(t, err)
 
-		assert.Equal(t, got, []string{"ConfigMap 'configmap-name' not found for volume '{volume-name {nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil &ConfigMapVolumeSource{LocalObjectReference:LocalObjectReference{Name:configmap-name,},Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil nil}}'"})
+		assert.Len(t, got, 1)
+		assert.Contains(t, got[0], "ConfigMap 'configmap-name' not found for volume")
 	})
 }
 
@@ -689,8 +690,8 @@ func TestValidateSecretVolume(t *testing.T) {
 		got, err := baseReconcileLoop.validateSecretVolume(volume)
 
 		assert.NoError(t, err)
-
-		assert.Equal(t, got, []string{"Secret 'secret-name' not found for volume '{volume-name {nil nil nil nil nil &SecretVolumeSource{SecretName:secret-name,Items:[]KeyToPath{},DefaultMode:nil,Optional:*false,} nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil}}'"})
+		assert.Len(t, got, 1)
+		assert.Contains(t, got[0], "Secret 'secret-name' not found for volume")
 	})
 }
 

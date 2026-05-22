@@ -175,7 +175,7 @@ func createJenkinsAPIClientFromServiceAccount(jenkins *v1alpha2.Jenkins, jenkins
 	config := configuration.Configuration{Jenkins: jenkins, ClientSet: *clientSet, Config: Cfg}
 	r := base.New(config, jenkinsclient.JenkinsAPIConnectionSettings{})
 
-	token, _, err := r.Configuration.Exec(podName, resources.JenkinsMasterContainerName, []string{"cat", "/var/run/secrets/kubernetes.io/serviceaccount/token"})
+	token, _, err := r.Exec(podName, resources.JenkinsMasterContainerName, []string{"cat", "/var/run/secrets/kubernetes.io/serviceaccount/token"})
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 
 func getJenkinsService(jenkins *v1alpha2.Jenkins, serviceKind string) *corev1.Service {
 	service := &corev1.Service{}
-	serviceName := constants.OperatorName + "-" + serviceKind + "-" + jenkins.ObjectMeta.Name
+	serviceName := constants.OperatorName + "-" + serviceKind + "-" + jenkins.Name
 	Expect(K8sClient.Get(context.TODO(), client.ObjectKey{Name: serviceName, Namespace: jenkins.Namespace}, service)).Should(Succeed())
 
 	return service

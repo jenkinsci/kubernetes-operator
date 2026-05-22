@@ -311,14 +311,14 @@ func (s *seedJobs) ensureLabelsForSecrets(jenkins v1alpha2.Jenkins) error {
 			requiredLabels[JenkinsCredentialTypeLabelName] = string(seedJob.JenkinsCredentialType)
 
 			secret := &corev1.Secret{}
-			namespaceName := types.NamespacedName{Namespace: jenkins.ObjectMeta.Namespace, Name: seedJob.CredentialID}
+			namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: seedJob.CredentialID}
 			err := s.Client.Get(context.TODO(), namespaceName, secret)
 			if err != nil {
 				return stackerr.WithStack(err)
 			}
 
 			if !resources.VerifyIfLabelsAreSet(secret, requiredLabels) {
-				secret.ObjectMeta.Labels = requiredLabels
+				secret.Labels = requiredLabels
 				if err = s.Client.Update(context.TODO(), secret); err != nil {
 					return stackerr.WithStack(err)
 				}

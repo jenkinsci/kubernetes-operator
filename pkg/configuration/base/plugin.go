@@ -13,7 +13,7 @@ import (
 )
 
 func (r *JenkinsBaseConfigurationReconciler) verifyPlugins(jenkinsClient jenkinsclient.Jenkins) (bool, error) {
-	if r.Configuration.Jenkins.Spec.Master.SkipPlugins != nil && *r.Configuration.Jenkins.Spec.Master.SkipPlugins {
+	if r.Jenkins.Spec.Master.SkipPlugins != nil && *r.Jenkins.Spec.Master.SkipPlugins {
 		return true, nil
 	}
 	allPluginsInJenkins, err := jenkinsClient.GetPlugins(fetchAllPlugins)
@@ -30,7 +30,7 @@ func (r *JenkinsBaseConfigurationReconciler) verifyPlugins(jenkinsClient jenkins
 	r.logger.V(log.VDebug).Info(fmt.Sprintf("Installed plugins '%+v'", installedPlugins))
 
 	status := true
-	allRequiredPlugins := [][]v1alpha2.Plugin{r.Configuration.Jenkins.Spec.Master.BasePlugins, r.Configuration.Jenkins.Spec.Master.Plugins}
+	allRequiredPlugins := [][]v1alpha2.Plugin{r.Jenkins.Spec.Master.BasePlugins, r.Jenkins.Spec.Master.Plugins}
 	for _, requiredPlugins := range allRequiredPlugins {
 		for _, plugin := range requiredPlugins {
 			if _, ok := isPluginInstalled(allPluginsInJenkins, plugin); !ok {

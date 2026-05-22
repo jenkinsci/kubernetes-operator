@@ -52,12 +52,12 @@ func (r *JenkinsBaseConfigurationReconciler) Validate(jenkins *v1alpha2.Jenkins)
 		messages = append(messages, msg...)
 	}
 
-	if msg, err := r.validateCustomization(r.Configuration.Jenkins.Spec.GroovyScripts.Customization, "spec.groovyScripts"); err != nil {
+	if msg, err := r.validateCustomization(r.Jenkins.Spec.GroovyScripts.Customization, "spec.groovyScripts"); err != nil {
 		return nil, err
 	} else if len(msg) > 0 {
 		messages = append(messages, msg...)
 	}
-	if msg, err := r.validateCustomization(r.Configuration.Jenkins.Spec.ConfigurationAsCode.Customization, "spec.configurationAsCode"); err != nil {
+	if msg, err := r.validateCustomization(r.Jenkins.Spec.ConfigurationAsCode.Customization, "spec.configurationAsCode"); err != nil {
 		return nil, err
 	} else if len(msg) > 0 {
 		messages = append(messages, msg...)
@@ -71,7 +71,7 @@ func (r *JenkinsBaseConfigurationReconciler) Validate(jenkins *v1alpha2.Jenkins)
 }
 
 func (r *JenkinsBaseConfigurationReconciler) validateJenkinsMasterContainerCommand() []string {
-	masterContainer := r.Configuration.GetJenkinsMasterContainer()
+	masterContainer := r.GetJenkinsMasterContainer()
 	if masterContainer == nil {
 		return []string{}
 	}
@@ -104,7 +104,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateJenkinsMasterContainerComma
 
 func (r *JenkinsBaseConfigurationReconciler) validateImagePullSecrets() ([]string, error) {
 	var messages []string
-	for _, sr := range r.Configuration.Jenkins.Spec.Master.ImagePullSecrets {
+	for _, sr := range r.Jenkins.Spec.Master.ImagePullSecrets {
 		msg, err := r.validateImagePullSecret(sr.Name)
 		if err != nil {
 			return nil, err
@@ -119,7 +119,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateImagePullSecrets() ([]strin
 func (r *JenkinsBaseConfigurationReconciler) validateImagePullSecret(secretName string) ([]string, error) {
 	var messages []string
 	secret := &corev1.Secret{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: secretName, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, secret)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: secretName, Namespace: r.Jenkins.Namespace}, secret)
 	if err != nil && apierrors.IsNotFound(err) {
 		messages = append(messages, fmt.Sprintf("Secret %s not found defined in spec.master.imagePullSecrets", secretName))
 	} else if err != nil && !apierrors.IsNotFound(err) {
@@ -144,7 +144,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateImagePullSecret(secretName 
 
 func (r *JenkinsBaseConfigurationReconciler) validateVolumes() ([]string, error) {
 	var messages []string
-	for _, volume := range r.Configuration.Jenkins.Spec.Master.Volumes {
+	for _, volume := range r.Jenkins.Spec.Master.Volumes {
 		switch {
 		case volume.ConfigMap != nil:
 			if msg, err := r.validateConfigMapVolume(volume); err != nil {
@@ -174,7 +174,7 @@ func (r *JenkinsBaseConfigurationReconciler) validatePersistentVolumeClaim(volum
 	var messages []string
 
 	pvc := &corev1.PersistentVolumeClaim{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.PersistentVolumeClaim.ClaimName, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, pvc)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.PersistentVolumeClaim.ClaimName, Namespace: r.Jenkins.Namespace}, pvc)
 	if err != nil && apierrors.IsNotFound(err) {
 		messages = append(messages, fmt.Sprintf("PersistentVolumeClaim '%s' not found for volume '%v'", volume.PersistentVolumeClaim.ClaimName, volume))
 	} else if err != nil && !apierrors.IsNotFound(err) {
@@ -191,7 +191,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateConfigMapVolume(volume core
 	}
 
 	configMap := &corev1.ConfigMap{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.ConfigMap.Name, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, configMap)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.ConfigMap.Name, Namespace: r.Jenkins.Namespace}, configMap)
 	if err != nil && apierrors.IsNotFound(err) {
 		messages = append(messages, fmt.Sprintf("ConfigMap '%s' not found for volume '%v'", volume.ConfigMap.Name, volume))
 	} else if err != nil && !apierrors.IsNotFound(err) {
@@ -208,7 +208,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateSecretVolume(volume corev1.
 	}
 
 	secret := &corev1.Secret{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.Secret.SecretName, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, secret)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: volume.Secret.SecretName, Namespace: r.Jenkins.Namespace}, secret)
 	if err != nil && apierrors.IsNotFound(err) {
 		messages = append(messages, fmt.Sprintf("Secret '%s' not found for volume '%v'", volume.Secret.SecretName, volume))
 	} else if err != nil && !apierrors.IsNotFound(err) {
@@ -221,8 +221,8 @@ func (r *JenkinsBaseConfigurationReconciler) validateSecretVolume(volume corev1.
 func (r *JenkinsBaseConfigurationReconciler) validateReservedVolumes() []string {
 	var messages []string
 
-	for _, baseVolume := range resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins) {
-		for _, volume := range r.Configuration.Jenkins.Spec.Master.Volumes {
+	for _, baseVolume := range resources.GetJenkinsMasterPodBaseVolumes(r.Jenkins) {
+		for _, volume := range r.Jenkins.Spec.Master.Volumes {
 			if baseVolume.Name == volume.Name {
 				messages = append(messages, fmt.Sprintf("Jenkins Master pod volume '%s' is reserved please choose different one", volume.Name))
 			}
@@ -255,7 +255,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateContainer(container v1alpha
 
 func (r *JenkinsBaseConfigurationReconciler) validateContainerVolumeMounts(container v1alpha2.Container) []string {
 	var messages []string
-	allVolumes := append(resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Master.Volumes...)
+	allVolumes := append(resources.GetJenkinsMasterPodBaseVolumes(r.Jenkins), r.Jenkins.Spec.Master.Volumes...)
 
 	for _, volumeMount := range container.VolumeMounts {
 		if len(volumeMount.MountPath) == 0 {
@@ -279,14 +279,14 @@ func (r *JenkinsBaseConfigurationReconciler) validateContainerVolumeMounts(conta
 
 func (r *JenkinsBaseConfigurationReconciler) validateJenkinsMasterPodEnvs() []string {
 	var messages []string
-	baseEnvs := resources.GetJenkinsMasterContainerBaseEnvs(r.Configuration.Jenkins)
+	baseEnvs := resources.GetJenkinsMasterContainerBaseEnvs(r.Jenkins)
 	baseEnvNames := map[string]string{}
 	for _, env := range baseEnvs {
 		baseEnvNames[env.Name] = env.Value
 	}
 
 	javaOpts := corev1.EnvVar{}
-	for _, userEnv := range r.Configuration.Jenkins.Spec.Master.Containers[0].Env {
+	for _, userEnv := range r.Jenkins.Spec.Master.Containers[0].Env {
 		if userEnv.Name == constants.JavaOpsVariableName {
 			javaOpts = userEnv
 		}
@@ -383,7 +383,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateCustomization(customization
 
 	if len(customization.Secret.Name) > 0 {
 		secret := &corev1.Secret{}
-		err := r.Client.Get(context.TODO(), types.NamespacedName{Name: customization.Secret.Name, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, secret)
+		err := r.Client.Get(context.TODO(), types.NamespacedName{Name: customization.Secret.Name, Namespace: r.Jenkins.Namespace}, secret)
 		if err != nil && apierrors.IsNotFound(err) {
 			messages = append(messages, fmt.Sprintf("Secret '%s' configured in %s.secret.name not found", customization.Secret.Name, name))
 		} else if err != nil && !apierrors.IsNotFound(err) {
@@ -398,7 +398,7 @@ func (r *JenkinsBaseConfigurationReconciler) validateCustomization(customization
 		}
 
 		configMap := &corev1.ConfigMap{}
-		err := r.Client.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: r.Configuration.Jenkins.ObjectMeta.Namespace}, configMap)
+		err := r.Client.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: r.Jenkins.Namespace}, configMap)
 		if err != nil && apierrors.IsNotFound(err) {
 			messages = append(messages, fmt.Sprintf("ConfigMap '%s' configured in %s.configurations[%d] not found", configMapRef.Name, name, index))
 		} else if err != nil && !apierrors.IsNotFound(err) {

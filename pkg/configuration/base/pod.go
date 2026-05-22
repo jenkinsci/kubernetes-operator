@@ -32,83 +32,83 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 		return reason.NewPodRestart(reason.KubernetesSource, messages, verbose...)
 	}
 
-	userAndPasswordHashIsDifferent := userAndPasswordHash != r.Configuration.Jenkins.Status.UserAndPasswordHash
-	userAndPasswordHashStatusNotEmpty := r.Configuration.Jenkins.Status.UserAndPasswordHash != ""
+	userAndPasswordHashIsDifferent := userAndPasswordHash != r.Jenkins.Status.UserAndPasswordHash
+	userAndPasswordHashStatusNotEmpty := r.Jenkins.Status.UserAndPasswordHash != ""
 
 	if userAndPasswordHashIsDifferent && userAndPasswordHashStatusNotEmpty {
 		messages = append(messages, "User or password have changed")
 		verbose = append(verbose, "User or password have changed, recreating pod")
 	}
 
-	if r.Configuration.Jenkins.Spec.Restore.RecoveryOnce != 0 && r.Configuration.Jenkins.Status.RestoredBackup != 0 {
+	if r.Jenkins.Spec.Restore.RecoveryOnce != 0 && r.Jenkins.Status.RestoredBackup != 0 {
 		messages = append(messages, "spec.restore.recoveryOnce is set")
 		verbose = append(verbose, "spec.restore.recoveryOnce is set, recreating pod")
 	}
 
-	if version.Version != r.Configuration.Jenkins.Status.OperatorVersion {
+	if version.Version != r.Jenkins.Status.OperatorVersion {
 		messages = append(messages, "Jenkins Operator version has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins Operator version has changed, actual '%+v' new '%+v'",
-			r.Configuration.Jenkins.Status.OperatorVersion, version.Version))
+			r.Jenkins.Status.OperatorVersion, version.Version))
 	}
 
 	//FIXME too hacky
 	var jenkinsSecurityContext *corev1.PodSecurityContext
-	if r.Configuration.Jenkins.Spec.Master.SecurityContext == nil {
+	if r.Jenkins.Spec.Master.SecurityContext == nil {
 		jenkinsSecurityContext = &corev1.PodSecurityContext{}
 	} else {
-		jenkinsSecurityContext = r.Configuration.Jenkins.Spec.Master.SecurityContext
+		jenkinsSecurityContext = r.Jenkins.Spec.Master.SecurityContext
 	}
 	if !reflect.DeepEqual(jenkinsSecurityContext, currentJenkinsMasterPod.Spec.SecurityContext) {
 		messages = append(messages, "Jenkins pod security context has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod security context has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.SecurityContext, r.Configuration.Jenkins.Spec.Master.SecurityContext))
+			currentJenkinsMasterPod.Spec.SecurityContext, r.Jenkins.Spec.Master.SecurityContext))
 	}
 
-	if !compareImagePullSecrets(r.Configuration.Jenkins.Spec.Master.ImagePullSecrets, currentJenkinsMasterPod.Spec.ImagePullSecrets) {
+	if !compareImagePullSecrets(r.Jenkins.Spec.Master.ImagePullSecrets, currentJenkinsMasterPod.Spec.ImagePullSecrets) {
 		messages = append(messages, "Jenkins Pod ImagePullSecrets has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins Pod ImagePullSecrets has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.ImagePullSecrets, r.Configuration.Jenkins.Spec.Master.ImagePullSecrets))
+			currentJenkinsMasterPod.Spec.ImagePullSecrets, r.Jenkins.Spec.Master.ImagePullSecrets))
 	}
 
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.NodeSelector, currentJenkinsMasterPod.Spec.NodeSelector) {
+	if !compareMap(r.Jenkins.Spec.Master.NodeSelector, currentJenkinsMasterPod.Spec.NodeSelector) {
 		messages = append(messages, "Jenkins pod node selector has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod node selector has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.NodeSelector, r.Configuration.Jenkins.Spec.Master.NodeSelector))
+			currentJenkinsMasterPod.Spec.NodeSelector, r.Jenkins.Spec.Master.NodeSelector))
 	}
 
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.Labels, currentJenkinsMasterPod.Labels) {
+	if !compareMap(r.Jenkins.Spec.Master.Labels, currentJenkinsMasterPod.Labels) {
 		messages = append(messages, "Jenkins pod labels have changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod labels have changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Labels, r.Configuration.Jenkins.Spec.Master.Labels))
+			currentJenkinsMasterPod.Labels, r.Jenkins.Spec.Master.Labels))
 	}
 
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.Annotations, currentJenkinsMasterPod.ObjectMeta.Annotations) {
+	if !compareMap(r.Jenkins.Spec.Master.Annotations, currentJenkinsMasterPod.Annotations) {
 		messages = append(messages, "Jenkins pod annotations have changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod annotations have changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.ObjectMeta.Annotations, r.Configuration.Jenkins.Spec.Master.Annotations))
+			currentJenkinsMasterPod.Annotations, r.Jenkins.Spec.Master.Annotations))
 	}
 
 	if !r.compareVolumes(currentJenkinsMasterPod) {
 		messages = append(messages, "Jenkins pod volumes have changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins pod volumes have changed, actual '%v' required '%v'",
-			currentJenkinsMasterPod.Spec.Volumes, r.Configuration.Jenkins.Spec.Master.Volumes))
+			currentJenkinsMasterPod.Spec.Volumes, r.Jenkins.Spec.Master.Volumes))
 	}
 
-	if len(r.Configuration.Jenkins.Spec.Master.Containers) != len(currentJenkinsMasterPod.Spec.Containers) {
+	if len(r.Jenkins.Spec.Master.Containers) != len(currentJenkinsMasterPod.Spec.Containers) {
 		messages = append(messages, "Jenkins amount of containers has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins amount of containers has changed, actual '%+v' required '%+v'",
-			len(currentJenkinsMasterPod.Spec.Containers), len(r.Configuration.Jenkins.Spec.Master.Containers)))
+			len(currentJenkinsMasterPod.Spec.Containers), len(r.Jenkins.Spec.Master.Containers)))
 	}
 
-	if r.Configuration.Jenkins.Spec.Master.PriorityClassName != currentJenkinsMasterPod.Spec.PriorityClassName {
+	if r.Jenkins.Spec.Master.PriorityClassName != currentJenkinsMasterPod.Spec.PriorityClassName {
 		messages = append(messages, "Jenkins priorityClassName has changed")
 		verbose = append(verbose, fmt.Sprintf("Jenkins priorityClassName has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.PriorityClassName, r.Configuration.Jenkins.Spec.Master.PriorityClassName))
+			currentJenkinsMasterPod.Spec.PriorityClassName, r.Jenkins.Spec.Master.PriorityClassName))
 	}
 
-	customResourceReplaced := (r.Configuration.Jenkins.Status.BaseConfigurationCompletedTime == nil ||
-		r.Configuration.Jenkins.Status.UserConfigurationCompletedTime == nil) &&
-		r.Configuration.Jenkins.Status.UserAndPasswordHash == ""
+	customResourceReplaced := (r.Jenkins.Status.BaseConfigurationCompletedTime == nil ||
+		r.Jenkins.Status.UserConfigurationCompletedTime == nil) &&
+		r.Jenkins.Status.UserAndPasswordHash == ""
 
 	if customResourceReplaced {
 		messages = append(messages, "Jenkins CR has been replaced")
@@ -117,14 +117,14 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 
 	for _, actualContainer := range currentJenkinsMasterPod.Spec.Containers {
 		if actualContainer.Name == resources.JenkinsMasterContainerName {
-			containerMessages, verboseMessages := r.compareContainers(resources.NewJenkinsMasterContainer(r.Configuration.Jenkins), actualContainer)
+			containerMessages, verboseMessages := r.compareContainers(resources.NewJenkinsMasterContainer(r.Jenkins), actualContainer)
 			messages = append(messages, containerMessages...)
 			verbose = append(verbose, verboseMessages...)
 			continue
 		}
 
 		var expectedContainer *corev1.Container
-		for _, jenkinsContainer := range r.Configuration.Jenkins.Spec.Master.Containers {
+		for _, jenkinsContainer := range r.Jenkins.Spec.Master.Containers {
 			if jenkinsContainer.Name == actualContainer.Name {
 				tmp := resources.ConvertJenkinsContainerToKubernetesContainer(jenkinsContainer)
 				expectedContainer = &tmp
@@ -153,11 +153,11 @@ func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.
 	}
 
 	// Check if this Pod already exists
-	currentJenkinsMasterPod, err := r.Configuration.GetJenkinsMasterPod()
+	currentJenkinsMasterPod, err := r.GetJenkinsMasterPod()
 	if err != nil && apierrors.IsNotFound(err) {
-		jenkinsMasterPod := resources.NewJenkinsMasterPod(meta, r.Configuration.Jenkins)
+		jenkinsMasterPod := resources.NewJenkinsMasterPod(meta, r.Jenkins)
 		*r.Notifications <- event.Event{
-			Jenkins: *r.Configuration.Jenkins,
+			Jenkins: *r.Jenkins,
 			Phase:   event.PhaseBase,
 			Level:   v1alpha2.NotificationLevelInfo,
 			Reason:  reason.NewPodCreation(reason.OperatorSource, []string{"Creating a new Jenkins Master Pod"}),
@@ -169,14 +169,14 @@ func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.
 		}
 
 		now := metav1.Now()
-		r.Configuration.Jenkins.Status = v1alpha2.JenkinsStatus{
+		r.Jenkins.Status = v1alpha2.JenkinsStatus{
 			OperatorVersion:     version.Version,
 			ProvisionStartTime:  &now,
-			LastBackup:          r.Configuration.Jenkins.Status.LastBackup,
-			PendingBackup:       r.Configuration.Jenkins.Status.LastBackup,
+			LastBackup:          r.Jenkins.Status.LastBackup,
+			PendingBackup:       r.Jenkins.Status.LastBackup,
 			UserAndPasswordHash: userAndPasswordHash,
 		}
-		return reconcile.Result{Requeue: true}, r.Client.Status().Update(context.TODO(), r.Configuration.Jenkins)
+		return reconcile.Result{Requeue: true}, r.Client.Status().Update(context.TODO(), r.Jenkins)
 	} else if err != nil && !apierrors.IsNotFound(err) {
 		return reconcile.Result{}, stackerr.WithStack(err)
 	}
@@ -185,15 +185,15 @@ func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.
 		return reconcile.Result{Requeue: true}, nil
 	}
 
-	if r.IsJenkinsTerminating(*currentJenkinsMasterPod) && r.Configuration.Jenkins.Status.UserConfigurationCompletedTime != nil {
+	if r.IsJenkinsTerminating(*currentJenkinsMasterPod) && r.Jenkins.Status.UserConfigurationCompletedTime != nil {
 		backupAndRestore := backuprestore.New(r.Configuration, r.logger)
 		if backupAndRestore.IsBackupTriggerEnabled() {
 			backupAndRestore.StopBackupTrigger()
 			return reconcile.Result{Requeue: true}, nil
 		}
-		if r.Configuration.Jenkins.Spec.Backup.MakeBackupBeforePodDeletion && !r.Configuration.Jenkins.Status.BackupDoneBeforePodDeletion {
-			if r.Configuration.Jenkins.Status.LastBackup == r.Configuration.Jenkins.Status.PendingBackup {
-				r.Configuration.Jenkins.Status.PendingBackup++
+		if r.Jenkins.Spec.Backup.MakeBackupBeforePodDeletion && !r.Jenkins.Status.BackupDoneBeforePodDeletion {
+			if r.Jenkins.Status.LastBackup == r.Jenkins.Status.PendingBackup {
+				r.Jenkins.Status.PendingBackup++
 			}
 			if err = backupAndRestore.Backup(true); err != nil {
 				return reconcile.Result{}, err
@@ -209,7 +209,7 @@ func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsMasterPod(meta metav1.
 				r.logger.Info(msg)
 			}
 
-			return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
+			return reconcile.Result{Requeue: true}, r.RestartJenkinsMasterPod(restartReason)
 		}
 	}
 

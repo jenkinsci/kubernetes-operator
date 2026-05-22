@@ -13,7 +13,7 @@ import (
 func NewResourceObjectMeta(jenkins *v1alpha2.Jenkins) metav1.ObjectMeta {
 	return metav1.ObjectMeta{
 		Name:      GetResourceName(jenkins),
-		Namespace: jenkins.ObjectMeta.Namespace,
+		Namespace: jenkins.Namespace,
 		Labels:    BuildResourceLabels(jenkins),
 	}
 }
@@ -39,7 +39,7 @@ func BuildLabelsForWatchedResources(jenkins v1alpha2.Jenkins) map[string]string 
 
 // GetResourceName returns name of Kubernetes resource base on Jenkins CR
 func GetResourceName(jenkins *v1alpha2.Jenkins) string {
-	return fmt.Sprintf("%s-%s", constants.LabelAppValue, jenkins.ObjectMeta.Name)
+	return fmt.Sprintf("%s-%s", constants.LabelAppValue, jenkins.Name)
 }
 
 // VerifyIfLabelsAreSet check is selected labels are set for specific resource

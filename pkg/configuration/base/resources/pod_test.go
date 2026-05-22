@@ -148,9 +148,10 @@ func TestGetJenkinsMasterPodBaseVolumes(t *testing.T) {
 
 func checkSecretVolumesPresence(jenkins *v1alpha2.Jenkins) (groovyExists bool, cascExists bool) {
 	for _, volume := range GetJenkinsMasterPodBaseVolumes(jenkins) {
-		if volume.Name == ("gs-" + jenkins.Spec.GroovyScripts.Secret.Name) {
+		switch volume.Name {
+		case "gs-" + jenkins.Spec.GroovyScripts.Secret.Name:
 			groovyExists = true
-		} else if volume.Name == ("casc-" + jenkins.Spec.ConfigurationAsCode.Secret.Name) {
+		case "casc-" + jenkins.Spec.ConfigurationAsCode.Secret.Name:
 			cascExists = true
 		}
 	}

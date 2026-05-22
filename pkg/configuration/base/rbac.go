@@ -42,7 +42,7 @@ func (r *JenkinsBaseConfigurationReconciler) createRBAC(meta metav1.ObjectMeta) 
 func (r *JenkinsBaseConfigurationReconciler) ensureExtraRBAC(meta metav1.ObjectMeta) error {
 	var err error
 	var name string
-	for _, roleRef := range r.Configuration.Jenkins.Spec.Roles {
+	for _, roleRef := range r.Jenkins.Spec.Roles {
 		name = getExtraRoleBindingName(meta.Name, roleRef)
 		roleBinding := resources.NewRoleBinding(name, meta.Namespace, meta.Name, roleRef)
 		err := r.Client.Create(context.TODO(), roleBinding)
@@ -55,7 +55,7 @@ func (r *JenkinsBaseConfigurationReconciler) ensureExtraRBAC(meta metav1.ObjectM
 	}
 
 	roleBindings := &rbacv1.RoleBindingList{}
-	err = r.Client.List(context.TODO(), roleBindings, client.InNamespace(r.Configuration.Jenkins.Namespace))
+	err = r.Client.List(context.TODO(), roleBindings, client.InNamespace(r.Jenkins.Namespace))
 	if err != nil {
 		return stackerr.WithStack(err)
 	}
@@ -66,7 +66,7 @@ func (r *JenkinsBaseConfigurationReconciler) ensureExtraRBAC(meta metav1.ObjectM
 		}
 
 		found := false
-		for _, roleRef := range r.Configuration.Jenkins.Spec.Roles {
+		for _, roleRef := range r.Jenkins.Spec.Roles {
 			name = getExtraRoleBindingName(meta.Name, roleRef)
 			if roleBinding.Name == name {
 				found = true

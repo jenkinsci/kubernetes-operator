@@ -83,7 +83,7 @@ func (c *Configuration) GetJenkinsDeployment() (*appsv1.Deployment, error) {
 
 // IsJenkinsTerminating returns true if the Jenkins pod is terminating.
 func (c *Configuration) IsJenkinsTerminating(pod corev1.Pod) bool {
-	return pod.ObjectMeta.DeletionTimestamp != nil
+	return pod.DeletionTimestamp != nil
 }
 
 // CreateResource is creating kubernetes resource and references it to Jenkins CR
@@ -193,7 +193,7 @@ func (c *Configuration) getJenkinsAPIUrl() (string, error) {
 	var service corev1.Service
 
 	err := c.Client.Get(context.TODO(), types.NamespacedName{
-		Namespace: c.Jenkins.ObjectMeta.Namespace,
+		Namespace: c.Jenkins.Namespace,
 		Name:      resources.GetJenkinsHTTPServiceName(c.Jenkins),
 	}, &service)
 
@@ -230,7 +230,7 @@ func (c *Configuration) GetJenkinsClientFromSecret() (jenkinsclient.Jenkins, err
 		return nil, err
 	}
 	credentialsSecret := &corev1.Secret{}
-	err = c.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(c.Jenkins), Namespace: c.Jenkins.ObjectMeta.Namespace}, credentialsSecret)
+	err = c.Client.Get(context.TODO(), types.NamespacedName{Name: resources.GetOperatorCredentialsSecretName(c.Jenkins), Namespace: c.Jenkins.Namespace}, credentialsSecret)
 	if err != nil {
 		return nil, stackerr.WithStack(err)
 	}

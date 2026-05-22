@@ -87,7 +87,7 @@ func (g *Groovy) WaitForSecretSynchronization(secretsPath string) (requeue bool,
 	}
 
 	secret := &corev1.Secret{}
-	err = g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: g.customization.Secret.Name, Namespace: g.jenkins.ObjectMeta.Namespace}, secret)
+	err = g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: g.customization.Secret.Name, Namespace: g.jenkins.Namespace}, secret)
 	if err != nil {
 		return true, errors.WithStack(err)
 	}
@@ -116,7 +116,7 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 	if len(g.customization.Secret.Name) > 0 {
 		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{
 			Name:      g.customization.Secret.Name,
-			Namespace: g.jenkins.ObjectMeta.Namespace,
+			Namespace: g.jenkins.Namespace,
 		}, secret)
 		if err != nil {
 			return true, err
@@ -125,7 +125,7 @@ func (g *Groovy) Ensure(filter func(name string) bool, updateGroovyScript func(g
 
 	for _, configMapRef := range g.customization.Configurations {
 		configMap := &corev1.ConfigMap{}
-		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: g.jenkins.ObjectMeta.Namespace}, configMap)
+		err := g.k8sClient.Get(context.TODO(), types.NamespacedName{Name: configMapRef.Name, Namespace: g.jenkins.Namespace}, configMap)
 		if err != nil {
 			return true, errors.WithStack(err)
 		}

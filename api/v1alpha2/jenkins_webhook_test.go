@@ -1,6 +1,7 @@
 package v1alpha2
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -79,7 +80,7 @@ func TestValidate(t *testing.T) {
 	t.Run("Validating when plugins data file is not fetched", func(t *testing.T) {
 		userplugins := []Plugin{{Name: "script-security", Version: "1.77"}, {Name: "git-client", Version: "3.9"}, {Name: "git", Version: "4.8.1"}, {Name: "plain-credentials", Version: "1.7"}}
 		jenkinscr := *createJenkinsCR(userplugins, true)
-		_, got := jenkinscr.ValidateCreate()
+		_, got := jenkinscr.ValidateCreate(context.TODO(), &jenkinscr)
 		assert.Equal(t, got, errors.New("plugins data has not been fetched"))
 	})
 
@@ -95,7 +96,7 @@ func TestValidate(t *testing.T) {
 			{Name: "plain-credentials"}}}
 		userplugins := []Plugin{{Name: "script-security", Version: "1.77"}, {Name: "git-client", Version: "3.9"}, {Name: "git", Version: "4.8.1"}, {Name: "plain-credentials", Version: "1.7"}}
 		jenkinscr := *createJenkinsCR(userplugins, true)
-		_, got := jenkinscr.ValidateCreate()
+		_, got := jenkinscr.ValidateCreate(context.TODO(), &jenkinscr)
 		assert.Nil(t, got)
 	})
 
@@ -113,7 +114,7 @@ func TestValidate(t *testing.T) {
 		}}
 		userplugins := []Plugin{{Name: "google-login", Version: "1.2"}, {Name: "mailer", Version: "1.1"}, {Name: "git", Version: "4.8.1"}, {Name: "command-launcher", Version: "1.6"}, {Name: "workflow-cps", Version: "2.59"}}
 		jenkinscr := *createJenkinsCR(userplugins, true)
-		_, got := jenkinscr.ValidateCreate()
+		_, got := jenkinscr.ValidateCreate(context.TODO(), &jenkinscr)
 		assert.Equal(t, got, errors.New("security vulnerabilities detected in the following user-defined plugins: \nworkflow-cps:2.59\ngoogle-login:1.2\nmailer:1.1"))
 	})
 
@@ -136,19 +137,19 @@ func TestValidate(t *testing.T) {
 
 		userplugins = []Plugin{{Name: "handy-uri-templates-2-api", Version: "2.1.8-1.0"}, {Name: "resource-disposer", Version: "0.8"}, {Name: "jjwt-api", Version: "0.11.2-9.c8b45b8bb173"}, {Name: "blueocean-github-pipeline", Version: "1.2.0-beta-3"}, {Name: "ghprb", Version: "1.39"}}
 		newjenkinscr := *createJenkinsCR(userplugins, true)
-		_, got := newjenkinscr.ValidateUpdate(&oldjenkinscr)
+		_, got := newjenkinscr.ValidateUpdate(context.TODO(), &oldjenkinscr, &newjenkinscr)
 		assert.Equal(t, got, errors.New("security vulnerabilities detected in the following user-defined plugins: \nhandy-uri-templates-2-api:2.1.8-1.0\nresource-disposer:0.8\nblueocean-github-pipeline:1.2.0-beta-3\nghprb:1.39"))
 	})
 
 	t.Run("Validation is turned off", func(t *testing.T) {
 		userplugins := []Plugin{{Name: "google-login", Version: "1.2"}, {Name: "mailer", Version: "1.1"}, {Name: "git", Version: "4.8.1"}, {Name: "command-launcher", Version: "1.6"}, {Name: "workflow-cps", Version: "2.59"}}
 		jenkinscr := *createJenkinsCR(userplugins, false)
-		_, got := jenkinscr.ValidateCreate()
+		_, got := jenkinscr.ValidateCreate(context.TODO(), &jenkinscr)
 		assert.Nil(t, got)
 
 		userplugins = []Plugin{{Name: "google-login", Version: "1.2"}, {Name: "mailer", Version: "1.1"}, {Name: "git", Version: "4.8.1"}, {Name: "command-launcher", Version: "1.6"}, {Name: "workflow-cps", Version: "2.59"}}
 		newjenkinscr := *createJenkinsCR(userplugins, false)
-		_, got = newjenkinscr.ValidateUpdate(&jenkinscr)
+		_, got = newjenkinscr.ValidateUpdate(context.TODO(), &jenkinscr, &newjenkinscr)
 		assert.Nil(t, got)
 	})
 }
