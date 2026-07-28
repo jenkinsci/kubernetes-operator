@@ -2,6 +2,9 @@
 SHELL := /bin/sh
 PATH  := $(GOPATH)/bin:$(PATH)
 
+# Platforms to build multi-arch images for
+PLATFORMS ?= linux/amd64,linux/arm64
+
 # Import config
 # You can change the default config with `make config="config_special.env" build`
 config ?= config.env
@@ -34,6 +37,11 @@ ARGS ?= $(EXTRA_ARGS)
 .PHONY: all
 all: status checkmake clean build verify install docker-build docker-images ## Build the image
 	@echo "+ $@"
+
+.PHONY: docker-buildx-create
+docker-buildx-create: ## Create a buildx builder instance for multi-arch builds
+	@echo "+ $@"
+	docker buildx create --name backup-pvc-builder --driver=docker-container --use || docker buildx use backup-pvc-builder
 
 .PHONY: check-env
 check-env: ## Checks the environment variables
@@ -87,9 +95,20 @@ docker-build-e2e: GID=1001
 docker-build-e2e: docker-build
 
 .PHONY: docker-build
-docker-build: check-env ## Build the container
+docker-build: check-env ## Build the container for the local platform
 	@echo "+ $@"
 	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
+
+.PHONY: docker-buildx
+docker-buildx: check-env docker-buildx-create ## Build and push multi-arch container image (linux/amd64 + linux/arm64)
+	@echo "+ $@"
+	docker buildx build . \
+		--platform $(PLATFORMS) \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) \
+		--file Dockerfile \
+		--output type=registry
 
 .PHONY: docker-images
 docker-images: ## List all local containers
@@ -97,25 +116,35 @@ docker-images: ## List all local containers
 	docker images
 
 .PHONY: docker-push
-docker-push: docker-build ## Push the container
+docker-push: docker-build ## Push the container (single-arch, local platform only)
 	@echo "+ $@"
 	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
 	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
 
 .PHONY: docker-release-version
-docker-release-version: docker-build ## Release image with version tag (in addition to build tag)
+docker-release-version: check-env docker-buildx-create ## Release multi-arch image with version tag
 	@echo "+ $@"
-	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
-	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
+	docker buildx build . \
+		--platform $(PLATFORMS) \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG) \
+		--file Dockerfile \
+		--output type=registry
 
 .PHONY: docker-release-latest
-docker-release-latest: docker-build ## Release image with latest tags (in addition to build tag)
+docker-release-latest: check-env docker-buildx-create ## Release multi-arch image with latest tag
 	@echo "+ $@"
-	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
-	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
+	docker buildx build . \
+		--platform $(PLATFORMS) \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG) \
+		--file Dockerfile \
+		--output type=registry
 
 .PHONY: docker-release
-docker-release: docker-release-version docker-release-latest ## Release image with version and latest tags (in addition to build tag)
+docker-release: docker-release-version docker-release-latest ## Release multi-arch image with version and latest tags
 	@echo "+ $@"
 
 .PHONY: backup-kind-load
