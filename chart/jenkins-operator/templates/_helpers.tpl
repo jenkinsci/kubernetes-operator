@@ -32,6 +32,21 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Returns "true" when the operator should watch all namespaces (WATCH_NAMESPACE="").
+This happens when the bundled Jenkins is enabled with an empty jenkins.namespace, or
+when jenkins is disabled and operator.watchNamespace is explicitly set to "".
+An empty string is falsy in templates, so operator.watchNamespace is detected with
+hasKey to distinguish "set to empty (all namespaces)" from "unset (own namespace)".
+*/}}
+{{- define "jenkins-operator.watchAllNamespaces" -}}
+{{- if .Values.jenkins.enabled -}}
+{{- if eq .Values.jenkins.namespace "" -}}true{{- end -}}
+{{- else if hasKey .Values.operator "watchNamespace" -}}
+{{- if eq .Values.operator.watchNamespace "" -}}true{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "jenkins-operator.labels" -}}
