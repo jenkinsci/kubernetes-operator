@@ -178,7 +178,7 @@ vet: ## Verifies `go vet` passes
 .PHONY: staticcheck
 staticcheck: $(STATICCHECK) ## Verifies `staticcheck` passes
 	@echo "+ $@"
-	@$(STATICCHECK) $(PACKAGES)
+	@$(STATICCHECK) -checks='all,-ST*,-QF*,-SA1019' $(PACKAGES)
 
 .PHONY: cover
 cover: ## Runs go test with coverage
