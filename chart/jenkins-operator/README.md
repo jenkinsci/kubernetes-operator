@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: 0.9.0-beta1](https://img.shields.io/badge/Version-0.9.0--beta1-informational?style=flat-square) ![AppVersion: 0.9.0-beta1](https://img.shields.io/badge/AppVersion-0.9.0--beta1-informational?style=flat-square)
+![Version: 0.9.0-beta2](https://img.shields.io/badge/Version-0.9.0--beta2-informational?style=flat-square) ![AppVersion: 0.9.0-beta1](https://img.shields.io/badge/AppVersion-0.9.0--beta1-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -54,7 +54,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.528.3-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.580.1-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
