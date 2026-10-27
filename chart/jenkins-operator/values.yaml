@@ -336,6 +336,9 @@ operator:
 
   # Select a different namespace to look for the Jenkins CR and deploy Jenkins in. Defaults to the same namespace as
   # the operator.
+  # Only used when jenkins.enabled is false.
+  # Set to an empty string ("") to make a single operator watch all namespaces; this also switches the operator's
+  # RBAC to a ClusterRole/ClusterRoleBinding.
   # watchNamespace: "jenkins-namespace"
 
   resources: {}

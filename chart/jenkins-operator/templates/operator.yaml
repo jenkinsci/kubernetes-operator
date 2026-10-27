@@ -55,10 +55,12 @@ spec:
             periodSeconds: 10
           env:
             - name: WATCH_NAMESPACE
-              {{- if .Values.jenkins.enabled }}
-              value: {{ .Values.jenkins.namespace }}
+              {{- if eq (include "jenkins-operator.watchAllNamespaces" .) "true" }}
+              value: ""
+              {{- else if .Values.jenkins.enabled }}
+              value: {{ .Values.jenkins.namespace | quote }}
               {{- else if .Values.operator.watchNamespace }}
-              value: {{ .Values.operator.watchNamespace }}
+              value: {{ .Values.operator.watchNamespace | quote }}
               {{- else }}
               valueFrom:
                 fieldRef:
