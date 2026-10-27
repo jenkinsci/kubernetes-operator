@@ -1,12 +1,65 @@
 package v1alpha2
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
+
+func TestJenkinsCustomValidator(t *testing.T) {
+	previous := SecValidator
+	t.Cleanup(func() { SecValidator = previous })
+	SecValidator = SecurityValidator{
+		isCached: true,
+		PluginDataCache: PluginsInfo{Plugins: []PluginInfo{
+			{Name: "sample-plugin", SecurityWarnings: createSecurityWarnings("1.0", "2.0")},
+		}},
+	}
+	validator := &JenkinsCustomValidator{}
+	ctx := context.Background()
+	safe := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "3.0"}}, true)
+	vulnerable := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "1.5"}}, true)
+	disabled := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "1.5"}}, false)
+
+	tests := []struct {
+		name      string
+		validate  func() (admission.Warnings, error)
+		wantError bool
+	}{
+		{"create rejects vulnerable plugins", func() (admission.Warnings, error) { return validator.ValidateCreate(ctx, vulnerable) }, true},
+		{"create allows safe plugins", func() (admission.Warnings, error) { return validator.ValidateCreate(ctx, safe) }, false},
+		{"create allows disabled validation", func() (admission.Warnings, error) { return validator.ValidateCreate(ctx, disabled) }, false},
+		{"update rejects new vulnerable plugins", func() (admission.Warnings, error) { return validator.ValidateUpdate(ctx, safe, vulnerable) }, true},
+		{"update allows removal of vulnerable plugins", func() (admission.Warnings, error) { return validator.ValidateUpdate(ctx, vulnerable, safe) }, false},
+		{"update allows disabled validation", func() (admission.Warnings, error) { return validator.ValidateUpdate(ctx, safe, disabled) }, false},
+		{"delete allows vulnerable plugins", func() (admission.Warnings, error) { return validator.ValidateDelete(ctx, vulnerable) }, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			warnings, err := tt.validate()
+			assert.Empty(t, warnings)
+			if tt.wantError {
+				assert.ErrorContains(t, err, "sample-plugin:1.5")
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+	for _, obj := range []runtime.Object{&corev1.Pod{}, (*Jenkins)(nil), nil} {
+		_, err := validator.ValidateCreate(ctx, obj)
+		assert.Error(t, err)
+		_, err = validator.ValidateUpdate(ctx, safe, obj)
+		assert.Error(t, err)
+		_, err = validator.ValidateDelete(ctx, obj)
+		assert.Error(t, err)
+	}
+}
 
 func TestMakeSemanticVersion(t *testing.T) {
 	t.Run("only major version specified", func(t *testing.T) {

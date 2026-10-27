@@ -1,5 +1,28 @@
 include variables.mk
 
+LOCALBIN ?= $(shell pwd)/bin
+## Tool Versions
+GOLANGCI_LINT_VERSION ?= v2.12.2
+STATICCHECK_VERSION ?= v0.8.2
+GOIMPORTS_VERSION ?= v0.52.0
+CONTROLLER_TOOLS_VERSION ?= v0.23.0
+ENVTEST_VERSION ?= v0.0.0-20250626154428-7fd020cb5fc3
+KUSTOMIZE_VERSION ?= v5.3.0
+## Tool Binaries
+GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
+STATICCHECK ?= $(LOCALBIN)/staticcheck-$(STATICCHECK_VERSION)
+GOIMPORTS ?= $(LOCALBIN)/goimports-$(GOIMPORTS_VERSION)
+CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen-$(CONTROLLER_TOOLS_VERSION)
+ENVTEST ?= $(LOCALBIN)/setup-envtest-$(ENVTEST_VERSION)
+KUSTOMIZE ?= $(LOCALBIN)/kustomize-$(KUSTOMIZE_VERSION)
+OPERATOR_SDK ?= $(LOCALBIN)/operator-sdk-v$(OPERATOR_SDK_VERSION)
+
+define go-install-tool
+	@set -eu; tool_tmp=$$(mktemp -d); trap 'rm -rf "$$tool_tmp"' EXIT; \
+	GOBIN="$$tool_tmp" go install $(1)@$(2); \
+	mv "$$tool_tmp/$(3)" "$@"
+endef
+
 .PHONY: all
 all: status checkmake clean build verify install container-runtime-build container-runtime-images ## Build the image
 	@echo "+ $@"
@@ -66,26 +89,22 @@ fmt: ## Verifies all files have been `gofmt`ed
 	@go fmt $(PACKAGES)
 
 .PHONY: lint
-HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
-lint: ## Verifies `golint` passes
+lint: golangci-lint ## Verifies `golint` passes
 	@echo "+ $@"
-ifndef HAS_GOLINT
-	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0
-endif
-	@bin/golangci-lint run
+	@$(GOLANGCI_LINT) config verify
+	@set -eu; format_diff=$$(mktemp); trap 'rm -f "$$format_diff"' EXIT; \
+	$(GOLANGCI_LINT) fmt --diff > "$$format_diff"; cat "$$format_diff"; test ! -s "$$format_diff"
+	@$(GOLANGCI_LINT) run
 
 .PHONY: lint-fix
 lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
-	@bin/golangci-lint run --fix
+	@$(GOLANGCI_LINT) fmt
+	@$(GOLANGCI_LINT) run --fix
 
 .PHONY: goimports
-HAS_GOIMPORTS := $(shell which $(PROJECT_DIR)/bin/goimports)
-goimports: ## Verifies `goimports` passes
+goimports: $(GOIMPORTS) ## Verifies `goimports` passes
 	@echo "+ $@"
-ifndef HAS_GOIMPORTS
-	$(call GOBIN=$(PROJECT_DIR)/bin go install golang.org/x/tools/cmd/goimports@v0.1.0)
-endif
-	@bin/goimports -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+	@$(GOIMPORTS) -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 .PHONY: test
 test: ## Runs the go tests
@@ -157,18 +176,9 @@ vet: ## Verifies `go vet` passes
 	@go vet $(PACKAGES)
 
 .PHONY: staticcheck
-HAS_STATICCHECK := $(shell which $(PROJECT_DIR)/bin/staticcheck)
-staticcheck: ## Verifies `staticcheck` passes
+staticcheck: $(STATICCHECK) ## Verifies `staticcheck` passes
 	@echo "+ $@"
-ifndef HAS_STATICCHECK
-	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
-	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
-	mkdir -p $(PROJECT_DIR)/bin
-	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
-	rm -rf $(TMP_DIR)
-endif
-	@$(PROJECT_DIR)/bin/staticcheck $(PACKAGES)
+	@$(STATICCHECK) $(PACKAGES)
 
 .PHONY: cover
 cover: ## Runs go test with coverage
@@ -568,51 +578,50 @@ generate: controller-gen
 ##@ Build Dependencies
 
 ## Location to install dependencies to
-LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
-
-## Tool Binaries
-KUSTOMIZE ?= $(LOCALBIN)/kustomize
-CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
-ENVTEST ?= $(LOCALBIN)/setup-envtest
-
-## Tool Versions
-KUSTOMIZE_VERSION ?= v5.3.0
-CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
-$(KUSTOMIZE): $(LOCALBIN)
-	test -s $(LOCALBIN)/kustomize || { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }
+$(KUSTOMIZE): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/kustomize/kustomize/v5,$(KUSTOMIZE_VERSION),kustomize)
 
 .PHONY: controller-gen
 controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
-$(CONTROLLER_GEN): $(LOCALBIN)
-	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
+$(CONTROLLER_GEN): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/controller-tools/cmd/controller-gen,$(CONTROLLER_TOOLS_VERSION),controller-gen)
 
 .PHONY: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
-$(ENVTEST): $(LOCALBIN)
-	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.17
+$(ENVTEST): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/controller-runtime/tools/setup-envtest,$(ENVTEST_VERSION),setup-envtest)
+
+.PHONY: golangci-lint
+golangci-lint: $(GOLANGCI_LINT)
+$(GOLANGCI_LINT): | $(LOCALBIN)
+	$(call go-install-tool,github.com/golangci/golangci-lint/v2/cmd/golangci-lint,$(GOLANGCI_LINT_VERSION),golangci-lint)
+
+$(STATICCHECK): | $(LOCALBIN)
+	$(call go-install-tool,honnef.co/go/tools/cmd/staticcheck,$(STATICCHECK_VERSION),staticcheck)
+
+$(GOIMPORTS): | $(LOCALBIN)
+	$(call go-install-tool,golang.org/x/tools/cmd/goimports,$(GOIMPORTS_VERSION),goimports)
 
 .PHONY: operator-sdk
-HAS_OPERATOR_SDK := $(shell which $(PROJECT_DIR)/bin/operator-sdk)
-operator-sdk: # Download operator-sdk locally if necessary
-	@echo "+ $@"
-ifndef HAS_OPERATOR_SDK
-	wget -O $(PROJECT_DIR)/bin/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/v${OPERATOR_SDK_VERSION}/operator-sdk_$(PLATFORM)_amd64
-	chmod +x $(PROJECT_DIR)/bin/operator-sdk
-endif
+operator-sdk: $(OPERATOR_SDK) # Download operator-sdk locally if necessary
+$(OPERATOR_SDK): | $(LOCALBIN)
+	@set -eu; tool_tmp=$$(mktemp -d); trap 'rm -rf "$$tool_tmp"' EXIT; \
+	wget -q -O "$$tool_tmp/operator-sdk" https://github.com/operator-framework/operator-sdk/releases/download/v$(OPERATOR_SDK_VERSION)/operator-sdk_$(PLATFORM)_$(ARCH); \
+	chmod +x "$$tool_tmp/operator-sdk"; mv "$$tool_tmp/operator-sdk" "$@"
 
 # Generate bundle manifests and metadata, then validate generated files.
 .PHONY: bundle
 bundle: manifests operator-sdk kustomize
-	bin/operator-sdk generate kustomize manifests -q
+	$(OPERATOR_SDK) generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
-	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle $(BUNDLE_GEN_FLAGS)
-	bin/operator-sdk bundle validate ./bundle
+	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
+	$(OPERATOR_SDK) bundle validate ./bundle
 
 # Build the bundle image.
 .PHONY: bundle-build

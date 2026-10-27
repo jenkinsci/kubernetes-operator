@@ -11,16 +11,20 @@
   )
 , mkGoEnv ? pkgs.mkGoEnv
 , gomod2nix ? pkgs.gomod2nix
-, go22 ? pkgs.go_1_22
+, go ? pkgs.go_1_26
 , golangci-lint ? pkgs.golangci-lint
 }:
 
 let
-  goEnv = mkGoEnv { pwd = ../.; };
+  goEnv = mkGoEnv {
+    pwd = ../.;
+    modules = ./gomod2nix.toml;
+    inherit go;
+  };
 in
 pkgs.mkShell {
   packages = [
-    go22
+    go
     golangci-lint
     goEnv
     gomod2nix
