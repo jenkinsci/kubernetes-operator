@@ -78,10 +78,10 @@ type JenkinsReconciler struct {
 // SetupWithManager sets up the controller with the Manager.
 func (r *JenkinsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	jenkinsHandler := &enqueueRequestForJenkins{}
-	configMapResource := &corev1.Secret{
+	configMapResource := &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: APIVersion,
-			Kind:       SecretKind,
+			Kind:       ConfigMapKind,
 		},
 	}
 	secretResource := &corev1.Secret{
