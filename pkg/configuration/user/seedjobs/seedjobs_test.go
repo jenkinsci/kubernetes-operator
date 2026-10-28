@@ -2,6 +2,7 @@ package seedjobs
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/golang/mock/gomock"
+	"github.com/jenkinsci/kubernetes-operator/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -21,7 +23,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
-	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 const agentSecret = "test-secret"
@@ -74,7 +75,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		defer ctrl.Finish()
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -129,7 +130,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 		jenkins.Spec.SeedJobs = []v1alpha2.SeedJob{}
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewClientBuilder().
+		fakeClient := testutil.NewClientBuilder().
 			WithRuntimeObjects(jenkins).
 			WithStatusSubresource(jenkins).
 			Build()
@@ -181,7 +182,7 @@ func TestCreateAgent(t *testing.T) {
 		jenkins := jenkinsCustomResource()
 
 		jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().Build()
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		assert.NoError(t, err)
 
@@ -293,9 +294,28 @@ func TestEnsureSeedJobsCompletesWithNoJobs(t *testing.T) {
 	assert.NoError(t, scheme.AddToScheme(testScheme))
 	assert.NoError(t, v1alpha2.AddToScheme(testScheme))
 	jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "no-seeds", Namespace: "default"}}
-	k8sClient := fake.NewClientBuilder().WithScheme(testScheme).WithStatusSubresource(jenkins).WithObjects(jenkins).Build()
+	k8sClient := testutil.NewClientBuilder().WithScheme(testScheme).WithStatusSubresource(jenkins).WithObjects(jenkins).Build()
 	reconciler := New(nil, configuration.Configuration{Client: k8sClient, Jenkins: jenkins})
 	done, err := reconciler.EnsureSeedJobs(jenkins)
 	assert.NoError(t, err)
 	assert.True(t, done, "no configured seed jobs must allow user configuration to complete")
+}
+
+func TestCreateAgentCreatesMissingNode(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	jenkins := jenkinsCustomResource()
+	testScheme := runtime.NewScheme()
+	assert.NoError(t, scheme.AddToScheme(testScheme))
+	assert.NoError(t, v1alpha2.AddToScheme(testScheme))
+	fakeClient := testutil.NewClientBuilder().WithScheme(testScheme).Build()
+	jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
+	jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).Return(nil, fmt.Errorf("lookup: %w", jenkinsclient.ErrNotFound))
+	jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 5, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(nil, nil)
+	jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil)
+	seedJobsClient := New(jenkinsClient, configuration.Configuration{Client: fakeClient, Jenkins: jenkins})
+	err := seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkins, jenkins.Namespace, AgentName)
+	assert.NoError(t, err)
+	var deployment appsv1.Deployment
+	err = fakeClient.Get(context.Background(), types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, &deployment)
+	assert.NoError(t, err)
 }

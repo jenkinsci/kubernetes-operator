@@ -165,7 +165,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 						ReadinessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},
@@ -179,7 +179,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 						LivenessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},

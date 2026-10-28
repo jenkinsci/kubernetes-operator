@@ -49,7 +49,7 @@ var _ = Describe("Jenkins Controller", func() {
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
 				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.580.1-lts"),
 				"--set-string", fmt.Sprintf("operator.image=%s", *imageName),
-				"--set-string", fmt.Sprintf("backup.image=%s", "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"),
+				"--set-string", fmt.Sprintf("jenkins.backup.image=%s", "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"),
 				"--set-string", fmt.Sprintf("jenkins.imagePullPolicy=%s", "IfNotPresent"), "--install")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))

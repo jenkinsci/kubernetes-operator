@@ -375,7 +375,7 @@ func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cl
 	_, err := jenkinsClient.GetNode(context.TODO(), agentName)
 
 	// Create node if not exists
-	if err != nil && err.Error() == "No node found" {
+	if stackerr.Is(err, jenkinsclient.ErrNotFound) {
 		_, err = jenkinsClient.CreateNode(context.TODO(), agentName, 5, "The jenkins-operator generated agent", "/home/jenkins", agentName)
 		if err != nil {
 			return stackerr.WithStack(err)

@@ -17,7 +17,7 @@ const (
 	// JenkinsHomeVolumeName is the Jenkins home volume name
 	JenkinsHomeVolumeName    = "jenkins-home"
 	jenkinsPath              = "/var/jenkins"
-	httpGetPath              = "/login"
+	httpGetPath              = "/health"
 	jenkinsScriptsVolumeName = "scripts"
 	// JenkinsScriptsVolumePath is a path where are scripts used to configure Jenkins
 	JenkinsScriptsVolumePath = jenkinsPath + "/scripts"
@@ -234,9 +234,7 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 		envs = append(envs, jenkinsHomeEnvVar)
 	}
 
-	if jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet != nil {
-		setLivenessAndReadinessPath(jenkins)
-	}
+	setLivenessAndReadinessPath(jenkins)
 
 	return corev1.Container{
 		Name:            JenkinsMasterContainerName,
@@ -267,22 +265,11 @@ func NewJenkinsMasterContainer(jenkins *v1alpha2.Jenkins) corev1.Container {
 }
 
 func setLivenessAndReadinessPath(jenkins *v1alpha2.Jenkins) {
-	ReadinessProbePath := jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path
-	LivenessProbePath := jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path
-
-	if prefix, ok := GetJenkinsOpts(*jenkins)["prefix"]; ok {
-		if !strings.HasPrefix(ReadinessProbePath, prefix) {
-			jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path = prefix + httpGetPath
-		}
-		if !strings.HasPrefix(LivenessProbePath, prefix) {
-			jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path = prefix + httpGetPath
-		}
-	} else {
-		if ReadinessProbePath != httpGetPath {
-			jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path = httpGetPath
-		}
-		if LivenessProbePath != httpGetPath {
-			jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path = httpGetPath
+	prefix := strings.TrimRight(GetJenkinsOpts(*jenkins)["prefix"], "/")
+	master := &jenkins.Spec.Master.Containers[0]
+	for _, probe := range []*corev1.Probe{master.ReadinessProbe, master.LivenessProbe} {
+		if probe != nil && probe.HTTPGet != nil && probe.HTTPGet.Path == httpGetPath {
+			probe.HTTPGet.Path = prefix + httpGetPath
 		}
 	}
 }

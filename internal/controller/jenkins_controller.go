@@ -55,7 +55,7 @@ const (
 	APIVersion             = "core/v1"
 	SecretKind             = "Secret"
 	ConfigMapKind          = "ConfigMap"
-	containerProbeURI      = "login"
+	containerProbeURI      = "/health"
 	containerProbePortName = "http"
 )
 

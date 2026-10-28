@@ -2,11 +2,13 @@ package v1alpha2
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	corev1 "k8s.io/api/core/v1"
+	"github.com/stretchr/testify/require"
+	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -51,13 +53,66 @@ func TestJenkinsCustomValidator(t *testing.T) {
 			}
 		})
 	}
-	for _, obj := range []runtime.Object{&corev1.Pod{}, (*Jenkins)(nil), nil} {
-		_, err := validator.ValidateCreate(ctx, obj)
-		assert.Error(t, err)
-		_, err = validator.ValidateUpdate(ctx, safe, obj)
-		assert.Error(t, err)
-		_, err = validator.ValidateDelete(ctx, obj)
-		assert.Error(t, err)
+	_, err := validator.ValidateCreate(ctx, nil)
+	assert.Error(t, err)
+	_, err = validator.ValidateUpdate(ctx, safe, nil)
+	assert.Error(t, err)
+	_, err = validator.ValidateDelete(ctx, nil)
+	assert.Error(t, err)
+}
+
+func TestJenkinsAdmissionSecurityValidation(t *testing.T) {
+	previous := SecValidator
+	t.Cleanup(func() { SecValidator = previous })
+	SecValidator = SecurityValidator{
+		isCached: true,
+		PluginDataCache: PluginsInfo{Plugins: []PluginInfo{
+			{Name: "sample-plugin", SecurityWarnings: createSecurityWarnings("1.0", "2.0")},
+		}},
+	}
+	scheme := runtime.NewScheme()
+	require.NoError(t, AddToScheme(scheme))
+	handler := admission.WithValidator(scheme, &JenkinsCustomValidator{})
+	safe := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "3.0"}}, true)
+	vulnerable := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "1.5"}}, true)
+	disabled := createJenkinsCR([]Plugin{{Name: "sample-plugin", Version: "1.5"}}, false)
+	tests := []struct {
+		name      string
+		operation admissionv1.Operation
+		oldObj    *Jenkins
+		newObj    *Jenkins
+		allowed   bool
+	}{
+		{"create rejects vulnerable plugins", admissionv1.Create, nil, vulnerable, false},
+		{"create accepts safe plugins", admissionv1.Create, nil, safe, true},
+		{"create accepts disabled validation", admissionv1.Create, nil, disabled, true},
+		{"update rejects vulnerable plugins", admissionv1.Update, safe, vulnerable, false},
+		{"update accepts removal of vulnerable plugins", admissionv1.Update, vulnerable, safe, true},
+		{"delete accepts vulnerable plugins", admissionv1.Delete, vulnerable, nil, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := admission.Request{AdmissionRequest: admissionv1.AdmissionRequest{
+				Operation: tt.operation,
+				Kind:      metav1.GroupVersionKind{Group: "jenkins.io", Version: "v1alpha2", Kind: "Jenkins"},
+			}}
+			if tt.oldObj != nil {
+				raw, err := json.Marshal(tt.oldObj)
+				require.NoError(t, err)
+				req.OldObject = runtime.RawExtension{Raw: raw}
+			}
+			if tt.newObj != nil {
+				raw, err := json.Marshal(tt.newObj)
+				require.NoError(t, err)
+				req.Object = runtime.RawExtension{Raw: raw}
+			}
+			response := handler.Handle(context.Background(), req)
+			assert.Equal(t, tt.allowed, response.Allowed)
+			if !tt.allowed {
+				require.NotNil(t, response.Result)
+				assert.Contains(t, response.Result.Message, "sample-plugin:1.5")
+			}
+		})
 	}
 }
 

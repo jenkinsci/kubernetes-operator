@@ -70,6 +70,9 @@ var _ = Describe("Jenkins controller recovery", func() {
 		WaitForJenkinsBaseConfigurationToComplete(jenkins)
 		WaitForJenkinsUserConfigurationToComplete(jenkins)
 		Expect(getJenkins(jenkins.Namespace, jenkins.Name).UID).To(Equal(originalUID))
+		master := getJenkinsMasterPod(jenkins).Spec.Containers[0]
+		Expect(master.ReadinessProbe.HTTPGet.Path).To(Equal("/health"))
+		Expect(master.LivenessProbe.HTTPGet.Path).To(Equal("/health"))
 		jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 		defer cleanUpFunc()
 		_, err := jenkinsClient.ExecuteScript("assert jenkins.model.Jenkins.get().isQuietingDown() == false")
