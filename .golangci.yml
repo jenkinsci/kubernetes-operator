@@ -11,7 +11,7 @@ linters:
   default: none
   settings:
     staticcheck:
-      checks: ["all", "-ST*", "-QF*", "-SA1019"]
+      checks: ["all", "-ST*", "-QF*"]
     goconst:
       ignore-tests: true
   enable:
@@ -32,9 +32,6 @@ linters:
   exclusions:
     generated: lax
     rules:
-      - linters:
-          - staticcheck
-        text: '\.Requeue is deprecated'
       - linters:
           - dupl
         path: internal/*
