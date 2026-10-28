@@ -1,22 +1,5 @@
 include variables.mk
 
-LOCALBIN ?= $(shell pwd)/bin
-## Tool Versions
-GOLANGCI_LINT_VERSION ?= v2.12.2
-STATICCHECK_VERSION ?= v0.8.2
-GOIMPORTS_VERSION ?= v0.52.0
-CONTROLLER_TOOLS_VERSION ?= v0.23.0
-ENVTEST_VERSION ?= v0.0.0-20250626154428-7fd020cb5fc3
-KUSTOMIZE_VERSION ?= v5.3.0
-## Tool Binaries
-GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
-STATICCHECK ?= $(LOCALBIN)/staticcheck-$(STATICCHECK_VERSION)
-GOIMPORTS ?= $(LOCALBIN)/goimports-$(GOIMPORTS_VERSION)
-CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen-$(CONTROLLER_TOOLS_VERSION)
-ENVTEST ?= $(LOCALBIN)/setup-envtest-$(ENVTEST_VERSION)
-KUSTOMIZE ?= $(LOCALBIN)/kustomize-$(KUSTOMIZE_VERSION)
-OPERATOR_SDK ?= $(LOCALBIN)/operator-sdk-v$(OPERATOR_SDK_VERSION)
-
 define go-install-tool
 	@set -eu; tool_tmp=$$(mktemp -d); trap 'rm -rf "$$tool_tmp"' EXIT; \
 	GOBIN="$$tool_tmp" go install $(1)@$(2); \
