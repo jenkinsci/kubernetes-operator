@@ -40,13 +40,13 @@ func TestReconcileReturnsRetryableErrors(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
-			t.Cleanup(func() { delete(reconcileErrors, request.Name) })
+			t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 			r := &JenkinsReconciler{Client: failingReadClient{err: test.err}}
 			result, err := r.Reconcile(context.Background(), request)
 			require.ErrorIs(t, err, test.err)
 			require.Equal(t, ctrl.Result{}, result)
 			if apierrors.IsConflict(test.err) {
-				require.NotContains(t, reconcileErrors, request.Name)
+				require.NotContains(t, reconcileErrors, request.NamespacedName)
 			}
 		})
 	}
@@ -82,7 +82,7 @@ func TestReconcileStopsAfterTenIdenticalErrors(t *testing.T) {
 	events := make(chan event.Event, 1)
 	r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).WithObjects(jenkins).Build(), NotificationEvents: &events}
 	request := ctrl.Request{NamespacedName: client.ObjectKeyFromObject(jenkins)}
-	t.Cleanup(func() { delete(reconcileErrors, request.Name) })
+	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	for range 9 {
 		result, err := r.Reconcile(context.Background(), request)
 		require.Error(t, err)
@@ -101,7 +101,7 @@ func TestReconcileTerminalGroovyFailureNotifiesWithoutRetry(t *testing.T) {
 	events := make(chan event.Event, 1)
 	r := &JenkinsReconciler{NotificationEvents: &events}
 	request := ctrl.Request{NamespacedName: client.ObjectKeyFromObject(jenkins)}
-	t.Cleanup(func() { delete(reconcileErrors, request.Name) })
+	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	failure := &jenkinsclient.GroovyScriptExecutionFailed{ConfigurationType: "base-groovy", Source: "configmap", Name: "invalid.groovy", Logs: "syntax error"}
 	result, err := r.handleReconcileResult(request, ctrl.Result{}, jenkins, failure)
 	require.NoError(t, err)
@@ -115,7 +115,7 @@ func TestReconcileTerminalGroovyFailureNotifiesWithoutRetry(t *testing.T) {
 
 func TestReconcileReadFailureLimitDoesNotPanic(t *testing.T) {
 	request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
-	t.Cleanup(func() { delete(reconcileErrors, request.Name) })
+	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	r := &JenkinsReconciler{Client: failingReadClient{err: errors.New("API unavailable")}}
 	for range 9 {
 		_, err := r.Reconcile(context.Background(), request)
@@ -128,7 +128,7 @@ func TestReconcileReadFailureLimitDoesNotPanic(t *testing.T) {
 
 func TestReconcilePreservesDelayAndDiscardsItOnError(t *testing.T) {
 	request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
-	t.Cleanup(func() { delete(reconcileErrors, request.Name) })
+	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	r := &JenkinsReconciler{}
 	pending := ctrl.Result{RequeueAfter: 5 * time.Second}
 	result, err := r.handleReconcileResult(request, pending, nil, nil)
@@ -138,4 +138,67 @@ func TestReconcilePreservesDelayAndDiscardsItOnError(t *testing.T) {
 	result, err = r.handleReconcileResult(request, pending, nil, failure)
 	require.ErrorIs(t, err, failure)
 	require.Equal(t, ctrl.Result{}, result)
+}
+
+func TestReconcileFailureHistoryIsIsolatedByNamespace(t *testing.T) {
+	r := &JenkinsReconciler{}
+	failure := errors.New("API unavailable")
+	first := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "first"}}
+	second := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "second"}}
+	t.Cleanup(func() {
+		delete(reconcileErrors, first.NamespacedName)
+		delete(reconcileErrors, second.NamespacedName)
+	})
+	for range 9 {
+		_, err := r.handleReconcileResult(first, ctrl.Result{}, nil, failure)
+		require.ErrorIs(t, err, failure)
+	}
+	_, err := r.handleReconcileResult(second, ctrl.Result{}, nil, failure)
+	require.ErrorIs(t, err, failure)
+}
+
+func TestReconcileSuccessResetsFailureHistory(t *testing.T) {
+	for _, test := range []struct {
+		name   string
+		result ctrl.Result
+	}{
+		{name: "completed"},
+		{name: "polling", result: ctrl.Result{RequeueAfter: 5 * time.Second}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
+			t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
+			r := &JenkinsReconciler{}
+			failure := errors.New("API unavailable")
+			for range 9 {
+				_, err := r.handleReconcileResult(request, ctrl.Result{}, nil, failure)
+				require.ErrorIs(t, err, failure)
+			}
+			result, err := r.handleReconcileResult(request, test.result, nil, nil)
+			require.NoError(t, err)
+			require.Equal(t, test.result, result)
+			for range 9 {
+				_, err = r.handleReconcileResult(request, ctrl.Result{}, nil, failure)
+				require.ErrorIs(t, err, failure)
+			}
+		})
+	}
+}
+
+func TestReconcileDeletionResetsFailureHistory(t *testing.T) {
+	s := runtime.NewScheme()
+	require.NoError(t, v1alpha2.AddToScheme(s))
+	r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).Build()}
+	request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
+	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
+	failure := errors.New("API unavailable")
+	for range 9 {
+		_, err := r.handleReconcileResult(request, ctrl.Result{}, nil, failure)
+		require.ErrorIs(t, err, failure)
+	}
+	result, err := r.Reconcile(context.Background(), request)
+	require.NoError(t, err)
+	require.Equal(t, ctrl.Result{}, result)
+	_, err = r.handleReconcileResult(request, ctrl.Result{}, nil, failure)
+	require.ErrorIs(t, err, failure)
 }

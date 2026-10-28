@@ -59,7 +59,7 @@ const (
 	containerProbePortName = "http"
 )
 
-var reconcileErrors = map[string]reconcileError{}
+var reconcileErrors = map[client.ObjectKey]reconcileError{}
 var logx = log.Log
 
 // JenkinsReconciler reconciles a Jenkins object
@@ -152,7 +152,7 @@ func (r *JenkinsReconciler) handleReconcileResult(request ctrl.Request, result r
 	if err != nil && apierrors.IsConflict(err) {
 		return reconcile.Result{}, err
 	} else if err != nil {
-		lastErrors, found := reconcileErrors[request.Name]
+		lastErrors, found := reconcileErrors[request.NamespacedName]
 		if found {
 			if err.Error() == lastErrors.err.Error() {
 				lastErrors.counter++
@@ -166,7 +166,7 @@ func (r *JenkinsReconciler) handleReconcileResult(request ctrl.Request, result r
 				counter: 1,
 			}
 		}
-		reconcileErrors[request.Name] = lastErrors
+		reconcileErrors[request.NamespacedName] = lastErrors
 		if lastErrors.counter >= reconcileFailLimit {
 			if log.Debug {
 				logger.V(log.VWarn).Info(fmt.Sprintf("Reconcile loop failed %d times with the same errors, giving up: %+v", reconcileFailLimit, err))
@@ -209,6 +209,7 @@ func (r *JenkinsReconciler) handleReconcileResult(request ctrl.Request, result r
 		}
 		return reconcile.Result{}, err
 	}
+	delete(reconcileErrors, request.NamespacedName)
 	return result, nil
 }
 
