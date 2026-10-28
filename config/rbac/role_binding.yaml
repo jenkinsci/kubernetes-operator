@@ -5,8 +5,8 @@ metadata:
   name: manager-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: jenkins-operator
+  kind: ClusterRole
+  name: manager-role
 subjects:
 - kind: ServiceAccount
-  name: jenkins-operator
+  name: controller-manager

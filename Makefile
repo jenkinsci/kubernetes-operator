@@ -541,6 +541,7 @@ uninstall-crds: manifests kustomize
 .PHONY: deploy
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)
+	kubectl apply -f config/default/namespace.yaml
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config

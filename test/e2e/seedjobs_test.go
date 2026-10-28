@@ -18,6 +18,7 @@ import (
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 type seedJobConfig struct {
@@ -242,19 +243,51 @@ for (BuildStep step : jobRef.getBuildersList()) {
 }
 `))
 
-func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) {
+func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) *gojenkins.Build {
 	By("retrieving created Jenkins job")
 	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
 	Expect(err).To(BeNil())
 
 	By("running Jenkins job")
-	_, err = job.InvokeSimple(context.TODO(), map[string]string{})
+	queueID, err := job.InvokeSimple(context.TODO(), map[string]string{})
 	Expect(err).To(BeNil())
 
-	// FIXME: waitForJobToFinish use
-	By("waiting for the job to finish")
-	time.Sleep(100 * time.Second) // wait for the build to complete
+	By("waiting for the triggered build to finish successfully")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	build, err := waitForJobToFinish(ctx, job, queueID)
+	Expect(err).NotTo(HaveOccurred())
+	return build
 }
+func waitForJobToFinish(ctx context.Context, job *gojenkins.Job, queueID int64) (*gojenkins.Build, error) {
+	var build *gojenkins.Build
+	err := wait.PollUntilContextCancel(ctx, time.Second, true, func(ctx context.Context) (bool, error) {
+		if build == nil {
+			task, err := job.Jenkins.GetQueueItem(ctx, queueID)
+			if err != nil {
+				return false, err
+			}
+			if task.Raw.Executable.Number == 0 {
+				return false, nil
+			}
+			build, err = job.GetBuild(ctx, task.Raw.Executable.Number)
+			if err != nil {
+				return false, err
+			}
+		} else if _, err := build.Poll(ctx); err != nil {
+			return false, err
+		}
+		return !build.Info().Building && build.GetResult() != "", nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("waiting for queue item %d: %w", queueID, err)
+	}
+	if build.GetResult() != gojenkins.STATUS_SUCCESS {
+		return build, fmt.Errorf("build %d finished with %s\n%s", build.GetBuildNumber(), build.GetResult(), build.GetConsoleOutput(ctx))
+	}
+	return build, nil
+}
+
 func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("retrieving finished job")
 
@@ -277,5 +310,5 @@ func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID str
 
 		By("evaluating correctness of the outcome")
 		return build.IsGood(context.TODO()), err
-	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
+	}, 1100*time.Second, retryInterval).Should(BeTrue())
 }

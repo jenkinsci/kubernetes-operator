@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"reflect"
+	"slices"
 	"text/template"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -236,7 +236,7 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	}
 
 	seedJobIDs := s.getAllSeedJobIDs(*jenkins)
-	if !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
+	if !slices.Equal(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
 		// @ansh-devs fixed : calls to Update and Patch will not alter its status.
 		jenkins.Status.CreatedSeedJobs = seedJobIDs
 		return false, stackerr.WithStack(s.Client.Status().Update(context.TODO(), jenkins))

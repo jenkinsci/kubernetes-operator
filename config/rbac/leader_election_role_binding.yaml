@@ -9,4 +9,4 @@ roleRef:
   name: leader-election-role
 subjects:
 - kind: ServiceAccount
-  name: jenkins-operator
+  name: controller-manager

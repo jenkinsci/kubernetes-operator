@@ -17,6 +17,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -285,4 +286,16 @@ func TestSeedJobs_isRecreatePodNeeded(t *testing.T) {
 
 		assert.True(t, got)
 	})
+}
+
+func TestEnsureSeedJobsCompletesWithNoJobs(t *testing.T) {
+	testScheme := runtime.NewScheme()
+	assert.NoError(t, scheme.AddToScheme(testScheme))
+	assert.NoError(t, v1alpha2.AddToScheme(testScheme))
+	jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "no-seeds", Namespace: "default"}}
+	k8sClient := fake.NewClientBuilder().WithScheme(testScheme).WithStatusSubresource(jenkins).WithObjects(jenkins).Build()
+	reconciler := New(nil, configuration.Configuration{Client: k8sClient, Jenkins: jenkins})
+	done, err := reconciler.EnsureSeedJobs(jenkins)
+	assert.NoError(t, err)
+	assert.True(t, done, "no configured seed jobs must allow user configuration to complete")
 }

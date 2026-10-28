@@ -3,6 +3,7 @@ package e2e
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -248,7 +249,7 @@ func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	Eventually(func() (bool, error) {
 		jenkinsPod = getJenkinsMasterPod(jenkins)
 		return !jenkinsPod.CreationTimestamp.Equal(initialCreationTimestamp), nil
-	}, 45*retryInterval, retryInterval).Should(BeTrue())
+	}, 450*time.Second, retryInterval).Should(BeTrue())
 
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted\n")
 }
