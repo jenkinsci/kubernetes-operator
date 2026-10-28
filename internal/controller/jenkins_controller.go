@@ -19,9 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"reflect"
-	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -61,7 +59,7 @@ const (
 	containerProbePortName = "http"
 )
 
-var reconcileErrors = map[string]reconcileError{}
+var reconcileErrors = map[client.ObjectKey]reconcileError{}
 var logx = log.Log
 
 // JenkinsReconciler reconciles a Jenkins object
@@ -141,15 +139,20 @@ func (r *JenkinsReconciler) newJenkinsReconcilier(jenkins *v1alpha2.Jenkins) con
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.0/pkg/reconcile
 func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (ctrl.Result, error) {
-	reconcileFailLimit := uint64(10)
 	logger := logx.WithValues("cr", request.Name)
 	logger.V(log.VDebug).Info("Reconciling Jenkins")
 
 	result, jenkins, err := r.reconcile(request)
+	return r.handleReconcileResult(request, result, jenkins, err)
+}
+
+func (r *JenkinsReconciler) handleReconcileResult(request ctrl.Request, result reconcile.Result, jenkins *v1alpha2.Jenkins, err error) (reconcile.Result, error) {
+	reconcileFailLimit := uint64(10)
+	logger := logx.WithValues("cr", request.Name)
 	if err != nil && apierrors.IsConflict(err) {
-		return reconcile.Result{Requeue: true}, nil
+		return reconcile.Result{}, err
 	} else if err != nil {
-		lastErrors, found := reconcileErrors[request.Name]
+		lastErrors, found := reconcileErrors[request.NamespacedName]
 		if found {
 			if err.Error() == lastErrors.err.Error() {
 				lastErrors.counter++
@@ -163,7 +166,7 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 				counter: 1,
 			}
 		}
-		reconcileErrors[request.Name] = lastErrors
+		reconcileErrors[request.NamespacedName] = lastErrors
 		if lastErrors.counter >= reconcileFailLimit {
 			if log.Debug {
 				logger.V(log.VWarn).Info(fmt.Sprintf("Reconcile loop failed %d times with the same errors, giving up: %+v", reconcileFailLimit, err))
@@ -171,16 +174,18 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 				logger.V(log.VWarn).Info(fmt.Sprintf("Reconcile loop failed %d times with the same errors, giving up: %s", reconcileFailLimit, err))
 			}
 
-			*r.NotificationEvents <- event.Event{
-				Jenkins: *jenkins,
-				Phase:   event.PhaseBase,
-				Level:   v1alpha2.NotificationLevelWarning,
-				Reason: reason.NewReconcileLoopFailed(
-					reason.OperatorSource,
-					[]string{fmt.Sprintf("Reconcile loop failed %d times with the same errors, giving up: %s", reconcileFailLimit, err)},
-				),
+			if jenkins != nil {
+				*r.NotificationEvents <- event.Event{
+					Jenkins: *jenkins,
+					Phase:   event.PhaseBase,
+					Level:   v1alpha2.NotificationLevelWarning,
+					Reason: reason.NewReconcileLoopFailed(
+						reason.OperatorSource,
+						[]string{fmt.Sprintf("Reconcile loop failed %d times with the same errors, giving up: %s", reconcileFailLimit, err)},
+					),
+				}
 			}
-			return reconcile.Result{Requeue: false}, nil
+			return reconcile.Result{}, nil
 		}
 
 		if log.Debug {
@@ -200,13 +205,11 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 					[]string{fmt.Sprintf("%s Source '%s' Name '%s' groovy script execution failed, logs: %+v", groovyErr.ConfigurationType, groovyErr.Source, groovyErr.Name, groovyErr.Logs)}...,
 				),
 			}
-			return reconcile.Result{Requeue: false}, nil
+			return reconcile.Result{}, nil
 		}
-		return reconcile.Result{Requeue: true}, nil
+		return reconcile.Result{}, err
 	}
-	if result.Requeue && result.RequeueAfter == 0 {
-		result.RequeueAfter = time.Duration(rand.Intn(10)) * time.Second
-	}
+	delete(reconcileErrors, request.NamespacedName)
 	return result, nil
 }
 
@@ -232,7 +235,7 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 		return reconcile.Result{}, jenkins, err
 	}
 	if requeue {
-		return reconcile.Result{Requeue: true}, jenkins, nil
+		return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, jenkins, nil
 	}
 
 	config := r.newJenkinsReconcilier(jenkins)
@@ -265,11 +268,11 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 	if jenkinsClient == nil {
-		return reconcile.Result{Requeue: false}, jenkins, nil
+		return reconcile.Result{}, jenkins, nil
 	}
 
 	if jenkins.Status.BaseConfigurationCompletedTime == nil {
@@ -320,7 +323,7 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 
@@ -329,7 +332,7 @@ func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Resu
 	if err != nil {
 		return reconcile.Result{}, jenkins, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, jenkins, nil
 	}
 

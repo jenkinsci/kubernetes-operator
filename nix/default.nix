@@ -13,6 +13,7 @@
 }:
 
 buildGoApplication {
+  go = pkgs.go_1_26;
   pname = ((builtins.fromTOML (builtins.readFile ../config.base.env)).NAME);
   version = builtins.readFile ../VERSION.txt;
   pwd = ../.;

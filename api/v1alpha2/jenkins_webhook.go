@@ -18,8 +18,10 @@ package v1alpha2
 
 import (
 	"compress/gzip"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -32,15 +34,13 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 var (
-	jenkinslog                                                = logf.Log.WithName("jenkins-resource") // log is for logging in this package.
-	SecValidator                                              = *NewSecurityValidator()
-	_                                       webhook.Validator = &Jenkins{}
-	initialSecurityWarningsDownloadSucceded                   = false
+	jenkinslog                              = logf.Log.WithName("jenkins-resource") // log is for logging in this package.
+	SecValidator                            = *NewSecurityValidator()
+	initialSecurityWarningsDownloadSucceded = false
 )
 
 const (
@@ -54,7 +54,36 @@ const (
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(in).
+		WithValidator(&JenkinsCustomValidator{}).
 		Complete()
+}
+
+type JenkinsCustomValidator struct{}
+
+var _ admission.CustomValidator = &JenkinsCustomValidator{}
+
+func (*JenkinsCustomValidator) ValidateCreate(_ context.Context, obj runtime.Object) (admission.Warnings, error) {
+	jenkins, ok := obj.(*Jenkins)
+	if !ok || jenkins == nil {
+		return nil, fmt.Errorf("expected a Jenkins resource, got %T", obj)
+	}
+	return jenkins.ValidateCreate()
+}
+
+func (*JenkinsCustomValidator) ValidateUpdate(_ context.Context, oldObj, newObj runtime.Object) (admission.Warnings, error) {
+	jenkins, ok := newObj.(*Jenkins)
+	if !ok || jenkins == nil {
+		return nil, fmt.Errorf("expected a Jenkins resource, got %T", newObj)
+	}
+	return jenkins.ValidateUpdate(oldObj)
+}
+
+func (*JenkinsCustomValidator) ValidateDelete(_ context.Context, obj runtime.Object) (admission.Warnings, error) {
+	jenkins, ok := obj.(*Jenkins)
+	if !ok || jenkins == nil {
+		return nil, fmt.Errorf("expected a Jenkins resource, got %T", obj)
+	}
+	return jenkins.ValidateDelete()
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
