@@ -32,7 +32,7 @@ jobs:
         #TODO: add also the webhook part and understand if is necessary
       - name: Helm update plain manifests
         run: |
-          helm template --set fullnameOverride=jenkins-operator \
+          bin/helm template --set fullnameOverride=jenkins-operator \
           --set jenkins.enabled=false  \
           --set jenkins.backup.enabled=false \
           --set jenkins.backup.pvc.enabled=false \

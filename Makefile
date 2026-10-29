@@ -553,6 +553,8 @@ undeploy:
 .PHONY: manifests
 manifests: controller-gen
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	cp config/crd/bases/jenkins.io_jenkins.yaml chart/jenkins-operator/crds/jenkins-crd.yaml
+	cp config/crd/bases/jenkins.io_jenkins.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
 # Generate code
 .PHONY: generate
