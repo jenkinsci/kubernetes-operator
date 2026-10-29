@@ -5,6 +5,7 @@ go 1.26.0
 require (
 	github.com/bndr/gojenkins v1.2.0
 	github.com/distribution/reference v0.6.0
+	github.com/dlclark/regexp2/v2 v2.12.0
 	github.com/go-logr/logr v1.4.4
 	github.com/go-logr/zapr v1.3.0
 	github.com/golang/mock v1.6.0
@@ -16,7 +17,6 @@ require (
 	github.com/stretchr/testify v1.12.1
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.58.0
-	golang.org/x/mod v0.41.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	k8s.io/api v0.37.1
 	k8s.io/apimachinery v0.37.1
