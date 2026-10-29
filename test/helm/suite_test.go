@@ -2,6 +2,7 @@ package helm
 
 import (
 	"flag"
+	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/test/e2e"
@@ -27,13 +28,12 @@ func init() {
 	imageName = flag.String("image-name", "", "Name of the locally built for testing Jenkins Operator Image.")
 }
 
-// func TestHelm(t *testing.T) {
-// 	RegisterFailHandler(Fail)
+func TestHelm(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Helm Suite")
+}
 
-// 	RunSpecs(t, "Controller Suite")
-// }
-
-var _ = BeforeSuite(func(done Done) {
+var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(false)))
 
 	By("bootstrapping test environment")
@@ -47,15 +47,17 @@ var _ = BeforeSuite(func(done Done) {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 	//TODO @ansh-devs
-	some := runtime.NewScheme()
-	err = v1alpha2.AddToScheme(some)
+	testScheme := runtime.NewScheme()
+	err = scheme.AddToScheme(testScheme)
+	Expect(err).NotTo(HaveOccurred())
+	err = v1alpha2.AddToScheme(testScheme)
 	Expect(err).NotTo(HaveOccurred())
 
 	// +kubebuilder:scaffold:scheme
 
 	// setup manager
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme:  scheme.Scheme,
+		Scheme:  testScheme,
 		Metrics: metricsserver.Options{BindAddress: "0"},
 	})
 	Expect(err).NotTo(HaveOccurred())
@@ -65,10 +67,10 @@ var _ = BeforeSuite(func(done Done) {
 		Expect(err).NotTo(HaveOccurred())
 	}()
 
+	e2e.Cfg = cfg
 	e2e.K8sClient = k8sManager.GetClient()
 	Expect(e2e.K8sClient).NotTo(BeNil())
-	close(done)
-}, 60)
+})
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")

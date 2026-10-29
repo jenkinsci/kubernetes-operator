@@ -52,38 +52,34 @@ const (
 )
 
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewWebhookManagedBy(mgr).
-		For(in).
+	return ctrl.NewWebhookManagedBy(mgr, in).
 		WithValidator(&JenkinsCustomValidator{}).
 		Complete()
 }
 
 type JenkinsCustomValidator struct{}
 
-var _ admission.CustomValidator = &JenkinsCustomValidator{}
+var _ admission.Validator[*Jenkins] = &JenkinsCustomValidator{}
 
-func (*JenkinsCustomValidator) ValidateCreate(_ context.Context, obj runtime.Object) (admission.Warnings, error) {
-	jenkins, ok := obj.(*Jenkins)
-	if !ok || jenkins == nil {
+func (*JenkinsCustomValidator) ValidateCreate(_ context.Context, obj *Jenkins) (admission.Warnings, error) {
+	if obj == nil {
 		return nil, fmt.Errorf("expected a Jenkins resource, got %T", obj)
 	}
-	return jenkins.ValidateCreate()
+	return obj.ValidateCreate()
 }
 
-func (*JenkinsCustomValidator) ValidateUpdate(_ context.Context, oldObj, newObj runtime.Object) (admission.Warnings, error) {
-	jenkins, ok := newObj.(*Jenkins)
-	if !ok || jenkins == nil {
+func (*JenkinsCustomValidator) ValidateUpdate(_ context.Context, oldObj, newObj *Jenkins) (admission.Warnings, error) {
+	if newObj == nil {
 		return nil, fmt.Errorf("expected a Jenkins resource, got %T", newObj)
 	}
-	return jenkins.ValidateUpdate(oldObj)
+	return newObj.ValidateUpdate(oldObj)
 }
 
-func (*JenkinsCustomValidator) ValidateDelete(_ context.Context, obj runtime.Object) (admission.Warnings, error) {
-	jenkins, ok := obj.(*Jenkins)
-	if !ok || jenkins == nil {
+func (*JenkinsCustomValidator) ValidateDelete(_ context.Context, obj *Jenkins) (admission.Warnings, error) {
+	if obj == nil {
 		return nil, fmt.Errorf("expected a Jenkins resource, got %T", obj)
 	}
-	return jenkins.ValidateDelete()
+	return obj.ValidateDelete()
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.

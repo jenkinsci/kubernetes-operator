@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/internal/testutil"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 
@@ -18,7 +19,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 type failingReadClient struct {
@@ -57,7 +57,7 @@ func TestReconcileDefaultingSchedulesPositiveJitter(t *testing.T) {
 	require.NoError(t, v1alpha2.AddToScheme(s))
 	for range 100 {
 		jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "example", Namespace: "default"}}
-		r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).WithObjects(jenkins).Build()}
+		r := &JenkinsReconciler{Client: testutil.NewClientBuilder().WithScheme(s).WithObjects(jenkins).Build()}
 		result, err := r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(jenkins)})
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, result.RequeueAfter, time.Second)
@@ -69,7 +69,7 @@ func TestReconcileDefaultingSchedulesPositiveJitter(t *testing.T) {
 func TestReconcileDeletedJenkinsDoesNotRetry(t *testing.T) {
 	s := runtime.NewScheme()
 	require.NoError(t, v1alpha2.AddToScheme(s))
-	r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).Build()}
+	r := &JenkinsReconciler{Client: testutil.NewClientBuilder().WithScheme(s).Build()}
 	result, err := r.Reconcile(context.Background(), ctrl.Request{NamespacedName: types.NamespacedName{Name: "deleted", Namespace: "default"}})
 	require.NoError(t, err)
 	require.Equal(t, ctrl.Result{}, result)
@@ -80,7 +80,7 @@ func TestReconcileStopsAfterTenIdenticalErrors(t *testing.T) {
 	require.NoError(t, v1alpha2.AddToScheme(s))
 	jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: t.Name(), Namespace: "default"}, Spec: v1alpha2.JenkinsSpec{Master: v1alpha2.JenkinsMaster{Containers: []v1alpha2.Container{{Name: "invalid"}}}}}
 	events := make(chan event.Event, 1)
-	r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).WithObjects(jenkins).Build(), NotificationEvents: &events}
+	r := &JenkinsReconciler{Client: testutil.NewClientBuilder().WithScheme(s).WithObjects(jenkins).Build(), NotificationEvents: &events}
 	request := ctrl.Request{NamespacedName: client.ObjectKeyFromObject(jenkins)}
 	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	for range 9 {
@@ -188,7 +188,7 @@ func TestReconcileSuccessResetsFailureHistory(t *testing.T) {
 func TestReconcileDeletionResetsFailureHistory(t *testing.T) {
 	s := runtime.NewScheme()
 	require.NoError(t, v1alpha2.AddToScheme(s))
-	r := &JenkinsReconciler{Client: fake.NewClientBuilder().WithScheme(s).Build()}
+	r := &JenkinsReconciler{Client: testutil.NewClientBuilder().WithScheme(s).Build()}
 	request := ctrl.Request{NamespacedName: types.NamespacedName{Name: t.Name(), Namespace: "default"}}
 	t.Cleanup(func() { delete(reconcileErrors, request.NamespacedName) })
 	failure := errors.New("API unavailable")

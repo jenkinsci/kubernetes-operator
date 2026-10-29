@@ -61,7 +61,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.latestPlugins | bool | `true` |  |
 | jenkins.lifecycle | object | `{}` |  |
 | jenkins.livenessProbe.failureThreshold | int | `20` |  |
-| jenkins.livenessProbe.httpGet.path | string | `"/login"` |  |
+| jenkins.livenessProbe.httpGet.path | string | `"/health"` |  |
 | jenkins.livenessProbe.httpGet.port | string | `"http"` |  |
 | jenkins.livenessProbe.httpGet.scheme | string | `"HTTP"` |  |
 | jenkins.livenessProbe.initialDelaySeconds | int | `100` |  |
@@ -75,7 +75,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.plugins | list | `[]` |  |
 | jenkins.priorityClassName | string | `""` |  |
 | jenkins.readinessProbe.failureThreshold | int | `60` |  |
-| jenkins.readinessProbe.httpGet.path | string | `"/login"` |  |
+| jenkins.readinessProbe.httpGet.path | string | `"/health"` |  |
 | jenkins.readinessProbe.httpGet.port | string | `"http"` |  |
 | jenkins.readinessProbe.httpGet.scheme | string | `"HTTP"` |  |
 | jenkins.readinessProbe.initialDelaySeconds | int | `120` |  |

@@ -37,7 +37,7 @@ func TestAPIs(t *testing.T) {
 	RunSpecs(t, "Controller Suite")
 }
 
-var _ = BeforeSuite(func(done Done) {
+var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(false)))
 
 	By("bootstrapping test environment")
@@ -99,8 +99,7 @@ var _ = BeforeSuite(func(done Done) {
 
 	K8sClient = k8sManager.GetClient()
 	Expect(K8sClient).NotTo(BeNil())
-	close(done)
-}, 60)
+})
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")

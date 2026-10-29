@@ -104,7 +104,10 @@ e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests
 jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
 	@echo "+ $@"
 	docker pull jenkins/jenkins:$(LATEST_LTS_VERSION)
-	kind load docker-image jenkins/jenkins:$(LATEST_LTS_VERSION) --name $(KIND_CLUSTER_NAME)
+	@set -eu; image_archive=$$(mktemp); trap 'rm -f "$$image_archive"' EXIT; \
+	image_platform=$$(docker image inspect jenkins/jenkins:$(LATEST_LTS_VERSION) --format '{{.Os}}/{{.Architecture}}'); \
+	docker image save --platform "$$image_platform" --output "$$image_archive" jenkins/jenkins:$(LATEST_LTS_VERSION); \
+	kind load image-archive "$$image_archive" --name $(KIND_CLUSTER_NAME)
 
 ## Backup Section
 
@@ -116,19 +119,15 @@ backup-kind-load: ## Load latest backup image in the cluster
 ## HELM Section
 
 .PHONY: helm
-HAS_HELM := $(shell command -v helm 2> /dev/null)
-helm: ## Download helm if it's not present, otherwise symlink
+helm: ## Install the configured Helm version locally
 	@echo "+ $@"
-ifeq ($(strip $(HAS_HELM)),)
-	mkdir -p $(PROJECT_DIR)/bin
-	curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
-else
-	mkdir -p $(PROJECT_DIR)/bin
-	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
-endif
+	@set -eu; \
+	if [ "$$($(PROJECT_DIR)/bin/helm version --template '{{.Version}}' 2>/dev/null || true)" = "v$(HELM_VERSION)" ]; then exit 0; fi; \
+	mkdir -p $(PROJECT_DIR)/bin; \
+	helm_tmp=$$(mktemp -d $(PROJECT_DIR)/bin/helm.XXXXXX); trap 'rm -rf "$$helm_tmp"' EXIT; \
+	curl -fsSL https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz -o "$$helm_tmp/helm.tar.gz"; \
+	tar -xzf "$$helm_tmp/helm.tar.gz" -C "$$helm_tmp"; \
+	mv "$$helm_tmp/$(PLATFORM)-amd64/helm" $(PROJECT_DIR)/bin/helm
 
 .PHONY: helm-lint
 helm-lint: helm
@@ -416,17 +415,18 @@ kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
 .PHONY: bats-tests ## Run bats tests
+bats-tests: helm
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
 bats-tests: backup-kind-load container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
+	PATH="$(PROJECT_DIR)/bin:$(PATH)" OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 else
 bats-tests: backup-kind-load
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
+	PATH="$(PROJECT_DIR)/bin:$(PATH)" OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 endif
 
 .PHONY: crc-start
@@ -541,6 +541,7 @@ uninstall-crds: manifests kustomize
 .PHONY: deploy
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)
+	kubectl apply -f config/default/namespace.yaml
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config
@@ -552,6 +553,8 @@ undeploy:
 .PHONY: manifests
 manifests: controller-gen
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	cp config/crd/bases/jenkins.io_jenkins.yaml chart/jenkins-operator/crds/jenkins-crd.yaml
+	cp config/crd/bases/jenkins.io_jenkins.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
 # Generate code
 .PHONY: generate

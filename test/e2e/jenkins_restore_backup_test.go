@@ -4,6 +4,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	// +kubebuilder:scaffold:imports
 )
@@ -38,7 +39,11 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()
 			waitForJobCreation(jenkinsClient, jobID)
-			verifyJobCanBeRun(jenkinsClient, jobID)
+			artifactContents := "backup payload for " + namespace.Name
+			configureBackupTestJob(jenkinsClient, jobID, artifactContents)
+			build := verifyJobCanBeRun(jenkinsClient, jobID)
+			verifyBackupArtifact(build, artifactContents)
+			backupNumber := waitForBackupAfterBuild(jenkins)
 
 			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 			restartJenkinsMasterPod(jenkins)
@@ -47,7 +52,8 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			jenkinsClient2, cleanUpFunc2 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc2()
 			waitForJobCreation(jenkinsClient2, jobID)
-			verifyJobBuildsAfterRestoreBackup(jenkinsClient2, jobID)
+			verifyJobBuildsAfterRestoreBackup(jenkinsClient2, jobID, build.GetBuildNumber(), artifactContents)
+			Expect(getJenkins(jenkins.Namespace, jenkins.Name).Status.RestoredBackup).To(BeNumerically(">=", backupNumber))
 
 			resetJenkinsStatus(jenkins)
 			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
@@ -56,7 +62,8 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			jenkinsClient3, cleanUpFunc3 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc3()
 			waitForJobCreation(jenkinsClient3, jobID)
-			verifyJobBuildsAfterRestoreBackup(jenkinsClient3, jobID)
+			verifyJobBuildsAfterRestoreBackup(jenkinsClient3, jobID, build.GetBuildNumber(), artifactContents)
+			Expect(getJenkins(jenkins.Namespace, jenkins.Name).Status.RestoredBackup).To(BeNumerically(">=", backupNumber))
 		})
 	})
 })

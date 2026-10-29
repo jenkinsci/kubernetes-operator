@@ -120,7 +120,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 			&corev1.Probe{
 				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
-						Path: "/login",
+						Path: "/health",
 					},
 				},
 			}
@@ -129,15 +129,15 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 			&corev1.Probe{
 				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
-						Path: "/login",
+						Path: "/health",
 					},
 				},
 			}
 
 		setLivenessAndReadinessPath(&jenkins)
 
-		assert.Equal(t, httpGetPath, jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
-		assert.Equal(t, httpGetPath, jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
+		assert.Equal(t, "/health", jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
+		assert.Equal(t, "/health", jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
 	})
 
 	t.Run("JENKINS_OPTS initialized. Probes' paths default", func(t *testing.T) {
@@ -150,7 +150,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 			&corev1.Probe{
 				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
-						Path: "/login",
+						Path: "/health",
 					},
 				},
 			}
@@ -159,15 +159,15 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 			&corev1.Probe{
 				ProbeHandler: corev1.ProbeHandler{
 					HTTPGet: &corev1.HTTPGetAction{
-						Path: "/login",
+						Path: "/health",
 					},
 				},
 			}
 
 		setLivenessAndReadinessPath(&jenkins)
 
-		assert.Equal(t, "/jenkins/login", jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
-		assert.Equal(t, "/jenkins/login", jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
+		assert.Equal(t, "/jenkins/health", jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
+		assert.Equal(t, "/jenkins/health", jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
 	})
 
 	t.Run("JENKINS_OPTS initialized. Probes' paths customized", func(t *testing.T) {
@@ -223,7 +223,7 @@ func TestSetLivenessAndReadinessPath(t *testing.T) {
 
 		setLivenessAndReadinessPath(&jenkins)
 
-		assert.Equal(t, "/login", jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
-		assert.Equal(t, "/login", jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
+		assert.Equal(t, "/jenkins/login", jenkins.Spec.Master.Containers[0].ReadinessProbe.HTTPGet.Path)
+		assert.Equal(t, "/jenkins/login", jenkins.Spec.Master.Containers[0].LivenessProbe.HTTPGet.Path)
 	})
 }
