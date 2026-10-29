@@ -104,7 +104,10 @@ e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests
 jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
 	@echo "+ $@"
 	docker pull jenkins/jenkins:$(LATEST_LTS_VERSION)
-	kind load docker-image jenkins/jenkins:$(LATEST_LTS_VERSION) --name $(KIND_CLUSTER_NAME)
+	@set -eu; image_archive=$$(mktemp); trap 'rm -f "$$image_archive"' EXIT; \
+	image_platform=$$(docker image inspect jenkins/jenkins:$(LATEST_LTS_VERSION) --format '{{.Os}}/{{.Architecture}}'); \
+	docker image save --platform "$$image_platform" --output "$$image_archive" jenkins/jenkins:$(LATEST_LTS_VERSION); \
+	kind load image-archive "$$image_archive" --name $(KIND_CLUSTER_NAME)
 
 ## Backup Section
 
