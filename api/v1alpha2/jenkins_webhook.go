@@ -17,20 +17,20 @@ limitations under the License.
 package v1alpha2
 
 import (
-	"compress/gzip"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
+	"slices"
+	"sync"
 	"time"
 
+	"github.com/dlclark/regexp2/v2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/plugins"
 
-	"golang.org/x/mod/semver"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -41,14 +41,14 @@ var (
 	jenkinslog                              = logf.Log.WithName("jenkins-resource") // log is for logging in this package.
 	SecValidator                            = *NewSecurityValidator()
 	initialSecurityWarningsDownloadSucceded = false
+	securityWarningsMutex                   sync.RWMutex
 )
 
 const (
-	Hosturl                      = "https://reports.jenkins.io/plugin-site-api/plugins.json.gzip"
-	PluginDataFileCompressedPath = "/tmp/plugins.json.gzip"
-	PluginDataFile               = "/tmp/plugins.json"
-	shortenedCheckingPeriod      = 1 * time.Hour
-	defaultCheckingPeriod        = 12 * time.Minute
+	Hosturl                 = "https://updates.jenkins.io/update-center.actual.json"
+	warningMatchTimeout     = 100 * time.Millisecond
+	shortenedCheckingPeriod = 1 * time.Hour
+	defaultCheckingPeriod   = 12 * time.Minute
 )
 
 func (in *Jenkins) SetupWebhookWithManager(mgr ctrl.Manager) error {
@@ -135,6 +135,7 @@ type Warning struct {
 }
 
 type Version struct {
+	Pattern      string `json:"pattern"`
 	FirstVersion string `json:"firstVersion"`
 	LastVersion  string `json:"lastVersion"`
 }
@@ -146,46 +147,41 @@ type PluginData struct {
 
 // Validates security warnings for both updating and creating a Jenkins CR
 func Validate(r Jenkins) error {
-	if !SecValidator.isCached {
+	securityWarningsMutex.RLock()
+	isCached, pluginDataCache := SecValidator.isCached, SecValidator.PluginDataCache
+	securityWarningsMutex.RUnlock()
+	if !isCached {
 		return errors.New("plugins data has not been fetched")
 	}
 
-	pluginSet := make(map[string]PluginData)
+	pluginSet := make(map[string][]PluginData)
 	var faultyBasePlugins string
 	var faultyUserPlugins string
 	basePlugins := plugins.BasePlugins()
 
 	for _, plugin := range basePlugins {
-		// Only Update the map if the plugin is not present or a lower version is being used
-		if pluginData, ispresent := pluginSet[plugin.Name]; !ispresent || semver.Compare(makeSemanticVersion(plugin.Version), pluginData.Version) == 1 {
-			pluginSet[plugin.Name] = PluginData{Version: plugin.Version, Kind: "base"}
-		}
+		pluginSet[plugin.Name] = append(pluginSet[plugin.Name], PluginData{Version: plugin.Version, Kind: "base"})
 	}
 
 	for _, plugin := range r.Spec.Master.Plugins {
-		if pluginData, ispresent := pluginSet[plugin.Name]; !ispresent || semver.Compare(makeSemanticVersion(plugin.Version), pluginData.Version) == 1 {
-			pluginSet[plugin.Name] = PluginData{Version: plugin.Version, Kind: "user-defined"}
+		// Check each requested version; Jenkins plugin versions are not semantic versions.
+		if !slices.ContainsFunc(pluginSet[plugin.Name], func(data PluginData) bool { return data.Version == plugin.Version }) {
+			pluginSet[plugin.Name] = append(pluginSet[plugin.Name], PluginData{Version: plugin.Version, Kind: "user-defined"})
 		}
 	}
 
-	for _, plugin := range SecValidator.PluginDataCache.Plugins {
-		if pluginData, ispresent := pluginSet[plugin.Name]; ispresent {
+	for _, plugin := range pluginDataCache.Plugins {
+		for _, pluginData := range pluginSet[plugin.Name] {
 			var hasVulnerabilities bool
 			for _, warning := range plugin.SecurityWarnings {
-				for _, version := range warning.Versions {
-					firstVersion := version.FirstVersion
-					lastVersion := version.LastVersion
-					if len(firstVersion) == 0 {
-						firstVersion = "0" // setting default value in case of empty string
-					}
-					if len(lastVersion) == 0 {
-						lastVersion = pluginData.Version // setting default value in case of empty string
-					}
-					// checking if this warning applies to our version as well
-					if compareVersions(firstVersion, lastVersion, pluginData.Version) {
-						jenkinslog.Info("Security Vulnerability detected in "+pluginData.Kind+" "+plugin.Name+":"+pluginData.Version, "Warning message", warning.Message, "For more details,check security advisory", warning.URL)
-						hasVulnerabilities = true
-					}
+				// checking if this warning applies to our version as well
+				affected, err := warning.affectsVersion(pluginData.Version)
+				if err != nil {
+					return fmt.Errorf("cannot evaluate security warning %s for %s:%s: %w", warning.ID, plugin.Name, pluginData.Version, err)
+				}
+				if affected {
+					jenkinslog.Info("Security Vulnerability detected in "+pluginData.Kind+" "+plugin.Name+":"+pluginData.Version, "Warning message", warning.Message, "For more details,check security advisory", warning.URL)
+					hasVulnerabilities = true
 				}
 			}
 
@@ -236,166 +232,131 @@ func (in *SecurityValidator) checkForSecurityVulnerabilities(securityWarningsFet
 		in.checkingPeriod = shortenedCheckingPeriod
 		return
 	}
-	in.isCached = true
 	in.checkingPeriod = defaultCheckingPeriod
 
 	// should only be executed once when the operator starts
 	if !initialSecurityWarningsDownloadSucceded {
-		securityWarningsFetched <- in.isCached
+		securityWarningsFetched <- true
 		initialSecurityWarningsDownloadSucceded = true
 	}
 }
 
-// Downloads extracts and reads the JSON data in every 12 hours
+// Downloads and reads the update-center JSON data.
 func (in *SecurityValidator) fetchPluginData() error {
 	jenkinslog.Info("Initializing/Updating the plugin data cache")
 	var err error
 	for in.Attempts = 0; in.Attempts < 5; in.Attempts++ {
-		err = in.download()
+		var candidate PluginsInfo
+		candidate, err = in.download()
 		if err != nil {
-			jenkinslog.V(log.VDebug).Info("Cache Plugin Data", "failed to download file", err)
+			jenkinslog.V(log.VDebug).Info("Cache Plugin Data", "failed to download plugin data", err)
 			continue
 		}
-		break
+		securityWarningsMutex.Lock()
+		in.PluginDataCache = candidate
+		in.isCached = true
+		securityWarningsMutex.Unlock()
+		return nil
 	}
-
-	if err != nil {
-		return err
-	}
-
-	for in.Attempts = 0; in.Attempts < 5; in.Attempts++ {
-		err = in.extract()
-		if err != nil {
-			jenkinslog.V(log.VDebug).Info("Cache Plugin Data", "failed to extract file", err)
-			continue
-		}
-		break
-	}
-
-	if err != nil {
-		return err
-	}
-
-	for in.Attempts = 0; in.Attempts < 5; in.Attempts++ {
-		err = in.cache()
-		if err != nil {
-			jenkinslog.V(log.VDebug).Info("Cache Plugin Data", "failed to read plugin data file", err)
-			continue
-		}
-		break
-	}
-
 	return err
 }
 
-func (in *SecurityValidator) download() error {
-	pluginDataFileCompressed, err := os.Create(PluginDataFileCompressedPath)
-	if err != nil {
-		return err
-	}
-
-	// ensure pluginDataFileCompressed is closed
-	defer func() {
-		if err := pluginDataFileCompressed.Close(); err != nil {
-			jenkinslog.V(log.VDebug).Info("Failed to close SecurityValidator.download io", "error", err)
-		}
-	}()
-
+func (in *SecurityValidator) download() (PluginsInfo, error) {
 	req, err := http.NewRequest(http.MethodGet, Hosturl, nil)
 	if err != nil {
-		return err
+		return PluginsInfo{}, err
 	}
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 
-	Client := http.Client{
-		Timeout: 1 * time.Minute,
-	}
-
-	response, err := Client.Do(req)
+	client := http.Client{Timeout: 1 * time.Minute}
+	response, err := client.Do(req)
 	if err != nil {
-		return err
+		return PluginsInfo{}, err
 	}
-
 	defer httpResponseCloser(response)
+	if response.StatusCode != http.StatusOK {
+		return PluginsInfo{}, fmt.Errorf("download plugin data: HTTP %s", response.Status)
+	}
 
-	_, err = io.Copy(pluginDataFileCompressed, response.Body)
-
-	return err
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		return PluginsInfo{}, fmt.Errorf("read plugin data: %w", err)
+	}
+	return parsePluginWarnings(data)
 }
 
-func (in *SecurityValidator) extract() error {
-	reader, err := os.Open(PluginDataFileCompressedPath)
-
-	if err != nil {
-		return err
+// Loads the JSON data into memory and stores it in a candidate cache.
+func parsePluginWarnings(data []byte) (PluginsInfo, error) {
+	var metadata struct {
+		Warnings []struct {
+			Warning
+			Name string `json:"name"`
+			Type string `json:"type"`
+		} `json:"warnings"`
 	}
-	defer func() {
-		if err := reader.Close(); err != nil {
-			log.Log.Error(err, "failed to close SecurityValidator.extract.reader ")
-		}
-	}()
-
-	archive, err := gzip.NewReader(reader)
-	if err != nil {
-		return err
+	if err := json.Unmarshal(data, &metadata); err != nil {
+		return PluginsInfo{}, fmt.Errorf("decode update-center JSON: %w", err)
 	}
-
-	defer func() {
-		if err := archive.Close(); err != nil {
-			log.Log.Error(err, "failed to close SecurityValidator.extract.archive ")
-		}
-	}()
-	writer, err := os.Create(PluginDataFile)
-	if err != nil {
-		return err
+	if metadata.Warnings == nil {
+		return PluginsInfo{}, errors.New("update-center JSON has no warnings array")
 	}
 
-	defer func() {
-		if err := writer.Close(); err != nil {
-			log.Log.Error(err, "failed to close SecurityValidator.extract.writer")
+	candidate := PluginsInfo{}
+	pluginIndexes := make(map[string]int)
+	for _, warning := range metadata.Warnings {
+		if warning.Type != "plugin" {
+			continue
 		}
-	}()
-
-	_, err = io.Copy(writer, archive)
-	return err
+		if warning.Name == "" {
+			return PluginsInfo{}, fmt.Errorf("security warning %s has no plugin name", warning.ID)
+		}
+		for _, version := range warning.Versions {
+			if _, err := compileWarningPattern(version.Pattern); err != nil {
+				return PluginsInfo{}, fmt.Errorf("invalid pattern for security warning %s: %w", warning.ID, err)
+			}
+		}
+		index, exists := pluginIndexes[warning.Name]
+		if !exists {
+			index = len(candidate.Plugins)
+			pluginIndexes[warning.Name] = index
+			candidate.Plugins = append(candidate.Plugins, PluginInfo{Name: warning.Name})
+		}
+		candidate.Plugins[index].SecurityWarnings = append(candidate.Plugins[index].SecurityWarnings, warning.Warning)
+	}
+	return candidate, nil
 }
 
-// Loads the JSON data into memory and stores it
-func (in *SecurityValidator) cache() error {
-	jsonFile, err := os.Open(PluginDataFile)
-	if err != nil {
-		return err
+func compileWarningPattern(pattern string) (*regexp2.Regexp, error) {
+	if pattern == "" {
+		return nil, errors.New("missing version pattern")
 	}
-	defer func() {
-		if err := jsonFile.Close(); err != nil {
-			log.Log.Error(err, "failed to close SecurityValidator.cache.jsonFile")
+	// Jenkins uses Matcher.matches(), which requires the entire version to match.
+	compiled, err := regexp2.Compile(`\A(?:` + pattern + `)\z`)
+	if err != nil {
+		return nil, err
+	}
+	compiled.MatchTimeout = warningMatchTimeout
+	return compiled, nil
+}
+
+func (in Warning) affectsVersion(version string) (bool, error) {
+	if len(in.Versions) == 0 {
+		return true, nil
+	}
+	for _, affected := range in.Versions {
+		pattern, err := compileWarningPattern(affected.Pattern)
+		if err != nil {
+			return false, err
 		}
-	}()
-	byteValue, err := io.ReadAll(jsonFile)
-	if err != nil {
-		return err
+		matches, err := pattern.MatchString(version)
+		if err != nil {
+			return false, err
+		}
+		if matches {
+			return true, nil
+		}
 	}
-	err = json.Unmarshal(byteValue, &in.PluginDataCache)
-	return err
-}
-
-// returns a semantic version that can be used for comparison, allowed versioning format vMAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH
-func makeSemanticVersion(version string) string {
-	if version[0] != 'v' {
-		version = "v" + version
-	}
-	return semver.Canonical(version)
-}
-
-// Compare if the current version lies between first version and last version
-func compareVersions(firstVersion string, lastVersion string, pluginVersion string) bool {
-	firstSemVer := makeSemanticVersion(firstVersion)
-	lastSemVer := makeSemanticVersion(lastVersion)
-	pluginSemVer := makeSemanticVersion(pluginVersion)
-	if semver.Compare(pluginSemVer, firstSemVer) == -1 || semver.Compare(pluginSemVer, lastSemVer) == 1 {
-		return false
-	}
-	return true
+	return false, nil
 }
 
 func httpResponseCloser(response *http.Response) {
