@@ -4,9 +4,6 @@ let
   buildPackages = [
     hugo_099_pkgs.hugo #hugo pre-v100
     pkgs.nodejs_22 #Node 1.22
-    pkgs.nodePackages.autoprefixer
-    pkgs.nodePackages.postcss
-    pkgs.nodePackages.postcss-cli
   ];
   baseUrl = ((builtins.fromTOML (builtins.readFile ../website/config.toml)).baseURL);
 in

@@ -178,6 +178,10 @@ cover: ## Runs go test with coverage
 verify: fmt lint test staticcheck vet ## Verify the code
 	@echo "+ $@"
 
+.PHONY: update-nix-hashes
+update-nix-hashes: ## Refresh Go and website Nix dependency hashes
+	nix run .#update-nix-hashes
+
 .PHONY: install
 install: ## Installs the executable
 	@echo "+ $@"
