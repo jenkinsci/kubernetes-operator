@@ -2,6 +2,10 @@
 SHELL := /bin/sh
 PATH  := $(GOPATH)/bin:$(PATH)
 
+# Platforms to build multi-arch images for
+PLATFORMS ?= linux/amd64,linux/arm64
+BUILDX_OUTPUT ?= type=registry
+
 # Import config
 # You can change the default config with `make config="config_special.env" build`
 config ?= config.env
@@ -34,6 +38,11 @@ ARGS ?= $(EXTRA_ARGS)
 .PHONY: all
 all: status checkmake clean build verify install docker-build docker-images ## Build the image
 	@echo "+ $@"
+
+.PHONY: docker-buildx-create
+docker-buildx-create: ## Create a buildx builder instance for multi-arch builds
+	@echo "+ $@"
+	docker buildx create --name backup-pvc-builder --driver=docker-container --use || docker buildx use backup-pvc-builder
 
 .PHONY: check-env
 check-env: ## Checks the environment variables
@@ -68,12 +77,17 @@ endif
 
 define e2e
 echo "\nRunning $(1) e2e test";
-@e2e/$(1)/test.sh quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT)
+@bash e2e/$(1)/test.sh quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT)
 endef
 
 .PHONY: docker-e2e
 E2E_TESTS := $(shell ls e2e)
 docker-e2e: docker-build-e2e ## Make e2e tests for docker image
+	@echo "+ $@"
+	$(MAKE) docker-test
+
+.PHONY: docker-test
+docker-test: ## Run e2e tests against the existing image
 	@echo "+ $@"
 	$(foreach TEST_NAME,$(E2E_TESTS), $(call e2e,$(TEST_NAME)))
 
@@ -87,9 +101,24 @@ docker-build-e2e: GID=1001
 docker-build-e2e: docker-build
 
 .PHONY: docker-build
-docker-build: check-env ## Build the container
+docker-build: check-env ## Build the container for the local platform
 	@echo "+ $@"
 	docker build . --build-arg UID=$(UID) --build-arg GID=$(GID) -t quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) --file Dockerfile
+
+define docker-buildx-command
+docker buildx build . \
+	--platform $(PLATFORMS) \
+	--build-arg UID=$(UID) \
+	--build-arg GID=$(GID) \
+	$(foreach tag,$(1),--tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(tag)) \
+	--file Dockerfile \
+	--output $(2)
+endef
+
+.PHONY: docker-buildx
+docker-buildx: check-env docker-buildx-create ## Build multi-arch image; override BUILDX_OUTPUT for local output
+	@echo "+ $@"
+	$(call docker-buildx-command,$(GITCOMMIT),$(BUILDX_OUTPUT))
 
 .PHONY: docker-images
 docker-images: ## List all local containers
@@ -97,26 +126,25 @@ docker-images: ## List all local containers
 	docker images
 
 .PHONY: docker-push
-docker-push: docker-build ## Push the container
+docker-push: docker-build ## Push the container (single-arch, local platform only)
 	@echo "+ $@"
 	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
 	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(BUILD_TAG)
 
 .PHONY: docker-release-version
-docker-release-version: docker-build ## Release image with version tag (in addition to build tag)
+docker-release-version: check-env docker-buildx-create ## Release multi-arch image with version tag
 	@echo "+ $@"
-	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
-	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(VERSION_TAG)
+	$(call docker-buildx-command,$(VERSION_TAG),type=registry)
 
 .PHONY: docker-release-latest
-docker-release-latest: docker-build ## Release image with latest tags (in addition to build tag)
+docker-release-latest: check-env docker-buildx-create ## Release multi-arch image with latest tag
 	@echo "+ $@"
-	docker tag quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(GITCOMMIT) quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
-	docker push quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY)-$(NAME):$(LATEST_TAG)
+	$(call docker-buildx-command,$(LATEST_TAG),type=registry)
 
 .PHONY: docker-release
-docker-release: docker-release-version docker-release-latest ## Release image with version and latest tags (in addition to build tag)
+docker-release: check-env docker-buildx-create ## Release multi-arch image with version and latest tags
 	@echo "+ $@"
+	$(call docker-buildx-command,$(VERSION_TAG) $(LATEST_TAG),type=registry)
 
 .PHONY: backup-kind-load
 backup-kind-load: docker-build ## Build and load backup img in kind with e2e-test tag
