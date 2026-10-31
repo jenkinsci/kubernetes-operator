@@ -23,6 +23,7 @@ endef
 config ?= config.kind.env
 include $(config)
 
+## Tool Versions
 include config.base.env
 $(foreach var,$(shell cat config.base.env),$(eval $(call strip_quotes,$(var))))
 
@@ -123,3 +124,13 @@ ENVTEST_ASSETS_DIR=$(shell pwd)/testbin
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 OS = $(shell go env GOOS)
 ARCH = $(shell go env GOARCH)
+
+## Tool Binaries
+LOCALBIN ?= $(shell pwd)/bin
+GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint-$(GOLANGCI_LINT_VERSION)
+STATICCHECK ?= $(LOCALBIN)/staticcheck-$(STATICCHECK_VERSION)
+GOIMPORTS ?= $(LOCALBIN)/goimports-$(GOIMPORTS_VERSION)
+CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen-$(CONTROLLER_TOOLS_VERSION)
+ENVTEST ?= $(LOCALBIN)/setup-envtest-$(ENVTEST_VERSION)
+KUSTOMIZE ?= $(LOCALBIN)/kustomize-$(KUSTOMIZE_VERSION)
+OPERATOR_SDK ?= $(LOCALBIN)/operator-sdk-v$(OPERATOR_SDK_VERSION)

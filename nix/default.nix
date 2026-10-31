@@ -1,21 +1,17 @@
-{ pkgs ? (
-    let
-      inherit (builtins) fetchTree fromJSON readFile;
-      inherit ((fromJSON (readFile ./flake.lock)).nodes) nixpkgs gomod2nix;
-    in
-    import (fetchTree nixpkgs.locked) {
-      overlays = [
-        (import "${fetchTree gomod2nix.locked}/overlay.nix")
-      ];
-    }
-  )
-, buildGoApplication ? pkgs.buildGoApplication
-}:
+{ lib, buildGoModule }:
 
-buildGoApplication {
-  pname = ((builtins.fromTOML (builtins.readFile ../config.base.env)).NAME);
-  version = builtins.readFile ../VERSION.txt;
-  pwd = ../.;
-  src = ../.;
-  modules = ./gomod2nix.toml;
+buildGoModule {
+  pname = (builtins.fromTOML (builtins.readFile ../config.base.env)).NAME;
+  version = lib.strings.trim (builtins.readFile ../VERSION.txt);
+  src = lib.cleanSource ../.;
+  vendorHash = "sha256-Q9/z/hPLTEp9s7X7zDbfwDig8bkLO7yUTTEi+aBYGNs=";
+  subPackages = [ "cmd" ];
+
+  checkPhase = ''
+    runHook preCheck
+    RUNNING_TESTS=1 go test -p "$NIX_BUILD_CORES" ./api/... ./internal/... ./pkg/... ./version/...
+    runHook postCheck
+  '';
+
+  meta.mainProgram = "cmd";
 }

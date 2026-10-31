@@ -21,7 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
-const JenkinsTestImage = "jenkins/jenkins:2.541.2-lts"
+const JenkinsTestImage = "jenkins/jenkins:2.580.1-lts"
 
 var (
 	Cfg       *rest.Config
@@ -100,7 +100,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 						ReadinessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},
@@ -114,7 +114,7 @@ func RenderJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 						LivenessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},

@@ -47,9 +47,9 @@ var _ = Describe("Jenkins Controller", func() {
 
 			cmd := exec.Command("../../bin/helm", "upgrade", "jenkins", "../../chart/jenkins-operator", "--namespace", namespace.Name, "--debug",
 				"--set-string", fmt.Sprintf("jenkins.namespace=%s", namespace.Name),
-				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.541.2-lts"),
+				"--set-string", fmt.Sprintf("jenkins.image=%s", "jenkins/jenkins:2.580.1-lts"),
 				"--set-string", fmt.Sprintf("operator.image=%s", *imageName),
-				"--set-string", fmt.Sprintf("backup.image=%s", "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"),
+				"--set-string", fmt.Sprintf("jenkins.backup.image=%s", "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"),
 				"--set-string", fmt.Sprintf("jenkins.imagePullPolicy=%s", "IfNotPresent"), "--install")
 			output, err := cmd.CombinedOutput()
 			Expect(err).NotTo(HaveOccurred(), string(output))
@@ -84,7 +84,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 		validPlugins = []v1alpha2.Plugin{
 			{Name: "simple-theme-plugin", Version: "176.v39740c03a_a_f5"},
 			{Name: "audit-trail", Version: "361.v82cde86c784e"},
-			{Name: "github", Version: "1.38.0"},
+			{Name: "github", Version: "1.47.0"},
 		}
 	)
 
@@ -139,7 +139,7 @@ var _ = Describe("Jenkins Controller with security validator", func() {
 			By("Waiting for the operator to fetch the plugin data ")
 			time.Sleep(time.Duration(200) * time.Second)
 
-			By("Creating a Jenkins custom resource with some plugins having security warnings but validation is turned off")
+			By("Creating a Jenkins custom resource with safe plugins and security validation enabled")
 			jenkins := e2e.RenderJenkinsCR(jenkinsCRName, namespace.Name, seedJobs, groovyScripts, casc, "")
 			jenkins.Spec.Master.Plugins = validPlugins
 			jenkins.Spec.ValidateSecurityWarnings = true

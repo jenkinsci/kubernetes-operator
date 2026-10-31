@@ -33,20 +33,33 @@ func (jenkins *jenkins) ExecuteScript(script string) (string, error) {
 }
 
 func (jenkins *jenkins) executeScript(script string, verifier string) (string, error) {
-	output := ""
 	fullScript := fmt.Sprintf("%s\nprint println('%s')", script, verifier)
 
+	output, err := jenkins.postScript(fullScript)
+	if err != nil {
+		return output, err
+	}
+
+	if !strings.Contains(output, verifier) {
+		return output, &GroovyScriptExecutionFailed{}
+	}
+
+	return output, nil
+}
+
+func (jenkins *jenkins) postScript(script string) (string, error) {
+	output := ""
 	data := url.Values{}
-	data.Set("script", fullScript)
+	data.Set("script", script)
 
 	ar := gojenkins.NewAPIRequest("POST", "/scriptText", bytes.NewBufferString(data.Encode()))
-	if err := jenkins.Requester.SetCrumb(context.TODO(), ar); err != nil {
+	if err := jenkins.requester.SetCrumb(context.TODO(), ar); err != nil {
 		return output, err
 	}
 	ar.SetHeader("Content-Type", "application/x-www-form-urlencoded")
 	ar.Suffix = ""
 
-	r, err := jenkins.Requester.Do(context.TODO(), ar, &output, nil)
+	r, err := jenkins.requester.Do(context.TODO(), ar, &output, nil)
 	if err != nil {
 		return "", errors.Wrapf(err, "couldn't execute groovy script, logs '%s'", output)
 	}
@@ -55,10 +68,6 @@ func (jenkins *jenkins) executeScript(script string, verifier string) (string, e
 	}
 	if r.StatusCode != http.StatusOK {
 		return output, errors.Errorf("invalid status code '%d', logs '%s'", r.StatusCode, output)
-	}
-
-	if !strings.Contains(output, verifier) {
-		return output, &GroovyScriptExecutionFailed{}
 	}
 
 	return output, nil

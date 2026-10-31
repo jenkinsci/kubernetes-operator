@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: 0.9.0-beta1](https://img.shields.io/badge/Version-0.9.0--beta1-informational?style=flat-square) ![AppVersion: 0.9.0-beta1](https://img.shields.io/badge/AppVersion-0.9.0--beta1-informational?style=flat-square)
+![Version: 0.9.0-beta2](https://img.shields.io/badge/Version-0.9.0--beta2-informational?style=flat-square) ![AppVersion: 0.9.0-beta1](https://img.shields.io/badge/AppVersion-0.9.0--beta1-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -54,14 +54,14 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.528.3-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.580.1-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
 | jenkins.latestPlugins | bool | `true` |  |
 | jenkins.lifecycle | object | `{}` |  |
 | jenkins.livenessProbe.failureThreshold | int | `20` |  |
-| jenkins.livenessProbe.httpGet.path | string | `"/login"` |  |
+| jenkins.livenessProbe.httpGet.path | string | `"/health"` |  |
 | jenkins.livenessProbe.httpGet.port | string | `"http"` |  |
 | jenkins.livenessProbe.httpGet.scheme | string | `"HTTP"` |  |
 | jenkins.livenessProbe.initialDelaySeconds | int | `100` |  |
@@ -75,7 +75,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.plugins | list | `[]` |  |
 | jenkins.priorityClassName | string | `""` |  |
 | jenkins.readinessProbe.failureThreshold | int | `60` |  |
-| jenkins.readinessProbe.httpGet.path | string | `"/login"` |  |
+| jenkins.readinessProbe.httpGet.path | string | `"/health"` |  |
 | jenkins.readinessProbe.httpGet.port | string | `"http"` |  |
 | jenkins.readinessProbe.httpGet.scheme | string | `"HTTP"` |  |
 | jenkins.readinessProbe.initialDelaySeconds | int | `120` |  |

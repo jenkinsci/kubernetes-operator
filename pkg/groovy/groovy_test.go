@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/internal/testutil"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 
@@ -17,13 +18,11 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes/scheme"
-	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 const configurationType = "test-conf-type"
 
 func TestGroovy_EnsureSingle(t *testing.T) {
-	t.Skip("TODO: fix me, skipping the test suite temporarily")
 	log.SetupLogger(true)
 	emptyCustomization := v1alpha2.Customization{}
 	hash := "hash"
@@ -44,7 +43,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -90,7 +89,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -126,7 +125,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -198,7 +197,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -258,7 +257,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -290,7 +289,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -324,7 +323,7 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 
@@ -349,7 +348,6 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 }
 
 func TestGroovy_Ensure(t *testing.T) {
-	t.Skip("TODO: fix me, skipping the test suite temporarily")
 	log.SetupLogger(true)
 	groovyScript := "groovy-script"
 	groovyScriptName := "groovy-script-name.groovy"
@@ -394,7 +392,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -454,7 +452,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -513,7 +511,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, configMap)
@@ -579,7 +577,7 @@ func TestGroovy_Ensure(t *testing.T) {
 		}
 		err := v1alpha2.SchemeBuilder.AddToScheme(scheme.Scheme)
 		require.NoError(t, err)
-		fakeClient := fake.NewClientBuilder().Build()
+		fakeClient := testutil.NewClientBuilder().WithStatusSubresource(&v1alpha2.Jenkins{}).Build()
 		err = fakeClient.Create(ctx, jenkins)
 		require.NoError(t, err)
 		err = fakeClient.Create(ctx, secret)
@@ -614,7 +612,6 @@ func TestGroovy_Ensure(t *testing.T) {
 }
 
 func TestGroovy_isGroovyScriptAlreadyApplied(t *testing.T) {
-	t.Skip("TODO: fix me, skipping the test suite temporarily")
 	log.SetupLogger(true)
 	emptyCustomization := v1alpha2.Customization{}
 

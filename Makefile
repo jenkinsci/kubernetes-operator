@@ -1,5 +1,11 @@
 include variables.mk
 
+define go-install-tool
+	@set -eu; tool_tmp=$$(mktemp -d); trap 'rm -rf "$$tool_tmp"' EXIT; \
+	GOBIN="$$tool_tmp" go install $(1)@$(2); \
+	mv "$$tool_tmp/$(3)" "$@"
+endef
+
 .PHONY: all
 all: status checkmake clean build verify install container-runtime-build container-runtime-images ## Build the image
 	@echo "+ $@"
@@ -66,26 +72,22 @@ fmt: ## Verifies all files have been `gofmt`ed
 	@go fmt $(PACKAGES)
 
 .PHONY: lint
-HAS_GOLINT := $(shell which $(PROJECT_DIR)/bin/golangci-lint)
-lint: ## Verifies `golint` passes
+lint: golangci-lint ## Verifies `golint` passes
 	@echo "+ $@"
-ifndef HAS_GOLINT
-	GOBIN=$(PROJECT_DIR)/bin go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.0
-endif
-	@bin/golangci-lint run
+	@$(GOLANGCI_LINT) config verify
+	@set -eu; format_diff=$$(mktemp); trap 'rm -f "$$format_diff"' EXIT; \
+	$(GOLANGCI_LINT) fmt --diff > "$$format_diff"; cat "$$format_diff"; test ! -s "$$format_diff"
+	@$(GOLANGCI_LINT) run
 
 .PHONY: lint-fix
 lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
-	@bin/golangci-lint run --fix
+	@$(GOLANGCI_LINT) fmt
+	@$(GOLANGCI_LINT) run --fix
 
 .PHONY: goimports
-HAS_GOIMPORTS := $(shell which $(PROJECT_DIR)/bin/goimports)
-goimports: ## Verifies `goimports` passes
+goimports: $(GOIMPORTS) ## Verifies `goimports` passes
 	@echo "+ $@"
-ifndef HAS_GOIMPORTS
-	$(call GOBIN=$(PROJECT_DIR)/bin go install golang.org/x/tools/cmd/goimports@v0.1.0)
-endif
-	@bin/goimports -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+	@$(GOIMPORTS) -l -e $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 .PHONY: test
 test: ## Runs the go tests
@@ -102,7 +104,10 @@ e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests
 jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
 	@echo "+ $@"
 	docker pull jenkins/jenkins:$(LATEST_LTS_VERSION)
-	kind load docker-image jenkins/jenkins:$(LATEST_LTS_VERSION) --name $(KIND_CLUSTER_NAME)
+	@set -eu; image_archive=$$(mktemp); trap 'rm -f "$$image_archive"' EXIT; \
+	image_platform=$$(docker image inspect jenkins/jenkins:$(LATEST_LTS_VERSION) --format '{{.Os}}/{{.Architecture}}'); \
+	docker image save --platform "$$image_platform" --output "$$image_archive" jenkins/jenkins:$(LATEST_LTS_VERSION); \
+	kind load image-archive "$$image_archive" --name $(KIND_CLUSTER_NAME)
 
 ## Backup Section
 
@@ -114,19 +119,15 @@ backup-kind-load: ## Load latest backup image in the cluster
 ## HELM Section
 
 .PHONY: helm
-HAS_HELM := $(shell command -v helm 2> /dev/null)
-helm: ## Download helm if it's not present, otherwise symlink
+helm: ## Install the configured Helm version locally
 	@echo "+ $@"
-ifeq ($(strip $(HAS_HELM)),)
-	mkdir -p $(PROJECT_DIR)/bin
-	curl -Lo $(PROJECT_DIR)/bin/helm.tar.gz https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz && tar xzfv $(PROJECT_DIR)/bin/helm.tar.gz -C $(PROJECT_DIR)/bin
-	mv $(PROJECT_DIR)/bin/$(PLATFORM)-amd64/helm $(PROJECT_DIR)/bin/helm
-	rm -rf $(PROJECT_DIR)/bin/$(PLATFORM)-amd64
-	rm -rf $(PROJECT_DIR)/bin/helm.tar.gz
-else
-	mkdir -p $(PROJECT_DIR)/bin
-	test -L $(PROJECT_DIR)/bin/helm || ln -sf $(shell command -v helm) $(PROJECT_DIR)/bin/helm
-endif
+	@set -eu; \
+	if [ "$$($(PROJECT_DIR)/bin/helm version --template '{{.Version}}' 2>/dev/null || true)" = "v$(HELM_VERSION)" ]; then exit 0; fi; \
+	mkdir -p $(PROJECT_DIR)/bin; \
+	helm_tmp=$$(mktemp -d $(PROJECT_DIR)/bin/helm.XXXXXX); trap 'rm -rf "$$helm_tmp"' EXIT; \
+	curl -fsSL https://get.helm.sh/helm-v$(HELM_VERSION)-$(PLATFORM)-amd64.tar.gz -o "$$helm_tmp/helm.tar.gz"; \
+	tar -xzf "$$helm_tmp/helm.tar.gz" -C "$$helm_tmp"; \
+	mv "$$helm_tmp/$(PLATFORM)-amd64/helm" $(PROJECT_DIR)/bin/helm
 
 .PHONY: helm-lint
 helm-lint: helm
@@ -157,18 +158,9 @@ vet: ## Verifies `go vet` passes
 	@go vet $(PACKAGES)
 
 .PHONY: staticcheck
-HAS_STATICCHECK := $(shell which $(PROJECT_DIR)/bin/staticcheck)
-staticcheck: ## Verifies `staticcheck` passes
+staticcheck: $(STATICCHECK) ## Verifies `staticcheck` passes
 	@echo "+ $@"
-ifndef HAS_STATICCHECK
-	$(eval TMP_DIR := $(shell mktemp -d))
-	wget -O $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz https://github.com/dominikh/go-tools/releases/download/2023.1.7/staticcheck_$(PLATFORM)_amd64.tar.gz
-	tar zxvf $(TMP_DIR)/staticcheck_$(PLATFORM)_amd64.tar.gz -C $(TMP_DIR)
-	mkdir -p $(PROJECT_DIR)/bin
-	mv $(TMP_DIR)/staticcheck/staticcheck $(PROJECT_DIR)/bin
-	rm -rf $(TMP_DIR)
-endif
-	@$(PROJECT_DIR)/bin/staticcheck $(PACKAGES)
+	@$(STATICCHECK) -checks='all,-ST*,-QF*' $(PACKAGES)
 
 .PHONY: cover
 cover: ## Runs go test with coverage
@@ -185,6 +177,10 @@ cover: ## Runs go test with coverage
 .PHONY: verify
 verify: fmt lint test staticcheck vet ## Verify the code
 	@echo "+ $@"
+
+.PHONY: update-nix-hashes
+update-nix-hashes: ## Refresh Go and website Nix dependency hashes
+	nix run .#update-nix-hashes
 
 .PHONY: install
 install: ## Installs the executable
@@ -423,17 +419,18 @@ kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
 .PHONY: bats-tests ## Run bats tests
+bats-tests: helm
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
 BUILD_PRESENT := $(shell docker images |grep -q ${IMAGE_NAME})
 ifndef BUILD_PRESENT
 bats-tests: backup-kind-load container-runtime-build-amd64 ## Run bats tests
 	@echo "+ $@"
 	kind load docker-image ${IMAGE_NAME} --name $(KIND_CLUSTER_NAME)
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
+	PATH="$(PROJECT_DIR)/bin:$(PATH)" OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 else
 bats-tests: backup-kind-load
 	@echo "+ $@"
-	OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
+	PATH="$(PROJECT_DIR)/bin:$(PATH)" OPERATOR_IMAGE="${IMAGE_NAME}" TERM=xterm bats -T -p test/bats$(if $(BATS_TEST_PATH),/${BATS_TEST_PATH})
 endif
 
 .PHONY: crc-start
@@ -548,6 +545,7 @@ uninstall-crds: manifests kustomize
 .PHONY: deploy
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)
+	kubectl apply -f config/default/namespace.yaml
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
 
 # UnDeploy controller from the configured Kubernetes cluster in ~/.kube/config
@@ -559,6 +557,8 @@ undeploy:
 .PHONY: manifests
 manifests: controller-gen
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	cp config/crd/bases/jenkins.io_jenkins.yaml chart/jenkins-operator/crds/jenkins-crd.yaml
+	cp config/crd/bases/jenkins.io_jenkins.yaml deploy/crds/jenkins.io_jenkins_crd.yaml
 
 # Generate code
 .PHONY: generate
@@ -568,51 +568,50 @@ generate: controller-gen
 ##@ Build Dependencies
 
 ## Location to install dependencies to
-LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
-
-## Tool Binaries
-KUSTOMIZE ?= $(LOCALBIN)/kustomize
-CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
-ENVTEST ?= $(LOCALBIN)/setup-envtest
-
-## Tool Versions
-KUSTOMIZE_VERSION ?= v5.3.0
-CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
-$(KUSTOMIZE): $(LOCALBIN)
-	test -s $(LOCALBIN)/kustomize || { curl -s $(KUSTOMIZE_INSTALL_SCRIPT) | bash -s -- $(subst v,,$(KUSTOMIZE_VERSION)) $(LOCALBIN); }
+$(KUSTOMIZE): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/kustomize/kustomize/v5,$(KUSTOMIZE_VERSION),kustomize)
 
 .PHONY: controller-gen
 controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessary.
-$(CONTROLLER_GEN): $(LOCALBIN)
-	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
+$(CONTROLLER_GEN): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/controller-tools/cmd/controller-gen,$(CONTROLLER_TOOLS_VERSION),controller-gen)
 
 .PHONY: envtest
 envtest: $(ENVTEST) ## Download envtest-setup locally if necessary.
-$(ENVTEST): $(LOCALBIN)
-	test -s $(LOCALBIN)/setup-envtest || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.17
+$(ENVTEST): | $(LOCALBIN)
+	$(call go-install-tool,sigs.k8s.io/controller-runtime/tools/setup-envtest,$(ENVTEST_VERSION),setup-envtest)
+
+.PHONY: golangci-lint
+golangci-lint: $(GOLANGCI_LINT)
+$(GOLANGCI_LINT): | $(LOCALBIN)
+	$(call go-install-tool,github.com/golangci/golangci-lint/v2/cmd/golangci-lint,$(GOLANGCI_LINT_VERSION),golangci-lint)
+
+$(STATICCHECK): | $(LOCALBIN)
+	$(call go-install-tool,honnef.co/go/tools/cmd/staticcheck,$(STATICCHECK_VERSION),staticcheck)
+
+$(GOIMPORTS): | $(LOCALBIN)
+	$(call go-install-tool,golang.org/x/tools/cmd/goimports,$(GOIMPORTS_VERSION),goimports)
 
 .PHONY: operator-sdk
-HAS_OPERATOR_SDK := $(shell which $(PROJECT_DIR)/bin/operator-sdk)
-operator-sdk: # Download operator-sdk locally if necessary
-	@echo "+ $@"
-ifndef HAS_OPERATOR_SDK
-	wget -O $(PROJECT_DIR)/bin/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/v${OPERATOR_SDK_VERSION}/operator-sdk_$(PLATFORM)_amd64
-	chmod +x $(PROJECT_DIR)/bin/operator-sdk
-endif
+operator-sdk: $(OPERATOR_SDK) # Download operator-sdk locally if necessary
+$(OPERATOR_SDK): | $(LOCALBIN)
+	@set -eu; tool_tmp=$$(mktemp -d); trap 'rm -rf "$$tool_tmp"' EXIT; \
+	wget -q -O "$$tool_tmp/operator-sdk" https://github.com/operator-framework/operator-sdk/releases/download/v$(OPERATOR_SDK_VERSION)/operator-sdk_$(PLATFORM)_$(ARCH); \
+	chmod +x "$$tool_tmp/operator-sdk"; mv "$$tool_tmp/operator-sdk" "$@"
 
 # Generate bundle manifests and metadata, then validate generated files.
 .PHONY: bundle
 bundle: manifests operator-sdk kustomize
-	bin/operator-sdk generate kustomize manifests -q
+	$(OPERATOR_SDK) generate kustomize manifests -q
 	cd config/manager && $(KUSTOMIZE) edit set image controller=quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(VERSION_TAG)
-	$(KUSTOMIZE) build config/manifests | bin/operator-sdk generate bundle $(BUNDLE_GEN_FLAGS)
-	bin/operator-sdk bundle validate ./bundle
+	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
+	$(OPERATOR_SDK) bundle validate ./bundle
 
 # Build the bundle image.
 .PHONY: bundle-build
