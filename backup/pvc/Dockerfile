@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 LABEL maintainer="Jenkins Kubernetes Operator Community" \
       org.opencontainers.image.authors="Jenkins Kubernetes Operator Community" \
