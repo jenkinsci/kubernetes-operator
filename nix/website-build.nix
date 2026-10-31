@@ -11,7 +11,7 @@ pkgs.buildNpmPackage {
   name = "jenkins-kubernetes-operator-website";
   src = ../website;
   version = "0.0.2";
-  npmDepsHash = "sha256-x/OPri4wO0KFPJ2ZGmLTl/BdHUH4qlj0c5UsqiNC8EM=";
+  npmDepsHash = "sha256-OaLvJNwViN7q2E7eHVn64eYTQZ7kVDOULx1fdBcliF8=";
   nativeBuildInputs = buildPackages;
   buildPhase = "${pkgs.nodejs_22}/bin/npm run build";
   installPhase = "cp -r public $out";
