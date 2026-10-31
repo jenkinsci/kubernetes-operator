@@ -45,9 +45,13 @@ trap "docker rm -vf $cid > /dev/null;rm -rf ${BACKUP_DIR};rm -rf ${JENKINS_HOME}
 
 sleep 2
 mv ${BACKUP_TMP_DIR}/12.tar.zstd ${BACKUP_DIR}/
-sleep 2
+for ((attempt=0; attempt<30; attempt++)); do
+    backup_files=("${BACKUP_DIR}"/*.tar.zstd)
+    [[ ${#backup_files[@]} -eq 2 ]] && break
+    sleep 1
+done
 
-if [[ "${DEBUG}" ]]; then
+if [[ "${DEBUG}" || $attempt -eq 30 ]]; then
     docker logs ${cid}
     ls -la ${BACKUP_DIR}
 fi
