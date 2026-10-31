@@ -384,18 +384,6 @@ crc-run: crc-start run ## Run the operator locally and use CodeReady Containers 
 deepcopy-gen: generate ## Generate deepcopy golang code
 	@echo "+ $@"
 
-.PHONY: scheme-doc-gen
-HAS_GEN_CRD_API_REFERENCE_DOCS := $(shell ls gen-crd-api-reference-docs 2> /dev/null)
-scheme-doc-gen: ## Generate Jenkins CRD scheme doc
-	@echo "+ $@"
-ifndef HAS_GEN_CRD_API_REFERENCE_DOCS
-	@wget https://github.com/ahmetb/$(GEN_CRD_API)/releases/download/v0.1.2/$(GEN_CRD_API)_$(PLATFORM)_amd64.tar.gz
-	@mkdir -p $(GEN_CRD_API)
-	@tar -C $(GEN_CRD_API) -zxf $(GEN_CRD_API)_$(PLATFORM)_amd64.tar.gz
-	@rm $(GEN_CRD_API)_$(PLATFORM)_amd64.tar.gz
-endif
-	$(GEN_CRD_API)/$(GEN_CRD_API) -config gen-crd-api-config.json -api-dir $(PKG)/api/$(API_VERSION) -template-dir $(GEN_CRD_API)/template -out-file documentation/$(VERSION)/jenkins-$(API_VERSION)-scheme.md
-
 .PHONY: check-crc
 check-crc: ## Checks if KUBERNETES_PROVIDER is set to crc
 	@echo "+ $@"
@@ -516,11 +504,10 @@ ifeq ($(HAS_HUGO), )
 endif
 
 .PHONY: generate-docs
-generate-docs: hugo ## Re-generate docs directory from the website directory
+generate-docs: hugo ## Build the website into website/public
 	@echo "+ $@"
-	rm -rf docs || echo "Cannot remove docs dir, ignoring"
 	cd website && npm install
-	$(HUGO_PATH)/hugo -s website -d ../docs
+	$(HUGO_PATH)/hugo -s website
 
 .PHONY: run-docs
 run-docs: hugo
