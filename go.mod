@@ -9,7 +9,7 @@ require (
 	github.com/go-logr/logr v1.4.4
 	github.com/go-logr/zapr v1.3.0
 	github.com/golang/mock v1.6.0
-	github.com/mailgun/mailgun-go/v3 v3.6.4
+	github.com/mailgun/mailgun-go/v5 v5.15.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.44.0
 	github.com/openshift/api v3.9.0+incompatible
@@ -72,6 +72,7 @@ require (
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
+	github.com/oapi-codegen/runtime v1.3.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
