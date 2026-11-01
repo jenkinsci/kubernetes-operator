@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prep - check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Prep - Set up env vars
         run: |
@@ -34,7 +34,7 @@ jobs:
           file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Prep - go environment
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v5
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -77,7 +77,7 @@ jobs:
         run: make bats-tests
 
       - name: Post - Login to Quay.io
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v3
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}
