@@ -1,7 +1,7 @@
-ARG GO_VERSION
+ARG GO_VERSION=1.26
 
 # Build the manager binary
-FROM golang:$GO_VERSION as builder
+FROM golang:$GO_VERSION AS builder
 ARG CTIMEVAR
 ARG TARGETOS
 ARG TARGETARCH
