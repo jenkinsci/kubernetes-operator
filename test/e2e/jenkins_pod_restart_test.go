@@ -14,8 +14,11 @@ import (
 var _ = Describe("Jenkins controller", func() {
 
 	const (
-		jenkinsCRName     = e2e
-		priorityClassName = ""
+		jenkinsCRName            = e2e
+		priorityClassName        = ""
+		numberOfExecutors        = 3
+		numberOfExecutorsEnvName = "NUMBER_OF_EXECUTORS"
+		systemMessage            = "User configuration survives pod replacement"
 	)
 
 	var (
@@ -23,12 +26,14 @@ var _ = Describe("Jenkins controller", func() {
 		jenkins       *v1alpha2.Jenkins
 		groovyScripts = v1alpha2.GroovyScripts{
 			Customization: v1alpha2.Customization{
-				Configurations: []v1alpha2.ConfigMapRef{},
+				Configurations: []v1alpha2.ConfigMapRef{{Name: userConfigurationConfigMapName}},
+				Secret:         v1alpha2.SecretRef{Name: userConfigurationSecretName},
 			},
 		}
 		casc = v1alpha2.ConfigurationAsCode{
 			Customization: v1alpha2.Customization{
-				Configurations: []v1alpha2.ConfigMapRef{},
+				Configurations: []v1alpha2.ConfigMapRef{{Name: userConfigurationConfigMapName}},
+				Secret:         v1alpha2.SecretRef{Name: userConfigurationSecretName},
 			},
 		}
 	)
@@ -36,7 +41,8 @@ var _ = Describe("Jenkins controller", func() {
 	BeforeEach(func() {
 		namespace = CreateNamespace()
 
-		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
+		createUserConfigurationSecret(namespace.Name, map[string]string{numberOfExecutorsEnvName: "3"})
+		createUserConfigurationConfigMap(namespace.Name, numberOfExecutorsEnvName, systemMessage)
 		jenkins = RenderJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
 		Expect(K8sClient.Create(context.TODO(), jenkins)).Should(Succeed())
 	})
@@ -49,10 +55,18 @@ var _ = Describe("Jenkins controller", func() {
 	Context("when restarting Jenkins master pod", func() {
 		It("new Jenkins pod should be created after a restart", func() {
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
+			originalPodUID := getJenkinsMasterPod(jenkins).UID
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
+			Expect(getJenkinsMasterPod(jenkins).UID).NotTo(Equal(originalPodUID))
 			checkBaseConfigurationCompleteTimeIsNotSet(jenkins)
+			Expect(getJenkins(jenkins.Namespace, jenkins.Name).Status.UserConfigurationCompletedTime).To(BeNil())
 			WaitForJenkinsBaseConfigurationToComplete(jenkins)
+			WaitForJenkinsUserConfigurationToComplete(jenkins)
+			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
+			defer cleanUpFunc()
+			verifyUserConfiguration(jenkinsClient, numberOfExecutors, systemMessage)
 		})
 	})
 })

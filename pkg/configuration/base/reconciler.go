@@ -64,7 +64,7 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 		if err != nil {
 			return reconcile.Result{}, nil, err
 		}
-		if result.Requeue {
+		if result.RequeueAfter > 0 {
 			return result, nil, nil
 		}
 		r.logger.V(log.VDebug).Info("Jenkins Deployment is present")
@@ -76,7 +76,7 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil, nil
 	}
 	r.logger.V(log.VDebug).Info("Jenkins master pod is present")
@@ -86,14 +86,14 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 		return reconcile.Result{}, nil, err
 	}
 	if stopReconcileLoop {
-		return reconcile.Result{Requeue: false}, nil, nil
+		return reconcile.Result{}, nil, nil
 	}
 
 	result, err = r.waitForJenkins()
 	if err != nil {
 		return reconcile.Result{}, nil, err
 	}
-	if result.Requeue {
+	if result.RequeueAfter > 0 {
 		return result, nil, nil
 	}
 	r.logger.V(log.VDebug).Info("Jenkins master pod is ready")
@@ -117,7 +117,7 @@ func (r *JenkinsBaseConfigurationReconciler) Reconcile() (reconcile.Result, jenk
 			reason.OperatorSource,
 			[]string{message},
 		)
-		return reconcile.Result{Requeue: true}, nil, r.Configuration.RestartJenkinsMasterPod(restartReason)
+		return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, nil, r.Configuration.RestartJenkinsMasterPod(restartReason)
 	}
 
 	result, err = r.ensureBaseConfiguration(jenkinsClient)
@@ -373,12 +373,12 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 
 	if r.IsJenkinsTerminating(*jenkinsMasterPod) {
 		r.logger.V(log.VDebug).Info("Jenkins master pod is terminating")
-		return reconcile.Result{Requeue: true, RequeueAfter: time.Second * 5}, nil
+		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	if jenkinsMasterPod.Status.Phase != corev1.PodRunning {
 		r.logger.V(log.VDebug).Info("Jenkins master pod not ready")
-		return reconcile.Result{Requeue: true, RequeueAfter: time.Second * 5}, nil
+		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	containersReadyCount := 0
@@ -391,7 +391,7 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 				reason.KubernetesSource,
 				[]string{message},
 			)
-			return reconcile.Result{Requeue: true}, r.Configuration.RestartJenkinsMasterPod(restartReason)
+			return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, r.Configuration.RestartJenkinsMasterPod(restartReason)
 		}
 		if !containerStatus.Ready {
 			r.logger.V(log.VDebug).Info(fmt.Sprintf("Container '%s' not ready, readiness probe failed", containerStatus.Name))
@@ -400,7 +400,7 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 		}
 	}
 	if containersReadyCount != len(jenkinsMasterPod.Status.ContainerStatuses) {
-		return reconcile.Result{Requeue: true, RequeueAfter: time.Second * 5}, nil
+		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	return reconcile.Result{}, nil
@@ -419,5 +419,8 @@ func (r *JenkinsBaseConfigurationReconciler) ensureBaseConfiguration(jenkinsClie
 	}, func(groovyScript string) string {
 		return groovyScript
 	})
-	return reconcile.Result{Requeue: requeue}, err
+	if requeue {
+		return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, err
+	}
+	return reconcile.Result{}, err
 }

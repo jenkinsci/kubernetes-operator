@@ -29,7 +29,7 @@ func Test_ExecuteScript(t *testing.T) {
 
 		jenkinsClient := &jenkins{}
 		jenkinsClient.Server = ts.URL
-		jenkinsClient.Requester = &gojenkins.Requester{
+		jenkinsClient.requester = &gojenkins.Requester{
 			Base:      ts.URL,
 			SslVerify: true,
 			Client:    client,
@@ -53,7 +53,7 @@ func Test_ExecuteScript(t *testing.T) {
 
 		jenkinsClient := &jenkins{}
 		jenkinsClient.Server = ts.URL
-		jenkinsClient.Requester = &gojenkins.Requester{
+		jenkinsClient.requester = &gojenkins.Requester{
 			Base:      ts.URL,
 			SslVerify: true,
 			Client:    client,
@@ -74,7 +74,7 @@ func Test_ExecuteScript(t *testing.T) {
 
 		jenkinsClient := &jenkins{}
 		jenkinsClient.Server = ts.URL
-		jenkinsClient.Requester = &gojenkins.Requester{
+		jenkinsClient.requester = &gojenkins.Requester{
 			Base:      ts.URL,
 			SslVerify: true,
 			Client:    client,

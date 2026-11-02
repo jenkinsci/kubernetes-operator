@@ -1,10 +1,8 @@
 package client
 
 import (
-	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"strings"
@@ -15,7 +13,7 @@ import (
 )
 
 var (
-	errorNotFound = errors.New("404")
+	ErrNotFound = errors.New("404")
 )
 
 // Jenkins defines Jenkins API.
@@ -62,6 +60,7 @@ type Jenkins interface {
 
 type jenkins struct {
 	gojenkins.Jenkins
+	requester *gojenkins.Requester
 }
 
 // JenkinsAPIConnectionSettings is struct that handle information about Jenkins API connection.
@@ -169,12 +168,13 @@ func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
 		httpClient.Transport = &setBearerToken{token: passwordOrToken, rt: httpClient.Transport}
 	}
 
-	jenkinsClient.Requester = &gojenkins.Requester{
+	jenkinsClient.requester = &gojenkins.Requester{
 		Base:      url,
 		SslVerify: true,
 		Client:    httpClient,
 		BasicAuth: basicAuth,
 	}
+	jenkinsClient.Requester = &jenkinsRequester{Requester: jenkinsClient.requester}
 	if _, err := jenkinsClient.Init(context.TODO()); err != nil {
 		return nil, errors.Wrap(err, "couldn't init Jenkins API client")
 	}
@@ -192,44 +192,14 @@ func newClient(url, userName, passwordOrToken string) (Jenkins, error) {
 
 func isNotFoundError(err error) bool {
 	if err != nil {
-		return err.Error() == errorNotFound.Error()
+		return errors.Is(err, ErrNotFound)
 	}
 	return false
 }
 
 func (jenkins *jenkins) GetNodeSecret(name string) (string, error) {
-	url := fmt.Sprintf("%s/scriptText", jenkins.Server)
 	script := fmt.Sprintf(`println(jenkins.model.Jenkins.getInstance().getComputer("%s").getJnlpMac())`, name)
-	payload := bytes.NewBufferString(fmt.Sprintf("script=%s", script))
-
-	req, err := http.NewRequest("POST", url, payload)
-	if err != nil {
-		return "", errors.WithStack(err)
-	}
-	req.SetBasicAuth(jenkins.Requester.BasicAuth.Username, jenkins.Requester.BasicAuth.Password)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer func() {
-		if cerr := resp.Body.Close(); cerr != nil && err == nil {
-			err = cerr
-		}
-	}()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("failed to get node secret: %s", string(body))
-	}
-
-	return string(body), nil
+	return jenkins.postScript(script)
 }
 
 // Returns the list of all plugins installed on the Jenkins server.

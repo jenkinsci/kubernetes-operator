@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"reflect"
+	"slices"
 	"text/template"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -46,7 +46,7 @@ const (
 	AgentName = "seed-job-agent"
 
 	// DefaultAgentImage is the default image used for the seed-job agent
-	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6"
+	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21"
 
 	creatingGroovyScriptName = "seed-job-groovy-script.groovy"
 
@@ -236,7 +236,7 @@ func (s *seedJobs) EnsureSeedJobs(jenkins *v1alpha2.Jenkins) (done bool, err err
 	}
 
 	seedJobIDs := s.getAllSeedJobIDs(*jenkins)
-	if !reflect.DeepEqual(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
+	if !slices.Equal(seedJobIDs, jenkins.Status.CreatedSeedJobs) {
 		// @ansh-devs fixed : calls to Update and Patch will not alter its status.
 		jenkins.Status.CreatedSeedJobs = seedJobIDs
 		return false, stackerr.WithStack(s.Client.Status().Update(context.TODO(), jenkins))
@@ -375,7 +375,7 @@ func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cl
 	_, err := jenkinsClient.GetNode(context.TODO(), agentName)
 
 	// Create node if not exists
-	if err != nil && err.Error() == "No node found" {
+	if stackerr.Is(err, jenkinsclient.ErrNotFound) {
 		_, err = jenkinsClient.CreateNode(context.TODO(), agentName, 5, "The jenkins-operator generated agent", "/home/jenkins", agentName)
 		if err != nil {
 			return stackerr.WithStack(err)

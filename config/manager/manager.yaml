@@ -15,9 +15,8 @@ spec:
       labels:
         control-plane: controller-manager
       annotations:
-        kubectl.kubernetes.io/default-container: manager
+        kubectl.kubernetes.io/default-container: jenkins-operator
     spec:
-      serviceAccountName: jenkins-operator
       securityContext:
         runAsUser: 65532
       containers:
@@ -25,7 +24,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+        image: controller:latest
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:

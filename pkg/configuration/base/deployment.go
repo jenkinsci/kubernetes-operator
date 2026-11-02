@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
+	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
@@ -46,7 +47,7 @@ func (r *JenkinsBaseConfigurationReconciler) ensureJenkinsDeployment(meta metav1
 			PendingBackup:       r.Configuration.Jenkins.Status.LastBackup,
 			UserAndPasswordHash: userAndPasswordHash,
 		}
-		return reconcile.Result{Requeue: true}, r.Client.Update(context.TODO(), r.Configuration.Jenkins)
+		return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, r.Client.Update(context.TODO(), r.Configuration.Jenkins)
 	} else if err != nil && !apierrors.IsNotFound(err) {
 		return reconcile.Result{}, stackerr.WithStack(err)
 	}
