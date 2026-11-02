@@ -10,7 +10,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/event"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/provider"
 
-	"github.com/mailgun/mailgun-go/v3"
+	"github.com/mailgun/mailgun-go/v5"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -107,17 +107,17 @@ func (m MailGun) Send(event event.Event) error {
 			event.Jenkins.Namespace, selector.Name, selector.Key)
 	}
 
-	mg := mailgun.NewMailgun(m.config.Mailgun.Domain, secretValue)
+	mg := mailgun.NewMailgun(secretValue)
 	from := fmt.Sprintf("Jenkins Operator Notifier <%s>", m.config.Mailgun.From)
 	subject := provider.NotificationTitle(event)
 	recipient := m.config.Mailgun.Recipient
 
-	msg := mg.NewMessage(from, subject, "", recipient)
-	msg.SetHtml(m.generateMessage(event))
+	msg := mailgun.NewMessage(m.config.Mailgun.Domain, from, subject, "", recipient)
+	msg.SetHTML(m.generateMessage(event))
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	_, _, err = mg.Send(ctx, msg)
+	_, err = mg.Send(ctx, msg)
 
 	return err
 }

@@ -62,5 +62,5 @@ func checkBaseConfigurationCompleteTimeIsNotSet(jenkins *v1alpha2.Jenkins) {
 			return false, err
 		}
 		return actualJenkins.Status.BaseConfigurationCompletedTime == nil, nil
-	}, time.Duration(110)*retryInterval, time.Second).Should(BeTrue())
+	}, 1100*time.Second, time.Second).Should(BeTrue())
 }

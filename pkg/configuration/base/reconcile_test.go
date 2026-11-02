@@ -3,6 +3,7 @@ package base
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -13,6 +14,7 @@ import (
 	"github.com/bndr/gojenkins"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -992,4 +994,34 @@ func TestCompareContainerResources(t *testing.T) {
 
 		assert.False(t, got)
 	})
+}
+
+func TestWaitForJenkinsSchedulesReadinessPolling(t *testing.T) {
+	for _, test := range []struct {
+		name        string
+		phase       corev1.PodPhase
+		ready       bool
+		terminating bool
+		delay       time.Duration
+	}{
+		{name: "pending", phase: corev1.PodPending, delay: 5 * time.Second},
+		{name: "container not ready", phase: corev1.PodRunning, delay: 5 * time.Second},
+		{name: "terminating", phase: corev1.PodRunning, ready: true, terminating: true, delay: 5 * time.Second},
+		{name: "ready", phase: corev1.PodRunning, ready: true},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "example", Namespace: "default"}}
+			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "jenkins-example", Namespace: "default"}, Status: corev1.PodStatus{Phase: test.phase, ContainerStatuses: []corev1.ContainerStatus{{Name: "jenkins", Ready: test.ready}}}}
+			if test.terminating {
+				now := metav1.Now()
+				pod.DeletionTimestamp = &now
+				pod.Finalizers = []string{"test-finalizer"}
+			}
+			c := fake.NewClientBuilder().WithScheme(scheme.Scheme).WithObjects(pod).Build()
+			reconciler := New(configuration.Configuration{Client: c, Jenkins: jenkins}, client.JenkinsAPIConnectionSettings{})
+			result, err := reconciler.waitForJenkins()
+			require.NoError(t, err)
+			require.Equal(t, test.delay, result.RequeueAfter)
+		})
+	}
 }

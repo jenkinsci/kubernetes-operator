@@ -2,7 +2,6 @@ kubeconfig
 .idea
 /vendor
 deploy/namespace-init.yaml
-/gen-crd-api-reference-docs
 
 # Temporary Build Files
 build/_output

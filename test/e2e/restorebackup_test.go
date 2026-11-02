@@ -10,12 +10,14 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
+	"github.com/bndr/gojenkins"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const pvcName = "pvc-jenkins"
@@ -30,20 +32,64 @@ func waitForJobCreation(jenkinsClient client.Jenkins, jobID string) {
 			return false, err
 		}
 		return err == nil, err
-	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
+	}, 1100*time.Second, retryInterval).Should(BeTrue())
 
 	Expect(err).NotTo(HaveOccurred())
 }
 
-func verifyJobBuildsAfterRestoreBackup(jenkinsClient client.Jenkins, jobID string) {
-	By("checking if job builds after restoring backup")
+const backupArtifactName = "backup-marker.txt"
 
+func configureBackupTestJob(jenkinsClient client.Jenkins, jobID, contents string) {
+	By("configuring a backup payload artifact")
 	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
 	Expect(err).NotTo(HaveOccurred())
-	build, err := job.GetLastBuild(context.TODO())
-	Expect(err).NotTo(HaveOccurred())
+	config := fmt.Sprintf(`<flow-definition>
+ <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">
+ <script><![CDATA[node('seed-job-agent') {
+ writeFile file: 'backup-marker.txt', text: '%s'
+ archiveArtifacts artifacts: 'backup-marker.txt'
+ }]]></script>
+ <sandbox>true</sandbox>
+ </definition>
+ </flow-definition>`, contents)
+	Expect(job.UpdateConfig(context.TODO(), config)).To(Succeed())
+}
 
-	Expect(build.GetBuildNumber()).To(Equal(int64(1)))
+func verifyBackupArtifact(build *gojenkins.Build, contents string) {
+	Expect(build.GetResult()).To(Equal(gojenkins.STATUS_SUCCESS))
+	artifacts := build.GetArtifacts()
+	Expect(artifacts).To(HaveLen(1))
+	Expect(artifacts[0].FileName).To(Equal(backupArtifactName))
+	data, err := artifacts[0].GetData(context.TODO())
+	Expect(err).NotTo(HaveOccurred())
+	Expect(data).To(Equal([]byte(contents)))
+}
+
+func waitForBackupAfterBuild(jenkins *v1alpha2.Jenkins) uint64 {
+	By("waiting for a completed backup started after the build")
+	current := getJenkins(jenkins.Namespace, jenkins.Name)
+	before := max(current.Status.LastBackup, current.Status.PendingBackup)
+	var completed uint64
+	Eventually(func() (uint64, error) {
+		current := &v1alpha2.Jenkins{}
+		err := K8sClient.Get(context.TODO(), k8sclient.ObjectKeyFromObject(jenkins), current)
+		if err != nil {
+			return 0, err
+		}
+		completed = current.Status.LastBackup
+		return completed, nil
+	}, 3*time.Minute, time.Second).Should(BeNumerically(">", before))
+	return completed
+}
+
+func verifyJobBuildsAfterRestoreBackup(jenkinsClient client.Jenkins, jobID string, buildNumber int64, contents string) {
+	By("checking the exact build and artifact after restoring backup")
+	job, err := jenkinsClient.GetJob(context.TODO(), jobID)
+	Expect(err).NotTo(HaveOccurred())
+	build, err := job.GetBuild(context.TODO(), buildNumber)
+	Expect(err).NotTo(HaveOccurred())
+	Expect(build.GetBuildNumber()).To(Equal(buildNumber))
+	verifyBackupArtifact(build, contents)
 }
 
 func createPVC(namespace string) {
@@ -119,7 +165,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 						ReadinessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},
@@ -133,7 +179,7 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 						LivenessProbe: &corev1.Probe{
 							ProbeHandler: corev1.ProbeHandler{
 								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
+									Path:   "/health",
 									Port:   intstr.FromString("http"),
 									Scheme: corev1.URISchemeHTTP,
 								},
