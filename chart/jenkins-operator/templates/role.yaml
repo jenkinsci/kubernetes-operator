@@ -1,12 +1,11 @@
-{{ if eq .Values.jenkins.namespace "" }}
+{{ if eq (include "jenkins-operator.watchAllNamespaces" .) "true" }}
 {{- /*
-# This is a special case when .Values.jenkins.namespace is equal to empty
-# string which leads to WATCH_NAMESPACE env of jenkins-operator to be set to
-# empty string and leads to operator actually watching all namespaces. In this
+# Special case where WATCH_NAMESPACE is set to an empty string, which makes the
+# operator watch all namespaces (see jenkins-operator.watchAllNamespaces). In this
 # case we need to create clusterrole and clusterrolebinding instead of role and
 # rolebinding
 */ -}}
-  {{- template "jenkins-operator.role" .Values.jenkins.namespace }}
+  {{- template "jenkins-operator.role" "" }}
 {{ else }}
   {{- template "jenkins-operator.role" .Release.Namespace }}
   {{- if ne .Release.Namespace .Values.jenkins.namespace -}}
