@@ -101,3 +101,6 @@ result
 website/node_modules
 website/public
 website/.hugo_build.lock
+
+# Theme source is supplied by flake.lock (Nix or Make).
+website/themes/

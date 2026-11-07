@@ -30,3 +30,13 @@ div.row {
     }
   }
 }
+
+.td-navbar .navbar-brand__name {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.td-navbar .navbar-brand svg {
+  width: 2rem;
+  height: 2rem;
+}

@@ -3,33 +3,34 @@ Bootstrap variables overrides for theme.
 See https://github.com/twbs/bootstrap/pull/23260
 */
 
-@fa-font-path :        "../webfonts";
+$fa-font-path: "../webfonts";
 
 // Bootstrap flags. For more, see https://getbootstrap.com/docs/4.0/getting-started/theming/
 $enable-gradients: false;
 $enable-rounded: false;
 $enable-shadows: false;
 
-$primary: #1EA149 !default;
+$primary: #1EA149;
+$td-navbar-bg-color: $primary;
 $primary-light: #F6D2A5;
-$secondary: #FFA630 !default;
-$success: #3772FF !default;
-$info: #C0E0DE !default;
-$warning: #ED6A5A !default;
-$danger: #ED6A5A !default;
-$white: #fff !default;
-$light: #D3F3EE !default;
+$secondary: #FFA630;
+$success: #3772FF;
+$info: #C0E0DE;
+$warning: #ED6A5A;
+$danger: #ED6A5A;
+$white: #fff;
+$light: #D3F3EE;
 
-$dark: #403F4C !default;
-$blue: #72A1E5 !default;
+$dark: #403F4C;
+$blue: #72A1E5;
 $orange: #EAAA2C;
 
 $link-color: #EAAA2C;
-$link-decoration: none !default;
-$link-hover-color: #FEC555 !default;
-$link-hover-decoration: none !default;
+$link-decoration: none;
+$link-hover-color: #FEC555;
+$link-hover-decoration: none;
 
-$navbar-dark-color: $white !default;
+$navbar-dark-color: $white;
 
 // $spacer: 20rem;
 

@@ -33,7 +33,7 @@ Release 0.9.0 uses Go 1.26 and Operator SDK 1.42.3.
 
 Open the checkout in VS Code with the Dev Containers extension and select
 **Dev Containers: Reopen in Container**. The configuration in `.devcontainer/devcontainer.json`
-provides Go, Docker-in-Docker, kubectl, Helm, Kind, Bats and its libraries, Hugo, and Nix.
+provides Go, Docker-in-Docker, kubectl, Helm, Kind, Bats and its libraries, and Nix.
 Run `nix develop` in the container terminal for the full development toolset,
 including pre-commit and helm-docs. Check `docker info` before running cluster tests.
 
@@ -182,21 +182,24 @@ nix develop ..#website
 hugo server -D
 ```
 
-This shell installs the website's npm dependencies. Review incidental package/lockfile changes
+This shell links the pinned Docsy source from the Nix store and installs the website's npm dependencies with `npm ci`. Review incidental package/lockfile changes
 before committing. For a production build from the repository root, use `nix build .#website`.
 New files must be added to Git for a Git-backed flake build to include them.
 
-For a devcontainer or local-tool setup without the website devshell, install Node.js/npm
-and a C/C++ build toolchain (needed by extended Hugo), then run from the repository root:
+Website development and publishing require Nix. The dedicated website shell provides
+Hugo, Node.js/npm and Dart Sass. The root Make targets are shortcuts for the Nix workflow:
 
 ```bash
-make generate-docs
-make run-docs
+make generate-docs  # builds the production website in result/
+make run-docs       # starts the preview with drafts enabled
 ```
 
-`make generate-docs` installs npm dependencies and builds the configured extended Hugo
-locally under `bin/hugo`; `make run-docs` starts the preview with drafts enabled.
-The website still uses Hugo 0.99; compatibility with newer Hugo remains separate work.
+To update Docsy, change the `docsy` input in `flake.nix`, update its lock with
+`nix flake update docsy`, and review its required Hugo and frontend dependency versions.
+Keep `HUGO_VERSION` and `DART_SASS_VERSION` in `config.base.env` aligned with the
+pinned Nix packages.
+After npm dependency changes, refresh the website's `npmDepsHash` in
+`nix/website-build.nix` and verify `nix build .#website`.
 
 ## Clean up the local cluster
 

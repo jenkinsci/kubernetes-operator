@@ -16,7 +16,7 @@ defaultContentLanguageInSubdir = false
 # Useful when translating.
 enableMissingTranslationPlaceholders = true
 
-disableKinds = ["taxonomy", "taxonomyTerm"]
+disableKinds = ["taxonomy", "term"]
 
 # Highlighting config
 pygmentsCodeFences = true
@@ -42,18 +42,22 @@ blog = "/:section/:year/:month/:day/:slug/"
 #latexDashes = true
 
 [markup]
-defaultMarkdownHandler = "blackfriday"
+defaultMarkdownHandler = "goldmark"
+[markup.goldmark.renderer]
+unsafe = true
 
 # Image processing configuration.
 [imaging]
 resampleFilter = "CatmullRom"
-quality = 75
 anchor = "smart"
+
+[imaging.jpeg]
+quality = 75
 
 [services]
 [services.googleAnalytics]
 # Comment out the next line to disable GA tracking. Also disables the feature described in [params.ui.feedback].
-id = "UA-00000000-0"
+# id = ""
 
 # Language configuration
 
@@ -61,7 +65,7 @@ id = "UA-00000000-0"
 [languages.en]
 title = "Jenkins Operator"
 description = "A native operator for Kubernetes to manage Jenkins"
-languageName ="English"
+label = "English"
 # Weight used for sorting.
 weight = 1
 
@@ -82,7 +86,8 @@ github_repo = "https://github.com/jenkinsci/kubernetes-operator"
 github_project_repo = "https://github.com/jenkinsci/kubernetes-operator"
 
 # Specify a value here if your content directory is not in your repo's root directory
-# github_subdir = ""
+github_subdir = "website"
+github_branch = "master"
 
 # Google Custom Search Engine ID. Remove or comment out to disable search.
 gcs_engine_id = "011737558837375720776:fsdu1nryfng"
@@ -97,6 +102,7 @@ breadcrumb_disable = false
 sidebar_search_disable = false
 #  Set to false if you don't want to display a logo (/assets/icons/logo.svg) in the top nav bar
 navbar_logo = true
+navbar_theme = "dark"
 
 [params.blog]
 enable = false
@@ -135,3 +141,32 @@ no = 'Sorry to hear that. Please <a href="https://github.com/USERNAME/REPOSITORY
 #	icon = "fab fa-github"
 #        desc = "Development takes place here!"
 
+
+[[module.mounts]]
+source = "assets"
+target = "assets"
+
+[[module.mounts]]
+source = "node_modules/bootstrap"
+target = "assets/vendor/bootstrap"
+
+[[module.mounts]]
+source = "node_modules/@fortawesome/fontawesome-free"
+target = "assets/vendor/Font-Awesome"
+
+[[module.mounts]]
+source = "static"
+target = "static"
+
+[[module.mounts]]
+source = "node_modules/@fortawesome/fontawesome-free/webfonts"
+target = "static/webfonts"
+
+# The homepage and landing pages contain HTML with Docsy shortcodes.
+[security]
+allowContent = ["^text/(html|markdown)$"]
+
+# Bootstrap's development bundle refers to this map relative to js/main.js.
+[[module.mounts]]
+source = "node_modules/bootstrap/dist/js/bootstrap.bundle.js.map"
+target = "static/js/bootstrap.bundle.js.map"
