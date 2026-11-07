@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Prep - check out code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Prep - Set up env vars
         run: |
@@ -34,7 +34,7 @@ jobs:
           file-path: "${{ github.workspace }}/.bats/bats-file"
 
       - name: Prep - go environment
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v5
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
 
@@ -54,7 +54,7 @@ jobs:
 
       - name: Prep - Kind setup
         if: ${{ github.event.inputs.skipTests != 'true' }}
-        uses: helm/kind-action@1544676c07bb3570fcb70166beaa07c4528fd4aa # v1.15.1
+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
         with:
           cluster_name: ${{env.KIND_CLUSTER_NAME}}
           config: kind-cluster.yaml
@@ -77,7 +77,7 @@ jobs:
         run: make bats-tests
 
       - name: Post - Login to Quay.io
-        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v3
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: quay.io
           username: ${{ secrets.QUAYIO_USERNAME }}
