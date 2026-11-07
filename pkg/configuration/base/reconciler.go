@@ -294,6 +294,11 @@ func CompareContainerVolumeMounts(expected corev1.Container, actual corev1.Conta
 func (r *JenkinsBaseConfigurationReconciler) compareVolumes(actualPod corev1.Pod) bool {
 	var toCompare []corev1.Volume
 	for _, volume := range actualPod.Spec.Volumes {
+
+		if r.isVolumeIgnored(volume.Name) {
+			continue
+		}
+
 		// filter out service account
 		if strings.HasPrefix(volume.Name, actualPod.Spec.ServiceAccountName) {
 			continue
@@ -423,4 +428,14 @@ func (r *JenkinsBaseConfigurationReconciler) ensureBaseConfiguration(jenkinsClie
 		return reconcile.Result{RequeueAfter: configuration.RetryDelay()}, err
 	}
 	return reconcile.Result{}, err
+}
+
+// isVolumeIgnored checks if the given volume name is in the list of ignored volumes
+func (r *JenkinsBaseConfigurationReconciler) isVolumeIgnored(volumeName string) bool {
+	for _, ignoredVolume := range r.Jenkins.Spec.Lifecycle.Ignore.IgnoredVolumes {
+		if ignoredVolume == volumeName {
+			return true
+		}
+	}
+	return false
 }
