@@ -1,13 +1,13 @@
 ---
-title: "Custom Backup and Restore Providers"
-linkTitle: "Custom Backup and Restore Providers"
-weight: 10
-date: 2020-04-13
+title: "Custom backup and restore providers"
+linkTitle: "Custom backup and restore providers"
+weight: 7
+date: 2021-12-08
 description: >
   Custom backup and restore provider
 ---
 
-With enough effort one can create a custom backup and restore provider 
+With enough effort one can create a custom backup and restore provider
 for the Jenkins Operator.
 
 ## Requirements
@@ -15,7 +15,7 @@ for the Jenkins Operator.
 Two commands (e.g. scripts) are required:
 
 - a backup command, e.g. `backup.sh` that takes one argument, a **backup number**
-- a restore command, e.g. `backup.sh` that takes one argument, a **backup number**
+- a restore command, e.g. `restore.sh` that takes one argument, a **backup number**
 
 Both scripts need to return an exit code of `0` on success and `1` or greater for failure.
 
@@ -26,30 +26,30 @@ for backup cleanup or rotation if required, or an external system.
 
 The mechanism relies on basic Kubernetes and UNIX functionalities.
 
-The backup (and restore) container runs as a sidecar in the same 
+The backup (and restore) container runs as a sidecar in the same
 Kubernetes pod as the Jenkins master.
 
-Name of the backup and restore containers can be set as necessary using 
-`spec.backup.containerName` and `spec.restore.containerName`. 
+Name of the backup and restore containers can be set as necessary using
+`spec.backup.containerName` and `spec.restore.containerName`.
 In most cases it will be the same container, but we allow for less common use cases.
 
 The operator will call a backup or restore commands inside a sidecar container when necessary:
 
-- backup command (defined in `spec.backup.action.exec.command`) 
+- backup command (defined in `spec.backup.action.exec.command`)
   will be called every `N` seconds configurable in: `spec.backup.interval`
   and on pod shutdown (if enabled in `spec.backup.makeBackupBeforePodDeletion`)
   with an integer representing the current backup number as first and only argument
-- restore command (defined in `spec.restore.action.exec.command`) 
-  will be called at Jenkins startup 
+- restore command (defined in `spec.restore.action.exec.command`)
+  will be called at Jenkins startup
   with an integer representing the backup number to restore as first and only argument
   (can be overridden using `spec.restore.recoveryOnce`)
 
 ## Example AWS S3 backup using the CLI
 
 This example shows abbreviated version of a simple AWS S3 backup implementation
-using: `aws-cli`, `bash` and `kube2iam`. 
+using: `aws-cli`, `bash` and `kube2iam`.
 
-In addition to your normal `Jenkins` `CustomResource` some additional settings 
+In addition to your normal `Jenkins` `CustomResource` some additional settings
 for backup and restore are required, e.g.:
 
 ```yaml

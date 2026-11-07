@@ -12,7 +12,7 @@ This document helps you to state the reason for an error in the Jenkins Operator
 ## Operator logs
 Jenkins Operator can provide some useful logs. To get them, run:
 ```bash
-$ kubectl logs <controller-manager-pod-name> -f 
+$ kubectl logs <controller-manager-pod-name> -f
 ```
 
 In the logs look for `WARNING`, `ERROR` and `SEVERE` keywords.
@@ -33,7 +33,7 @@ $ kubectl -n <namespace-name> describe po <name-of-the-jenkins-pod>
 ```
 and check the logs from the Jenkins container:
 ```bash
-$ kubectl -n <namespace-name> logs <jenkins-pod> <jenkins-master> -f 
+$ kubectl -n <namespace-name> logs <jenkins-pod> <jenkins-master> -f
 ```
 
 
@@ -45,6 +45,14 @@ To obtain the events in your Cluster run:
 ```bash
 $ kubectl -n <namespace> get events --sort-by='{.lastTimestamp}'
 ```
+
+## Authentication failures after enabling SSO
+
+If Jenkins works in your browser but the operator receives HTTP 401/403 responses
+or login redirects, check the robot account used for Jenkins API access. Browser
+SSO sessions do not authenticate the operator. See
+[SSO and external security realms](/kubernetes-operator/docs/security/#sso-and-external-security-realms)
+for account permissions, credentials and token regeneration requirements.
 
 ## Quick soft reset
 You can always kill the Jenkins pod and wait for it to come up again. All the version-controlled configurations will be downloaded again

@@ -2,7 +2,7 @@
 title: "Configuring backup and restore"
 linkTitle: "Configuring backup and restore"
 weight: 5
-date: 2024-06-25
+date: 2026-10-31
 description: >
   Prevent loss of job history
 ---
@@ -11,13 +11,15 @@ description: >
 > or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
 > up. Therefore, the backup script makes a copy of jobs history only.
 
-Backup and restore is done by a container sidecar.
+Backup and restore is done by a container sidecar. Chart 0.9.0 uses
+`quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1`, based on Debian Trixie and published for Linux AMD64 and ARM64.
+The backup image has its own version, independent of the operator and Jenkins images.
 
 ### PVC
 
 #### PVC Storage Size
 
-Please ensure that the size of the PVC (Persistent Volume Claim) is sufficient to accommodate `BACKUP_COUNT` + `1` backup **tar.gz** archives.
+Please ensure that the size of the PVC (Persistent Volume Claim) is sufficient to accommodate `BACKUP_COUNT` + `1` backup **tar.zstd** archives.
 
 The additional **+1** space is necessary to facilitate the creation of backups on the same filesystem and to prevent backup file corruption during copying between different filesystems. For further details, please refer to pr [#1000](https://github.com/jenkinsci/kubernetes-operator/pull/1000).
 
@@ -60,7 +62,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.401.1-lts
+        image: jenkins/jenkins:2.580.1-lts
         imagePullPolicy: IfNotPresent
         resources:
           limits:
@@ -76,8 +78,8 @@ spec:
           - name: JENKINS_HOME
             value: /jenkins-home
           - name: BACKUP_COUNT
-            value: "3" # keep only the 2 most recent backups
-        image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.2.3 # look at backup/pvc directory
+            value: "3" # keep only the 3 most recent backups
+        image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1 # look at backup/pvc directory
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /jenkins-home # Jenkins home volume

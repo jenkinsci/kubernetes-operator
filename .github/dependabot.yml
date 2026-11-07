@@ -3,7 +3,9 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     groups:
       golang:
         patterns:
@@ -12,7 +14,9 @@ updates:
   - package-ecosystem: "npm"
     directory: "/website"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     groups:
       npm:
         patterns:
@@ -21,8 +25,21 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    cooldown:
+      default-days: 7
     groups:
       actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "nix"
+    directory: "/"
+    cooldown:
+      default-days: 7
+    schedule:
+      interval: "weekly"
+    groups:
+      nix:
         patterns:
           - "*"

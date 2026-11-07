@@ -15,8 +15,14 @@ Steps to reproduce the behavior.
 
 **Additional information**
 
-Kubernetes version:
-Jenkins Operator version:
+Kubernetes version and distribution:
+Jenkins Operator version and image tag:
+Jenkins version and image tag:
+Installation method (Helm or manifests), and chart version if applicable:
+CPU architecture (amd64/arm64):
+Backup image tag (if relevant):
+Development environment (Nix devshell, devcontainer, or local tools, if relevant):
 
 
-Add error logs about the problem here (operator logs and Kubernetes events).
+Add relevant operator/Jenkins logs, Kubernetes events, and a minimal Jenkins resource
+or Helm values that reproduce the problem. Remove credentials, tokens and other secrets.

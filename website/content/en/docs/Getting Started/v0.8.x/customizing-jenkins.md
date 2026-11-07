@@ -1,17 +1,82 @@
 ---
-title: "Customization"
-linkTitle: "Customization"
+title: "Customizing Jenkins"
+linkTitle: "Customizing Jenkins"
 weight: 3
-date: 2019-12-20
+date: 2021-12-08
 description: >
   How to customize Jenkins
 ---
 
-Jenkins can be customized using groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin). 
+## How to customize Jenkins
+Jenkins can be customized with plugins.
+Plugin's configuration is applied as groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin).
+Any plugin working for Jenkins can be installed by the Jenkins Operator.
+
+Pre-installed plugins:
+
+* configuration-as-code v1.55
+* git v4.10.0
+* job-dsl v1.78.1
+* kubernetes-credentials-provider v0.20
+* kubernetes v1.30.11
+* workflow-aggregator v2.6
+* workflow-job v2.42
+
+Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/).
+
+
+#### Install plugins
+
+Edit Custom Resource under `spec.master.plugins`:
+
+```yaml
+apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  master:
+   plugins:
+   - name: simple-theme-plugin
+     version: "0.7"
+```
+
+Under `spec.master.basePlugins` you can find plugins for a valid **Jenkins Operator**:
+
+```yaml
+apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  master:
+    basePlugins:
+    - name: kubernetes
+      version: "1.30.11"
+    - name: workflow-job
+      version: "2.42"
+    - name: workflow-aggregator
+      version: "2.6"
+    - name: git
+      version: "4.10.0"
+    - name: job-dsl
+      version: "1.78.1"
+    - name: configuration-as-code
+      version: "1.55"
+    - name: kubernetes-credentials-provider
+      version: "0.20"
+```
+
+You can change their versions.
+
+The **Jenkins Operator** will then automatically install plugins after the Jenkins master pod restart.
+
+#### Apply plugin's config
+
 By using a [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/) you can create your own **Jenkins** customized configuration.
 Then you must reference the **`ConfigMap`** in the **Jenkins** pod customization file in `spec.groovyScripts` or `spec.configurationAsCode`
 
-For example create a **`ConfigMap`** with name `jenkins-operator-user-configuration`. Then, modify the **Jenkins** manifest to look like this:
+Create a **`ConfigMap`** with specific name (eg. `jenkins-operator-user-configuration`). Then, modify the **Jenkins** manifest:
 
 ```yaml
 apiVersion: jenkins.io/v1alpha2
@@ -20,7 +85,7 @@ metadata:
   name: example
 spec:
   configurationAsCode:
-    configurations: 
+    configurations:
     - name: jenkins-operator-user-configuration
   groovyScripts:
     configurations:
@@ -34,7 +99,7 @@ kind: ConfigMap
 metadata:
   name: jenkins-operator-user-configuration
 data:
-  1-configure-theme.groovy: | 
+  1-configure-theme.groovy: |
     import jenkins.*
     import jenkins.model.*
     import hudson.*
@@ -62,10 +127,10 @@ data:
 * `*.groovy` is Groovy script configuration
 * `*.yaml is` configuration as code
 
-If you want to correct your configuration you can edit it while the **Jenkins Operator** is running. 
+If you want to correct your configuration you can edit it while the **Jenkins Operator** is running.
 Jenkins will reconcile and apply the new configuration.
 
-### Using secrets from a Groovy script
+## How to use secrets from a Groovy scripts
 
 If you configured `spec.groovyScripts.secret.name`, then this secret is available to use from map Groovy scripts.
 The secrets are loaded to `secrets` map.
@@ -92,7 +157,7 @@ metadata:
   name: example
 spec:
   configurationAsCode:
-    configurations: 
+    configurations:
     - name: jenkins-operator-user-configuration
     secret:
       name: jenkins-conf-secrets
@@ -111,13 +176,13 @@ kind: ConfigMap
 metadata:
   name: jenkins-operator-user-configuration
 data:
-  1-system-message.groovy: | 
+  1-system-message.groovy: |
     import jenkins.*
     import jenkins.model.*
     import hudson.*
     import hudson.model.*
     Jenkins jenkins = Jenkins.getInstance()
-    
+
     jenkins.setSystemMessage(secrets["SYSTEM_MESSAGE"])
     jenkins.save()
 ```
@@ -136,49 +201,3 @@ data:
 
 
 After this, you should see the `Hello world` system message from the **Jenkins** homepage.
-
-## Install Plugins
-
-Edit Custom Resource under `spec.master.plugins`:
-
-```
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  master:
-   plugins:
-   - name: simple-theme-plugin
-     version: 0.5.1
-```
-
-Under `spec.master.basePlugins` you can find plugins for a valid **Jenkins Operator**:
-
-```yaml
-apiVersion: jenkins.io/v1alpha2
-kind: Jenkins
-metadata:
-  name: example
-spec:
-  master:
-    basePlugins:
-    - name: kubernetes
-      version: 1.18.3
-    - name: workflow-job
-      version: "2.34"
-    - name: workflow-aggregator
-      version: "2.6"
-    - name: git
-      version: 3.12.0
-    - name: job-dsl
-      version: "1.76"
-    - name: configuration-as-code
-      version: "1.29"
-    - name: kubernetes-credentials-provider
-      version: 0.12.1
-```
-
-You can change their versions.
-
-The **Jenkins Operator** will then automatically install plugins after the Jenkins master pod restarts.
