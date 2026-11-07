@@ -2,882 +2,138 @@
 title: "Installing the Operator"
 linkTitle: "Installing the Operator"
 weight: 1
-date: 2023-01-08
+date: 2026-10-31
 description: >
-  How to install Jenkins Operator
+  Install Jenkins Operator 0.9.0 with Helm or release manifests
 ---
 
 {{% pageinfo %}}
-This document describes installation procedure for **Jenkins Operator**.
-All container images can be found at [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository.
+This guide installs **Jenkins Operator 0.9.0**. Official images are published on Quay:
+[operator](https://quay.io/repository/jenkins-kubernetes-operator/operator) and
+[backup-pvc](https://quay.io/repository/jenkins-kubernetes-operator/backup-pvc).
+Both release images support Linux AMD64 and ARM64.
 {{% /pageinfo %}}
 
 ## Requirements
 
-To run **Jenkins Operator**, you will need:
+- A Kubernetes cluster and permission to create the operator's CRD and RBAC resources.
+- `kubectl` configured for that cluster, using a version compatible with its API server.
+- Helm 3 if installing the chart.
 
-- access to a Kubernetes cluster version `1.17+`
-- `kubectl` version `1.17+`
+See the [release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.9.0)
+and [release CI](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml)
+when evaluating your cluster version.
 
+## Install using Helm
 
-Listed below are the two ways to deploy Jenkins Operator.
-
-## Deploy Jenkins Operator using YAML's
-
-First, install Jenkins Custom Resource Definition:
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml
-```
-
-Then, install the Operator and other required resources:
+Add the chart repository and install chart version 0.9.0:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml
+helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+helm repo update
+helm install jenkins-operator jenkins/jenkins-operator \
+  --version 0.9.0 --namespace jenkins --create-namespace \
+  --set jenkins.namespace=jenkins
 ```
 
-Watch **Jenkins Operator** instance being created:
+By default, this installs both the operator and a Jenkins instance. To install only the operator,
+add `--set jenkins.enabled=false`, then follow [Deploying Jenkins](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
+
+Chart 0.9.0 uses these defaults:
+
+| Component | Image |
+|---|---|
+| Operator | `quay.io/jenkins-kubernetes-operator/operator:v0.9.0` |
+| Jenkins | `jenkins/jenkins:2.580.1-lts` |
+| Backup sidecar | `quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1` |
+
+The chart version, operator version, Jenkins version, and backup version are independent.
+Use a custom values file with `-f values.yaml` to override settings. See the
+[0.9.0 chart reference](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/chart/jenkins-operator/README.md)
+for supported values, including `jenkins.lifecycle`, `jenkins.terminationGracePeriodSeconds`,
+`jenkins.skipPlugins`, and `operator.watchNamespace`.
+
+For example, to add Jenkins labels and annotations:
 
 ```bash
-kubectl get pods -w
+helm install jenkins-operator jenkins/jenkins-operator \
+  --version 0.9.0 --namespace jenkins --create-namespace \
+  --set jenkins.namespace=jenkins \
+  --set jenkins.labels.LabelKey=LabelValue \
+  --set jenkins.annotations.AnnotationKey=AnnotationValue
 ```
 
-Now **Jenkins Operator** should be up and running in the `default` namespace.
-For deploying Jenkins, refer to [Deploy Jenkins section](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
+## Install using release manifests
 
-## Deploy Jenkins Operator using Helm Chart
-
-Alternatively, you can also use Helm to install the Operator (and optionally, by default, Jenkins). It requires the Helm 3+ for deployment.
-
-Create a namespace for the operator:
+Install the CRD, then the operator and its RBAC resources:
 
 ```bash
-$ kubectl create namespace <your-namespace>
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/deploy/all-in-one-v1alpha2.yaml
+kubectl rollout status deployment/jenkins-operator --namespace default
 ```
 
-To install, you need only to type these commands:
+This installs the operator in `default`; it does not create a Jenkins instance.
+Continue with [Deploying Jenkins](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
+For separate operator and Jenkins namespaces, see the
+[separate namespaces guide](/kubernetes-operator/docs/getting-started/latest/separate-namespaces/).
+
+## Upgrade an existing installation
+
+Back up Jenkins data and save your custom values before upgrading. Review the
+[release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.9.0)
+and [backup storage requirements](/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/#pvc-storage-size).
+
+Helm does not upgrade CRDs from a chart's `crds/` directory. Apply the release CRD before
+upgrading the chart, using your existing release name, namespace, and custom values:
 
 ```bash
-$ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
-$ helm install <name> jenkins/jenkins-operator -n <your-namespace>
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml
+helm repo update
+helm upgrade jenkins-operator jenkins/jenkins-operator \
+  --version 0.9.0 --namespace jenkins -f values.yaml
 ```
 
-To add custom labels and annotations, you can use `values.yaml` file or pass them into `helm install` command, e.g.:
+Check the rendered values before applying them, particularly custom images, probes, backup settings,
+and any use of the new `skipPlugins` option. The CR API remains `jenkins.io/v1alpha2`.
+
+## Validating webhook
+
+The webhook can reject Jenkins resources whose configured base or additional plugin versions match
+security warnings from Jenkins Update Center metadata. This validation is opt-in: enable both the
+operator's webhook and `spec.validateSecurityWarnings` on the Jenkins resource.
+
+The webhook requires cert-manager for its serving certificate. If cert-manager is already installed,
+install the operator first with Jenkins creation disabled:
 
 ```bash
-$ helm install <name> jenkins/jenkins-operator -n <your-namespace> --set jenkins.labels.LabelKey=LabelValue,jenkins.annotations.AnnotationKey=AnnotationValue
+helm upgrade --install jenkins-operator jenkins/jenkins-operator \
+  --version 0.9.0 --namespace jenkins --create-namespace \
+  --set jenkins.enabled=false --set webhook.enabled=true
 ```
-You can further customize Jenkins using `values.yaml`:
-<h3 id="JenkinsConfiguration">Jenkins instance configuration
-</h3>
 
-<table aria-colspan="4">
-<thead aria-colspan="4">
-<tr>
-<th></th>
-<th>Field</th>
-<th>Default value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody aria-colspan="4">
-<tr></tr>
-<tr>
-<td colspan="1">
-<code>jenkins</code>
-</td>
-<td colspan="3">
-<p>operator is section for configuring operator deployment</p>
-<table>
-<tr>
-<td>
-<code>enabled</code>
-</td>
-<td>
-true
-</td>
-<td>
-Enabled can enable or disable the Jenkins instance.
-Set to false if you have configured CR already and/or you want to deploy an operator only.
-</td>
-</tr>
-<tr>
-<td>
-<code>apiVersion</code>
-</td>
-<td>jenkins.io/v1alpha2</td>
-<td>
-Version of the CR manifest. The recommended and default value is <code>jenkins.io/v1alpha2</code>.
-<a href="#github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>name</code>
-</td>
-<td>
-jenkins
-</td>
-<td>
-Name of resource. The pod name will be <code>jenkins-&lt;name&gt;</code> (name will be set as suffix).
-</td>
-</tr>
-<tr>
-<td>
-<code>namespace</code>
-</td>
-<td>
-""
-</td>
-<td>
-Namespace the resources will be deployed to. If omitted, the resources will be deployed to the same namespace as the operator.
-It's not recommended to use default namespace. Create new namespace for jenkins (e.g. <code>kubectl create -n jenkins</code>).
+If cert-manager is not installed, the chart can install its bundled cert-manager dependency and CRDs
+with `--set cert-manager.enabled=true`. Check that dependency's compatibility with your cluster.
+Wait for cert-manager and the operator's serving certificate before creating a Jenkins resource.
 
-<b>Note:</b> If the Jenkins instance is disabled, this property will be ignored. Use the `operator.watchNamespace` property instead.
-</td>
-</tr>
-<tr>
-<td>
-<code>labels</code>
-</td>
-<td>
-{}
-</td>
-<td>
-Labels are injected into metadata labels field.
-</td>
-</tr>
-<tr>
-<td>
-<code>annotations</code>
-</td>
-<td>
-{}
-</td>
-<td>
-Annotations are injected into metadata annotations field.
-</td>
-</tr>
-<tr>
-<td>
-<code>image</code>
-</td>
-<td>
-jenkins/jenkins:lts
-</td>
-<td>
-Image is the name (and tag) of the Jenkins instance.
-It's recommended to use LTS (tag: "lts") version.
-</td>
-</tr>
-<tr>
-<td>
-<code>env</code>
-</td>
-<td>
-[]
-</td>
-<td>
-Env contains jenkins container environment variables.
-</td>
-</tr>
-<tr>
-<td>
-<code>imagePullPolicy</code>
-</td>
-<td>
-Always
-</td>
-<td>
-Defines policy for pulling images
-</td>
-</tr>
-<tr>
-<td>
-<code>priorityClassName</code>
-</td>
-<td>
-""
-</td>
-<td>
-PriorityClassName indicates the importance of a Pod relative to other Pods.
-<a href="https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>disableCSRFProtection</code>
-</td>
-<td>
-false
-</td>
-<td>
-disableCSRFProtection can enable or disable operator built-in CSRF protection.
-Set it to true if you are using OpenShift Jenkins Plugin.
-<a href="https://github.com/jenkinsci/kubernetes-operator/pull/193">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>imagePullSecrets</code>
-</td>
-<td>
-[]
-</td>
-<td>
-Used if you want to pull images from private repository
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuration/#pulling-docker-images-from-private-repositories">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>notifications</code>
-</td>
-<td>
-[]
-</td>
-<td>
-Notifications is feature that notify user about Jenkins reconciliation status
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/notifications/">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>basePlugins</code>
-</td>
-<td>
-<pre>
-- name: kubernetes
-  version: "1.25.2"
-- name: workflow-job
-  version: "2.39"
-- name: workflow-aggregator
-  version: "2.6"
-- name: git
-  version: "4.2.2"
-- name: job-dsl
-  version: "1.77"
-- name: configuration-as-code
-  version: "1.38"
-- name: kubernetes-credentials
-        -provider
-  version: "0.13"
-</pre>
-</td>
-<td>
-Plugins installed and required by the operator
-shouldn't contain plugins defined by user
-You can change their versions here
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>plugins</code>
-</td>
-<td>
-[]
-</td>
-<td>
-Plugins required by the user. You can define plugins here.
-<a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customization/#install-plugins">More info</a>
-Example:
-<pre>
-plugins:
- - name: simple-theme-plugin
-   version: 0.5.1
-</pre>
-</td>
-</tr>
-<tr>
-<td>
-<code>seedJobs</code>
-</td>
-<td>
-[]
-</td>
-<td>
-Placeholder for jenkins seed jobs
-For seed job creation tutorial, check:<br /> <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#prepare-job-definitions-and-pipelines">Prepare seed jobs</a>
-<br /><a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-seed-jobs-and-pipelines/#configure-seed-jobs">Configure seed jobs</a>
-<br />Example:
-<code>
-<pre>
-seedJobs:
-- id: jenkins-operator
-  targets: "cicd/jobs/*.jenkins"
-  description: "Jenkins Operator repository"
-  repositoryBranch: master
-  repositoryUrl:
-  - https://github.com/jenkinsci/kubernetes-operator.git
-</pre>
-</code>
-</td>
-</tr>
-<tr>
-<td>
-<code>resources</code>
-</td>
-<td>
-<pre>
-limits:
-  cpu: 1500m
-  memory: 3Gi
-requests:
-  cpu: 1
-  memory: 500M
-</pre>
-</td>
-<td>
-Resource limit/request for Jenkins
-<a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container">More info</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>volumes</code>
-</td>
-<td>
-<pre>
-- name: backup
-  persistentVolumeClaim:
-    claimName: jenkins-backup
-</pre>
-</td>
-<td>
-Volumes used by Jenkins
-By default, we are only using PVC volume for storing backups.
-</td>
-</tr>
-<tr>
-<td>
-<code>volumeMounts</code>
-</td>
-<td>
-[]
-</td>
-<td>
-volumeMounts are mounts for Jenkins pod.
-</td>
-</tr>
-<tr>
-<td>
-<code>securityContext</code>
-</td>
-<td>
-runAsUser: 1000
-fsGroup: 1000
-</td>
-<td>
-SecurityContext for pod.
-</td>
-</tr>
-<tr>
-<td><code>service</code></td>
-<td>not implemented</td>
-<td>Http Jenkins service. See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details.</td>
-</tr>
-<tr>
-<td><code>slaveService</code></td>
-<td>not implemented</td>
-<td>Slave Jenkins service. See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.Service for details.</td>
-</tr>
-<tr>
-<td>
-<code>livenessProbe</code>
-</td>
-<td>
-<pre>
-livenessProbe:
-  failureThreshold: 12
-  httpGet:
-    path: /login
-    port: http
-    scheme: HTTP
-  initialDelaySeconds: 80
-  periodSeconds: 10
-  successThreshold: 1
-  timeoutSeconds: 5
-</pre>
-</td>
-<td>
-livenessProbe for Pod
-</td>
-</tr>
-<tr>
-<td>
-<code>readinessProbe</code>
-</td>
-<td>
-<pre>
-readinessProbe:
-  failureThreshold: 3
-  httpGet:
-    path: /login
-    port: http
-    scheme: HTTP
-  initialDelaySeconds: 30
-  periodSeconds: 10
-  successThreshold: 1
-  timeoutSeconds: 1
-</pre>
-</td>
-<td>
-readinessProbe for Pod
-</td>
-</tr>
-<tr>
-<td>
-<code>
-backup
-</code>
-<p>
-<em>
-<a href="#Backup">
-Backup
-</a>
-</em>
-</p>
-</td>
-<td>
-</td>
-<td>
-Backup is section for configuring operator's backup feature
-By default backup feature is enabled and pre-configured
-This section simplifies the configuration described here: <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/">Configuring backup and restore</a>
-For customization tips see <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/custom-backup-and-restore">Custom backup and restore</a>
-</td>
-</tr>
-<tr>
-<td>
-<code>configuration</code>
-<p>
-<em>
-<a href="#Configuration">
-Configuration
-</a>
-</em>
-</p>
-</td>
-<td></td>
-<td>
-Section where we can configure Jenkins instance.
-See <a href="https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/">Customizing Jenkins</a> for details
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</tbody>
-</table>
+For a Helm-managed Jenkins instance, set `jenkins.enabled=true` and
+`jenkins.validateSecurityWarnings=true` in your values file once the webhook is ready.
+For a resource managed separately, set:
 
-### Configuring operator deployment
+```yaml
+spec:
+  validateSecurityWarnings: true
+```
 
-<table aria-colspan="4">
-    <thead aria-colspan="4">
-        <tr>
-            <th></th>
-            <th>Field</th>
-            <th>Default value</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody aria-colspan="4">
-        <tr></tr>
-        <tr>
-            <td colspan="1">
-            <code>operator</code>
-            </td>
-            <td colspan="3">
-            <p>operator is section for configuring operator deployment</p>
-                <table>
-                <tr>
-                <td>
-                <code>replicaCount</code></br>
-                </td>
-                <td>
-                1
-                </td>
-                <td>
-                Number of Replicas.
-                </td>
-                </tr>
-                <tr>
-                <td>
-                <code>image</code>
-                </td>
-                <td>
-                virtuslab/jenkins-operator:v0.4.0
-                </td>
-                <td>
-                Name (and tag) of the Jenkins Operator image.
-                </td>
-                </tr>
-                <tr>
-                <td>
-                <code>imagePullPolicy</code>
-                </td>
-                <td>
-                IfNotPresent
-                </td>
-                <td>
-                Defines policy for pulling images.
-                </td>
-                </tr>
-                <tr>
-                <td>
-                <code>imagePullSecrets</code>
-                </td>
-                <td>
-                []
-                </td>
-                <td>
-                Used if you want to pull images from private repository.
-                </td>
-                </tr>
-                <tr>
-                <td>
-                <code>nameOverride</code>
-                </td>
-                <td>
-                ""
-                </td>
-                <td>
-                nameOverride overrides the app name.
-                </td>
-                </tr>
-                <tr>
-                <td>
-                <code>fullnameOverride</code>
-                </td>
-                <td>
-                ""
-                </td>
-                <td>
-                fullnameOverride overrides the deployment name
-                </td>
-                </tr>
-                <tr>
-                    <td>
-                    <code>resources</code>
-                    </td>
-                    <td>
-                    {}
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <code>nodeSelector</code>
-                    </td>
-                    <td>
-                    {}
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <code>tolerations</code>
-                    </td>
-                    <td>
-                    {}
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    <code>affinity</code>
-                    </td>
-                    <td>
-                    {}
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>
+The operator needs access to `https://updates.jenkins.io/update-center.actual.json` to fetch warning metadata.
+Validation rejects a resource if that metadata has not yet been fetched. See
+[Security](/kubernetes-operator/docs/security/) for the validation behavior and other hardening settings.
 
+## Development snapshots
 
-
-<h3 id="Backup">Backup
-</h3>
-<p>
-(<em>Appears on:</em>
-<a href="#JenkinsConfiguration">JenkinsConfiguration</a>)
-</p>
-<p>
-Backup defines configuration of Jenkins backup.
-</p>
-
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Default value</th>
-<th>Description</th>
-</tr>
-</thead>
-    <tbody>
-        <tr>
-            <td>
-                <code>enabled</code>
-            </td>
-            <td>
-                true
-            </td>
-            <td>
-                Enabled is enable/disable switch for backup feature.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>image</code>
-            </td>
-            <td>
-                virtuslab/jenkins-operator-backup-pvc:v0.1.1
-            </td>
-            <td>
-                Image used by backup feature.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>containerName</code>
-            </td>
-            <td>
-                backup
-            </td>
-            <td>
-                Backup container name.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>interval</code>
-            </td>
-            <td>
-                30
-            </td>
-            <td>
-                Defines how often make backup in seconds.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>makeBackupBeforePodDeletion</code>
-            </td>
-            <td>
-                true
-            </td>
-            <td>
-                When enabled will make backup before pod deletion.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>backupCommand</code>
-            </td>
-            <td>
-                /home/user/bin/backup.sh
-            </td>
-            <td>
-                Backup container command.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>restoreCommand</code>
-            </td>
-            <td>
-                /home/user/bin/restore.sh
-            </td>
-            <td>
-                Backup restore command.
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <code>pvc</code>
-            </td>
-            <td colspan="2">
-                <p>Persistent Volume Claim Kubernetes resource</p>
-                <br/>
-                <table colspan="2" style="width:100%">
-                <tbody>
-                    <tr>
-                       <td>
-                            <code>enabled</code>
-                        </td>
-                        <td>
-                            true
-                        </td>
-                        <td>
-                            Enable/disable switch for PVC
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <code>enabled</code>
-                        </td>
-                        <td>
-                            true
-                        </td>
-                        <td>
-                            Enable/disable switch for PVC
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <code>size</code>
-                        </td>
-                        <td>
-                            5Gi
-                        </td>
-                        <td>
-                            Size of PVC
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <code>className</code>
-                        </td>
-                        <td>
-                            ""
-                        </td>
-                        <td>
-                            StorageClassName for PVC
-                            <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1">More info</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-         <tr>
-            <td>
-                <code>env</code>
-            </td>
-            <td>
-<pre>
-- name: BACKUP_DIR
-  value: /backup
-- name: JENKINS_HOME
-  value: /jenkins-home
-- name: BACKUP_COUNT
-  value: "3"
-</pre>
-            </td>
-                <td>
-                    Contains container environment variables.
-                    PVC backup provider handles these variables:<br />
-                    BACKUP_DIR - path for storing backup files (default: "/backup")<br />
-                    JENKINS_HOME - path to jenkins home (default: "/jenkins-home")<br />
-                    BACKUP_COUNT - define how much recent backups will be kept<br />
-                </td>
-            </td>
-        </tr>
-        <tr>
-        <td>
-            <code>volumeMounts</code>
-        </td>
-        <td>
-<pre>
-- name: jenkins-home
-  mountPath: /jenkins-home
-- mountPath: /backup
-  name: backup
-</pre>
-        </td>
-        <td>
-            Holds the mount points for volumes.
-        </td>
-        </tr>
-    </tbody>
-</table>
-
- <h4 id="Configuration">Configuration
- </h3>
- <p>
- (<em>Appears on:</em>
- <a href="#JenkinsConfiguration">Jenkins instance configuration</a>)
- </p>
-
- <table>
- <thead>
- <tr>
- <th>Field</th>
- <th>Default value</th>
- <th>Description</th>
- </tr>
- </thead>
-     <tbody>
-         <tr>
-             <td>
-                 <code>configurationAsCode</code>
-             </td>
-             <td>
-                 {}
-             </td>
-             <td>
-             ConfigurationAsCode defines configuration of Jenkins customization via Configuration as Code Jenkins plugin.
-Example:<br />
-<pre>
-- configMapName: jenkins-casc
-  content: {}
-</pre>
-             </td>
-         </tr>
-         <tr>
-             <td>
-                 <code>groovyScripts</code>
-             </td>
-             <td>
-                 {}
-             </td>
-             <td>
-             GroovyScripts defines configuration of Jenkins customization via groovy scripts.
-             Example:<br />
-<pre>
-- configMapName: jenkins-gs
-  content: {}
-</pre>
-             </td>
-         </tr>
-         <tr>
-             <td>
-                 <code>secretRefName</code>
-             </td>
-             <td>
-                 ""
-             </td>
-             <td>
-                 secretRefName of existing secret (previously created).
-             </td>
-         </tr>
-         <tr>
-             <td>
-                 <code>secretData</code>
-             </td>
-             <td>
-                 {}
-             </td>
-             <td>
-                 If secretRefName is empty, secretData creates new secret and fills with data provided in secretData.
-             </td>
-         </tr>
-     </tbody>
- </table>
-
-## Note on Operator's nightly built images
-If you wish to use the newest, not yet released version of the Operator, you can use one of nightly built snapshot images, however the maintainers of this project cannot guarantee their stability.
-
-You can find nightly built images by heading to [virtuslab/jenkins-operator](https://hub.docker.com/r/virtuslab/jenkins-operator) Docker Hub repository and looking for images with tag in the form of `{git-hash}`, {git-hash} being the hash of master branch commit that you want to use snapshot of.
+Nightly images are published to the [operator repository](https://quay.io/repository/jenkins-kubernetes-operator/operator)
+with a short Git commit hash as their tag. These are development snapshots, not the stable 0.9.0 image.
+Use the `master` manifests only when intentionally testing unreleased changes.
 
 ## Note on restricted Jenkins controller pod volumeMounts
 Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
@@ -895,96 +151,3 @@ below is the full list of those volumeMounts:
 * scripts
 * init-configuration
 * operator-credentials
-
-## Validating Webhook
-Validating webhook can be used in order to increase the Operator's capabilities to monitor security issues. It will look for security vulnerabilities in the base and requested plugins. It can be easily installed via Helm charts by setting webhook.enabled in values.yaml.
-
-
-**Note**: The webhook takes some time to get up and running. It's recommended to first deploy the Operator and later Jenkins Custom Resource by using toggles in `values.yaml`.
-For the installation with yaml manifests (without using Helm chart), first, install cert-manager:
-
-```bash
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.1/cert-manager.yaml
-```
-
-It takes some time to get cert-manager up and running.
-Then, install the webhook and other required resources:
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-webhook.yaml
-```
-
-Now, download the manifests for the operator and other resources from [here](https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/deploy/all-in-one-v1alpha2.yaml) and provide these additional fields in the Operator manifest:
-
-<pre>
-<code>
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: jenkins-operator
-  labels:
-    control-plane: controller-manager
-spec:
-  selector:
-    matchLabels:
-      control-plane: controller-manager
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        control-plane: controller-manager
-    spec:
-      serviceAccountName: jenkins-operator
-      securityContext:
-        runAsUser: 65532
-      containers:
-      - command:
-        - /manager
-        args:
-        - --leader-elect
-        <b>- --validate-security-warnings</b>
-        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
-        name: jenkins-operator
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          allowPrivilegeEscalation: false
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8081
-          initialDelaySeconds: 15
-          periodSeconds: 20
-        readinessProbe:
-          httpGet:
-            path: /readyz
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        resources:
-          limits:
-            cpu: 200m
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
-        env:
-          - name: WATCH_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-        <b>volumeMounts:
-          - mountPath: /tmp/k8s-webhook-server/serving-certs
-            name: webhook-certs
-            readOnly: true
-      volumes:
-      - name: webhook-certs
-        secret:
-          defaultMode: 420
-          secretName: jenkins-webhook-certificate
-      terminationGracePeriodSeconds: 10</b>
-</code>
-</pre>
-
-To enable security validation in the Jenkins Custom Resource, set
-
->jenkins.ValidateSecurityWarnings=true

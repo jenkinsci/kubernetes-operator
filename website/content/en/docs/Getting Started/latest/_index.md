@@ -1,14 +1,14 @@
 ---
-title: "Latest (v0.8.x)"
-linkTitle: "Latest (v0.8.x)"
+title: "Latest (v0.9.x)"
+linkTitle: "Latest (v0.9.x)"
 weight: 1
-date: 2023-31-05
+date: 2026-10-31
 description: >
   How to work with the latest, currently supported Jenkins Operator version.
 ---
 
 {{% pageinfo %}}
-This document describes a getting started guide for **Jenkins Operator** `v0.8.x` and also additional configuration.
+This document describes a getting started guide for **Jenkins Operator** `v0.9.x` and also additional configuration.
 {{% /pageinfo %}}
 
 ## First Steps

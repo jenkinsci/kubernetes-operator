@@ -1,8 +1,8 @@
 ---
-title: "Configuration"
-linkTitle: "Configuration"
-weight: 2
-date: 2020-04-13
+title: "Configuring Seed Jobs and Pipelines"
+linkTitle: "Configuring Seed Jobs and Pipelines"
+weight: 4
+date: 2021-12-08
 description: >
   How to configure Jenkins with Operator
 ---
@@ -19,18 +19,29 @@ First you have to prepare pipelines and job definition in your GitHub repository
 ```
 cicd/
 ├── jobs
-│   └── build.jenkins
+│   └── k8s.jenkins
 └── pipelines
-    └── build.jenkins
+    └── k8s.jenkins
 ```
 
-**`cicd/jobs/build.jenkins`** is a job definition:
+**`cicd/jobs/k8s.jenkins`** is a job definition:
 
 ```
 #!/usr/bin/env groovy
 
-pipelineJob('build-jenkins-operator') {
-    displayName('Build jenkins-operator')
+pipelineJob('k8s-e2e') {
+    displayName('Kubernetes Plugin E2E Test')
+
+    logRotator {
+        numToKeep(10)
+        daysToKeep(30)
+    }
+
+    configure { project ->
+        project / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DurabilityHintJobProperty' {
+            hint('PERFORMANCE_OPTIMIZED')
+        }
+    }
 
     definition {
         cpsScm {
@@ -43,59 +54,31 @@ pipelineJob('build-jenkins-operator') {
                     branches('*/master')
                 }
             }
-            scriptPath('cicd/pipelines/build.jenkins')
+            scriptPath('cicd/pipelines/k8s.jenkins')
         }
     }
 }
 ```
 
-**`cicd/pipelines/build.jenkins`** is an actual Jenkins pipeline:
+**`cicd/pipelines/k8s.jenkins`** is an actual Jenkins pipeline:
 
 ```
 #!/usr/bin/env groovy
 
-def label = "build-jenkins-operator-${UUID.randomUUID().toString()}"
+def label = "k8s-${UUID.randomUUID().toString()}"
 def home = "/home/jenkins"
 def workspace = "${home}/workspace/build-jenkins-operator"
 def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
 
 podTemplate(label: label,
         containers: [
-                containerTemplate(name: 'jnlp', image: 'jenkins/inbound-agent:alpine'),
-                containerTemplate(name: 'go', image: 'golang:1-alpine', command: 'cat', ttyEnabled: true),
-        ],
-        envVars: [
-                envVar(key: 'GOPATH', value: workspace),
+                containerTemplate(name: 'alpine', image: 'alpine:3.11', ttyEnabled: true, command: 'cat'),
         ],
         ) {
-
     node(label) {
-        dir(workdir) {
-            stage('Init') {
-                timeout(time: 3, unit: 'MINUTES') {
-                    checkout scm
-                }
-                container('go') {
-                    sh 'apk --no-cache --update add make git gcc libc-dev'
-                }
-            }
-
-            stage('Dep') {
-                container('go') {
-                    sh 'make dep'
-                }
-            }
-
-            stage('Test') {
-                container('go') {
-                    sh 'make test'
-                }
-            }
-
-            stage('Build') {
-                container('go') {
-                    sh 'make build'
-                }
+        stage('Run shell') {
+            container('alpine') {
+                sh 'echo "hello world"'
             }
         }
     }
@@ -149,7 +132,7 @@ $ ssh-keygen -t rsa -b 2048
 $ ssh-keygen -p -f <filename> -m pem
 ```
 
-Then copy content from generated file. 
+Then copy content from generated file.
 
 #### Public key
 
@@ -180,7 +163,7 @@ spec:
     targets: "cicd/jobs/*.jenkins"
     description: "Jenkins Operator repository"
     repositoryBranch: master
-    repositoryUrl: ssh://git@github.com:jenkinsci/kubernetes-operator.git
+    repositoryUrl: git@github.com:jenkinsci/kubernetes-operator.git
 ```
 
 and create a Kubernetes Secret (name of secret should be the same from `credentialID` field):
@@ -196,7 +179,7 @@ metadata:
     "jenkins.io/credentials-description" : "ssh github.com:jenkinsci/kubernetes-operator"
 stringData:
   privateKey: |
-    -----BEGIN RSA PRIVATE KEY-----
+    <your-private-ssh-key>
     MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
     oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
     ...
@@ -237,6 +220,26 @@ stringData:
 
 ### External authentication
 You can use `external` credential type if you want to configure authentication using Configuration As Code or Groovy Script.
+
+Example:
+```yaml
+apiVersion: jenkins.io/v1alpha2
+kind: Jenkins
+metadata:
+  name: example
+spec:
+  seedJobs:
+  - id: jenkins-operator-external
+    credentialType: external
+    credentialID: k8s-external
+    targets: "cicd/jobs/*.jenkins"
+    description: "Jenkins Operator repository"
+    repositoryBranch: master
+    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
+```
+
+Remember that `credentialID` must match the id of the credentials configured in Jenkins. Consult the
+[Jenkins docs for using credentials][jenkins-using-credentials] for details.
 
 ## HTTP Proxy for downloading plugins
 
@@ -330,3 +333,4 @@ Example config file to modify and use:
 
 [job-dsl]:https://github.com/jenkinsci/job-dsl-plugin
 [kubernetes-credentials-provider]:https://jenkinsci.github.io/kubernetes-credentials-provider-plugin/
+[jenkins-using-credentials]:https://www.jenkins.io/doc/book/using/using-credentials/

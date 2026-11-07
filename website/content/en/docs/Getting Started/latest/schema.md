@@ -2,13 +2,15 @@
 title: "Schema"
 linkTitle: "Schema"
 weight: 11
-date: 2023-01-08
+date: 2026-10-31
 description: >
   API Schema definitions for Jenkins CRD
 ---
 
 {{% pageinfo %}}
-This document contains API scheme for `jenkins-operator` Custom Resource Definition manifest
+This document describes the `jenkins.io/v1alpha2` API used by Jenkins Operator 0.9.0.
+The [release CRD](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml)
+is the authoritative schema for validation and supported fields.
 {{% /pageinfo %}}
 
 <p>Packages:</p>
@@ -737,13 +739,17 @@ More info: <a href="https://kubernetes.io/docs/concepts/policy/security-context/
 More info: <a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">https://kubernetes.io/docs/tasks/configure-pod-container/security-context/</a></p>
 </td>
 </tr>
+<tr>
+<td><code>lifecycle</code></br><em>Kubernetes Lifecycle</em></td>
+<td><em>(Optional)</em><p>Lifecycle hooks for the Jenkins container, such as postStart and preStop. In Helm, configure these using jenkins.lifecycle.</p></td>
+</tr>
 </tbody>
 </table>
 <h3 id="github.com/jenkinsci/kubernetes-operator/api/v1alpha2.Customization">Customization
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.ConfigurationAsCode">ConfigurationAsCode</a>, 
+<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.ConfigurationAsCode">ConfigurationAsCode</a>,
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.GroovyScripts">GroovyScripts</a>)
 </p>
 <p>
@@ -821,7 +827,7 @@ Customization
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Backup">Backup</a>, 
+<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Backup">Backup</a>,
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Restore">Restore</a>)
 </p>
 <p>
@@ -1143,6 +1149,14 @@ string
 <em>(Optional)</em>
 <p>HostAliases for Jenkins master pod and SeedJob agent</p>
 </td>
+</tr>
+<tr>
+<td><code>skipPlugins</code></br><em>boolean</em></td>
+<td><em>(Optional)</em><p>Skip installation of both base and additional plugins. Defaults to false. Requires a custom Jenkins image containing the required base plugins.</p></td>
+</tr>
+<tr>
+<td><code>terminationGracePeriodSeconds</code></br><em>integer</em></td>
+<td><em>(Optional)</em><p>Time in seconds allowed for pod termination before processes are forcibly stopped. Defaults to 30 seconds; allow enough time for shutdown and cleanup.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2037,9 +2051,9 @@ string
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Mailgun">Mailgun</a>, 
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.MicrosoftTeams">MicrosoftTeams</a>, 
-<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.SMTP">SMTP</a>, 
+<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Mailgun">Mailgun</a>,
+<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.MicrosoftTeams">MicrosoftTeams</a>,
+<a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.SMTP">SMTP</a>,
 <a href="#github.com%2fjenkinsci%2fkubernetes-operator%2fapi%2fv1alpha2.Slack">Slack</a>)
 </p>
 <p>
