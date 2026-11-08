@@ -412,6 +412,10 @@ kind-clean: ## Delete kind cluster
 kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
+.PHONY: mesh-install mesh-clean
+mesh-install mesh-clean: helm ## Install or remove a test mesh in Kind (MESH=istio or linkerd)
+	bash test/bats/mesh-install.bash "$(patsubst mesh-%,%,$@)" "$(MESH)" "$(ISTIO_VERSION)" "$(LINKERD_VERSION)" "kind-$(KIND_CLUSTER_NAME)"
+
 .PHONY: bats-tests ## Run bats tests
 bats-tests: helm
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64

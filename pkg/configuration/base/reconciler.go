@@ -382,8 +382,24 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 			containersReadyCount++
 		}
 	}
-	if containersReadyCount != len(jenkinsMasterPod.Status.ContainerStatuses) {
+	if containersReadyCount != len(jenkinsMasterPod.Spec.Containers) {
 		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+	}
+
+	for _, container := range jenkinsMasterPod.Spec.InitContainers {
+		if ptr.Deref(container.RestartPolicy, corev1.ContainerRestartPolicy("")) != corev1.ContainerRestartPolicyAlways {
+			continue
+		}
+		ready := false
+		for _, status := range jenkinsMasterPod.Status.InitContainerStatuses {
+			if status.Name == container.Name {
+				ready = status.Ready
+				break
+			}
+		}
+		if !ready {
+			return reconcile.Result{RequeueAfter: 5 * time.Second}, nil
+		}
 	}
 
 	return reconcile.Result{}, nil

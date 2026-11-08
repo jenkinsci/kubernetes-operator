@@ -256,10 +256,26 @@ when another controller changes or removes keys declared in `spec.master`.
 ServiceAccount annotations remain managed separately.
 
 Other restart checks remain active, including failures, credentials, operator
-upgrades and changes to retained fields. Mesh sidecars and probe rewrites are not
-covered. The experimental Deployment path does not use these rules.
+upgrades and changes to retained fields. Unrecognized sidecars and probe rewrites
+are not covered. The experimental Deployment path does not use these rules.
 
 Helm uses the same settings under `jenkins.reconciliation`.
+
+Istio and Linkerd regular/native sidecars and their known injected volumes are
+covered by the same switch; [exact component names](https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/mesh_comparison.go).
+Mesh rules preserve user-declared containers and volumes. Istio requires this Pod
+annotation to keep application probes unchanged:
+
+```yaml
+spec:
+  master:
+    annotations:
+      sidecar.istio.io/rewriteAppHTTPProbers: "false"
+```
+
+Full strict-mTLS compatibility is not supported: mesh policy must permit direct
+kubelet probes and operator-to-Jenkins traffic. Linkerd does not use the Istio
+annotation. See [Istio health checks](https://istio.io/latest/docs/ops/configuration/mesh/app-health-check/).
 
 ### Kubernetes volume defaults
 

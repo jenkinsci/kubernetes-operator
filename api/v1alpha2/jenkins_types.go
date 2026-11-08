@@ -81,10 +81,11 @@ type JenkinsSpec struct {
 
 // JenkinsReconciliation configures comparison of the desired and admitted Jenkins pod.
 type JenkinsReconciliation struct {
-	// IgnoreWellKnownInjections tolerates the documented AWS/Azure identity fields and Google ADC env.
+	// IgnoreWellKnownInjections tolerates documented cloud identity and Istio/Linkerd injection.
 	// Defaults to true; set false to disable the built-in rules.
-	// Rules are additive with Ignore and apply even to explicitly declared matching names.
-	// Meshes, custom credential volume names and provider configuration metadata are not included.
+	// Rules are additive with Ignore. Cloud identity rules include explicitly declared names.
+	// Mesh rules preserve user-declared containers and volumes.
+	// Custom injection templates, custom credential volume names and provider configuration metadata are not included.
 	// +optional
 	// +kubebuilder:default=true
 	IgnoreWellKnownInjections *bool `json:"ignoreWellKnownInjections,omitempty"`

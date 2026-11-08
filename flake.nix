@@ -51,6 +51,7 @@
           packages = [
             pkgs.gnumake
             pkgs.wget
+            pkgs.openssl
             pkgs.helm-docs
             pkgs.pre-commit
             pkgs.kind
