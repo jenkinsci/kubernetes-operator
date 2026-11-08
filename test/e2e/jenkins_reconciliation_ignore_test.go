@@ -231,9 +231,13 @@ var _ = Describe("Jenkins reconciliation ignore", func() {
 	It("tolerates workload identity admission for AWS", func() {
 		identityScenarios("irsa", "eks-pod-identity")
 	})
-	It("tolerates workload identity admission for generic gcp", func() { identityScenario("gcp") })
+	It("keeps Google ADC and native GKE identity stable", func() {
+		By("checking injected Google ADC credentials")
+		identityScenario("gcp")
+		cleanupNamespace()
+		createNamespace()
 
-	It("keeps native GKE ServiceAccount identity stable without ignore rules", func() {
+		By("checking native GKE identity without custom ignore rules")
 		j := identityJenkins(namespace.Name)
 		j.Spec.ServiceAccount.Annotations = map[string]string{"iam.gke.io/gcp-service-account": "test@example.iam.gserviceaccount.com"}
 		// Kind supplies this real node selector; native GKE identity uses metadata-server-enabled nodes.
