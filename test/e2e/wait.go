@@ -3,11 +3,9 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
-	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 
 	"github.com/onsi/ginkgo"
@@ -80,21 +78,4 @@ func WaitForJenkinsUserConfigurationToComplete(jenkins *v1alpha2.Jenkins) {
 		return actualJenkins.Status.UserConfigurationCompletedTime, nil
 	}, 2000*time.Second, retryInterval).Should(gomega.Not(gomega.BeNil()))
 	_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Jenkins instance is up and ready\n")
-}
-
-//lint:ignore U1000 Ignore unused function temporarily
-func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
-	ginkgo.By("waiting for Jenkins safe restart")
-
-	gomega.Eventually(func() (bool, error) {
-		status, err := jenkinsClient.Poll(context.TODO())
-		_, _ = fmt.Fprintf(ginkgo.GinkgoWriter, "Safe restart status: %+v, err: %s\n", status, err)
-		if err != nil {
-			return false, err
-		}
-		if status != http.StatusOK {
-			return false, err
-		}
-		return true, nil
-	}, 2500*time.Second, retryInterval).Should(gomega.BeTrue())
 }

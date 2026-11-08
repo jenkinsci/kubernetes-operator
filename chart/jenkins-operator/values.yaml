@@ -47,6 +47,18 @@ jenkins:
   # lifecycle is used if you want to specify lifecycle hooks for the master container
   lifecycle: {}
 
+  # Comparison-only exceptions for externally injected pod fields (unreleased).
+  reconciliation:
+    # Opt into the documented cloud identity catalog; meshes are excluded. Manual rules remain additive.
+    ignoreWellKnownInjections: true
+    ignore:
+      annotations: []
+      labels: []
+      env: []
+      volumes: []
+      # Literal volume-name prefixes, including corresponding mounts; useful for Azure Workload Identity.
+      volumeNamePrefixes: []
+
   # priorityClassName indicates the importance of a Pod relative to other Pods
   # See: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
   priorityClassName: ""

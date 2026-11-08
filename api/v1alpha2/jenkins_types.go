@@ -73,6 +73,48 @@ type JenkinsSpec struct {
 
 	// JenkinsAPISettings defines configuration used by the operator to gain admin access to the Jenkins API
 	JenkinsAPISettings JenkinsAPISettings `json:"jenkinsAPISettings"`
+
+	// Reconciliation controls which externally managed pod fields do not trigger recreation.
+	// +optional
+	Reconciliation JenkinsReconciliation `json:"reconciliation,omitempty"`
+}
+
+// JenkinsReconciliation configures comparison of the desired and admitted Jenkins pod.
+type JenkinsReconciliation struct {
+	// IgnoreWellKnownInjections tolerates the documented AWS/Azure identity fields and Google ADC env.
+	// Defaults to true; set false to disable the built-in rules.
+	// Rules are additive with Ignore and apply even to explicitly declared matching names.
+	// Meshes, custom credential volume names and provider configuration metadata are not included.
+	// +optional
+	// +kubebuilder:default=true
+	IgnoreWellKnownInjections *bool `json:"ignoreWellKnownInjections,omitempty"`
+
+	// Ignore selects fields excluded from pod recreation comparisons, not pod creation or validation.
+	// +optional
+	Ignore JenkinsReconciliationIgnore `json:"ignore,omitempty"`
+}
+
+// JenkinsReconciliationIgnore tolerates selected admission-controller mutations.
+// Names and keys are case-sensitive. Environment rules apply to all compared containers.
+type JenkinsReconciliationIgnore struct {
+	// Annotations lists exact pod annotation keys whose changed or missing values are tolerated.
+	// +optional
+	Annotations []string `json:"annotations,omitempty"`
+	// Labels lists exact pod label keys whose changed or missing values are tolerated.
+	// +optional
+	Labels []string `json:"labels,omitempty"`
+	// Env lists exact environment variable names, including ValueFrom, to ignore. EnvFrom is unchanged.
+	// +optional
+	Env []string `json:"env,omitempty"`
+	// Volumes lists exact volume names to ignore, including corresponding mounts by name.
+	// +optional
+	Volumes []string `json:"volumes,omitempty"`
+	// VolumeNamePrefixes ignores volume names and their mounts by literal prefix.
+	// This supports Azure Workload Identity's per-pod azure-workload-identity-reserved-<hash> names.
+	// IgnoreWellKnownInjections adds the Azure prefix; empty prefixes are invalid.
+	// +optional
+	// +kubebuilder:validation:items:MinLength=1
+	VolumeNamePrefixes []string `json:"volumeNamePrefixes,omitempty"`
 }
 
 // AuthorizationStrategy defines authorization strategy of the operator for the Jenkins API
