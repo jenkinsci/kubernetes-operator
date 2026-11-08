@@ -8,6 +8,18 @@ metadata:
   labels: {{ toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- with .Values.jenkins.reconciliation }}
+  {{- $ignore := .ignore | default dict }}
+  {{- if or (hasKey . "ignoreWellKnownInjections") $ignore.annotations $ignore.labels $ignore.env $ignore.volumes $ignore.volumeNamePrefixes }}
+  reconciliation:
+    {{- if hasKey . "ignoreWellKnownInjections" }}
+    ignoreWellKnownInjections: {{ .ignoreWellKnownInjections }}
+    {{- end }}
+    {{- if or $ignore.annotations $ignore.labels $ignore.env $ignore.volumes $ignore.volumeNamePrefixes }}
+    ignore: {{ toYaml $ignore | nindent 6 }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
   configurationAsCode:
     {{- if .Values.jenkins.configuration.configurationAsCode }}
     configurations:

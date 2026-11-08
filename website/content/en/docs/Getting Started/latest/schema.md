@@ -9,9 +9,33 @@ description: >
 
 {{% pageinfo %}}
 This document describes the `jenkins.io/v1alpha2` API used by Jenkins Operator 0.9.0.
+The reconciliation options below are unreleased additions on current main.
 The [release CRD](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml)
 is the authoritative schema for validation and supported fields.
 {{% /pageinfo %}}
+
+## Reconciliation options (unreleased)
+
+Current main adds optional `spec.reconciliation.ignoreWellKnownInjections` (boolean,
+default `true`) for the documented cloud identity catalog. It combines with the
+manual lists below. Matching declared fields are ignored too. Native GKE needs no
+injection rules; custom GCP volume names remain manual, and meshes are excluded.
+
+`spec.reconciliation.ignore` provides these optional string arrays:
+
+| Field | Comparison exception |
+| --- | --- |
+| `annotations` | Exact pod annotation keys declared in `spec.master` |
+| `labels` | Exact pod label keys declared in `spec.master` |
+| `env` | Exact environment variable names in all compared regular containers, including `valueFrom` |
+| `volumes` | Exact volume names and corresponding mount names |
+| `volumeNamePrefixes` | Literal non-empty volume-name prefixes and corresponding mount names; supports Azure Workload Identity per-pod names |
+
+These fields require matching operator and CRD versions from after 0.9.0. Omitted
+or empty lists preserve existing comparison behavior. They affect comparison only;
+`envFrom`, unrelated fields, extra containers and operational restart reasons stay
+managed. See [usage and cloud identity examples](../customizing-jenkins/#externally-managed-pod-fields-unreleased).
+The tables below describe the released 0.9.0 API.
 
 <p>Packages:</p>
 <ul>
