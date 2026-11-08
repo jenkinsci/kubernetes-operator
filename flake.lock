@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "docsy": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793496235,
+        "narHash": "sha256-vVdnVIPnD6yuFHb8JPLPdNKHnFr3dalYenN/PUmyB/U=",
+        "owner": "docsy",
+        "repo": "docsy",
+        "rev": "9cb7b33d270c5e340499652dfec55037f96782a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "docsy",
+        "ref": "v0.18.1",
+        "repo": "docsy",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -15,22 +32,6 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
-        "type": "github"
-      }
-    },
-    "hugo_099": {
-      "locked": {
-        "lastModified": 1657975505,
-        "narHash": "sha256-juMbw+GY2ycTrg3QbdFfEQs6P3FJeoYEv8aMVl2EZsg=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d6df226c53d46821bd4773bd7ec3375f30238edb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "d6df226c53d46821bd4773bd7ec3375f30238edb",
         "type": "github"
       }
     },
@@ -68,8 +69,8 @@
     },
     "root": {
       "inputs": {
+        "docsy": "docsy",
         "flake-utils": "flake-utils",
-        "hugo_099": "hugo_099",
         "nixpkgs": "nixpkgs",
         "nixpkgs-rolling": "nixpkgs-rolling"
       }

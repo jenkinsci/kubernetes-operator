@@ -490,29 +490,16 @@ endif
 	@echo
 
 
-# Download and build hugo extended locally if necessary
-HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.99.1
-HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
-.PHONY: hugo
-hugo:
-ifeq ($(HAS_HUGO), )
-	@echo "Installing Hugo $(HUGO_VERSION)"
-	rm -rf $(HUGO_PATH)
-	git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH)
-	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
-endif
-
+# Website tooling is provided by the dedicated Nix shell.
 .PHONY: generate-docs
-generate-docs: hugo ## Build the website into website/public
+generate-docs: ## Build the website with Nix into result/
 	@echo "+ $@"
-	cd website && npm install
-	$(HUGO_PATH)/hugo -s website
+	nix build .#website
 
 .PHONY: run-docs
-run-docs: hugo
+run-docs: ## Preview the website with Nix
 	@echo "+ $@"
-	cd website && $(HUGO_PATH)/hugo server -D
+	cd website && nix develop ..#website --command hugo server -D
 
 ##################### FROM OPERATOR SDK ########################
 # Install CRDs into a cluster

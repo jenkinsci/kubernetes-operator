@@ -29,7 +29,7 @@ Choose the environment that suits you:
   Docker engine and client, Git and kubectl on the host.
 - **Devcontainer:** open the checkout in VS Code and select **Dev Containers:
   Reopen in Container**, using `.devcontainer/devcontainer.json`. It configures
-  Go, Docker-in-Docker, kubectl, Helm, Kind, Bats, Hugo and Nix. Run `nix develop`
+  Go, Docker-in-Docker, kubectl, Helm, Kind, Bats and Nix. Run `nix develop`
   in its terminal when you need the full development toolset, including pre-commit
   and helm-docs.
 - **Local tools with Make:** install Git, GNU Make, Bash, Go, Docker, kubectl and
@@ -40,7 +40,8 @@ Choose the environment that suits you:
 
 Use `config.base.env` and `variables.mk` for the configured tool versions. The
 [Developer Guide](https://jenkinsci.github.io/kubernetes-operator/docs/developer-guide/)
-covers setup, cluster tests, backup tests and website development for these options.
+covers setup, cluster tests and backup tests for these options. Website development
+and publishing use the dedicated Nix website environment.
 
 Run focused tests first. For Go changes, run `make verify`; for API changes, also
 run `make manifests` and review the generated files. Run local integration suites

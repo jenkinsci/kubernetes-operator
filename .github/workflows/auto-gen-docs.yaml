@@ -8,11 +8,21 @@ on:
     paths:
       - 'website/**'
       - 'assets/**'
+      - 'nix/website-*.nix'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'config.base.env'
+      - '.github/workflows/auto-gen-docs.yaml'
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
     paths:
       - 'website/**'
       - 'assets/**'
+      - 'nix/website-*.nix'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'config.base.env'
+      - '.github/workflows/auto-gen-docs.yaml'
 
 permissions:
   contents: read
