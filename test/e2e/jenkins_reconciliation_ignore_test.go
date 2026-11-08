@@ -91,18 +91,26 @@ func replaceIdentityPod(j *v1alpha2.Jenkins, old types.UID) *corev1.Pod {
 var _ = Describe("Jenkins reconciliation ignore", func() {
 	var namespace *corev1.Namespace
 	var cleanup func()
-	BeforeEach(func() {
+	createNamespace := func() {
 		namespace = &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{GenerateName: "identity-"}}
 		Expect(K8sClient.Create(context.Background(), namespace)).To(Succeed())
-	})
-	AfterEach(func() {
-		defer DestroyNamespace(namespace)
-		if cleanup != nil {
-			cleanup()
-			cleanup = nil
+	}
+	cleanupNamespace := func() {
+		if namespace == nil {
+			return
 		}
-		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, namespace.Name)
-	})
+		current := namespace
+		namespace = nil
+		defer DestroyNamespace(current)
+		if cleanup != nil {
+			removeWebhook := cleanup
+			cleanup = nil
+			removeWebhook()
+		}
+		ShowLogsIfTestHasFailed(CurrentGinkgoTestDescription().Failed, current.Name)
+	}
+	BeforeEach(createNamespace)
+	AfterEach(cleanupNamespace)
 	identityScenario := func(profile string) {
 		cleanup = installIdentityWebhook(namespace.Name)
 		j := identityJenkins(namespace.Name)
@@ -207,10 +215,22 @@ var _ = Describe("Jenkins reconciliation ignore", func() {
 		}
 		stableIdentityPod(j, replacement.UID)
 	}
-	It("tolerates workload identity admission for azure fixed-name", func() { identityScenario("azure") })
-	It("tolerates workload identity admission for azure hashed-name", func() { identityScenario("azure-prefix") })
-	It("tolerates workload identity admission for irsa", func() { identityScenario("irsa") })
-	It("tolerates workload identity admission for EKS Pod Identity", func() { identityScenario("eks-pod-identity") })
+	identityScenarios := func(profiles ...string) {
+		for i, profile := range profiles {
+			if i > 0 {
+				cleanupNamespace()
+				createNamespace()
+			}
+			By("checking workload identity admission for " + profile)
+			identityScenario(profile)
+		}
+	}
+	It("tolerates workload identity admission for Azure", func() {
+		identityScenarios("azure", "azure-prefix")
+	})
+	It("tolerates workload identity admission for AWS", func() {
+		identityScenarios("irsa", "eks-pod-identity")
+	})
 	It("tolerates workload identity admission for generic gcp", func() { identityScenario("gcp") })
 
 	It("keeps native GKE ServiceAccount identity stable without ignore rules", func() {
