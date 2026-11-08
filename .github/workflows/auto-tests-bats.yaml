@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-file: ["1-deploy", "2-deploy-with-more-options", "3-deploy-with-webhook", "4-reconciliation-ignore"]
+        test-file: ["1-deploy", "2-deploy-with-more-options", "3-deploy-with-webhook", "4-reconciliation-ignore", "5-istio", "6-linkerd"]
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

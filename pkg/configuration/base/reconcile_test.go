@@ -1011,7 +1011,7 @@ func TestWaitForJenkinsSchedulesReadinessPolling(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			jenkins := &v1alpha2.Jenkins{ObjectMeta: metav1.ObjectMeta{Name: "example", Namespace: "default"}}
-			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "jenkins-example", Namespace: "default"}, Status: corev1.PodStatus{Phase: test.phase, ContainerStatuses: []corev1.ContainerStatus{{Name: "jenkins", Ready: test.ready}}}}
+			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "jenkins-example", Namespace: "default"}, Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "jenkins"}}}, Status: corev1.PodStatus{Phase: test.phase, ContainerStatuses: []corev1.ContainerStatus{{Name: "jenkins", Ready: test.ready}}}}
 			if test.terminating {
 				now := metav1.Now()
 				pod.DeletionTimestamp = &now

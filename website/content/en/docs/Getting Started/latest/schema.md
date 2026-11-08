@@ -17,7 +17,7 @@ is the authoritative schema for validation and supported fields.
 ## Reconciliation options (unreleased)
 
 Current main adds optional `spec.reconciliation.ignoreWellKnownInjections` (boolean,
-default `true`) for the documented cloud identity catalog. It combines with the
+default `true`) for the documented cloud identity and Istio/Linkerd injection rules. It combines with the
 manual lists below. Matching declared fields are ignored too. Native GKE needs no
 injection rules; custom GCP volume names remain manual, and meshes are excluded.
 

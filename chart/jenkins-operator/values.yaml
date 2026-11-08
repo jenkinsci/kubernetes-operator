@@ -49,7 +49,7 @@ jenkins:
 
   # Comparison-only exceptions for externally injected pod fields (unreleased).
   reconciliation:
-    # Opt into the documented cloud identity catalog; meshes are excluded. Manual rules remain additive.
+    # Default cloud identity and mesh injection rules. Manual rules remain additive.
     ignoreWellKnownInjections: true
     ignore:
       annotations: []

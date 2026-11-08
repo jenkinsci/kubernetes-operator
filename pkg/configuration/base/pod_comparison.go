@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maps"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -35,14 +36,44 @@ func normalizeVolumesForComparison(volumes []corev1.Volume) []corev1.Volume {
 	return normalized
 }
 
+type podComparisonExclusions struct {
+	containers, initContainers, volumes sets.Set[string]
+}
+
+func newPodComparisonExclusions() podComparisonExclusions {
+	return podComparisonExclusions{containers: sets.New[string](), initContainers: sets.New[string](), volumes: sets.New[string]()}
+}
+
+func (ignored podComparisonExclusions) normalize(expected, actual *corev1.Pod) {
+	for _, c := range expected.Spec.Containers {
+		ignored.containers.Delete(c.Name)
+		ignored.initContainers.Delete(c.Name)
+	}
+	for _, c := range expected.Spec.InitContainers {
+		ignored.containers.Delete(c.Name)
+		ignored.initContainers.Delete(c.Name)
+	}
+	for _, v := range expected.Spec.Volumes {
+		ignored.volumes.Delete(v.Name)
+	}
+	actual.Spec.Containers = slices.DeleteFunc(actual.Spec.Containers, func(c corev1.Container) bool { return ignored.containers.Has(c.Name) })
+	actual.Spec.InitContainers = slices.DeleteFunc(actual.Spec.InitContainers, func(c corev1.Container) bool { return ignored.initContainers.Has(c.Name) })
+	actual.Spec.Volumes = slices.DeleteFunc(actual.Spec.Volumes, func(v corev1.Volume) bool { return ignored.volumes.Has(v.Name) })
+	for i := range actual.Spec.Containers {
+		actual.Spec.Containers[i].VolumeMounts = slices.DeleteFunc(actual.Spec.Containers[i].VolumeMounts, func(m corev1.VolumeMount) bool { return ignored.volumes.Has(m.Name) })
+	}
+}
+
 // podComparisonPolicy is a snapshot of user rules; it never changes desired or actual objects.
 type podComparisonPolicy struct {
 	annotations, labels, env, volumes sets.Set[string]
 	volumePrefixes                    []string
+	wellKnownInjections               bool
+	injectedComponents                podComparisonExclusions
 }
 
 func newPodComparisonPolicy(ignore v1alpha2.JenkinsReconciliationIgnore, wellKnown bool) podComparisonPolicy {
-	p := podComparisonPolicy{annotations: sets.New(ignore.Annotations...), labels: sets.New(ignore.Labels...), env: sets.New(ignore.Env...), volumes: sets.New(ignore.Volumes...)}
+	p := podComparisonPolicy{wellKnownInjections: wellKnown, annotations: sets.New(ignore.Annotations...), labels: sets.New(ignore.Labels...), env: sets.New(ignore.Env...), volumes: sets.New(ignore.Volumes...)}
 	for _, prefix := range ignore.VolumeNamePrefixes {
 		if prefix != "" {
 			p.volumePrefixes = append(p.volumePrefixes, prefix)
@@ -137,9 +168,12 @@ func (p podComparisonPolicy) volumesEqual(expected, actual []corev1.Volume, serv
 	return reflect.DeepEqual(normalizeVolumesForComparison(retainedExpected), normalizeVolumesForComparison(retainedActual))
 }
 
-type podConfigurationDifference struct{ Field, Container, Name string }
+type podConfigurationDifference struct{ Field, Container, Name, Message string }
 
 func (d podConfigurationDifference) String() string {
+	if d.Message != "" {
+		return d.Message
+	}
 	if d.Container != "" {
 		return fmt.Sprintf("%s has changed in container '%s'", d.Field, d.Container)
 	}
@@ -162,6 +196,14 @@ func desiredPodForComparison(jenkins *v1alpha2.Jenkins) *corev1.Pod {
 
 func comparePodConfiguration(expected, actual corev1.Pod, policy podComparisonPolicy) []podConfigurationDifference {
 	var differences []podConfigurationDifference
+	if policy.wellKnownInjections {
+		expected = *expected.DeepCopy()
+		actual = *actual.DeepCopy()
+		injection := recognizedMeshInjection(&actual)
+		differences = injection.validate(&expected)
+		policy.injectedComponents = injection.podComparisonExclusions
+		policy.injectedComponents.normalize(&expected, &actual)
+	}
 	add := func(field string, equal bool) {
 		if !equal {
 			differences = append(differences, podConfigurationDifference{Field: field})
