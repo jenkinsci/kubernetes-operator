@@ -124,6 +124,7 @@ spec:
     priorityClassName: {{ .Values.jenkins.priorityClassName }}
     {{- end }}
     disableCSRFProtection: {{ .Values.jenkins.disableCSRFProtection }}
+    disableUsageStatistics: {{ .Values.jenkins.disableUsageStatistics }}
     {{- with .Values.jenkins.hostAliases }}
     hostAliases: {{ toYaml . | nindent 4 }}
     {{- end }}

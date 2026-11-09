@@ -51,10 +51,13 @@ The list below describes all the default security setting configured by the **Je
 
 - basic settings - use `Mode.EXCLUSIVE` - Jobs must specify that they want to run on master node
 - enable CSRF - Cross Site Request Forgery Protection is enabled
-- disable usage stats - Jenkins usage stats submitting is disabled
 - enable master access control - Slave to Master Access Control is enabled
 - disable CLI - CLI access of `/cli` URL is disabled
 - configure kubernetes-plugin - secure configuration for Kubernetes plugin
+
+Jenkins usage statistics settings are left unchanged by default. Set
+`spec.master.disableUsageStatistics: true` to disable collection, or
+`jenkins.disableUsageStatistics: true` in Helm.
 
 If you would like to dig a little bit into the code, take a look [here][base-configuration].
 

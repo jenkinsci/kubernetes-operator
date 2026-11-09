@@ -51,6 +51,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.configuration.secretData | object | `{}` |  |
 | jenkins.configuration.secretRefName | string | `""` |  |
 | jenkins.disableCSRFProtection | bool | `false` |  |
+| jenkins.disableUsageStatistics | bool | `false` | Disable Jenkins usage statistics; false leaves the Jenkins setting unchanged. |
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |

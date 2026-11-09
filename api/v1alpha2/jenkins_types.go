@@ -426,6 +426,10 @@ type JenkinsMaster struct {
 	// +optional
 	SkipPlugins *bool `json:"skipPlugins,omitempty"`
 
+	// DisableUsageStatistics disables Jenkins usage statistics. Defaults to false, leaving the Jenkins setting unchanged.
+	// +optional
+	DisableUsageStatistics bool `json:"disableUsageStatistics,omitempty"`
+
 	// DisableCSRFProtection allows you to toggle CSRF Protection on Jenkins
 	DisableCSRFProtection bool `json:"disableCSRFProtection"`
 

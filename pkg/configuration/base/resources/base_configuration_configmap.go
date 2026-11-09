@@ -179,7 +179,6 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 	groovyScriptsMap := map[string]string{
 		basicSettingsGroovyScriptName:           fmt.Sprintf(basicSettingsFmt, constants.DefaultAmountOfExecutors),
 		enableCSRFGroovyScriptName:              enableCSRF,
-		disableUsageStatsGroovyScriptName:       disableUsageStats,
 		disableInsecureFeaturesGroovyScriptName: disableInsecureFeatures,
 		configureKubernetesPluginGroovyScriptName: fmt.Sprintf(configureKubernetesPluginFmt,
 			clusterDomain,
@@ -189,6 +188,10 @@ func NewBaseConfigurationConfigMap(meta metav1.ObjectMeta, jenkins *v1alpha2.Jen
 		),
 		configureViewsGroovyScriptName:              configureViews,
 		disableJobDslScriptApprovalGroovyScriptName: disableJobDSLScriptApproval,
+	}
+
+	if jenkins.Spec.Master.DisableUsageStatistics {
+		groovyScriptsMap[disableUsageStatsGroovyScriptName] = disableUsageStats
 	}
 
 	if jenkins.Spec.Master.DisableCSRFProtection {

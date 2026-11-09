@@ -1139,6 +1139,18 @@ version: &ldquo;0.20&rdquo;</p>
 </tr>
 <tr>
 <td>
+<code>disableUsageStatistics</code></br>
+<em>
+bool
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Disables Jenkins usage statistics. Defaults to false, leaving the Jenkins setting unchanged.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>disableCSRFProtection</code></br>
 <em>
 bool

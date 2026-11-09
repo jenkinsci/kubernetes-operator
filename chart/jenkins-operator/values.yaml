@@ -68,6 +68,9 @@ jenkins:
   # See https://github.com/jenkinsci/kubernetes-operator/pull/193 for more info
   disableCSRFProtection: false
 
+  # -- Disable Jenkins usage statistics; false leaves the Jenkins setting unchanged.
+  disableUsageStatistics: false
+
   # adding entries to a pod's /etc/hosts file provides pod-level override of hostname
   # resolution when DNS and other options are not applicable.
   hostAliases: {}
