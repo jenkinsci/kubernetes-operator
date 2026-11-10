@@ -1,18 +1,12 @@
-{ pkgs, system, hugo_099_pkgs }:
+{ pkgs, hugo, docsy, dartSass }:
 
-let
-  devShellPackages = [
-    hugo_099_pkgs.hugo #hugo pre-v100
-    pkgs.nodejs_22 #Node 1.22
-    pkgs.helm-docs
-  ];
-  baseUrl = ((builtins.fromTOML (builtins.readFile ../website/config.toml)).baseURL);
-in
 pkgs.mkShell {
-  packages = devShellPackages;
+  packages = [ hugo pkgs.nodejs_22 dartSass pkgs.helm-docs ];
+  DOCSY_THEME = "${docsy}/theme";
   shellHook = ''
-    npm install --save-dev
-    npm list
+    website_root="$(git rev-parse --show-toplevel)/website"
+    mkdir -p "$website_root/themes"
+    ln -sfn "$DOCSY_THEME" "$website_root/themes/docsy"
+    (cd "$website_root" && npm ci)
   '';
-  BASE_URL = "${baseUrl}";
 }

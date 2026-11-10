@@ -1464,6 +1464,10 @@ spec:
                     description: DisableCSRFProtection allows you to toggle CSRF Protection
                       on Jenkins
                     type: boolean
+                  disableUsageStatistics:
+                    description: DisableUsageStatistics disables Jenkins usage statistics.
+                      Defaults to false, leaving the Jenkins setting unchanged.
+                    type: boolean
                   hostAliases:
                     description: HostAliases for Jenkins master pod and SeedJob agent
                     items:
@@ -4058,6 +4062,58 @@ spec:
                   - verbose
                   type: object
                 type: array
+              reconciliation:
+                description: Reconciliation controls which externally managed pod
+                  fields do not trigger recreation.
+                properties:
+                  ignore:
+                    description: Ignore selects fields excluded from pod recreation
+                      comparisons, not pod creation or validation.
+                    properties:
+                      annotations:
+                        description: Annotations lists exact pod annotation keys whose
+                          changed or missing values are tolerated.
+                        items:
+                          type: string
+                        type: array
+                      env:
+                        description: Env lists exact environment variable names, including
+                          ValueFrom, to ignore. EnvFrom is unchanged.
+                        items:
+                          type: string
+                        type: array
+                      labels:
+                        description: Labels lists exact pod label keys whose changed
+                          or missing values are tolerated.
+                        items:
+                          type: string
+                        type: array
+                      volumeNamePrefixes:
+                        description: |-
+                          VolumeNamePrefixes ignores volume names and their mounts by literal prefix.
+                          This supports Azure Workload Identity's per-pod azure-workload-identity-reserved-<hash> names.
+                          IgnoreWellKnownInjections adds the Azure prefix; empty prefixes are invalid.
+                        items:
+                          minLength: 1
+                          type: string
+                        type: array
+                      volumes:
+                        description: Volumes lists exact volume names to ignore, including
+                          corresponding mounts by name.
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                  ignoreWellKnownInjections:
+                    default: true
+                    description: |-
+                      IgnoreWellKnownInjections tolerates documented cloud identity and Istio/Linkerd injection.
+                      Defaults to true; set false to disable the built-in rules.
+                      Rules are additive with Ignore. Cloud identity rules include explicitly declared names.
+                      Mesh rules preserve user-declared containers and volumes.
+                      Custom injection templates, custom credential volume names and provider configuration metadata are not included.
+                    type: boolean
+                type: object
               restore:
                 description: |-
                   Backup defines configuration of Jenkins backup restore

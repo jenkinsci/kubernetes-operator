@@ -7,6 +7,9 @@ projects: ''
 assignees: ''
 ---
 
+**Problem or use case**
+What are you trying to accomplish, and what is missing from the current behavior?
+
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
 

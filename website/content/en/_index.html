@@ -3,7 +3,7 @@ title = "Jenkins Kubernetes Operator"
 linkTitle = "Jenkins Kubernetes Operator"
 
 +++
-{{< blocks/section color="dark" >}}
+{{< blocks/section type="row" color="dark" >}}
 <div class="col-md-1 order-md-1 hidden-xs hidden-sm hidden-md"></div>
 <div class="col-md-2 col-lg-1 order-xs-first order-sm-first order-md-last text-center ">
     <img src="/kubernetes-operator/img/logo.svg" style="height: 110%; margin-left: -75%; margin-top: -20%; position:relative;" alt="Logo"/>
@@ -13,21 +13,23 @@ linkTitle = "Jenkins Kubernetes Operator"
 	<p class="lead mt-2">Deploy Jenkins Operator and configure your Jenkins instances in Kubernetes
     </p>
 	<div class="mx-auto mt-5">
-		<a class="btn btn-lg btn-primary mr-3 mb-4" href="/kubernetes-operator/docs">
-			Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+		<a class="btn btn-lg btn-primary me-3 mb-4" href="/kubernetes-operator/docs">
+			Learn More <i class="fas fa-arrow-alt-circle-right ms-2"></i>
 		</a>
-		<a class="btn btn-lg btn-secondary mr-3 mb-4" href="https://github.com/jenkinsci/kubernetes-operator">
-			View Repository <i class="fab fa-github ml-2 "></i>
+		<a class="btn btn-lg btn-secondary me-3 mb-4" href="https://github.com/jenkinsci/kubernetes-operator">
+			View Repository <i class="fab fa-github ms-2 "></i>
 		</a>
 	</div>
 </div>
-{{% /blocks/section %}}
+{{< /blocks/section >}}
 
 {{% blocks/lead color="primary" %}}
+<div class="text-white">
 Jenkins Operator is a Kubernetes native operator which fully manages Jenkins on Kubernetes.<br /> It was built with immutability and declarative configuration as code in mind.<br />
+</div>
 {{% /blocks/lead %}}
 
-{{< blocks/section color="dark" >}}
+{{< blocks/section type="row" color="dark" >}}
 
 {{% blocks/feature icon="fas fa-cogs" title="Better configuration as code" %}}
 Use groovy scripts or JCasC to configure your Jenkins instance
@@ -49,7 +51,7 @@ Improve user experience by informing what has been done
 {{< /blocks/section >}}
 
 
-{{< blocks/section >}}
+{{< blocks/section type="row" >}}
 
 
 {{% blocks/feature icon="fab fa-github" title="Contributions welcome!" url="https://github.com/jenkinsci/kubernetes-operator/pulls" %}}

@@ -51,10 +51,11 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.configuration.secretData | object | `{}` |  |
 | jenkins.configuration.secretRefName | string | `""` |  |
 | jenkins.disableCSRFProtection | bool | `false` |  |
+| jenkins.disableUsageStatistics | bool | `false` | Disable Jenkins usage statistics; false leaves the Jenkins setting unchanged. |
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.580.1-lts"` |  |
+| jenkins.image | string | `"jenkins/jenkins:2.580.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
@@ -82,6 +83,12 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.readinessProbe.periodSeconds | int | `10` |  |
 | jenkins.readinessProbe.successThreshold | int | `1` |  |
 | jenkins.readinessProbe.timeoutSeconds | int | `8` |  |
+| jenkins.reconciliation.ignore.annotations | list | `[]` |  |
+| jenkins.reconciliation.ignore.env | list | `[]` |  |
+| jenkins.reconciliation.ignore.labels | list | `[]` |  |
+| jenkins.reconciliation.ignore.volumeNamePrefixes | list | `[]` |  |
+| jenkins.reconciliation.ignore.volumes | list | `[]` |  |
+| jenkins.reconciliation.ignoreWellKnownInjections | bool | `true` |  |
 | jenkins.resources.limits.cpu | string | `"1000m"` |  |
 | jenkins.resources.limits.memory | string | `"3Gi"` |  |
 | jenkins.resources.requests.cpu | string | `"250m"` |  |

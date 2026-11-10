@@ -24,6 +24,7 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
@@ -292,26 +293,8 @@ func CompareContainerVolumeMounts(expected corev1.Container, actual corev1.Conta
 
 // compareVolumes returns true if Jenkins pod and Jenkins CR volumes are the same
 func (r *JenkinsBaseConfigurationReconciler) compareVolumes(actualPod corev1.Pod) bool {
-	var toCompare []corev1.Volume
-	for _, volume := range actualPod.Spec.Volumes {
-		// filter out service account
-		if strings.HasPrefix(volume.Name, actualPod.Spec.ServiceAccountName) {
-			continue
-		}
-
-		// hotfix for k8s 1.21 - filter out kube-api-access-<random-suffix>
-		const kubeAPIAccessPrefix = "kube-api-access-"
-		if strings.HasPrefix(volume.Name, kubeAPIAccessPrefix) {
-			continue
-		}
-
-		toCompare = append(toCompare, volume)
-	}
-
-	return reflect.DeepEqual(
-		append(resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Master.Volumes...),
-		toCompare,
-	)
+	policy := newPodComparisonPolicy(r.Configuration.Jenkins.Spec.Reconciliation.Ignore, ptr.Deref(r.Configuration.Jenkins.Spec.Reconciliation.IgnoreWellKnownInjections, true))
+	return policy.volumesEqual(append(resources.GetJenkinsMasterPodBaseVolumes(r.Configuration.Jenkins), r.Configuration.Jenkins.Spec.Master.Volumes...), actualPod.Spec.Volumes, actualPod.Spec.ServiceAccountName)
 }
 
 func (r *JenkinsBaseConfigurationReconciler) detectJenkinsMasterPodStartingIssues() (stopReconcileLoop bool, err error) {
@@ -399,8 +382,24 @@ func (r *JenkinsBaseConfigurationReconciler) waitForJenkins() (reconcile.Result,
 			containersReadyCount++
 		}
 	}
-	if containersReadyCount != len(jenkinsMasterPod.Status.ContainerStatuses) {
+	if containersReadyCount != len(jenkinsMasterPod.Spec.Containers) {
 		return reconcile.Result{RequeueAfter: time.Second * 5}, nil
+	}
+
+	for _, container := range jenkinsMasterPod.Spec.InitContainers {
+		if ptr.Deref(container.RestartPolicy, corev1.ContainerRestartPolicy("")) != corev1.ContainerRestartPolicyAlways {
+			continue
+		}
+		ready := false
+		for _, status := range jenkinsMasterPod.Status.InitContainerStatuses {
+			if status.Name == container.Name {
+				ready = status.Ready
+				break
+			}
+		}
+		if !ready {
+			return reconcile.Result{RequeueAfter: 5 * time.Second}, nil
+		}
 	}
 
 	return reconcile.Result{}, nil

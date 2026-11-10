@@ -5,7 +5,10 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-26.05";
     nixpkgs-rolling.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    hugo_099.url = "github:nixos/nixpkgs/d6df226c53d46821bd4773bd7ec3375f30238edb";
+    docsy = {
+      url = "github:docsy/docsy/v0.18.1";
+      flake = false;
+    };
   };
 
   outputs =
@@ -15,9 +18,13 @@
       let
         pkgs = inputs.nixpkgs.legacyPackages.${system};
         rolling = inputs.nixpkgs-rolling.legacyPackages.${system};
-        hugo_099_pkgs = inputs.hugo_099.legacyPackages.${system};
+
         toolVersions = builtins.fromTOML (builtins.readFile ./config.base.env);
         go = pkgs.${"go_" + builtins.replaceStrings [ "." ] [ "_" ] toolVersions.GO_VERSION};
+        hugo = assert pkgs.hugo.version == toolVersions.HUGO_VERSION; pkgs.hugo;
+        dartSass = assert pkgs.dart-sass.version == toolVersions.DART_SASS_VERSION;
+          pkgs.dart-sass;
+        docsy = inputs.docsy;
         operatorVersion = builtins.readFile ./VERSION.txt;
         sdkVersion = toolVersions.OPERATOR_SDK_VERSION;
         jenkinsLtsVersion = toolVersions.LATEST_LTS_VERSION;
@@ -44,6 +51,7 @@
           packages = [
             pkgs.gnumake
             pkgs.wget
+            pkgs.openssl
             pkgs.helm-docs
             pkgs.pre-commit
             pkgs.kind
@@ -77,7 +85,7 @@
 
         # nix shell .#website
         devShells.website = pkgs.callPackage ./nix/website-shell.nix {
-          inherit pkgs system hugo_099_pkgs;
+          inherit pkgs hugo docsy dartSass;
         };
 
         # nix build
@@ -86,7 +94,7 @@
         };
 
         packages.website = import ./nix/website-build.nix {
-          inherit pkgs system hugo_099_pkgs;
+          inherit pkgs hugo docsy dartSass;
         };
 
       }

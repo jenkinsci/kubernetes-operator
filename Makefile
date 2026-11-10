@@ -92,13 +92,19 @@ goimports: $(GOIMPORTS) ## Verifies `goimports` passes
 .PHONY: test
 test: ## Runs the go tests
 	@echo "+ $@"
-	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS)
+	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS) ./test/e2e/testdata/reconciliation-ignore/identitywebhook
 
 .PHONY: e2e
 e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
 	RUNNING_TESTS=1 go test -parallel=1 "./test/e2e/" -ginkgo.v -tags "$(BUILDTAGS) cgo" -v -timeout 60m -run "$(E2E_TEST_SELECTOR)" \
 		-jenkins-api-hostname=$(JENKINS_API_HOSTNAME) -jenkins-api-port=$(JENKINS_API_PORT) -jenkins-api-use-nodeport=$(JENKINS_API_USE_NODEPORT) $(E2E_TEST_ARGS)
+
+# Built only by identity admission scenarios, including isolated CI scenarios.
+.PHONY: identity-webhook-kind-load
+identity-webhook-kind-load: ## Build and load the reconciliation identity fixture
+	docker build --build-arg GO_VERSION=$(GO_VERSION) -t identity-webhook:test -f test/e2e/testdata/reconciliation-ignore/Dockerfile .
+	kind load docker-image identity-webhook:test --name $(KIND_CLUSTER_NAME)
 
 .PHONY: jenkins-kind-load
 jenkins-kind-load: ## Load the jenkins lts version in kind to speed up tests
@@ -406,6 +412,10 @@ kind-clean: ## Delete kind cluster
 kind-revamp: kind-clean kind-setup ## Delete and recreate kind cluster
 	@echo "+ $@"
 
+.PHONY: mesh-install mesh-clean
+mesh-install mesh-clean: helm ## Install or remove a test mesh in Kind (MESH=istio or linkerd)
+	bash test/bats/mesh-install.bash "$(patsubst mesh-%,%,$@)" "$(MESH)" "$(ISTIO_VERSION)" "$(LINKERD_VERSION)" "kind-$(KIND_CLUSTER_NAME)"
+
 .PHONY: bats-tests ## Run bats tests
 bats-tests: helm
 IMAGE_NAME := quay.io/$(QUAY_ORGANIZATION)/$(QUAY_REGISTRY):$(GITCOMMIT)-amd64
@@ -490,29 +500,16 @@ endif
 	@echo
 
 
-# Download and build hugo extended locally if necessary
-HUGO_PATH = $(shell pwd)/bin/hugo
-HUGO_VERSION = v0.99.1
-HAS_HUGO := $(shell $(HUGO_PATH)/hugo version 2>&- | grep $(HUGO_VERSION))
-.PHONY: hugo
-hugo:
-ifeq ($(HAS_HUGO), )
-	@echo "Installing Hugo $(HUGO_VERSION)"
-	rm -rf $(HUGO_PATH)
-	git clone https://github.com/gohugoio/hugo.git --depth=1 --branch $(HUGO_VERSION) $(HUGO_PATH)
-	cd $(HUGO_PATH) && go build --tags extended -o hugo main.go
-endif
-
+# Website tooling is provided by the dedicated Nix shell.
 .PHONY: generate-docs
-generate-docs: hugo ## Build the website into website/public
+generate-docs: ## Build the website with Nix into result/
 	@echo "+ $@"
-	cd website && npm install
-	$(HUGO_PATH)/hugo -s website
+	nix build .#website
 
 .PHONY: run-docs
-run-docs: hugo
+run-docs: ## Preview the website with Nix
 	@echo "+ $@"
-	cd website && $(HUGO_PATH)/hugo server -D
+	cd website && nix develop ..#website --command hugo server -D
 
 ##################### FROM OPERATOR SDK ########################
 # Install CRDs into a cluster

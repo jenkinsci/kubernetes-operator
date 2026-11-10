@@ -8,7 +8,7 @@ jenkins:
 
   # apiVersion is the version of the CR manifest
   # The recommended and default value is "jenkins.io/v1alpha2"
-  # See https://jenkinsci.github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/ for more migration guide
+  # See https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/website/content/en/docs/Getting%20Started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2.md for more migration guide
   apiVersion: jenkins.io/v1alpha2
 
   # name of resource
@@ -47,6 +47,18 @@ jenkins:
   # lifecycle is used if you want to specify lifecycle hooks for the master container
   lifecycle: {}
 
+  # Comparison-only exceptions for externally injected pod fields (unreleased).
+  reconciliation:
+    # Default cloud identity and mesh injection rules. Manual rules remain additive.
+    ignoreWellKnownInjections: true
+    ignore:
+      annotations: []
+      labels: []
+      env: []
+      volumes: []
+      # Literal volume-name prefixes, including corresponding mounts; useful for Azure Workload Identity.
+      volumeNamePrefixes: []
+
   # priorityClassName indicates the importance of a Pod relative to other Pods
   # See: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
   priorityClassName: ""
@@ -55,6 +67,9 @@ jenkins:
   # Set it to true if you are using OpenShift Jenkins Plugin
   # See https://github.com/jenkinsci/kubernetes-operator/pull/193 for more info
   disableCSRFProtection: false
+
+  # -- Disable Jenkins usage statistics; false leaves the Jenkins setting unchanged.
+  disableUsageStatistics: false
 
   # adding entries to a pod's /etc/hosts file provides pod-level override of hostname
   # resolution when DNS and other options are not applicable.

@@ -2,338 +2,209 @@
 title: "Developer Guide"
 linkTitle: "Developer Guide"
 weight: 5
-date: 2023-01-16
+date: 2026-10-31
 description: >
-  Jenkins Operator for developers
+  Build and test Jenkins Operator with Nix, a devcontainer, or local tools
 ---
 
-{{% pageinfo %}}
-This document explains how to setup your development environment.
-{{% /pageinfo %}}
+## Development environment
 
-## Prerequisites
+Choose the Nix devshell, the repository devcontainer, or local tools with Make.
+All three use the same build and test targets below.
 
-- [operator_sdk][operator_sdk] version 1.3.0
-- [git][git_tool]
-- [go][go_tool] version 1.15.6
-- goimports, golint, checkmake and staticcheck
-- [minikube][minikube] version 1.21.0 (preferred Hypervisor - [virtualbox][virtualbox]) (automatically downloaded)
-- [docker][docker_tool] version 17.03+
+### Nix devshell
 
-## Clone repository and download dependencies
+Install Git, Nix with flakes enabled, a running Docker engine and client, and `kubectl`.
+Clone the repository and enter the development shell:
 
 ```bash
 git clone git@github.com:jenkinsci/kubernetes-operator.git
 cd kubernetes-operator
-make go-dependencies
+nix develop
 ```
 
-## Build and run with a minikube
+The default shell provides Go, Kind, pre-commit, helm-docs, Bats and its libraries, and other
+build tools. Tool versions are maintained in
+[`config.base.env`](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/config.base.env)
+and consumed by `variables.mk`; do not copy separate version settings into local scripts.
+Release 0.9.0 uses Go 1.26 and Operator SDK 1.42.3.
 
-Start minikube instance configured for **Jenkins Operator**. Appropriate minikube version will be downloaded to bin folder.
+### Devcontainer
+
+Open the checkout in VS Code with the Dev Containers extension and select
+**Dev Containers: Reopen in Container**. The configuration in `.devcontainer/devcontainer.json`
+provides Go, Docker-in-Docker, kubectl, Helm, Kind, Bats and its libraries, and Nix.
+Run `nix develop` in the container terminal for the full development toolset,
+including pre-commit and helm-docs. Check `docker info` before running cluster tests.
+
+### Local tools with Make
+
+Nix is not required by CI or the Dockerfiles. For a local setup, install the Go version from `config.base.env`, Git, GNU Make, Bash, Docker, `kubectl`,
+and Kind. The Make targets download versioned tools such as Helm, controller-gen, kustomize,
+golangci-lint and staticcheck into `bin/` as needed. Make does not install the host
+prerequisites listed above.
+Install helm-docs and pre-commit as well if you use the documentation and commit hooks.
+
+## Build and run with Kind
+
+Create one local cluster and build the operator:
+
 ```bash
-make minikube-start
+make kind-setup
+make build
 ```
-Next run **Jenkins Operator** locally. 
+
+The default cluster is `jenkins`, with context `kind-jenkins`. Confirm that this is the context
+you intend to use, then run the operator locally:
+
 ```bash
 make run
 ```
-Console output indicating readiness of this phase:
+
+`make run` installs CRDs, builds the operator, and watches the namespace selected by `NAMESPACE`
+(`default` unless overridden). In another terminal, apply a Jenkins resource from the
+[deployment guide](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
+The operator must remain running while it configures Jenkins.
+
+For an existing cluster, select its context before running Make so CRD installation uses the
+same cluster as the operator:
+
 ```bash
-+ build
-+ run
-kubectl config use-context minikube
-Switched to context "minikube".
-Watching 'default' namespace
-bin/manager --jenkins-api-hostname=192.168.99.252 --jenkins-api-port=0 --jenkins-api-use-nodeport=true --cluster-domain=cluster.local 
-2021-02-08T14:14:45.263+0100    INFO    cmd     Version: v0.5.0
-2021-02-08T14:14:45.263+0100    INFO    cmd     Git commit: 305dbeda-dirty-dirty
-2021-02-08T14:14:45.264+0100    INFO    cmd     Go Version: go1.15.6
-2021-02-08T14:14:45.264+0100    INFO    cmd     Go OS/Arch: darwin/amd64
-2021-02-08T14:14:45.264+0100    INFO    cmd     Watch namespace: default
-2021-02-08T14:14:45.592+0100    INFO    controller-runtime.metrics      metrics server is starting to listen    {"addr": "0.0.0.0:8383"}
-2021-02-08T14:14:45.599+0100    INFO    cmd     starting manager
-2021-02-08T14:14:45.599+0100    INFO    controller-runtime.manager      starting metrics server {"path": "/metrics"}
-2021-02-08T14:14:45.599+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: jenkins.io/v1alpha2, Kind=Jenkins"}
-2021-02-08T14:14:45.700+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: /, Kind="}
-2021-02-08T14:14:45.800+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: /, Kind="}
-2021-02-08T14:14:45.901+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: /, Kind="}
-2021-02-08T14:14:46.003+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: core/v1, Kind=Secret"}
-2021-02-08T14:14:46.004+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: core/v1, Kind=ConfigMap"}
-2021-02-08T14:14:46.004+0100    INFO    controller-runtime.manager.controller.jenkins   Starting EventSource    {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "source": "kind source: jenkins.io/v1alpha2, Kind=Jenkins"}
-2021-02-08T14:14:46.004+0100    INFO    controller-runtime.manager.controller.jenkins   Starting Controller     {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins"}
-2021-02-08T14:14:46.004+0100    INFO    controller-runtime.manager.controller.jenkins   Starting workers        {"reconciler group": "jenkins.io", "reconciler kind": "Jenkins", "worker count": 1}
-
-```
-Lastly apply Jenkins Custom Resource to minikube cluster:
-```bash
-kubectl apply -f config/samples/jenkins.io_v1alpha2_jenkins.yaml
-
-{"level":"info","ts":1612790690.875426,"logger":"controller-jenkins","msg":"Setting default Jenkins container command","cr":"jenkins-example"}
-{"level":"info","ts":1612790690.8754492,"logger":"controller-jenkins","msg":"Setting default Jenkins container JAVA_OPTS environment variable","cr":"jenkins-example"}
-{"level":"info","ts":1612790690.875456,"logger":"controller-jenkins","msg":"Setting default operator plugins","cr":"jenkins-example"}
-{"level":"info","ts":1612790690.875463,"logger":"controller-jenkins","msg":"Setting default Jenkins master service","cr":"jenkins-example"}
-{"level":"info","ts":1612790690.875467,"logger":"controller-jenkins","msg":"Setting default Jenkins slave service","cr":"jenkins-example"}
-{"level":"info","ts":1612790690.881811,"logger":"controller-jenkins","msg":"*v1alpha2.Jenkins/jenkins-example has been updated","cr":"jenkins-example"}
-{"level":"info","ts":1612790691.252834,"logger":"controller-jenkins","msg":"Creating a new Jenkins Master Pod default/jenkins-jenkins-example","cr":"jenkins-example"}
-{"level":"info","ts":1612790691.322793,"logger":"controller-jenkins","msg":"Jenkins master pod restarted by operator:","cr":"jenkins-example"}
-{"level":"info","ts":1612790691.322817,"logger":"controller-jenkins","msg":"Jenkins Operator version has changed, actual '' new 'v0.5.0'","cr":"jenkins-example"}
-{"level":"info","ts":1612790691.3228202,"logger":"controller-jenkins","msg":"Jenkins CR has been replaced","cr":"jenkins-example"}
-{"level":"info","ts":1612790695.8789551,"logger":"controller-jenkins","msg":"Creating a new Jenkins Master Pod default/jenkins-jenkins-example","cr":"jenkins-example"}
-{"level":"warn","ts":1612790817.9423082,"logger":"controller-jenkins","msg":"Reconcile loop failed: couldn't init Jenkins API client: Get \"http://192.168.99.254:31998/api/json\": dial tcp 192.168.99.254:31998: connect: connection refused","cr":"jenkins-example"}
-{"level":"warn","ts":1612790817.9998221,"logger":"controller-jenkins","msg":"Reconcile loop failed: couldn't init Jenkins API client: Get \"http://192.168.99.254:31998/api/json\": dial tcp 192.168.99.254:31998: connect: connection refused","cr":"jenkins-example"}
-{"level":"info","ts":1612790818.581316,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-operator-base-configuration-jenkins-example' name '1-basic-settings.groovy' running groovy script","cr":"jenkins-example"}
-...
-{"level":"info","ts":1612790820.9473379,"logger":"controller-jenkins","msg":"base-groovy ConfigMap 'jenkins-operator-base-configuration-jenkins-example' name '8-disable-job-dsl-script-approval.groovy' running groovy script","cr":"jenkins-example"}
-{"level":"info","ts":1612790821.244055,"logger":"controller-jenkins","msg":"Base configuration phase is complete, took 2m6s","cr":"jenkins-example"}
-{"level":"info","ts":1612790821.7953842,"logger":"controller-jenkins","msg":"Waiting for Seed Job Agent `seed-job-agent`...","cr":"jenkins-example"}
-...
-
-{"level":"info","ts":1612790851.843638,"logger":"controller-jenkins","msg":"Waiting for Seed Job Agent `seed-job-agent`...","cr":"jenkins-example"}
-{"level":"info","ts":1612790853.489524,"logger":"controller-jenkins","msg":"User configuration phase is complete, took 2m38s","cr":"jenkins-example"}
-
-Two log lines says that Jenkins Operator works correctly:
- 
-* `Base configuration phase is complete` - ensures manifests, Jenkins pod, Jenkins configuration and Jenkins API token  
-* `User configuration phase is complete` - ensures Jenkins restore, backup and seed jobs along with user configuration 
-
-> Details about base and user phase can be found [here](https://jenkinsci.github.io/kubernetes-operator/docs/how-it-works/architecture-and-design/).
-
-```
-```bash
-kubectl get jenkins -o yaml
-
-apiVersion: v1
-items:
-- apiVersion: jenkins.io/v1alpha2
-  kind: Jenkins
-  metadata:
-  ...
-  spec:
-    backup:
-      action: {}
-      containerName: ""
-      interval: 0
-      makeBackupBeforePodDeletion: false
-    configurationAsCode:
-      configurations: []
-      secret:
-        name: ""
-    groovyScripts:
-      configurations: []
-      secret:
-        name: ""
-    jenkinsAPISettings:
-      authorizationStrategy: createUser
-    master:
-      basePlugins:
-      ...
-      containers:
-      - command:
-        - bash
-        - -c
-        - /var/jenkins/scripts/init.sh && exec /usr/bin/tini -s -- /usr/local/bin/jenkins.sh
-        env:
-        - name: JAVA_OPTS
-          value: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
-            -XX:MaxRAMFraction=1 -Djenkins.install.runSetupWizard=false -Djava.awt.headless=true
-        image: jenkins/jenkins:2.263.3-lts-alpine
-        imagePullPolicy: Always
-        livenessProbe:
-        ...
-        readinessProbe:
-        ...
-        resources:
-          limits:
-            cpu: 1500m
-            memory: 3Gi
-          requests:
-            cpu: "1"
-            memory: 500Mi
-      disableCSRFProtection: false
-    restore:
-      action: {}
-      containerName: ""
-      getLatestAction: {}
-    seedJobs:
-    - additionalClasspath: ""
-      bitbucketPushTrigger: false
-      buildPeriodically: ""
-      description: Jenkins Operator repository
-      failOnMissingPlugin: false
-      githubPushTrigger: false
-      id: jenkins-operator
-      ignoreMissingFiles: false
-      pollSCM: ""
-      repositoryBranch: master
-      repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
-      targets: cicd/jobs/*.jenkins
-      unstableOnDeprecation: false
-    service:
-      port: 8080
-      type: NodePort
-    serviceAccount: {}
-    slaveService:
-      port: 50000
-      type: ClusterIP
-  status:
-    appliedGroovyScripts:
-    - configurationType: base-groovy
-      hash: 2ownqpRyBjQYmzTRttUx7axok3CKe2E45frI5iRwH0w=
-      name: 1-basic-settings.groovy
-      source: jenkins-operator-base-configuration-jenkins-example
-    ...
-    baseConfigurationCompletedTime: "2021-02-08T13:27:01Z"
-    createdSeedJobs:
-    - jenkins-operator
-    operatorVersion: v0.5.0
-    provisionStartTime: "2021-02-08T13:24:55Z"
-    userAndPasswordHash: nnfZsWmFfAYlYyVYeKhWW2KB4L8mE61JUfetAsr9IMM=
-    userConfigurationCompletedTime: "2021-02-08T13:27:33Z"
-kind: List
-metadata:
-  resourceVersion: ""
-  selfLink: ""
+kubectl config use-context my-context
+make run KUBECTL_CONTEXT=my-context NAMESPACE=jenkins
 ```
 
-```bash
-kubectl get po
+Create the namespace first if it does not exist. For Docker Desktop's Kubernetes cluster,
+use `make config=config.docker-desktop.env run` after selecting its context.
 
-NAME                                              READY   STATUS              RESTARTS   AGE
-jenkins-jenkins-example                           1/1     Running             0          23m
-seed-job-agent-jenkins-example-758cc7cc5c-82hbl   1/1     Running             0          21m
+## Focused tests and verification
 
-```
-
-## Build and run with Docker Desktop
-
-Install Docker Desktop. If you are using Docker Desktop for Windows, you will also need to install WSL or WSL2. Ensure that Docker Desktop is currently running, and that you have enabled Kubernetes in it.
-
-Run **Jenkins Operator** locally. 
-```bash
-make config="config.docker-desktop.env" run
-```
-
-From this point on, Docker Desktop usage is identical to minikube usage.
-
-### Debug Jenkins Operator
+Run a focused package test before the complete verification target:
 
 ```bash
-make run OPERATOR_EXTRA_ARGS="--debug"
-```
-
-### Stop or delete minikube cluster
-To stop Kubernetes cluster running locally on minikube:
-```bash
-minikube stop
-```
-To delete the cluster altogether:
-```bash
-minikube delete
-```
-
-## Build and run with a remote Kubernetes cluster
-
-You can also run the controller locally and make it listen to a remote Kubernetes server.
-
-```bash
-make run NAMESPACE=default KUBECTL_CONTEXT=remote-k8s EXTRA_ARGS='--kubeconfig ~/.kube/config'
-```
-
-Once **Jenkins Operator** are up and running, apply Jenkins custom resource:
-
-```bash
-kubectl --context remote-k8s --namespace default apply -f deploy/crds/jenkins_v1alpha2_jenkins_cr.yaml
-kubectl --context remote-k8s --namespace default get jenkins -o yaml
-kubectl --context remote-k8s --namespace default get po
-```
-
-## Testing
-
-Tests are written using [Ginkgo](https://onsi.github.io/ginkgo/) with [Gomega](https://onsi.github.io/gomega/). 
-
-Run unit tests with go fmt, lint, staticcheck, vet:
-
-```bash
+RUNNING_TESTS=1 go test ./pkg/plugins
 make verify
 ```
 
-Run unit tests only:
+`make verify` runs formatting, lint, unit tests, staticcheck, and vet. The formatting target may
+modify files; review the diff afterward. For unit tests alone, use `make test`.
+
+Before committing, run the repository hooks against the files you changed:
 
 ```bash
-make test
+pre-commit install
 ```
 
-### Running E2E tests
+For chart changes, use `make helm-lint` and regenerate the chart README with
+`helm-docs --chart-search-root=chart/jenkins-operator`. If using Make-installed Helm,
+run `export PATH="$PWD/bin:$PATH"` before the hooks so the Helm hook can find it.
 
-Run e2e tests with minikube:
+## Cluster integration tests
+
+Use the same local Kind cluster and run suites sequentially. These tests create and remove
+Kubernetes resources; use a development cluster rather than an installation containing Jenkins data.
 
 ```bash
-make minikube-start
+make kind-setup  # only if the local cluster does not already exist
+kubectl config use-context kind-jenkins
 make e2e
-```
-
-Run Helm e2e tests:
-```bash
-eval $(bin/minikube docker-env)
 make helm-e2e
+make bats-tests
 ```
 
-Run the specific e2e test:
+To focus on a Ginkgo example, pass a matching description through `E2E_TEST_ARGS`:
 
 ```bash
-make e2e E2E_TEST_SELECTOR='^TestConfiguration$'
+make e2e E2E_TEST_ARGS='-ginkgo.focus=creates.*vanilla'
 ```
 
-### Building docker image on minikube
+`E2E_TEST_SELECTOR` selects the Go test entry point with `-run`; Ginkgo example selection uses
+`-ginkgo.focus`. CI runs scenarios in separate jobs; do not run those scenarios concurrently
+against your shared local cluster. Keep any local plugin-mirror overrides out of committed fixtures.
 
-To be able to work with the docker daemon on `minikube` machine run the following command before building an image:
+The Helm/Bats Make targets currently build AMD64 operator images. Use an AMD64 test environment
+for those targets. The backup image has separate AMD64 and ARM64 checks.
+
+## Backup image tests
+
+`make -C backup/pvc docker-e2e` builds the local-platform image and runs its backup/restore tests.
+The test image's user must be able to write the bind-mounted test directories; adjust its UID/GID
+for your machine. These tests do not need a Kubernetes cluster.
+
+To test an ARM64 image without pushing to a registry, use Docker with ARM64 execution support
+(native or QEMU/binfmt) and load a single-platform image:
 
 ```bash
-eval $(bin/minikube docker-env)
+make -C backup/pvc docker-buildx PLATFORMS=linux/arm64 \
+  BUILDX_OUTPUT=type=docker GITCOMMIT=backup-dev UID="$(id -u)" GID=1000
+DOCKER_DEFAULT_PLATFORM=linux/arm64 make -C backup/pvc docker-test GITCOMMIT=backup-dev
 ```
 
-### When `api/v1alpha2/jenkins_types.go` has changed
+Use an available group ID in the image; `1000` is the normal backup image default. For an AMD64
+check, substitute `linux/amd64`. Run the two suites sequentially because they share fixture directories.
+The `docker-test` target tests the loaded image without rebuilding it for the host architecture.
 
-Run:
+## API and generated files
+
+After changing API types, regenerate the deepcopy code and manifests:
 
 ```bash
+make generate
 make manifests
+make verify
 ```
 
-### Getting the Jenkins URL and basic credentials
+Review the generated CRDs, RBAC, and chart/deploy copies with the source changes. Do not edit generated
+files to introduce changes that their source cannot reproduce.
+
+## Access Jenkins locally
+
+For a Jenkins resource named `example` in `default`, forward the HTTP service:
 
 ```bash
-minikube service jenkins-operator-http-<cr_name> --url
-kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.user}' | base64 -d
-kubectl get secret jenkins-operator-credentials-<cr_name> -o 'jsonpath={.data.password}' | base64 -d
+kubectl --namespace default port-forward service/jenkins-operator-http-example 8080:8080
 ```
 
-### Webhook
-To deploy the operator along with webhook, run :
+Open `http://localhost:8080`. In another terminal, read the generated credentials:
+
 ```bash
-eval $(minikube docker-env)
-make deploy-webhook
+kubectl --namespace default get secret jenkins-operator-credentials-example -o 'jsonpath={.data.user}' | base64 -d
+kubectl --namespace default get secret jenkins-operator-credentials-example -o 'jsonpath={.data.password}' | base64 -d
 ```
-It uses [cert-manager](https://cert-manager.io/) as an external dependency.
 
-## Self-learning
+## Website development
 
-* [Tutorial: Deep Dive into the Operator Framework for... Melvin Hillsman, Michael Hrivnak, & Matt Dorn
-](https://www.youtube.com/watch?v=8_DaCcRMp5I)
+From the repository root, enter the website directory before opening its shell:
 
-* [Operator Framework Training By OpenShift](https://www.katacoda.com/openshift/courses/operatorframework)
+```bash
+cd website
+nix develop ..#website
+hugo server -D
+```
 
-* [Operator SDK Tutorial for Go](https://sdk.operatorframework.io/docs/building-operators/golang/tutorial/)
+This shell links the pinned Docsy source from the Nix store and installs the website's npm dependencies with `npm ci`. Review incidental package/lockfile changes
+before committing. For a production build from the repository root, use `nix build .#website`.
+New files must be added to Git for a Git-backed flake build to include them.
 
-* [Kubebuilder Validating Webhook Implementation](https://book.kubebuilder.io/cronjob-tutorial/webhook-implementation.html)
+Website development and publishing require Nix. The dedicated website shell provides
+Hugo, Node.js/npm and Dart Sass. The root Make targets are shortcuts for the Nix workflow:
 
-[dep_tool]:https://golang.github.io/dep/docs/installation.html
-[git_tool]:https://git-scm.com/downloads
-[go_tool]:https://golang.org/dl/
-[operator_sdk]:https://github.com/operator-framework/operator-sdk
-[fork_guide]:https://help.github.com/articles/fork-a-repo/
-[docker_tool]:https://docs.docker.com/install/
-[kubectl_tool]:https://kubernetes.io/docs/tasks/tools/install-kubectl/
-[minikube]:https://kubernetes.io/docs/tasks/tools/install-minikube/
-[virtualbox]:https://www.virtualbox.org/wiki/Downloads
+```bash
+make generate-docs  # builds the production website in result/
+make run-docs       # starts the preview with drafts enabled
+```
+
+To update Docsy, change the `docsy` input in `flake.nix`, update its lock with
+`nix flake update docsy`, and review its required Hugo and frontend dependency versions.
+Keep `HUGO_VERSION` and `DART_SASS_VERSION` in `config.base.env` aligned with the
+pinned Nix packages.
+After npm dependency changes, refresh the website's `npmDepsHash` in
+`nix/website-build.nix` and verify `nix build .#website`.
+
+## Clean up the local cluster
+
+Once all local cluster tests are finished:
+
+```bash
+make kind-clean
+```

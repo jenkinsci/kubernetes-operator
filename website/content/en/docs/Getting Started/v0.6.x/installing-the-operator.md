@@ -108,7 +108,7 @@ Set to false if you have configured CR already and/or you want to deploy an oper
 <td>jenkins.io/v1alpha2</td>
 <td>
 Version of the CR manifest. The recommended and default value is <code>jenkins.io/v1alpha2</code>.
-<a href="#github.io/kubernetes-operator/docs/getting-started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2/">More info</a>
+<a href="https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/website/content/en/docs/Getting%20Started/v0.1.x/migration-guide-v1alpha1-to-v1alpha2.md">More info</a>
 </td>
 </tr>
 <tr>

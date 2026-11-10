@@ -3,7 +3,6 @@ package base
 import (
 	"context"
 	"fmt"
-	"reflect"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration"
@@ -17,6 +16,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
 
@@ -52,59 +52,11 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 			r.Configuration.Jenkins.Status.OperatorVersion, version.Version))
 	}
 
-	//FIXME too hacky
-	var jenkinsSecurityContext *corev1.PodSecurityContext
-	if r.Configuration.Jenkins.Spec.Master.SecurityContext == nil {
-		jenkinsSecurityContext = &corev1.PodSecurityContext{}
-	} else {
-		jenkinsSecurityContext = r.Configuration.Jenkins.Spec.Master.SecurityContext
-	}
-	if !reflect.DeepEqual(jenkinsSecurityContext, currentJenkinsMasterPod.Spec.SecurityContext) {
-		messages = append(messages, "Jenkins pod security context has changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins pod security context has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.SecurityContext, r.Configuration.Jenkins.Spec.Master.SecurityContext))
-	}
-
-	if !compareImagePullSecrets(r.Configuration.Jenkins.Spec.Master.ImagePullSecrets, currentJenkinsMasterPod.Spec.ImagePullSecrets) {
-		messages = append(messages, "Jenkins Pod ImagePullSecrets has changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins Pod ImagePullSecrets has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.ImagePullSecrets, r.Configuration.Jenkins.Spec.Master.ImagePullSecrets))
-	}
-
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.NodeSelector, currentJenkinsMasterPod.Spec.NodeSelector) {
-		messages = append(messages, "Jenkins pod node selector has changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins pod node selector has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.NodeSelector, r.Configuration.Jenkins.Spec.Master.NodeSelector))
-	}
-
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.Labels, currentJenkinsMasterPod.Labels) {
-		messages = append(messages, "Jenkins pod labels have changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins pod labels have changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Labels, r.Configuration.Jenkins.Spec.Master.Labels))
-	}
-
-	if !compareMap(r.Configuration.Jenkins.Spec.Master.Annotations, currentJenkinsMasterPod.ObjectMeta.Annotations) {
-		messages = append(messages, "Jenkins pod annotations have changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins pod annotations have changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.ObjectMeta.Annotations, r.Configuration.Jenkins.Spec.Master.Annotations))
-	}
-
-	if !r.compareVolumes(currentJenkinsMasterPod) {
-		messages = append(messages, "Jenkins pod volumes have changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins pod volumes have changed, actual '%v' required '%v'",
-			currentJenkinsMasterPod.Spec.Volumes, r.Configuration.Jenkins.Spec.Master.Volumes))
-	}
-
-	if len(r.Configuration.Jenkins.Spec.Master.Containers) != len(currentJenkinsMasterPod.Spec.Containers) {
-		messages = append(messages, "Jenkins amount of containers has changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins amount of containers has changed, actual '%+v' required '%+v'",
-			len(currentJenkinsMasterPod.Spec.Containers), len(r.Configuration.Jenkins.Spec.Master.Containers)))
-	}
-
-	if r.Configuration.Jenkins.Spec.Master.PriorityClassName != currentJenkinsMasterPod.Spec.PriorityClassName {
-		messages = append(messages, "Jenkins priorityClassName has changed")
-		verbose = append(verbose, fmt.Sprintf("Jenkins priorityClassName has changed, actual '%+v' required '%+v'",
-			currentJenkinsMasterPod.Spec.PriorityClassName, r.Configuration.Jenkins.Spec.Master.PriorityClassName))
+	desired := desiredPodForComparison(r.Configuration.Jenkins)
+	policy := newPodComparisonPolicy(r.Configuration.Jenkins.Spec.Reconciliation.Ignore, ptr.Deref(r.Configuration.Jenkins.Spec.Reconciliation.IgnoreWellKnownInjections, true))
+	for _, difference := range comparePodConfiguration(*desired, currentJenkinsMasterPod, policy) {
+		messages = append(messages, difference.String())
+		verbose = append(verbose, difference.String())
 	}
 
 	customResourceReplaced := (r.Configuration.Jenkins.Status.BaseConfigurationCompletedTime == nil ||
@@ -114,34 +66,6 @@ func (r *JenkinsBaseConfigurationReconciler) checkForPodRecreation(currentJenkin
 	if customResourceReplaced {
 		messages = append(messages, "Jenkins CR has been replaced")
 		verbose = append(verbose, "Jenkins CR has been replaced")
-	}
-
-	for _, actualContainer := range currentJenkinsMasterPod.Spec.Containers {
-		if actualContainer.Name == resources.JenkinsMasterContainerName {
-			containerMessages, verboseMessages := r.compareContainers(resources.NewJenkinsMasterContainer(r.Configuration.Jenkins), actualContainer)
-			messages = append(messages, containerMessages...)
-			verbose = append(verbose, verboseMessages...)
-			continue
-		}
-
-		var expectedContainer *corev1.Container
-		for _, jenkinsContainer := range r.Configuration.Jenkins.Spec.Master.Containers {
-			if jenkinsContainer.Name == actualContainer.Name {
-				tmp := resources.ConvertJenkinsContainerToKubernetesContainer(jenkinsContainer)
-				expectedContainer = &tmp
-			}
-		}
-
-		if expectedContainer == nil {
-			messages = append(messages, fmt.Sprintf("Container '%s' not found in pod", actualContainer.Name))
-			verbose = append(verbose, fmt.Sprintf("Container '%+v' not found in pod", actualContainer))
-			continue
-		}
-
-		containerMessages, verboseMessages := r.compareContainers(*expectedContainer, actualContainer)
-
-		messages = append(messages, containerMessages...)
-		verbose = append(verbose, verboseMessages...)
 	}
 
 	return reason.NewPodRestart(reason.OperatorSource, messages, verbose...)

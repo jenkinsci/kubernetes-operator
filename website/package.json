@@ -1,11 +1,10 @@
 {
   "name": "website",
-    "scripts": {
-        "build": "echo $BASE_URL; hugo --minify --baseURL=${BASE_URL}"
-    },
-    "devDependencies": {
-    "autoprefixer": "^10.6.2",
-    "postcss": "^8.5.32",
-    "postcss-cli": "^12.0.0"
+  "scripts": {
+    "build": "echo $BASE_URL; hugo --minify --baseURL=${BASE_URL}"
+  },
+  "devDependencies": {
+    "bootstrap": "5.3.8",
+    "@fortawesome/fontawesome-free": "7.3.1"
   }
 }

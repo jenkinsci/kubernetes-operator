@@ -2,7 +2,7 @@
 title: "Separate namespaces for Jenkins and Operator"
 linkTitle: "Separate namespaces for Jenkins and Operator"
 weight: 6
-date: 2021-12-08
+date: 2026-10-31
 description: >
     How to install Jenkins and Jenkins Operator in separate namespaces
 ---
@@ -281,7 +281,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: quay.io/jenkins-kubernetes-operator/operator:v0.8.0
+        image: quay.io/jenkins-kubernetes-operator/operator:v0.9.0
         name: jenkins-operator
         imagePullPolicy: IfNotPresent
         securityContext:
@@ -536,12 +536,12 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.401.1-lts
+        image: jenkins/jenkins:2.580.1-lts
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 12
           httpGet:
-            path: /login
+            path: /health
             port: http
             scheme: HTTP
           initialDelaySeconds: 100
@@ -551,7 +551,7 @@ spec:
         readinessProbe:
           failureThreshold: 10
           httpGet:
-            path: /login
+            path: /health
             port: http
             scheme: HTTP
           initialDelaySeconds: 80

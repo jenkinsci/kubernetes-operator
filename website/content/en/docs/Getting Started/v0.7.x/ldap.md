@@ -100,7 +100,7 @@ metadata:
 stringData:
   LDAP_MANAGER_PASSWORD: <password-for-manager-created-in-ldap>
 ```
-Schema reference: [v1alpha2.ConfigurationAsCode](./schema/#github.com/jenkinsci/kubernetes-operator/pkg/apis/jenkins/v1alpha2.ConfigurationAsCode)
+Schema reference: [v1alpha2.ConfigurationAsCode](/kubernetes-operator/docs/getting-started/v0.7.x/schema/#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.ConfigurationAsCode)
 
 Finally you must configure the Jenkins operator to use the manager's
 credentials from the AD.

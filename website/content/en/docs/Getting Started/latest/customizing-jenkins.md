@@ -11,8 +11,8 @@ description: >
 Jenkins can be customized with plugins.
 Plugin's configuration is applied as groovy scripts or the [configuration as code plugin](https://github.com/jenkinsci/configuration-as-code-plugin).
 Any plugin working for Jenkins can be installed by the Jenkins Operator.
- 
-Pre-installed plugins: 
+
+Pre-installed plugins:
 
 * configuration-as-code v1.55
 * git v4.10.0
@@ -22,7 +22,7 @@ Pre-installed plugins:
 * workflow-aggregator v2.6
 * workflow-job v2.42
 
-Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/). 
+Rest of the plugins can be found in [plugins repository](https://plugins.jenkins.io/).
 
 
 #### Install plugins
@@ -85,7 +85,7 @@ metadata:
   name: example
 spec:
   configurationAsCode:
-    configurations: 
+    configurations:
     - name: jenkins-operator-user-configuration
   groovyScripts:
     configurations:
@@ -99,7 +99,7 @@ kind: ConfigMap
 metadata:
   name: jenkins-operator-user-configuration
 data:
-  1-configure-theme.groovy: | 
+  1-configure-theme.groovy: |
     import jenkins.*
     import jenkins.model.*
     import hudson.*
@@ -127,7 +127,7 @@ data:
 * `*.groovy` is Groovy script configuration
 * `*.yaml is` configuration as code
 
-If you want to correct your configuration you can edit it while the **Jenkins Operator** is running. 
+If you want to correct your configuration you can edit it while the **Jenkins Operator** is running.
 Jenkins will reconcile and apply the new configuration.
 
 ## How to use secrets from a Groovy scripts
@@ -157,7 +157,7 @@ metadata:
   name: example
 spec:
   configurationAsCode:
-    configurations: 
+    configurations:
     - name: jenkins-operator-user-configuration
     secret:
       name: jenkins-conf-secrets
@@ -176,13 +176,13 @@ kind: ConfigMap
 metadata:
   name: jenkins-operator-user-configuration
 data:
-  1-system-message.groovy: | 
+  1-system-message.groovy: |
     import jenkins.*
     import jenkins.model.*
     import hudson.*
     import hudson.model.*
     Jenkins jenkins = Jenkins.getInstance()
-    
+
     jenkins.setSystemMessage(secrets["SYSTEM_MESSAGE"])
     jenkins.save()
 ```
@@ -201,3 +201,84 @@ data:
 
 
 After this, you should see the `Hello world` system message from the **Jenkins** homepage.
+
+## Externally managed pod fields (unreleased)
+
+{{% pageinfo %}}
+These options require an operator image and CRD built after 0.9.0; the published
+0.9.0 release does not support them.
+{{% /pageinfo %}}
+
+### Built-in cloud identity rules {#built-in-cloud-identity-rules}
+
+`spec.reconciliation.ignoreWellKnownInjections` defaults to `true`. It prevents
+the following injected fields from triggering pod recreation. Set it to `false`
+to disable these rules.
+
+| Integration | Exact env names | Volume names |
+| --- | --- | --- |
+| AWS IRSA | `AWS_ROLE_ARN`, `AWS_WEB_IDENTITY_TOKEN_FILE`, `AWS_REGION`, `AWS_DEFAULT_REGION`, `AWS_STS_REGIONAL_ENDPOINTS` | `aws-iam-token` |
+| EKS Pod Identity | `AWS_CONTAINER_CREDENTIALS_FULL_URI`, `AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE` | `eks-pod-identity-token` |
+| Azure Workload Identity | `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_AUTHORITY_HOST`, `AZURE_FEDERATED_TOKEN_FILE` | `azure-identity-token`, or prefix `azure-workload-identity-reserved-` |
+| Google ADC | `GOOGLE_APPLICATION_CREDENTIALS` | Add your injector's volume name manually |
+
+Matching volume mounts are also ignored. **Matching names explicitly declared in
+your CR are ignored too**: changing `AWS_REGION`, for example, will not recreate
+the pod. Disable the switch and use manual rules if you need narrower control.
+
+Cloud identity configuration is still required; see [AKS](../aks/) for Azure.
+Native GKE identity needs no ignore rules. No label or annotation keys are included
+in the built-in list.
+
+### Manual rules
+
+Add rules for other externally managed fields. They work with or without the
+built-in rules:
+
+```yaml
+spec:
+  reconciliation:
+    ignore:
+      annotations: [identity.example.com/managed]
+      labels: [identity.example.com/managed]
+      env: [EXTERNAL_TOKEN_FILE]
+      volumes: [external-identity-token]
+      volumeNamePrefixes: [custom-token-]
+```
+
+Names and keys are exact and case-sensitive. Volume prefixes are literal, non-empty
+strings, not globs; volume rules also ignore mounts by volume name. Env rules cover
+`value` and `valueFrom` in regular containers, but not `envFrom` or init containers.
+Rules apply to both desired and actual fields during comparison only.
+
+Extra pod labels and annotations are already tolerated. Use manual metadata rules
+when another controller changes or removes keys declared in `spec.master`.
+ServiceAccount annotations remain managed separately.
+
+Other restart checks remain active, including failures, credentials, operator
+upgrades and changes to retained fields. Unrecognized sidecars and probe rewrites
+are not covered. The experimental Deployment path does not use these rules.
+
+Helm uses the same settings under `jenkins.reconciliation`.
+
+Istio and Linkerd regular/native sidecars and their known injected volumes are
+covered by the same switch; [exact component names](https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/mesh_comparison.go).
+Mesh rules preserve user-declared containers and volumes. Istio requires this Pod
+annotation to keep application probes unchanged:
+
+```yaml
+spec:
+  master:
+    annotations:
+      sidecar.istio.io/rewriteAppHTTPProbers: "false"
+```
+
+Full strict-mTLS compatibility is not supported: mesh policy must permit direct
+kubelet probes and operator-to-Jenkins traffic. Linkerd does not use the Istio
+annotation. See [Istio health checks](https://istio.io/latest/docs/ops/configuration/mesh/app-health-check/).
+
+### Kubernetes volume defaults
+
+For ConfigMap, Secret, Projected and DownwardAPI volumes, omitted `defaultMode`
+compares equal to Kubernetes' default `0644` (`420`), independently of ignore rules.
+Different permissions or volume sources still trigger reconciliation.
