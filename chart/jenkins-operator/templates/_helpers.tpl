@@ -32,6 +32,27 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Render a container image reference as <registry>/<repository>:<tag>.
+Accepts a map with registry, repository and tag keys (registry is optional), or a plain
+string which is returned unchanged for backwards compatibility.
+Returns an empty string when no repository is set, so optional images can be omitted.
+*/}}
+{{- define "jenkins-operator.image" -}}
+{{- if kindIs "string" . -}}
+{{- . -}}
+{{- else if and . .repository -}}
+{{- $ref := .repository -}}
+{{- if .registry -}}
+{{- $ref = printf "%s/%s" .registry .repository -}}
+{{- end -}}
+{{- if .tag -}}
+{{- $ref = printf "%s:%s" $ref (toString .tag) -}}
+{{- end -}}
+{{- $ref -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "jenkins-operator.labels" -}}
