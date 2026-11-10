@@ -1464,6 +1464,10 @@ spec:
                     description: DisableCSRFProtection allows you to toggle CSRF Protection
                       on Jenkins
                     type: boolean
+                  disableUsageStatistics:
+                    description: DisableUsageStatistics disables Jenkins usage statistics.
+                      Defaults to false, leaving the Jenkins setting unchanged.
+                    type: boolean
                   hostAliases:
                     description: HostAliases for Jenkins master pod and SeedJob agent
                     items:
