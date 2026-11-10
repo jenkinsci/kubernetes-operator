@@ -23,7 +23,7 @@ spec:
     {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.operator.image }}
+          image: {{ include "jenkins-operator.image" .Values.operator.image }}
           imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
           ports:
             - name: http
