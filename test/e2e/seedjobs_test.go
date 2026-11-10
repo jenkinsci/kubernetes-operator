@@ -12,6 +12,7 @@ import (
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/user/seedjobs"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
+	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
 
 	"github.com/bndr/gojenkins"
 	. "github.com/onsi/ginkgo"
@@ -136,17 +137,17 @@ Jenkins.instance.getAllItems(com.cloudbees.hudson.plugins.folder.Folder.class).e
 
 def found = false
 for (c in allCredentials) {
-	if("%s".equals(c.id)) found = true
+	if(%s.equals(c.id)) found = true
 }
 if(!found) {
 	throw new Exception("Expected credential not found")
 }`
-	groovyScript := fmt.Sprintf(groovyScriptFmt, credentialName)
+	groovyScript := fmt.Sprintf(groovyScriptFmt, groovy.StringLiteral(credentialName))
 	_, err := jenkinsClient.ExecuteScript(groovyScript)
 	return err
 }
 
-var verifySeedJobPropertiesGroovyScriptTemplate = template.Must(template.New("test-e2e-verify-job-properties").Parse(`
+var verifySeedJobPropertiesGroovyScriptTemplate = template.Must(template.New("test-e2e-verify-job-properties").Funcs(template.FuncMap{"groovyString": groovy.StringLiteral}).Parse(`
 import hudson.model.FreeStyleProject;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.BranchSpec;
@@ -179,14 +180,14 @@ import hudson.tasks.BuildStep;
 
 Jenkins jenkins = Jenkins.instance
 
-def jobDslSeedName = "{{ .ID }}-{{ .SeedJobSuffix }}"
+def jobDslSeedName = {{ groovyString .ID }} + '-' + {{ groovyString .SeedJobSuffix }}
 def jobRef = jenkins.getItem(jobDslSeedName)
 
 if (jobRef == null) {
 	throw new Exception("Job with given name not found")
 }
 
-if (!jobRef.getDisplayName().equals("Seed Job from {{ .ID }}")) {
+if (!jobRef.getDisplayName().equals('Seed Job from ' + {{ groovyString .ID }})) {
 	throw new Exception("Display name is not equal")
 }
 
@@ -194,7 +195,7 @@ if (jobRef.getScm() == null) {
 	throw new Exception("No SCM found")
 }
 
-if (jobRef.getScm().getBranches().find { val -> val.getName() == "{{ .RepositoryBranch }}" } == null) {
+if (jobRef.getScm().getBranches().find { val -> val.getName() == {{ groovyString .RepositoryBranch }} } == null) {
 	throw new Exception("Specified SCM branch not found")
 }
 
@@ -203,7 +204,7 @@ if(jobRef.getScm().getRepositories().find { it.getURIs().find { uri -> uri.toStr
 }
 
 {{ if .PollSCM }}
-if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "SCMTrigger" && val.getSpec() == "{{ .PollSCM }}"  } == null) {
+if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "SCMTrigger" && val.getSpec() == {{ groovyString .PollSCM }}  } == null) {
 	throw new Exception("SCMTrigger not found but set")
 }
 {{ end }}
@@ -215,13 +216,13 @@ if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "G
 {{ end }}
 
 {{ if .BuildPeriodically }}
-if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "TimerTrigger" && val.getSpec() == "{{ .BuildPeriodically }}" } == null) {
+if (jobRef.getTriggers().find { key, val -> val.getClass().getSimpleName() == "TimerTrigger" && val.getSpec() == {{ groovyString .BuildPeriodically }} } == null) {
 	throw new Exception("BuildPeriodically not found but set")
 }
 {{ end }}
 
 for (BuildStep step : jobRef.getBuildersList()) {
-	if (!step.getTargets().equals("{{ .Targets }}")) {
+	if (!step.getTargets().equals({{ groovyString .Targets }})) {
 		throw new Exception("Targets are not equals'")
 	}
 

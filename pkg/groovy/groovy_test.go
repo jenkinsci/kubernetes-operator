@@ -26,7 +26,9 @@ func TestGroovy_EnsureSingle(t *testing.T) {
 	log.SetupLogger(true)
 	emptyCustomization := v1alpha2.Customization{}
 	hash := "hash"
-	groovyScript := "groovy-script"
+	groovyScript := `def name = 'world'
+println("hello ${name}")
+println('path\\file')`
 	groovyScriptName := "groovy-script-name"
 	source := "source"
 	ctx := context.TODO()
