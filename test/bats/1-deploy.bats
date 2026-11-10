@@ -209,3 +209,63 @@ diag() {
 
   rm "chart/jenkins-operator/deploy.tmp"
 }
+
+#bats test_tags=phase:helm,scenario:split-images
+@test "1.15 Helm: install with split registry, repository and tag image values" {
+  # Split the locally built operator image (OPERATOR_IMAGE=<registry>/<repository>:<tag>) into its parts
+  local op_registry="${OPERATOR_IMAGE%%/*}"
+  local op_rest="${OPERATOR_IMAGE#*/}"
+  local op_repository="${op_rest%:*}"
+  local op_tag="${op_rest##*:}"
+
+  run ${HELM} install split chart/jenkins-operator \
+    --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
+    --set namespace=${DETIK_CLIENT_NAMESPACE} \
+    --set operator.image.registry=${op_registry} \
+    --set operator.image.repository=${op_repository} \
+    --set operator.image.tag=${op_tag} \
+    --set jenkins.latestPlugins=true \
+    --set jenkins.image.registry=docker.io \
+    --set jenkins.image.repository=jenkins/jenkins \
+    --set jenkins.image.tag=2.580.2-lts \
+    --set jenkins.imagePullPolicy=IfNotPresent \
+    --set jenkins.backup.makeBackupBeforePodDeletion=false \
+    --set jenkins.backup.image.registry=quay.io \
+    --set jenkins.backup.image.repository=jenkins-kubernetes-operator/backup-pvc \
+    --set jenkins.backup.image.tag=e2e-test \
+    --set jenkins.seedJobAgentImage.registry=docker.io \
+    --set jenkins.seedJobAgentImage.repository=jenkins/inbound-agent \
+    --set jenkins.seedJobAgentImage.tag=3248.v65ecb_254c298-6-jdk21 \
+    --wait --timeout=5m
+  assert_success
+  assert ${HELM} status split
+
+  # The operator deployment must run the reassembled operator image
+  run ${KUBECTL} get deployment split-jenkins-operator -o jsonpath='{.spec.template.spec.containers[0].image}'
+  assert_success
+  assert_output "${OPERATOR_IMAGE}"
+
+  run try "at most 20 times every 10s to get pods named 'split-jenkins-operator-' and verify that '.status.containerStatuses[?(@.name==\"jenkins-operator\")].ready' is 'true'"
+  assert_success
+
+  # The Jenkins CR must carry the controller, backup and seed job agent images composed from the split values
+  run ${KUBECTL} get jenkins jenkins -o jsonpath='{.spec.master.containers[?(@.name=="jenkins-master")].image}'
+  assert_success
+  assert_output "docker.io/jenkins/jenkins:2.580.2-lts"
+
+  run ${KUBECTL} get jenkins jenkins -o jsonpath='{.spec.master.containers[?(@.name=="backup")].image}'
+  assert_success
+  assert_output "quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test"
+
+  run ${KUBECTL} get jenkins jenkins -o jsonpath='{.spec.seedJobAgentImage}'
+  assert_success
+  assert_output "docker.io/jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21"
+}
+
+#bats test_tags=phase:helm,scenario:split-images
+@test "1.16 Helm: clean split-images release" {
+  run ${HELM} uninstall split --wait
+  assert_success
+  # Wait for the complete removal
+  sleep 10
+}
