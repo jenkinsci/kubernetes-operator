@@ -26,6 +26,10 @@ var (
 func (r *JenkinsBaseConfigurationReconciler) Validate(jenkins *v1alpha2.Jenkins) ([]string, error) {
 	var messages []string
 
+	for _, err := range jenkins.Spec.Master.HomeVolume.Validate() {
+		messages = append(messages, err.Error())
+	}
+
 	if msg := r.validateReservedVolumes(); len(msg) > 0 {
 		messages = append(messages, msg...)
 	}

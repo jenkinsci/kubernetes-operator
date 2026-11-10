@@ -178,6 +178,10 @@ jenkins:
       cpu: 250m
       memory: 500Mi
 
+  # Jenkins home uses emptyDir by default.
+  # homeVolume:
+  #   emptyDir: {}
+
   # volumes used by Jenkins
   # By default, we are only using backup
   volumes:

@@ -393,6 +393,10 @@ type JenkinsMaster struct {
 	// +optional
 	Volumes []corev1.Volume `json:"volumes,omitempty"`
 
+	// HomeVolume configures Pod-scoped Jenkins home storage. Defaults to emptyDir.
+	// +optional
+	HomeVolume *JenkinsHomeVolume `json:"homeVolume,omitempty"`
+
 	// If specified, the pod's tolerations.
 	// +optional
 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`

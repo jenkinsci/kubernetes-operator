@@ -168,6 +168,9 @@ spec:
         volumeMounts: {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- end }}
+    {{- with .Values.jenkins.homeVolume }}
+    homeVolume: {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.jenkins.volumes }}
     volumes: {{- toYaml . | nindent 4 }}
     {{- end }}
