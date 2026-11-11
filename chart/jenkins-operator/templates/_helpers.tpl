@@ -32,8 +32,8 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
-Render a container image reference as <registry>/<repository>:<tag>.
-Accepts a map with registry, repository and tag keys (registry is optional), or a plain
+Render a container image reference as <repository>:<tag>.
+Accepts a map with repository (including registry) and tag keys, or a plain
 string which is returned unchanged for backwards compatibility.
 Returns an empty string when no repository is set, so optional images can be omitted.
 */}}
@@ -41,14 +41,10 @@ Returns an empty string when no repository is set, so optional images can be omi
 {{- if kindIs "string" . -}}
 {{- . -}}
 {{- else if and . .repository -}}
-{{- $ref := .repository -}}
-{{- if .registry -}}
-{{- $ref = printf "%s/%s" .registry .repository -}}
-{{- end -}}
+{{- .repository -}}
 {{- if .tag -}}
-{{- $ref = printf "%s:%s" $ref (toString .tag) -}}
+{{- printf ":%s" (toString .tag) -}}
 {{- end -}}
-{{- $ref -}}
 {{- end -}}
 {{- end -}}
 

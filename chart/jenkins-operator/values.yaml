@@ -33,14 +33,13 @@ jenkins:
   # annotations are injected into metadata annotations field
   annotations: {}
 
-  # image is the Jenkins controller (master) container image, split into its parts so the
-  # registry can be overridden independently, e.g. --set jenkins.image.registry=my.registry.local
-  # Rendered as <registry>/<repository>:<tag>; registry is omitted when empty.
+  # image is the Jenkins controller (master) container image, split into repository and tag.
+  # repository includes the registry, e.g. --set jenkins.image.repository=my.registry.local/mirror/jenkins
+  # Rendered as <repository>:<tag>.
   # It's recommended to use LTS (tag: "lts") version.
   # A plain full reference string (e.g. "jenkins/jenkins:2.580.2-lts") is still accepted.
   image:
-    registry: docker.io
-    repository: jenkins/jenkins
+    repository: docker.io/jenkins/jenkins
     tag: 2.580.2-lts
 
   # env contains jenkins container environment variables
@@ -162,11 +161,10 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
-  # seedJobAgentImage defines the image that will be used by the seed job agent, split into registry, repository and tag
+  # seedJobAgentImage defines the image that will be used by the seed job agent, split into repository and tag
   # (same format as jenkins.image). If repository is empty, the operator default (jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21) is used.
   # A plain full reference string is still accepted.
   seedJobAgentImage:
-    registry: ""
     repository: ""
     tag: ""
 
@@ -248,11 +246,10 @@ jenkins:
     # By default the feature is enabled
     enabled: true
 
-    # image used by backup feature, split into registry, repository and tag (see jenkins.image)
+    # image used by backup feature, split into repository and tag (see jenkins.image)
     # By default using prebuilt backup PVC image
     image:
-      registry: quay.io
-      repository: jenkins-kubernetes-operator/backup-pvc
+      repository: quay.io/jenkins-kubernetes-operator/backup-pvc
       tag: v0.5.1
 
     # containerName is backup container name
@@ -350,10 +347,9 @@ jenkins:
 operator:
   replicaCount: 1
 
-  # image is the Jenkins Operator container image, split into registry, repository and tag (see jenkins.image)
+  # image is the Jenkins Operator container image, split into repository and tag (see jenkins.image)
   image:
-    registry: quay.io
-    repository: jenkins-kubernetes-operator/operator
+    repository: quay.io/jenkins-kubernetes-operator/operator
     tag: v0.9.0
 
   # imagePullPolicy defines policy for pulling images

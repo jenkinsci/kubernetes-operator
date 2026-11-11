@@ -212,29 +212,23 @@ diag() {
 
 #bats test_tags=phase:helm,scenario:split-images
 @test "1.15 Helm: install with split registry, repository and tag image values" {
-  # Split the locally built operator image (OPERATOR_IMAGE=<registry>/<repository>:<tag>) into its parts
-  local op_registry="${OPERATOR_IMAGE%%/*}"
-  local op_rest="${OPERATOR_IMAGE#*/}"
-  local op_repository="${op_rest%:*}"
-  local op_tag="${op_rest##*:}"
+  # Split the locally built operator image (OPERATOR_IMAGE=<repository>:<tag>) into repository and tag
+  local op_repository="${OPERATOR_IMAGE%:*}"
+  local op_tag="${OPERATOR_IMAGE##*:}"
 
   run ${HELM} install split chart/jenkins-operator \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
-    --set operator.image.registry=${op_registry} \
     --set operator.image.repository=${op_repository} \
     --set operator.image.tag=${op_tag} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image.registry=docker.io \
-    --set jenkins.image.repository=jenkins/jenkins \
+    --set jenkins.image.repository=docker.io/jenkins/jenkins \
     --set jenkins.image.tag=2.580.2-lts \
     --set jenkins.imagePullPolicy=IfNotPresent \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
-    --set jenkins.backup.image.registry=quay.io \
-    --set jenkins.backup.image.repository=jenkins-kubernetes-operator/backup-pvc \
+    --set jenkins.backup.image.repository=quay.io/jenkins-kubernetes-operator/backup-pvc \
     --set jenkins.backup.image.tag=e2e-test \
-    --set jenkins.seedJobAgentImage.registry=docker.io \
-    --set jenkins.seedJobAgentImage.repository=jenkins/inbound-agent \
+    --set jenkins.seedJobAgentImage.repository=docker.io/jenkins/inbound-agent \
     --set jenkins.seedJobAgentImage.tag=3248.v65ecb_254c298-6-jdk21 \
     --wait --timeout=5m
   assert_success
