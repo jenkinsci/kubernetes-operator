@@ -30,8 +30,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.env[2].name | string | `"BACKUP_COUNT"` |  |
 | jenkins.backup.env[2].value | string | `"3"` |  |
 | jenkins.backup.getLatestAction[0] | string | `"/home/user/bin/get-latest.sh"` |  |
-| jenkins.backup.image.registry | string | `"quay.io"` |  |
-| jenkins.backup.image.repository | string | `"jenkins-kubernetes-operator/backup-pvc"` |  |
+| jenkins.backup.image.repository | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc"` |  |
 | jenkins.backup.image.tag | string | `"v0.5.1"` |  |
 | jenkins.backup.interval | int | `30` |  |
 | jenkins.backup.makeBackupBeforePodDeletion | bool | `true` |  |
@@ -57,8 +56,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image.registry | string | `"docker.io"` |  |
-| jenkins.image.repository | string | `"jenkins/jenkins"` |  |
+| jenkins.image.repository | string | `"docker.io/jenkins/jenkins"` |  |
 | jenkins.image.tag | string | `"2.580.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
@@ -99,7 +97,6 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.resources.requests.memory | string | `"500Mi"` |  |
 | jenkins.securityContext.fsGroup | int | `1000` |  |
 | jenkins.securityContext.runAsUser | int | `1000` |  |
-| jenkins.seedJobAgentImage.registry | string | `""` |  |
 | jenkins.seedJobAgentImage.repository | string | `""` |  |
 | jenkins.seedJobAgentImage.tag | string | `""` |  |
 | jenkins.seedJobs | list | `[]` |  |
@@ -113,8 +110,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image.registry | string | `"quay.io"` |  |
-| operator.image.repository | string | `"jenkins-kubernetes-operator/operator"` |  |
+| operator.image.repository | string | `"quay.io/jenkins-kubernetes-operator/operator"` |  |
 | operator.image.tag | string | `"v0.9.0"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
