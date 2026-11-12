@@ -4201,6 +4201,12 @@ spec:
                   by the seed job agent. If not defined jenkins/inbound-agent:4.9-1
                   will be used.
                 type: string
+              seedJobRestrictJobsToLabel:
+                default: true
+                description: |-
+                  SeedJobRestrictJobsToLabel reserves the seed agent for jobs targeting its label.
+                  Defaults to true; false allows unlabeled jobs.
+                type: boolean
               seedJobs:
                 description: |-
                   SeedJobs defines list of Jenkins Seed Job configurations

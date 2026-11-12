@@ -202,6 +202,12 @@ data:
 
 After this, you should see the `Hello world` system message from the **Jenkins** homepage.
 
+## Seed agent scheduling (unreleased)
+
+The seed agent accepts only jobs targeting `seed-job-agent` by default, including
+existing agents after upgrade. Set `spec.seedJobRestrictJobsToLabel: false` (Helm:
+`jenkins.seedJobRestrictJobsToLabel: false`) to allow unlabeled jobs.
+
 ## Externally managed pod fields (unreleased)
 
 {{% pageinfo %}}

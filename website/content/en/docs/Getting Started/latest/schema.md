@@ -1229,6 +1229,16 @@ Every single change here requires a pod restart.</p>
 </tr>
 <tr>
 <td>
+<code>seedJobRestrictJobsToLabel</code></br>
+<em>bool</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Defaults to true: reserve the seed agent for jobs targeting its label. Set false to allow unlabeled jobs.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>seedJobs</code></br>
 <em>
 <a href="#github.com/jenkinsci/kubernetes-operator/api/v1alpha2.SeedJob">

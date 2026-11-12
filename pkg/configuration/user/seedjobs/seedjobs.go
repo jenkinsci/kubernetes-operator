@@ -8,6 +8,7 @@ import (
 	"slices"
 	"text/template"
 
+	"github.com/go-logr/logr"
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/internal/render"
 	jenkinsclient "github.com/jenkinsci/kubernetes-operator/pkg/client"
@@ -17,14 +18,13 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/groovy"
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/notifications/reason"
-
-	"github.com/go-logr/logr"
 	stackerr "github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -48,7 +48,8 @@ const (
 	// DefaultAgentImage is the default image used for the seed-job agent
 	defaultAgentImage = "jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21"
 
-	creatingGroovyScriptName = "seed-job-groovy-script.groovy"
+	creatingGroovyScriptName  = "seed-job-groovy-script.groovy"
+	agentModeGroovyScriptName = "seed-job-agent-mode-groovy-script.groovy"
 
 	homeVolumeName = "home"
 	homeVolumePath = "/home/jenkins/agent"
@@ -56,6 +57,24 @@ const (
 	workspaceVolumeName = "workspace"
 	workspaceVolumePath = "/home/jenkins/workspace"
 )
+
+var seedAgentSetModeScriptTemplate = template.Must(template.New(agentModeGroovyScriptName).Funcs(template.FuncMap{"groovyString": groovy.StringLiteral}).Parse(`
+import hudson.model.Node
+import jenkins.model.Jenkins
+
+def jenkins = Jenkins.get()
+def agent = jenkins.getNode({{ groovyString .AgentName }})
+if (agent == null) {
+    throw new IllegalStateException('Seed agent not found')
+}
+def mode = Node.Mode.{{ .Mode }}
+if (agent.getMode() != mode) {
+    agent.setMode(mode)
+    if (!jenkins.updateNode(agent)) {
+        throw new IllegalStateException('Seed agent could not be saved')
+    }
+}
+`))
 
 var seedJobGroovyScriptTemplate = template.Must(template.New(creatingGroovyScriptName).Funcs(template.FuncMap{"groovyString": groovy.StringLiteral}).Parse(`
 import hudson.model.FreeStyleProject;
@@ -381,6 +400,19 @@ func (s *seedJobs) createAgent(jenkinsClient jenkinsclient.Jenkins, k8sClient cl
 			return stackerr.WithStack(err)
 		}
 	} else if err != nil {
+		return stackerr.WithStack(err)
+	}
+
+	mode := "EXCLUSIVE"
+	if !ptr.Deref(jenkinsManifest.Spec.SeedJobRestrictJobsToLabel, true) {
+		mode = "NORMAL"
+	}
+	data := struct{ AgentName, Mode string }{AgentName: agentName, Mode: mode}
+	setAgentModeScript, err := render.Render(seedAgentSetModeScriptTemplate, data)
+	if err != nil {
+		return stackerr.WithStack(err)
+	}
+	if _, err := jenkinsClient.ExecuteScript(setAgentModeScript); err != nil {
 		return stackerr.WithStack(err)
 	}
 

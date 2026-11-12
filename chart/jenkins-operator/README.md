@@ -96,6 +96,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.securityContext.fsGroup | int | `1000` |  |
 | jenkins.securityContext.runAsUser | int | `1000` |  |
 | jenkins.seedJobAgentImage | string | `""` |  |
+| jenkins.seedJobRestrictJobsToLabel | bool | `true` | Reserve the seed agent for jobs targeting its label; false allows unlabeled jobs. |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
 | jenkins.skipPlugins | bool | `false` |  |
