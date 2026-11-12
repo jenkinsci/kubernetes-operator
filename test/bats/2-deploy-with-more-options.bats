@@ -105,6 +105,18 @@ setup() {
   assert_success
   HOME_STORAGE_CLASS=$(${KUBECTL} get storageclass -o 'jsonpath={.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}' | awk '{print $1}')
   assert [ -n "${HOME_STORAGE_CLASS}" ]
+
+  # CRD updates can return before the API serves the new schema.
+  for attempt in {1..20}; do
+    run ${KUBECTL} patch jenkins jenkins --type=merge --dry-run=server \
+      -p '{"spec":{"master":{"homeVolume":{"emptyDir":{},"ephemeral":null}}}}' \
+      -o 'go-template={{if .spec.master.homeVolume}}ready{{end}}'
+    [[ "${status}" -eq 0 && "${output}" == ready ]] && break
+    sleep 1
+  done
+  assert_success
+  assert_output 'ready'
+
   run ${HELM} upgrade options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
