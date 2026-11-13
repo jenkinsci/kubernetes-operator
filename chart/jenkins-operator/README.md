@@ -56,7 +56,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image.repository | string | `"docker.io/jenkins/jenkins"` |  |
+| jenkins.image.repository | string | `"jenkins/jenkins"` |  |
 | jenkins.image.tag | string | `"2.580.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
@@ -99,6 +99,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.securityContext.runAsUser | int | `1000` |  |
 | jenkins.seedJobAgentImage.repository | string | `""` |  |
 | jenkins.seedJobAgentImage.tag | string | `""` |  |
+| jenkins.seedJobRestrictJobsToLabel | bool | `true` | Reserve the seed agent for jobs targeting its label; false allows unlabeled jobs. |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
 | jenkins.skipPlugins | bool | `false` |  |

@@ -39,7 +39,7 @@ jenkins:
   # It's recommended to use LTS (tag: "lts") version.
   # A plain full reference string (e.g. "jenkins/jenkins:2.580.2-lts") is still accepted.
   image:
-    repository: docker.io/jenkins/jenkins
+    repository: jenkins/jenkins
     tag: 2.580.2-lts
 
   # env contains jenkins container environment variables
