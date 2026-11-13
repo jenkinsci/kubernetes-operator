@@ -12,6 +12,7 @@ import (
 
 	"github.com/bndr/gojenkins"
 	"github.com/golang/mock/gomock"
+	"github.com/jenkinsci/kubernetes-operator/internal/render"
 	"github.com/jenkinsci/kubernetes-operator/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
@@ -23,6 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/utils/ptr"
 )
 
 const agentSecret = "test-secret"
@@ -68,6 +70,8 @@ func jenkinsCustomResource() *v1alpha2.Jenkins {
 }
 
 func TestEnsureSeedJobs(t *testing.T) {
+	restrictedAgentScript, err := render.Render(seedAgentSetModeScriptTemplate, struct{ AgentName, Mode string }{AgentName, "EXCLUSIVE"})
+	assert.NoError(t, err)
 	t.Run("happy", func(t *testing.T) {
 		// given
 		ctrl := gomock.NewController(t)
@@ -101,6 +105,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 
 		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).Return(nil, nil).AnyTimes()
 		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(testNode, nil).AnyTimes()
+		jenkinsClient.EXPECT().ExecuteScript(restrictedAgentScript).Return("", nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 		jenkinsClient.EXPECT().ExecuteScript(seedJobCreatingScript).AnyTimes()
 
@@ -146,6 +151,7 @@ func TestEnsureSeedJobs(t *testing.T) {
 
 		jenkinsClient.EXPECT().GetNode(ctx, AgentName).AnyTimes()
 		jenkinsClient.EXPECT().CreateNode(ctx, AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().ExecuteScript(restrictedAgentScript).Return("", nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		seedJobsClient := New(jenkinsClient, config)
@@ -173,6 +179,8 @@ func TestEnsureSeedJobs(t *testing.T) {
 }
 
 func TestCreateAgent(t *testing.T) {
+	restrictedAgentScript, err := render.Render(seedAgentSetModeScriptTemplate, struct{ AgentName, Mode string }{AgentName, "EXCLUSIVE"})
+	assert.NoError(t, err)
 	t.Run("don't fail when deployment is already created", func(t *testing.T) {
 		// given
 		ctrl := gomock.NewController(t)
@@ -188,6 +196,7 @@ func TestCreateAgent(t *testing.T) {
 
 		jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).AnyTimes()
 		jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 1, "The jenkins-operator generated agent", "/home/jenkins", AgentName).AnyTimes()
+		jenkinsClient.EXPECT().ExecuteScript(restrictedAgentScript).Return("", nil).AnyTimes()
 		jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil).AnyTimes()
 
 		config := configuration.Configuration{
@@ -311,6 +320,10 @@ func TestCreateAgentCreatesMissingNode(t *testing.T) {
 	jenkinsClient := jenkinsclient.NewMockJenkins(ctrl)
 	jenkinsClient.EXPECT().GetNode(context.TODO(), AgentName).Return(nil, fmt.Errorf("lookup: %w", jenkinsclient.ErrNotFound))
 	jenkinsClient.EXPECT().CreateNode(context.TODO(), AgentName, 5, "The jenkins-operator generated agent", "/home/jenkins", AgentName).Return(nil, nil)
+	jenkinsClient.EXPECT().ExecuteScript(gomock.Any()).DoAndReturn(func(script string) (string, error) {
+		assert.Contains(t, script, "Node.Mode.EXCLUSIVE")
+		return "", nil
+	})
 	jenkinsClient.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil)
 	seedJobsClient := New(jenkinsClient, configuration.Configuration{Client: fakeClient, Jenkins: jenkins})
 	err := seedJobsClient.createAgent(jenkinsClient, fakeClient, jenkins, jenkins.Namespace, AgentName)
@@ -318,4 +331,30 @@ func TestCreateAgentCreatesMissingNode(t *testing.T) {
 	var deployment appsv1.Deployment
 	err = fakeClient.Get(context.Background(), types.NamespacedName{Namespace: jenkins.Namespace, Name: agentDeploymentName(*jenkins, AgentName)}, &deployment)
 	assert.NoError(t, err)
+}
+
+func TestCreateAgentSchedulingMode(t *testing.T) {
+	for _, tt := range []struct {
+		name  string
+		value *bool
+		mode  string
+	}{
+		{"omitted", nil, "EXCLUSIVE"}, {"enabled", ptr.To(true), "EXCLUSIVE"}, {"disabled", ptr.To(false), "NORMAL"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			j := jenkinsCustomResource()
+			j.Spec.SeedJobRestrictJobsToLabel = tt.value
+			k8sClient := testutil.NewClientBuilder().Build()
+			api := jenkinsclient.NewMockJenkins(ctrl)
+			api.EXPECT().GetNode(context.TODO(), AgentName).Return(&gojenkins.Node{}, nil)
+			api.EXPECT().ExecuteScript(gomock.Any()).DoAndReturn(func(script string) (string, error) {
+				assert.Contains(t, script, "Node.Mode."+tt.mode)
+				return "", nil
+			})
+			api.EXPECT().GetNodeSecret(AgentName).Return(agentSecret, nil)
+			reconciler := New(api, configuration.Configuration{Client: k8sClient, Jenkins: j})
+			assert.NoError(t, reconciler.createAgent(api, k8sClient, j, j.Namespace, AgentName))
+		})
+	}
 }

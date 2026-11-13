@@ -168,6 +168,9 @@ jenkins:
     repository: ""
     tag: ""
 
+  # -- Reserve the seed agent for jobs targeting its label; false allows unlabeled jobs.
+  seedJobRestrictJobsToLabel: true
+
   # skipPlugins allows to skip installation of both BasePlugins and Plugins.
   # Requires using a custom image which includes the BasePlugins.
   # Defaults to false.

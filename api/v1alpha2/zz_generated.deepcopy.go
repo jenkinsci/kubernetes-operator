@@ -475,6 +475,11 @@ func (in *JenkinsSpec) DeepCopyInto(out *JenkinsSpec) {
 		*out = make([]SeedJob, len(*in))
 		copy(*out, *in)
 	}
+	if in.SeedJobRestrictJobsToLabel != nil {
+		in, out := &in.SeedJobRestrictJobsToLabel, &out.SeedJobRestrictJobsToLabel
+		*out = new(bool)
+		**out = **in
+	}
 	if in.Notifications != nil {
 		in, out := &in.Notifications, &out.Notifications
 		*out = make([]Notification, len(*in))

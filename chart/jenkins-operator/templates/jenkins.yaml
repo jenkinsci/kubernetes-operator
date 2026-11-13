@@ -186,4 +186,7 @@ spec:
   {{- if $seedJobAgentImage }}
   seedJobAgentImage: {{ $seedJobAgentImage }}
   {{- end }}
+  {{- if hasKey .Values.jenkins "seedJobRestrictJobsToLabel" }}
+  seedJobRestrictJobsToLabel: {{ .Values.jenkins.seedJobRestrictJobsToLabel }}
+  {{- end }}
 {{- end }}
