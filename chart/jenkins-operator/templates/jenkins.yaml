@@ -134,7 +134,7 @@ spec:
     {{- end }}
     containers:
       - name:  jenkins-master
-        image: {{ .Values.jenkins.image }}
+        image: {{ include "jenkins-operator.image" .Values.jenkins.image }}
         imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
         {{- with .Values.jenkins.livenessProbe }}
         livenessProbe: {{ toYaml . | nindent 10 }}
@@ -156,7 +156,7 @@ spec:
         {{- end }}
       {{- if .Values.jenkins.backup.enabled }}
       - name: {{ .Values.jenkins.backup.containerName }}
-        image: {{ .Values.jenkins.backup.image }}
+        image: {{ include "jenkins-operator.image" .Values.jenkins.backup.image }}
         imagePullPolicy: {{ .Values.jenkins.imagePullPolicy }}
         {{- with .Values.jenkins.backup.resources }}
         resources: {{ toYaml . | nindent 10 }}
@@ -182,8 +182,9 @@ spec:
   {{- with .Values.jenkins.seedJobs }}
   seedJobs: {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- if .Values.jenkins.seedJobAgentImage }}
-  seedJobAgentImage: {{ .Values.jenkins.seedJobAgentImage }}
+  {{- $seedJobAgentImage := include "jenkins-operator.image" .Values.jenkins.seedJobAgentImage }}
+  {{- if $seedJobAgentImage }}
+  seedJobAgentImage: {{ $seedJobAgentImage }}
   {{- end }}
   {{- if hasKey .Values.jenkins "seedJobRestrictJobsToLabel" }}
   seedJobRestrictJobsToLabel: {{ .Values.jenkins.seedJobRestrictJobsToLabel }}
