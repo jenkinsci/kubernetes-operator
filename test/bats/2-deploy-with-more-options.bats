@@ -154,7 +154,15 @@ setup() {
 @test "2.11 Helm: check Jenkins Pod status again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
-  HOME_STORAGE_CLASS=$(${KUBECTL} get jenkins jenkins -o 'jsonpath={.spec.master.homeVolume.ephemeral.storageClassName}')
+  run ${KUBECTL} get jenkins jenkins -o 'jsonpath={.spec.master.homeVolume.ephemeral.storageClassName}'
+  assert_success
+  HOME_STORAGE_CLASS="${output}"
+  if [[ -z "${HOME_STORAGE_CLASS}" ]]; then
+    ${HELM} get values options
+    ${HELM} get manifest options
+    ${KUBECTL} get jenkins jenkins -o yaml
+    ${KUBECTL} get crd jenkins.jenkins.io -o 'jsonpath={.spec.versions[?(@.name=="v1alpha2")].schema.openAPIV3Schema.properties.spec.properties.master.properties.homeVolume.properties.ephemeral.properties.storageClassName}'
+  fi
   assert [ -n "${HOME_STORAGE_CLASS}" ]
   run try "at most 30 times every 5s to get pods named '^jenkins-jenkins$' and verify that '.spec.volumes[?(@.name==\"jenkins-home\")].ephemeral.volumeClaimTemplate.spec.storageClassName' is '${HOME_STORAGE_CLASS}'"
   assert_success
