@@ -228,11 +228,13 @@ update-lts-version: ## Update the latest lts version
 	@echo "+ $@"
 	echo $(LATEST_LTS_VERSION)
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' chart/jenkins-operator/values.yaml
+	sed -i '/^jenkins:$$/,/^operator:$$/ { /^  image:$$/,/^  [^ ]/ { /^    tag:/ s|[0-9]\+\.[0-9]\+\.[0-9]\+|$(LATEST_LTS_VERSION)|; }; }' chart/jenkins-operator/values.yaml
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/e2e/test_utility.go
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/helm/helm_test.go
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' pkg/constants/constants.go
 	#TODO: source the version from config.base.env for bats test, no need of hardcoded version
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/bats/1-deploy.bats
+	sed -i 's|\(jenkins.image.tag=\)[0-9]\+\.[0-9]\+\.[0-9]\+|\1$(LATEST_LTS_VERSION)|g' test/bats/1-deploy.bats
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/bats/2-deploy-with-more-options.bats
 	sed -i 's|jenkins/jenkins:[0-9]\+.[0-9]\+.[0-9]\+|jenkins/jenkins:$(LATEST_LTS_VERSION)|g' test/bats/3-deploy-with-webhook.bats
 
