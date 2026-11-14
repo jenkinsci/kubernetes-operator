@@ -3,6 +3,7 @@ package base
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -949,4 +950,13 @@ func TestValidateJenkinsMasterContainerCommand(t *testing.T) {
 
 		assert.Len(t, got, 1)
 	})
+}
+
+func TestHomeVolumeReconciliationValidation(t *testing.T) {
+	j := comparisonJenkins()
+	j.Spec.Master.HomeVolume = &v1alpha2.JenkinsHomeVolume{}
+	r := New(configuration.Configuration{Jenkins: j, Client: fake.NewClientBuilder().Build()}, client.JenkinsAPIConnectionSettings{})
+	messages, err := r.Validate(j)
+	require.NoError(t, err)
+	require.Contains(t, strings.Join(messages, "\n"), "spec.master.homeVolume")
 }

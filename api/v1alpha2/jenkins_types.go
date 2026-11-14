@@ -22,6 +22,12 @@ type JenkinsSpec struct {
 	// +optional
 	SeedJobAgentImage string `json:"seedJobAgentImage,omitempty"`
 
+	// SeedJobRestrictJobsToLabel reserves the seed agent for jobs targeting its label.
+	// Defaults to true; false allows unlabeled jobs.
+	// +optional
+	// +kubebuilder:default=true
+	SeedJobRestrictJobsToLabel *bool `json:"seedJobRestrictJobsToLabel,omitempty"`
+
 	// ValidateSecurityWarnings enables or disables validating potential security warnings in Jenkins plugins via admission webhooks.
 	//+optional
 	ValidateSecurityWarnings bool `json:"validateSecurityWarnings,omitempty"`
@@ -386,6 +392,10 @@ type JenkinsMaster struct {
 	// More info: https://kubernetes.io/docs/concepts/storage/volumes
 	// +optional
 	Volumes []corev1.Volume `json:"volumes,omitempty"`
+
+	// HomeVolume configures Pod-scoped Jenkins home storage. Defaults to emptyDir.
+	// +optional
+	HomeVolume *JenkinsHomeVolume `json:"homeVolume,omitempty"`
 
 	// If specified, the pod's tolerations.
 	// +optional

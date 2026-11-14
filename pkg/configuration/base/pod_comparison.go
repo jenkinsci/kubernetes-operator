@@ -10,6 +10,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/base/resources"
 	corev1 "k8s.io/api/core/v1"
+	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
@@ -30,6 +31,9 @@ func normalizeVolumesForComparison(volumes []corev1.Volume) []corev1.Volume {
 		case volume.DownwardAPI != nil && volume.DownwardAPI.DefaultMode == nil:
 			mode := corev1.DownwardAPIVolumeSourceDefaultMode
 			volume.DownwardAPI.DefaultMode = &mode
+		case volume.Ephemeral != nil && volume.Ephemeral.VolumeClaimTemplate != nil && volume.Ephemeral.VolumeClaimTemplate.Spec.VolumeMode == nil:
+			mode := corev1.PersistentVolumeFilesystem
+			volume.Ephemeral.VolumeClaimTemplate.Spec.VolumeMode = &mode
 		}
 		normalized = append(normalized, *volume)
 	}
@@ -165,7 +169,7 @@ func (p podComparisonPolicy) volumesEqual(expected, actual []corev1.Volume, serv
 		}
 		retainedActual = append(retainedActual, v)
 	}
-	return reflect.DeepEqual(normalizeVolumesForComparison(retainedExpected), normalizeVolumesForComparison(retainedActual))
+	return apiequality.Semantic.DeepEqual(normalizeVolumesForComparison(retainedExpected), normalizeVolumesForComparison(retainedActual))
 }
 
 type podConfigurationDifference struct{ Field, Container, Name, Message string }

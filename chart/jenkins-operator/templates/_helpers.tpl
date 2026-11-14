@@ -32,17 +32,29 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
-Returns "true" when the operator should watch all namespaces (WATCH_NAMESPACE="").
-This happens when the bundled Jenkins is enabled with an empty jenkins.namespace, or
-when jenkins is disabled and operator.watchNamespace is explicitly set to "".
-An empty string is falsy in templates, so operator.watchNamespace is detected with
-hasKey to distinguish "set to empty (all namespaces)" from "unset (own namespace)".
+Render a container image reference as <repository>:<tag>.
+Accepts a map with repository (including registry) and tag keys, or a plain
+string which is returned unchanged for backwards compatibility.
+Returns an empty string when no repository is set, so optional images can be omitted.
 */}}
-{{- define "jenkins-operator.watchAllNamespaces" -}}
-{{- if .Values.jenkins.enabled -}}
-{{- if eq .Values.jenkins.namespace "" -}}true{{- end -}}
-{{- else if hasKey .Values.operator "watchNamespace" -}}
-{{- if eq .Values.operator.watchNamespace "" -}}true{{- end -}}
+{{- define "jenkins-operator.image" -}}
+{{- if kindIs "string" . -}}
+{{- . -}}
+{{- else if and . .repository -}}
+{{- .repository -}}
+{{- if .tag -}}
+{{- printf ":%s" (toString .tag) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Resolve the operator watch scope; an empty namespace means all namespaces. */}}
+{{- define "jenkins-operator.watchNamespace" -}}
+{{- if .Values.operator.watchAllNamespaces -}}
+{{- else if .Values.jenkins.enabled -}}
+{{- .Values.jenkins.namespace -}}
+{{- else -}}
+{{- default .Release.Namespace .Values.operator.watchNamespace -}}
 {{- end -}}
 {{- end -}}
 

@@ -33,10 +33,14 @@ jenkins:
   # annotations are injected into metadata annotations field
   annotations: {}
 
-  # image is the name (and tag) of the Jenkins instance
-  # Default: jenkins/jenkins:lts
-  # It's recommended to use LTS (tag: "lts") version
-  image: jenkins/jenkins:2.580.2-lts
+  # image is the Jenkins controller (master) container image, split into repository and tag.
+  # repository includes the registry, e.g. --set jenkins.image.repository=my.registry.local/mirror/jenkins
+  # Rendered as <repository>:<tag>.
+  # It's recommended to use LTS (tag: "lts") version.
+  # A plain full reference string (e.g. "jenkins/jenkins:2.580.2-lts") is still accepted.
+  image:
+    repository: jenkins/jenkins
+    tag: 2.580.2-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -157,8 +161,15 @@ jenkins:
   #    repositoryUrl: https://github.com/jenkinsci/kubernetes-operator.git
   seedJobs: []
 
-  # SeedJobAgentImage defines the image that will be used by the seed job agent. If not defined jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21 will be used.
-  seedJobAgentImage: ""
+  # seedJobAgentImage defines the image that will be used by the seed job agent, split into repository and tag
+  # (same format as jenkins.image). If repository is empty, the operator default (jenkins/inbound-agent:3248.v65ecb_254c298-6-jdk21) is used.
+  # A plain full reference string is still accepted.
+  seedJobAgentImage:
+    repository: ""
+    tag: ""
+
+  # -- Reserve the seed agent for jobs targeting its label; false allows unlabeled jobs.
+  seedJobRestrictJobsToLabel: true
 
   # skipPlugins allows to skip installation of both BasePlugins and Plugins.
   # Requires using a custom image which includes the BasePlugins.
@@ -174,6 +185,10 @@ jenkins:
     requests:
       cpu: 250m
       memory: 500Mi
+
+  # Jenkins home uses emptyDir by default.
+  # homeVolume:
+  #   emptyDir: {}
 
   # volumes used by Jenkins
   # By default, we are only using backup
@@ -235,9 +250,11 @@ jenkins:
     # By default the feature is enabled
     enabled: true
 
-    # image used by backup feature
+    # image used by backup feature, split into repository and tag (see jenkins.image)
     # By default using prebuilt backup PVC image
-    image: quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1
+    image:
+      repository: quay.io/jenkins-kubernetes-operator/backup-pvc
+      tag: v0.5.1
 
     # containerName is backup container name
     containerName: backup
@@ -334,8 +351,10 @@ jenkins:
 operator:
   replicaCount: 1
 
-  # image is the name (and tag) of the Jenkins Operator image
-  image: quay.io/jenkins-kubernetes-operator/operator:v0.9.0
+  # image is the Jenkins Operator container image, split into repository and tag (see jenkins.image)
+  image:
+    repository: quay.io/jenkins-kubernetes-operator/operator
+    tag: v0.9.0
 
   # imagePullPolicy defines policy for pulling images
   imagePullPolicy: IfNotPresent
@@ -351,10 +370,11 @@ operator:
 
   # Select a different namespace to look for the Jenkins CR and deploy Jenkins in. Defaults to the same namespace as
   # the operator.
-  # Only used when jenkins.enabled is false.
-  # Set to an empty string ("") to make a single operator watch all namespaces; this also switches the operator's
-  # RBAC to a ClusterRole/ClusterRoleBinding.
+  # Used when jenkins.enabled is false; empty also means the operator's namespace.
   # watchNamespace: "jenkins-namespace"
+
+  # -- Watch all namespaces, overriding watchNamespace and jenkins.namespace.
+  watchAllNamespaces: false
 
   resources: {}
   nodeSelector: {}

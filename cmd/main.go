@@ -129,7 +129,6 @@ func main() {
 		fatal(errors.Wrap(err, "failed to get config"), *debug)
 	}
 
-	cacheOptions := buildCacheOptions(namespace)
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		// MetricsBindAddress:      fmt.Sprintf("%s:%d", metricsHost, metricsPort),
 		Metrics: server.Options{
@@ -144,7 +143,7 @@ func main() {
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "c674355f.jenkins.io",
 		// Namespace:              namespace,
-		Cache: cacheOptions,
+		Cache: buildCacheOptions(namespace),
 	})
 	if err != nil {
 		fatal(errors.Wrap(err, "unable to start manager"), *debug)
@@ -211,21 +210,8 @@ func main() {
 	}
 }
 
-// buildCacheOptions returns the controller-runtime cache options for the given
-// WATCH_NAMESPACE value.
-//
-// An empty namespace means "watch all namespaces". In that case we must leave
-// Cache.DefaultNamespaces unset so controller-runtime builds a single
-// cluster-wide cache. Setting DefaultNamespaces{"": {}} instead builds a
-// multiNamespaceCache keyed only by "", which cannot serve namespace-scoped
-// List calls (e.g. ensureExtraRBAC lists RoleBindings InNamespace(jenkins.Namespace))
-// and fails with "unable to list: <ns> because of unknown namespace for the cache".
 func buildCacheOptions(namespace string) cache.Options {
-	cacheOptions := cache.Options{}
-	if namespace != "" {
-		cacheOptions.DefaultNamespaces = map[string]cache.Config{namespace: {}}
-	}
-	return cacheOptions
+	return cache.Options{DefaultNamespaces: map[string]cache.Config{namespace: {}}}
 }
 
 func fatal(err error, debug bool) {

@@ -30,7 +30,8 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.backup.env[2].name | string | `"BACKUP_COUNT"` |  |
 | jenkins.backup.env[2].value | string | `"3"` |  |
 | jenkins.backup.getLatestAction[0] | string | `"/home/user/bin/get-latest.sh"` |  |
-| jenkins.backup.image | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1"` |  |
+| jenkins.backup.image.repository | string | `"quay.io/jenkins-kubernetes-operator/backup-pvc"` |  |
+| jenkins.backup.image.tag | string | `"v0.5.1"` |  |
 | jenkins.backup.interval | int | `30` |  |
 | jenkins.backup.makeBackupBeforePodDeletion | bool | `true` |  |
 | jenkins.backup.pvc.className | string | `""` |  |
@@ -55,7 +56,8 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.enabled | bool | `true` |  |
 | jenkins.env | list | `[]` |  |
 | jenkins.hostAliases | object | `{}` |  |
-| jenkins.image | string | `"jenkins/jenkins:2.580.2-lts"` |  |
+| jenkins.image.repository | string | `"jenkins/jenkins"` |  |
+| jenkins.image.tag | string | `"2.580.2-lts"` |  |
 | jenkins.imagePullPolicy | string | `"Always"` |  |
 | jenkins.imagePullSecrets | list | `[]` |  |
 | jenkins.labels | object | `{}` |  |
@@ -95,7 +97,9 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.resources.requests.memory | string | `"500Mi"` |  |
 | jenkins.securityContext.fsGroup | int | `1000` |  |
 | jenkins.securityContext.runAsUser | int | `1000` |  |
-| jenkins.seedJobAgentImage | string | `""` |  |
+| jenkins.seedJobAgentImage.repository | string | `""` |  |
+| jenkins.seedJobAgentImage.tag | string | `""` |  |
+| jenkins.seedJobRestrictJobsToLabel | bool | `true` | Reserve the seed agent for jobs targeting its label; false allows unlabeled jobs. |
 | jenkins.seedJobs | list | `[]` |  |
 | jenkins.serviceAccount.annotations | object | `{}` |  |
 | jenkins.skipPlugins | bool | `false` |  |
@@ -107,7 +111,8 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | jenkins.volumes[0].persistentVolumeClaim.claimName | string | `"jenkins-backup"` |  |
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
-| operator.image | string | `"quay.io/jenkins-kubernetes-operator/operator:v0.9.0"` |  |
+| operator.image.repository | string | `"quay.io/jenkins-kubernetes-operator/operator"` |  |
+| operator.image.tag | string | `"v0.9.0"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |
@@ -115,6 +120,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | operator.replicaCount | int | `1` |  |
 | operator.resources | object | `{}` |  |
 | operator.tolerations | list | `[]` |  |
+| operator.watchAllNamespaces | bool | `false` | Watch all namespaces, overriding watchNamespace and jenkins.namespace. |
 | webhook.certificate.duration | string | `"2160h"` |  |
 | webhook.certificate.name | string | `"webhook-certificate"` |  |
 | webhook.certificate.renewbefore | string | `"360h"` |  |
