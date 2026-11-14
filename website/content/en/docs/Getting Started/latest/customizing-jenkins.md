@@ -202,13 +202,18 @@ data:
 
 After this, you should see the `Hello world` system message from the **Jenkins** homepage.
 
-## Seed agent scheduling (unreleased)
+## Usage statistics
+
+Set `spec.master.disableUsageStatistics: true` (Helm: `jenkins.disableUsageStatistics: true`)
+to disable Jenkins usage statistics. The default leaves the Jenkins setting unchanged.
+
+## Seed agent scheduling
 
 The seed agent accepts only jobs targeting `seed-job-agent` by default, including
 existing agents after upgrade. Set `spec.seedJobRestrictJobsToLabel: false` (Helm:
 `jenkins.seedJobRestrictJobsToLabel: false`) to allow unlabeled jobs.
 
-## Jenkins home storage (unreleased)
+## Jenkins home storage
 
 Jenkins home uses `emptyDir` by default. See [why Jenkins home is disposable]({{< relref "/docs/FAQ/_index.md#how-can-i-change-jenkins_home-from-volume-to-persistent-volume" >}}).
 To use a Pod-owned ephemeral PVC:
@@ -232,12 +237,7 @@ Helm uses `jenkins.homeVolume`.
 Changing home storage replaces the Pod without migrating data. Existing
 backup and restore settings still apply.
 
-## Externally managed pod fields (unreleased)
-
-{{% pageinfo %}}
-These options require an operator image and CRD built after 0.9.0; the published
-0.9.0 release does not support them.
-{{% /pageinfo %}}
+## Externally managed pod fields
 
 ### Built-in cloud identity rules {#built-in-cloud-identity-rules}
 
@@ -292,7 +292,7 @@ are not covered. The experimental Deployment path does not use these rules.
 Helm uses the same settings under `jenkins.reconciliation`.
 
 Istio and Linkerd regular/native sidecars and their known injected volumes are
-covered by the same switch; [exact component names](https://github.com/jenkinsci/kubernetes-operator/blob/master/pkg/configuration/base/mesh_comparison.go).
+covered by the same switch; [exact component names](https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/pkg/configuration/base/mesh_comparison.go).
 Mesh rules preserve user-declared containers and volumes. Istio requires this Pod
 annotation to keep application probes unchanged:
 

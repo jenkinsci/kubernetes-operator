@@ -23,10 +23,9 @@ Azure AKS managed Kubernetes service adds to every pod the following environment
 The operator is aware of it and omits these environment variables when checking if a Jenkins pod environment has been changed. It prevents the
 restart of a Jenkins pod over and over again.
 
-## Azure Workload Identity (unreleased reconciliation options)
+## Azure Workload Identity
 
-These options require an operator image and CRD built after 0.9.0; the published
-0.9.0 release does not support them. Configure the ServiceAccount and opt-in label,
+Configure the ServiceAccount and opt-in label,
 with the built-in injection rules enabled by default:
 
 ```yaml

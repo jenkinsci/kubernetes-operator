@@ -6,4 +6,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/jenkins-kubernetes-operator/operator
-  newTag: v0.8.0
+  newTag: v0.10.0-beta1
