@@ -21,6 +21,11 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.2  Helm: install helm chart with options" {
+  run ${KUBECTL} apply --server-side --force-conflicts -f chart/jenkins-operator/crds/jenkins-crd.yaml
+  assert_success
+  run ${KUBECTL} wait --for=condition=Established crd/jenkins.jenkins.io --timeout=60s
+  assert_success
+
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
   assert_success
   run ${HELM} install options \
@@ -101,21 +106,8 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.9  Helm: upgrade from main branch same value" {
-  run ${KUBECTL} apply --server-side --force-conflicts -f chart/jenkins-operator/crds/jenkins-crd.yaml
-  assert_success
   HOME_STORAGE_CLASS=$(${KUBECTL} get storageclass -o 'jsonpath={.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}' | awk '{print $1}')
   assert [ -n "${HOME_STORAGE_CLASS}" ]
-
-  # CRD updates can return before the API serves the new schema.
-  for attempt in {1..20}; do
-    run ${KUBECTL} patch jenkins jenkins --type=merge --dry-run=server \
-      -p '{"spec":{"master":{"homeVolume":{"emptyDir":{},"ephemeral":null}}}}' \
-      -o 'go-template={{if .spec.master.homeVolume}}ready{{end}}'
-    [[ "${status}" -eq 0 && "${output}" == ready ]] && break
-    sleep 1
-  done
-  assert_success
-  assert_output 'ready'
 
   run ${HELM} upgrade options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
@@ -157,12 +149,6 @@ setup() {
   run ${KUBECTL} get jenkins jenkins -o 'jsonpath={.spec.master.homeVolume.ephemeral.storageClassName}'
   assert_success
   HOME_STORAGE_CLASS="${output}"
-  if [[ -z "${HOME_STORAGE_CLASS}" ]]; then
-    ${HELM} get values options
-    ${HELM} get manifest options
-    ${KUBECTL} get jenkins jenkins -o yaml
-    ${KUBECTL} get crd jenkins.jenkins.io -o 'jsonpath={.spec.versions[?(@.name=="v1alpha2")].schema.openAPIV3Schema.properties.spec.properties.master.properties.homeVolume.properties.ephemeral.properties.storageClassName}'
-  fi
   assert [ -n "${HOME_STORAGE_CLASS}" ]
   run try "at most 30 times every 5s to get pods named '^jenkins-jenkins$' and verify that '.spec.volumes[?(@.name==\"jenkins-home\")].ephemeral.volumeClaimTemplate.spec.storageClassName' is '${HOME_STORAGE_CLASS}'"
   assert_success
