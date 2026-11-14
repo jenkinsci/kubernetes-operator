@@ -26,7 +26,7 @@ const e2e = "e2e"
 // Plugin versions should be the same as in
 // github.com/jenkinsci/kubernetes-operator/pkg/plugins/base_plugins.go
 const (
-	configurationAsCodePlugin           = "configuration-as-code:2144.ve8c697101488"
+	configurationAsCodePlugin           = "configuration-as-code:2147.v8a_8d38668c72"
 	gitPlugin                           = "git:5.11.0"
 	jobDslPlugin                        = "job-dsl:3732.v9a_c49a_61a_313"
 	kubernetesPlugin                    = "kubernetes:4560.vc25b_83890c34"
