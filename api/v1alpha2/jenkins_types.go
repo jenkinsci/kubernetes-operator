@@ -405,19 +405,19 @@ type JenkinsMaster struct {
 	// +optional
 	// Defaults to :
 	// - name: configuration-as-code
-	// version: "1625.v27444588cc3d"
+	// version: "1836.vccda_4a_122a_a_e"
 	// - name: git
-	// version: "5.0.0"
+	// version: "5.2.2"
 	// - name: job-dsl
-	// version: "1.83"
+	// version: "1.87"
 	// - name: kubernetes
-	// version: "3909.v1f2c633e8590"
+	// version: "4246.v5a_12b_1fe120e"
 	// - name: kubernetes-credentials-provider
-	// version: "1.211.vc236a_f5a_2f3c"
+	// version: "1.262.v2670ef7ea_0c5"
 	// - name: workflow-aggregator
 	// version: "596.v8c21c963d92d"
 	// - name: workflow-job
-	// version: "1289.vd1c337fd5354"
+	// version: "1400.v7fd111b_ec82f"
 	BasePlugins []Plugin `json:"basePlugins,omitempty"`
 
 	// Plugins contains plugins required by user
