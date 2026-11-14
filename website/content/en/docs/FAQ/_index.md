@@ -24,5 +24,5 @@ role to the Operator service account.
 
 ### How can I change JENKINS_HOME from volume to Persistent Volume?
 In order to provide smooth extension, scalability and errorless backups, Jenkins needs to stay ephemeral.
-You can choose between `emptyDir` and an ephemeral PVC for `JENKINS_HOME`. All the configurations should be volatile in Jenkins
+From 0.10.0, you can choose between `emptyDir` and an [ephemeral PVC](/kubernetes-operator/docs/getting-started/latest/customizing-jenkins/#jenkins-home-storage) for `JENKINS_HOME`. All the configurations should be volatile in Jenkins
 and kept in a VCS.

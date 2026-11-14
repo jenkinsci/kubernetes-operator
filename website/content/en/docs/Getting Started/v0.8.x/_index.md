@@ -1,7 +1,7 @@
 ---
 title: "v0.8.x"
 linkTitle: "v0.8.x"
-weight: 2
+weight: 3
 date: 2023-05-31
 description: >
   Archived getting started guide for Jenkins Operator 0.8.x.

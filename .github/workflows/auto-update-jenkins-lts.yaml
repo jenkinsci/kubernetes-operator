@@ -39,13 +39,11 @@ jobs:
           fi
 
       - name: Prepare go environment
-        if: steps.check.outputs.needs_update == 'true'
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Ensure Golang runtime dependencies
-        if: steps.check.outputs.needs_update == 'true'
         run: make go-dependencies
 
       - name: Update Jenkins lts version
@@ -53,20 +51,19 @@ jobs:
         run: make update-jenkins-lts
 
       - name: Update Jenkins base plugins
-        if: steps.check.outputs.needs_update == 'true'
         run: make update-plugins
 
       - name: Run verify
-        if: steps.check.outputs.needs_update == 'true'
         run: make verify
 
       - name: Create Pull Request
-        if: steps.check.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: update Jenkins lts version to ${{ steps.check.outputs.latest }}"
-          title: "chore: update Jenkins lts version to ${{ steps.check.outputs.latest }}"
-          body: "auto-update Jenkins lts version from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }}"
+          commit-message: "chore: update Jenkins LTS and base plugins"
+          title: "chore: update Jenkins LTS and base plugins"
+          body: |
+            Refresh base plugins for Jenkins ${{ steps.check.outputs.latest }}.
+            Update Jenkins LTS from ${{ steps.check.outputs.current }} to ${{ steps.check.outputs.latest }} when a new version is available.
           branch: auto-update-jenkins-lts-${{ steps.check.outputs.latest }}
           delete-branch: true

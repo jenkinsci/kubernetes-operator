@@ -11,7 +11,7 @@ description: >
 > or GroovyScripts and jobs should be defined as SeedJobs. It means that there is no point in backing up any job configuration
 > up. Therefore, the backup script makes a copy of jobs history only.
 
-Backup and restore is done by a container sidecar. Chart 0.9.0 uses
+Backup and restore is done by a container sidecar. Chart 0.10.0 uses
 `quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1`, based on Debian Trixie and published for Linux AMD64 and ARM64.
 The backup image has its own version, independent of the operator and Jenkins images.
 
@@ -62,7 +62,7 @@ spec:
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
-        image: jenkins/jenkins:2.580.1-lts
+        image: jenkins/jenkins:2.580.2-lts
         imagePullPolicy: IfNotPresent
         resources:
           limits:

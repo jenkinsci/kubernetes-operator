@@ -55,7 +55,7 @@ The list below describes all the default security setting configured by the **Je
 - disable CLI - CLI access of `/cli` URL is disabled
 - configure kubernetes-plugin - secure configuration for Kubernetes plugin
 
-Jenkins usage statistics settings are left unchanged by default. Set
+From 0.10.0, Jenkins usage statistics settings are left unchanged by default. Set
 `spec.master.disableUsageStatistics: true` to disable collection, or
 `jenkins.disableUsageStatistics: true` in Helm.
 
@@ -111,7 +111,7 @@ guide.
 
 If you find a vulnerability or any misconfiguration in Jenkins, please report it in the [issues](https://github.com/jenkinsci/kubernetes-operator/issues).
 
-[jenkins-operator-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/deploy/all-in-one-v1alpha2.yaml
-[jenkins-controller-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/pkg/configuration/base/resources/rbac.go
-[base-configuration]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/pkg/configuration/base/resources/base_configuration_configmap.go
+[jenkins-operator-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/deploy/all-in-one-v1alpha2.yaml
+[jenkins-controller-role]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/pkg/configuration/base/resources/rbac.go
+[base-configuration]:https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/pkg/configuration/base/resources/base_configuration_configmap.go
 [issues]:https://github.com/jenkinsci/kubernetes-operator/issues

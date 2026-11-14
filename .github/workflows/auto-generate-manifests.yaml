@@ -31,7 +31,11 @@ jobs:
         #TODO: add also the webhook part and understand if is necessary
       - name: Helm update plain manifests
         run: |
-          bin/helm template --set fullnameOverride=jenkins-operator \
+          make kustomize
+          source config.base.env
+          manifest_dir=$(mktemp -d)
+          trap 'rm -rf "$manifest_dir"' EXIT
+          bin/helm template --namespace default --set fullnameOverride=jenkins-operator \
           --set jenkins.enabled=false  \
           --set jenkins.backup.enabled=false \
           --set jenkins.backup.pvc.enabled=false \
@@ -39,7 +43,34 @@ jobs:
           --set operator.resources.limits.memory=120Mi \
           --set operator.resources.requests.cpu=100m \
           --set operator.resources.requests.memory=120Mi \
-          chart/jenkins-operator/ > deploy/all-in-one-v1alpha2.yaml
+          chart/jenkins-operator/ > "$manifest_dir/resources.yaml"
+          cat > "$manifest_dir/kustomization.yaml" <<'EOF'
+          apiVersion: kustomize.config.k8s.io/v1beta1
+          kind: Kustomization
+          resources:
+            - resources.yaml
+          patches:
+            - target:
+                kind: Deployment
+                name: jenkins-operator
+              patch: |-
+                apiVersion: apps/v1
+                kind: Deployment
+                metadata:
+                  name: jenkins-operator
+                spec:
+                  template:
+                    spec:
+                      containers:
+                        - name: jenkins-operator
+                          env:
+                            - name: WATCH_NAMESPACE
+                              value: null
+                              valueFrom:
+                                fieldRef:
+                                  fieldPath: metadata.namespace
+          EOF
+          "bin/kustomize-${KUSTOMIZE_VERSION}" build "$manifest_dir" > deploy/all-in-one-v1alpha2.yaml
           sed -i '/namespace: default/d' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/# Source: .*//g' deploy/all-in-one-v1alpha2.yaml
           sed -i 's/app\.kubernetes\.io\/instance: release-name//g' deploy/all-in-one-v1alpha2.yaml
