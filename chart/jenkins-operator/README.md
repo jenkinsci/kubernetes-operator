@@ -1,6 +1,6 @@
 # jenkins-operator
 
-![Version: 0.9.0](https://img.shields.io/badge/Version-0.9.0-informational?style=flat-square) ![AppVersion: 0.9.0](https://img.shields.io/badge/AppVersion-0.9.0-informational?style=flat-square)
+![Version: 0.10.0-beta1](https://img.shields.io/badge/Version-0.10.0--beta1-informational?style=flat-square) ![AppVersion: 0.10.0-beta1](https://img.shields.io/badge/AppVersion-0.10.0--beta1-informational?style=flat-square)
 
 Kubernetes native operator which fully manages Jenkins on Kubernetes
 
@@ -112,7 +112,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | operator.affinity | object | `{}` |  |
 | operator.fullnameOverride | string | `""` |  |
 | operator.image.repository | string | `"quay.io/jenkins-kubernetes-operator/operator"` |  |
-| operator.image.tag | string | `"v0.9.0"` |  |
+| operator.image.tag | string | `"v0.10.0-beta1"` |  |
 | operator.imagePullPolicy | string | `"IfNotPresent"` |  |
 | operator.imagePullSecrets | list | `[]` |  |
 | operator.nameOverride | string | `""` |  |

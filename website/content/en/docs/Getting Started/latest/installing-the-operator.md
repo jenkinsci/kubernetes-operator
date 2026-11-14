@@ -4,11 +4,11 @@ linkTitle: "Installing the Operator"
 weight: 1
 date: 2026-10-31
 description: >
-  Install Jenkins Operator 0.9.0 with Helm or release manifests
+  Install Jenkins Operator 0.10.0 with Helm or release manifests
 ---
 
 {{% pageinfo %}}
-This guide installs **Jenkins Operator 0.9.0**. Official images are published on Quay:
+This guide installs **Jenkins Operator 0.10.0**. Official images are published on Quay:
 [operator](https://quay.io/repository/jenkins-kubernetes-operator/operator) and
 [backup-pvc](https://quay.io/repository/jenkins-kubernetes-operator/backup-pvc).
 Both release images support Linux AMD64 and ARM64.
@@ -20,36 +20,36 @@ Both release images support Linux AMD64 and ARM64.
 - `kubectl` configured for that cluster, using a version compatible with its API server.
 - Helm 3 if installing the chart.
 
-See the [release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.9.0)
+See the [release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.10.0)
 and [release CI](https://github.com/jenkinsci/kubernetes-operator/actions/workflows/auto-tests-e2e.yaml)
 when evaluating your cluster version.
 
 ## Install using Helm
 
-Add the chart repository and install chart version 0.9.0:
+Add the chart repository and install chart version 0.10.0:
 
 ```bash
 helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
 helm repo update
 helm install jenkins-operator jenkins/jenkins-operator \
-  --version 0.9.0 --namespace jenkins --create-namespace \
+  --version 0.10.0 --namespace jenkins --create-namespace \
   --set jenkins.namespace=jenkins
 ```
 
 By default, this installs both the operator and a Jenkins instance. To install only the operator,
 add `--set jenkins.enabled=false`, then follow [Deploying Jenkins](/kubernetes-operator/docs/getting-started/latest/deploying-jenkins/).
 
-Chart 0.9.0 uses these defaults:
+Chart 0.10.0 uses these defaults:
 
 | Component | Image |
 |---|---|
-| Operator | `quay.io/jenkins-kubernetes-operator/operator:v0.9.0` |
-| Jenkins | `jenkins/jenkins:2.580.1-lts` |
+| Operator | `quay.io/jenkins-kubernetes-operator/operator:v0.10.0` |
+| Jenkins | `jenkins/jenkins:2.580.2-lts` |
 | Backup sidecar | `quay.io/jenkins-kubernetes-operator/backup-pvc:v0.5.1` |
 
 The chart version, operator version, Jenkins version, and backup version are independent.
 Use a custom values file with `-f values.yaml` to override settings. See the
-[0.9.0 chart reference](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/chart/jenkins-operator/README.md)
+[0.10.0 chart reference](https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/chart/jenkins-operator/README.md)
 for supported values, including `jenkins.lifecycle`, `jenkins.terminationGracePeriodSeconds`,
 `jenkins.skipPlugins`, and `operator.watchNamespace`.
 
@@ -57,19 +57,27 @@ For example, to add Jenkins labels and annotations:
 
 ```bash
 helm install jenkins-operator jenkins/jenkins-operator \
-  --version 0.9.0 --namespace jenkins --create-namespace \
+  --version 0.10.0 --namespace jenkins --create-namespace \
   --set jenkins.namespace=jenkins \
   --set jenkins.labels.LabelKey=LabelValue \
   --set jenkins.annotations.AnnotationKey=AnnotationValue
 ```
+
+## Operator watch scope
+
+With `jenkins.enabled=false`, the operator watches its own namespace by default.
+Set `operator.watchNamespace` to watch another namespace, or
+`operator.watchAllNamespaces=true` to watch all namespaces. The chart creates matching RBAC.
+With bundled Jenkins enabled, `jenkins.namespace` selects the watched namespace;
+`operator.watchAllNamespaces` overrides it.
 
 ## Install using release manifests
 
 Install the CRD, then the operator and its RBAC resources:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/deploy/all-in-one-v1alpha2.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.10.0/config/crd/bases/jenkins.io_jenkins.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.10.0/deploy/all-in-one-v1alpha2.yaml
 kubectl rollout status deployment/jenkins-operator --namespace default
 ```
 
@@ -81,21 +89,24 @@ For separate operator and Jenkins namespaces, see the
 ## Upgrade an existing installation
 
 Back up Jenkins data and save your custom values before upgrading. Review the
-[release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.9.0)
+[release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.10.0)
 and [backup storage requirements](/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/#pvc-storage-size).
 
 Helm does not upgrade CRDs from a chart's `crds/` directory. Apply the release CRD before
 upgrading the chart, using your existing release name, namespace, and custom values:
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.9.0/config/crd/bases/jenkins.io_jenkins.yaml
+kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/v0.10.0/config/crd/bases/jenkins.io_jenkins.yaml
 helm repo update
 helm upgrade jenkins-operator jenkins/jenkins-operator \
-  --version 0.9.0 --namespace jenkins -f values.yaml
+  --version 0.10.0 --namespace jenkins -f values.yaml
 ```
 
 Check the rendered values before applying them, particularly custom images, probes, backup settings,
-and any use of the new `skipPlugins` option. The CR API remains `jenkins.io/v1alpha2`.
+and seed-agent scheduling. The seed agent now accepts only jobs targeting its label;
+set `jenkins.seedJobRestrictJobsToLabel=false` to retain unlabeled-job scheduling.
+Updating the operator replaces existing Jenkins Pods. Backups and restore settings still apply.
+The CR API remains `jenkins.io/v1alpha2`.
 
 ## Validating webhook
 
@@ -108,7 +119,7 @@ install the operator first with Jenkins creation disabled:
 
 ```bash
 helm upgrade --install jenkins-operator jenkins/jenkins-operator \
-  --version 0.9.0 --namespace jenkins --create-namespace \
+  --version 0.10.0 --namespace jenkins --create-namespace \
   --set jenkins.enabled=false --set webhook.enabled=true
 ```
 
@@ -132,15 +143,15 @@ Validation rejects a resource if that metadata has not yet been fetched. See
 ## Development snapshots
 
 Nightly images are published to the [operator repository](https://quay.io/repository/jenkins-kubernetes-operator/operator)
-with a short Git commit hash as their tag. These are development snapshots, not the stable 0.9.0 image.
+with a short Git commit hash as their tag. These are development snapshots, not the versioned release image.
 Use the `master` manifests only when intentionally testing unreleased changes.
 
 ## Note on restricted Jenkins controller pod volumeMounts
 Current design of the Operator puts an emphasis on creating a full GitOps flow of work for Jenkins users.
 One of the key points of this design is maintaining an immutable state of Jenkins.
 
-One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts emptyDir Volume
-(jenkins-home) as Jenkins home directory.
+One of the prerequisites of this is an ephemeral Jenkins home directory. To achieve that, Operator mounts `jenkins-home` as Jenkins home directory, using `emptyDir` by default
+or an [ephemeral PVC](../customizing-jenkins/#jenkins-home-storage).
 It is not possible to overwrite volumeMount and specify any other Volume for Jenkins home directory,
 as attempting to do so will result in Operator error.
 

@@ -132,7 +132,7 @@ $ ssh-keygen -t rsa -b 2048
 $ ssh-keygen -p -f <filename> -m pem
 ```
 
-Then copy content from generated file. 
+Then copy content from generated file.
 
 #### Public key
 
@@ -179,10 +179,7 @@ metadata:
     "jenkins.io/credentials-description" : "ssh github.com:jenkinsci/kubernetes-operator"
 stringData:
   privateKey: |
-    -----BEGIN RSA PRIVATE KEY-----
-    MIIJKAIBAAKCAgEAxxDpleJjMCN5nusfW/AtBAZhx8UVVlhhhIKXvQ+dFODQIdzO
-    oDXybs1zVHWOj31zqbbJnsfsVZ9Uf3p9k6xpJ3WFY9b85WasqTDN1xmSd6swD4N8
-    ...
+    YOUR_SSH_PRIVATE_KEY
   username: github_user_name
 ```
 

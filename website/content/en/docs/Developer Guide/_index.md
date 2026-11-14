@@ -25,9 +25,9 @@ nix develop
 
 The default shell provides Go, Kind, pre-commit, helm-docs, Bats and its libraries, and other
 build tools. Tool versions are maintained in
-[`config.base.env`](https://github.com/jenkinsci/kubernetes-operator/blob/v0.9.0/config.base.env)
+[`config.base.env`](https://github.com/jenkinsci/kubernetes-operator/blob/v0.10.0/config.base.env)
 and consumed by `variables.mk`; do not copy separate version settings into local scripts.
-Release 0.9.0 uses Go 1.26 and Operator SDK 1.42.3.
+Release 0.10.0 uses Go 1.26 and Operator SDK 1.42.3.
 
 ### Devcontainer
 

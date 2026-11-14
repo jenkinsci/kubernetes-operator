@@ -30,14 +30,14 @@ including 0.8.1 and both 0.9.0 betas. Thanks to everyone who contributed and hel
 - Added backup tests for both architectures and publish both image tags from one build.
 - Updated to **Go 1.26** and improved Nix tooling, integration tests, and Helm configuration.
 
-Back up Jenkins data and review the [installation and upgrade guide](/kubernetes-operator/docs/getting-started/latest/installing-the-operator/)
+Back up Jenkins data and review the [installation and upgrade guide](/kubernetes-operator/docs/getting-started/v0.9.x/installing-the-operator/)
 before updating. Apply the release CRD first, then upgrade your existing Helm release with your custom values:
 
 ```bash
 helm upgrade jenkins-operator jenkins/jenkins-operator --version 0.9.0 --namespace jenkins -f values.yaml
 ```
 
-Ensure the [backup PVC has room for temporary backups](/kubernetes-operator/docs/getting-started/latest/configuring-backup-and-restore/#pvc-storage-size).
+Ensure the [backup PVC has room for temporary backups](/kubernetes-operator/docs/getting-started/v0.9.x/configuring-backup-and-restore/#pvc-storage-size).
 The CR API remains `jenkins.io/v1alpha2`.
 
 See the [release notes](https://github.com/jenkinsci/kubernetes-operator/releases/tag/v0.9.0)
