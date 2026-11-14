@@ -129,8 +129,6 @@ func main() {
 		fatal(errors.Wrap(err, "failed to get config"), *debug)
 	}
 
-	cacheNamespace := map[string]cache.Config{}
-	cacheNamespace[namespace] = cache.Config{}
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		// MetricsBindAddress:      fmt.Sprintf("%s:%d", metricsHost, metricsPort),
 		Metrics: server.Options{
@@ -145,7 +143,7 @@ func main() {
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "c674355f.jenkins.io",
 		// Namespace:              namespace,
-		Cache: cache.Options{DefaultNamespaces: cacheNamespace},
+		Cache: buildCacheOptions(namespace),
 	})
 	if err != nil {
 		fatal(errors.Wrap(err, "unable to start manager"), *debug)
@@ -210,6 +208,10 @@ func main() {
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		fatal(errors.Wrap(err, "problem running manager"), *debug)
 	}
+}
+
+func buildCacheOptions(namespace string) cache.Options {
+	return cache.Options{DefaultNamespaces: map[string]cache.Config{namespace: {}}}
 }
 
 func fatal(err error, debug bool) {

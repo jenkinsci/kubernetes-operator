@@ -120,6 +120,7 @@ Kubernetes native operator which fully manages Jenkins on Kubernetes
 | operator.replicaCount | int | `1` |  |
 | operator.resources | object | `{}` |  |
 | operator.tolerations | list | `[]` |  |
+| operator.watchAllNamespaces | bool | `false` | Watch all namespaces, overriding watchNamespace and jenkins.namespace. |
 | webhook.certificate.duration | string | `"2160h"` |  |
 | webhook.certificate.name | string | `"webhook-certificate"` |  |
 | webhook.certificate.renewbefore | string | `"360h"` |  |

@@ -48,6 +48,16 @@ Returns an empty string when no repository is set, so optional images can be omi
 {{- end -}}
 {{- end -}}
 
+{{/* Resolve the operator watch scope; an empty namespace means all namespaces. */}}
+{{- define "jenkins-operator.watchNamespace" -}}
+{{- if .Values.operator.watchAllNamespaces -}}
+{{- else if .Values.jenkins.enabled -}}
+{{- .Values.jenkins.namespace -}}
+{{- else -}}
+{{- default .Release.Namespace .Values.operator.watchNamespace -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Common labels
 */}}

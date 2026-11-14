@@ -370,7 +370,11 @@ operator:
 
   # Select a different namespace to look for the Jenkins CR and deploy Jenkins in. Defaults to the same namespace as
   # the operator.
+  # Used when jenkins.enabled is false; empty also means the operator's namespace.
   # watchNamespace: "jenkins-namespace"
+
+  # -- Watch all namespaces, overriding watchNamespace and jenkins.namespace.
+  watchAllNamespaces: false
 
   resources: {}
   nodeSelector: {}

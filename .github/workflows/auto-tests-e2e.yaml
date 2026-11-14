@@ -54,6 +54,9 @@ jobs:
       - name: Verify code formatting
         run: make verify
 
+      - name: Verify namespace cache
+        run: make test-cache
+
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs: [create-e2e-list, verify-code]

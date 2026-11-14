@@ -94,6 +94,11 @@ test: ## Runs the go tests
 	@echo "+ $@"
 	@RUNNING_TESTS=1 go test -tags "$(BUILDTAGS) cgo" $(PACKAGES_FOR_UNIT_TESTS) ./test/e2e/testdata/reconciliation-ignore/identitywebhook
 
+.PHONY: test-cache
+test-cache: envtest ## Test namespace cache reads with a local API server and etcd
+	@cache_test_assets="$$($(ENVTEST) use $(ENVTEST_K8S_VERSION) --bin-dir $(LOCALBIN) -p path)" && \
+		KUBEBUILDER_ASSETS="$$cache_test_assets" go test -tags "$(BUILDTAGS) integration" ./cmd -run TestNamespaceCache -count=1
+
 .PHONY: e2e
 e2e: deepcopy-gen manifests backup-kind-load jenkins-kind-load ## Runs e2e tests, you can use EXTRA_ARGS
 	@echo "+ $@"
