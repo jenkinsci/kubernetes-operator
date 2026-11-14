@@ -62,7 +62,7 @@ jobs:
           | sed -e 's/\(.*\)/"\1"/' | xargs sed -i "/date:/c\date: $(date +'%Y-%m-%d')"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        uses: peter-evans/create-pull-request@15733dbdfeedb4f7fdb73d13c6f5ac83b710fab8 # v8.1.2
         if: env.IS_CHANGED == 'true' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         with:
           commit-message: Auto-updated docs
