@@ -21,6 +21,11 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.2  Helm: install helm chart with options" {
+  run ${KUBECTL} apply --server-side --force-conflicts -f chart/jenkins-operator/crds/jenkins-crd.yaml
+  assert_success
+  run ${KUBECTL} wait --for=condition=Established crd/jenkins.jenkins.io --timeout=60s
+  assert_success
+
   run ${KUBECTL} label node jenkins-control-plane batstest=yep
   assert_success
   run ${HELM} install options \
@@ -101,6 +106,9 @@ setup() {
 
 #bats test_tags=phase:helm,scenario:more-options
 @test "2.9  Helm: upgrade from main branch same value" {
+  HOME_STORAGE_CLASS=$(${KUBECTL} get storageclass -o 'jsonpath={.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}' | awk '{print $1}')
+  assert [ -n "${HOME_STORAGE_CLASS}" ]
+
   run ${HELM} upgrade options \
     --set jenkins.namespace=${DETIK_CLIENT_NAMESPACE} \
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
@@ -110,6 +118,9 @@ setup() {
     --set jenkins.image="jenkins/jenkins:2.580.2-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.lifecycle.preStop.exec.command="{echo bats-test}" \
+    --set-string jenkins.homeVolume.ephemeral.storageClassName="${HOME_STORAGE_CLASS}" \
+    --set 'jenkins.homeVolume.ephemeral.accessModes[0]=ReadWriteOnce' \
+    --set jenkins.homeVolume.ephemeral.resources.requests.storage=2Gi \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
     chart/jenkins-operator --wait
@@ -135,11 +146,34 @@ setup() {
 @test "2.11 Helm: check Jenkins Pod status again" {
   [[ ! -f "chart/jenkins-operator/deploy.tmp" ]] && skip "Jenkins helm chart have not been deployed correctly"
 
+  run ${KUBECTL} get jenkins jenkins -o 'jsonpath={.spec.master.homeVolume.ephemeral.storageClassName}'
+  assert_success
+  HOME_STORAGE_CLASS="${output}"
+  assert [ -n "${HOME_STORAGE_CLASS}" ]
+  run try "at most 30 times every 5s to get pods named '^jenkins-jenkins$' and verify that '.spec.volumes[?(@.name==\"jenkins-home\")].ephemeral.volumeClaimTemplate.spec.storageClassName' is '${HOME_STORAGE_CLASS}'"
+  assert_success
+
   run try "at most 20 times every 10s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
 
   run try "at most 20 times every 5s to get pods named 'jenkins-jenkins' and verify that '.status.containerStatuses[?(@.name==\"jenkins-master\")].ready' is 'true'"
   assert_success
+
+  run ${KUBECTL} get jenkins jenkins -o 'jsonpath={.spec.master.homeVolume.ephemeral.resources.requests.storage}'
+  assert_success
+  assert_output '2Gi'
+
+  run ${KUBECTL} get pod jenkins-jenkins -o 'jsonpath={.spec.volumes[?(@.name=="jenkins-home")].ephemeral.volumeClaimTemplate.spec.storageClassName}'
+  assert_success
+  assert_output "${HOME_STORAGE_CLASS}"
+
+  run ${KUBECTL} wait --for=jsonpath='{.status.phase}'=Bound pvc/jenkins-jenkins-jenkins-home --timeout=120s
+  assert_success
+  POD_UID=$(${KUBECTL} get pod jenkins-jenkins -o 'jsonpath={.metadata.uid}')
+  run ${KUBECTL} get pvc jenkins-jenkins-jenkins-home -o 'jsonpath={.metadata.ownerReferences[?(@.kind=="Pod")].uid}'
+  assert_success
+  assert_output "${POD_UID}"
+
 }
 
 #bats test_tags=phase:helm,scenario:more-options
@@ -196,6 +230,14 @@ setup() {
 
   run verify "there is 0 pvc named 'jenkins backup'"
   assert_success
+
+  for attempt in {1..20}; do
+    run ${KUBECTL} get pvc jenkins-jenkins-jenkins-home --ignore-not-found -o name
+    assert_success
+    [[ -z "${output}" ]] && break
+    sleep 3
+  done
+  assert_output ''
 
   rm "chart/jenkins-operator/deploy.tmp"
 }

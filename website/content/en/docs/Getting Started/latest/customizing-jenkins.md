@@ -208,6 +208,30 @@ The seed agent accepts only jobs targeting `seed-job-agent` by default, includin
 existing agents after upgrade. Set `spec.seedJobRestrictJobsToLabel: false` (Helm:
 `jenkins.seedJobRestrictJobsToLabel: false`) to allow unlabeled jobs.
 
+## Jenkins home storage (unreleased)
+
+Jenkins home uses `emptyDir` by default. See [why Jenkins home is disposable]({{< relref "/docs/FAQ/_index.md#how-can-i-change-jenkins_home-from-volume-to-persistent-volume" >}}).
+To use a Pod-owned ephemeral PVC:
+
+```yaml
+spec:
+  master:
+    homeVolume:
+      ephemeral:
+        storageClassName: fast
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 20Gi
+```
+
+Select one source: `ephemeral` or `emptyDir` (optional `medium` and `sizeLimit`).
+Omit `storageClassName` for the cluster default; `""` requests no StorageClass.
+Helm uses `jenkins.homeVolume`.
+
+Changing home storage replaces the Pod without migrating data. Existing
+backup and restore settings still apply.
+
 ## Externally managed pod fields (unreleased)
 
 {{% pageinfo %}}

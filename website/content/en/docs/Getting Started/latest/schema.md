@@ -1067,6 +1067,16 @@ More info: <a href="https://kubernetes.io/docs/concepts/containers/images#specif
 </tr>
 <tr>
 <td>
+<code>homeVolume</code></br>
+<em>object</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Pod-scoped Jenkins home storage. Select emptyDir or ephemeral (a Kubernetes PersistentVolumeClaimSpec, including storageClassName). Omitted uses emptyDir.</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>volumes</code></br>
 <em>
 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#volume-v1-core">

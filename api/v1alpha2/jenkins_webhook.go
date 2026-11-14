@@ -31,6 +31,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/log"
 	"github.com/jenkinsci/kubernetes-operator/pkg/plugins"
 
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -87,6 +88,9 @@ func (*JenkinsCustomValidator) ValidateDelete(_ context.Context, obj *Jenkins) (
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (in *Jenkins) ValidateCreate() (admission.Warnings, error) {
+	if errs := in.Spec.Master.HomeVolume.Validate(); len(errs) > 0 {
+		return nil, apierrors.NewInvalid(in.GroupVersionKind().GroupKind(), in.Name, errs)
+	}
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate create", "name", in.Name)
 		err := Validate(*in)
@@ -98,6 +102,9 @@ func (in *Jenkins) ValidateCreate() (admission.Warnings, error) {
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (in *Jenkins) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
+	if errs := in.Spec.Master.HomeVolume.Validate(); len(errs) > 0 {
+		return nil, apierrors.NewInvalid(in.GroupVersionKind().GroupKind(), in.Name, errs)
+	}
 	if in.Spec.ValidateSecurityWarnings {
 		jenkinslog.Info("validate update", "name", in.Name)
 		return nil, Validate(*in)

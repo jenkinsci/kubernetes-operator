@@ -88,18 +88,27 @@ func getJenkinsHomePath(jenkins *v1alpha2.Jenkins) string {
 	return defaultJenkinsHomePath
 }
 
+func jenkinsHomeVolume(jenkins *v1alpha2.Jenkins) corev1.Volume {
+	volume := corev1.Volume{Name: JenkinsHomeVolumeName}
+	home := jenkins.Spec.Master.HomeVolume
+	switch {
+	case home == nil:
+		volume.EmptyDir = &corev1.EmptyDirVolumeSource{}
+	case home.EmptyDir != nil:
+		volume.EmptyDir = home.EmptyDir.DeepCopy()
+	case home.Ephemeral != nil:
+		volume.Ephemeral = &corev1.EphemeralVolumeSource{VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{Spec: *home.Ephemeral.DeepCopy()}}
+	}
+	return volume
+}
+
 // GetJenkinsMasterPodBaseVolumes returns Jenkins master pod volumes required by operator
 func GetJenkinsMasterPodBaseVolumes(jenkins *v1alpha2.Jenkins) []corev1.Volume {
 	configMapVolumeSourceDefaultMode := corev1.ConfigMapVolumeSourceDefaultMode
 	secretVolumeSourceDefaultMode := corev1.SecretVolumeSourceDefaultMode
 	var scriptsVolumeDefaultMode int32 = 0777
 	volumes := []corev1.Volume{
-		{
-			Name: JenkinsHomeVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				EmptyDir: &corev1.EmptyDirVolumeSource{},
-			},
-		},
+		jenkinsHomeVolume(jenkins),
 		{
 			Name: jenkinsScriptsVolumeName,
 			VolumeSource: corev1.VolumeSource{
