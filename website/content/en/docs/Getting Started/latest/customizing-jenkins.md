@@ -14,7 +14,7 @@ Any plugin working for Jenkins can be installed by the Jenkins Operator.
 
 Pre-installed plugins:
 
-* `configuration-as-code:2144.ve8c697101488`
+* `configuration-as-code:2147.v8a_8d38668c72`
 * `git:5.11.0`
 * `job-dsl:3732.v9a_c49a_61a_313`
 * `kubernetes:4560.vc25b_83890c34`
@@ -51,7 +51,7 @@ spec:
   master:
     basePlugins:
     - name: configuration-as-code
-      version: "2144.ve8c697101488"
+      version: "2147.v8a_8d38668c72"
     - name: git
       version: "5.11.0"
     - name: job-dsl

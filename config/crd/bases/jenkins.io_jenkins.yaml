@@ -166,7 +166,7 @@ spec:
                       BasePlugins contains plugins required by operator
                       Defaults to :
                       - name: configuration-as-code
-                      version: "2144.ve8c697101488"
+                      version: "2147.v8a_8d38668c72"
                       - name: git
                       version: "5.11.0"
                       - name: job-dsl
