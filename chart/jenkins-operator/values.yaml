@@ -126,9 +126,13 @@ jenkins:
   # - name: job-dsl
   #   version: "1.87"
   # - name: configuration-as-code
-  #   version: 1810.v9b_c30a_249a_4c
+  #   version: 1836.vccda_4a_122a_a_e
   # - name: kubernetes-credentials-provider
   #   version: 1.262.v2670ef7ea_0c5
+  #
+  # These versions are known to work together. If you override one, check it doesn't
+  # require a newer configuration-as-code than the one you're pinning, or the
+  # Operator will fail to start with a plugin dependency conflict (see #1087).
 
   basePlugins: []
 

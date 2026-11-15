@@ -52,20 +52,22 @@ spec:
   master:
     basePlugins:
     - name: kubernetes
-      version: "1.30.11"
+      version: "4246.v5a_12b_1fe120e"
     - name: workflow-job
-      version: "2.42"
+      version: "1400.v7fd111b_ec82f"
     - name: workflow-aggregator
-      version: "2.6"
+      version: "596.v8c21c963d92d"
     - name: git
-      version: "4.10.0"
+      version: "5.2.2"
     - name: job-dsl
-      version: "1.78.1"
+      version: "1.87"
     - name: configuration-as-code
-      version: "1.55"
+      version: "1836.vccda_4a_122a_a_e"
     - name: kubernetes-credentials-provider
-      version: "0.20"
+      version: "1.262.v2670ef7ea_0c5"
 ```
+
+These versions are known to work together as of this writing. Several of these plugins (`git`, `kubernetes`, `kubernetes-credentials-provider`, `workflow-aggregator`) depend on a minimum version of `configuration-as-code` internally - if you override one plugin's version here, check that it doesn't require a newer `configuration-as-code` than the one you're pinning, or the Operator will fail to start with a "Multiple plugin prerequisites not met" error (see [#1087](https://github.com/jenkinsci/kubernetes-operator/issues/1087)).
 
 You can change their versions.
 
