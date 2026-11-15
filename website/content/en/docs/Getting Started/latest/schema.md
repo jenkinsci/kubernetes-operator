@@ -1115,20 +1115,18 @@ More info: <a href="https://kubernetes.io/docs/concepts/storage/volumes">https:/
 <em>(Optional)</em>
 <p>BasePlugins contains plugins required by operator
 Defaults to :
-- name: kubernetes
-version: &ldquo;1.30.11&rdquo;
-- name: workflow-job
-version: &ldquo;2.42&rdquo;
-- name: workflow-aggregator
-version: &ldquo;2.6&rdquo;
-- name: git
-version: &ldquo;4.10.0&rdquo;
-- name: job-dsl
-version: &ldquo;1.78.1&rdquo;
 - name: configuration-as-code
-version: &ldquo;1.55&rdquo;
+version: &ldquo;2144.ve8c697101488&rdquo;
+- name: git
+version: &ldquo;5.11.0&rdquo;
+- name: job-dsl
+version: &ldquo;3732.v9a_c49a_61a_313&rdquo;
+- name: kubernetes
+version: &ldquo;4560.vc25b_83890c34&rdquo;
 - name: kubernetes-credentials-provider
-version: &ldquo;0.20&rdquo;</p>
+version: &ldquo;1.324.v5271cd145cb_1&rdquo;
+- name: workflow-aggregator
+version: &ldquo;608.v67378e9d3db_1&rdquo;</p>
 </td>
 </tr>
 <tr>

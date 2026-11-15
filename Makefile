@@ -205,6 +205,16 @@ update-plugins: ## Update jenkins base plugins
 	echo "updating plugins for Jenkins $$JENKINS_VERSION"; \
 	./.github/workflows/update-plugins.sh "$$JENKINS_VERSION"
 
+.PHONY: update-plugin-docs
+update-plugin-docs: ## Sync plugin examples and regenerate CRD descriptions
+	python3 .github/workflows/sync_plugin_docs.py
+	$(MAKE) manifests
+
+.PHONY: test-plugin-docs
+test-plugin-docs: ## Check plugin documentation synchronization
+	python3 -B -m unittest discover -s .github/workflows -p test_sync_plugin_docs.py
+	python3 .github/workflows/sync_plugin_docs.py --check
+
 .PHONY: update-plugins-dry-run
 update-plugins-dry-run: ## Update jenkins base plugin -- dry run
 	@echo "+ $@"

@@ -53,6 +53,9 @@ jobs:
       - name: Update Jenkins base plugins
         run: make update-plugins
 
+      - name: Update plugin documentation
+        run: make update-plugin-docs test-plugin-docs
+
       - name: Run verify
         run: make verify
 
