@@ -4,7 +4,7 @@
     "build": "echo $BASE_URL; hugo --minify --baseURL=${BASE_URL}"
   },
   "devDependencies": {
-    "bootstrap": "5.3.8",
+    "bootstrap": "5.3.9",
     "@fortawesome/fontawesome-free": "7.3.1"
   }
 }
