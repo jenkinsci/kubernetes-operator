@@ -28,7 +28,7 @@ const e2e = "e2e"
 const (
 	configurationAsCodePlugin           = "configuration-as-code:2147.v8a_8d38668c72"
 	gitPlugin                           = "git:5.11.0"
-	jobDslPlugin                        = "job-dsl:3732.v9a_c49a_61a_313"
+	jobDslPlugin                        = "job-dsl:3752.vb_199526b_20c3"
 	kubernetesPlugin                    = "kubernetes:4560.vc25b_83890c34"
 	kubernetesCredentialsProviderPlugin = "kubernetes-credentials-provider:1.324.v5271cd145cb_1"
 	// Depends on workflow-job which should be automatically downloaded
