@@ -16,7 +16,7 @@ Pre-installed plugins:
 
 * `configuration-as-code:2147.v8a_8d38668c72`
 * `git:5.11.0`
-* `job-dsl:3732.v9a_c49a_61a_313`
+* `job-dsl:3752.vb_199526b_20c3`
 * `kubernetes:4560.vc25b_83890c34`
 * `kubernetes-credentials-provider:1.324.v5271cd145cb_1`
 * `workflow-aggregator:608.v67378e9d3db_1`
@@ -55,7 +55,7 @@ spec:
     - name: git
       version: "5.11.0"
     - name: job-dsl
-      version: "3732.v9a_c49a_61a_313"
+      version: "3752.vb_199526b_20c3"
     - name: kubernetes
       version: "4560.vc25b_83890c34"
     - name: kubernetes-credentials-provider

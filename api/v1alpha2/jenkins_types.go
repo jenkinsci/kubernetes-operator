@@ -409,7 +409,7 @@ type JenkinsMaster struct {
 	// - name: git
 	// version: "5.11.0"
 	// - name: job-dsl
-	// version: "3732.v9a_c49a_61a_313"
+	// version: "3752.vb_199526b_20c3"
 	// - name: kubernetes
 	// version: "4560.vc25b_83890c34"
 	// - name: kubernetes-credentials-provider
