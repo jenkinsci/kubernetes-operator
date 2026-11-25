@@ -33,7 +33,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.580.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.580.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -158,7 +158,7 @@ diag() {
     --set namespace=${DETIK_CLIENT_NAMESPACE} \
     --set operator.image=${OPERATOR_IMAGE} \
     --set jenkins.latestPlugins=true \
-    --set jenkins.image="jenkins/jenkins:2.580.2-lts" \
+    --set jenkins.image="jenkins/jenkins:2.580.3-lts" \
     --set jenkins.imagePullPolicy="IfNotPresent" \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image=quay.io/jenkins-kubernetes-operator/backup-pvc:e2e-test \
@@ -223,7 +223,7 @@ diag() {
     --set operator.image.tag=${op_tag} \
     --set jenkins.latestPlugins=true \
     --set jenkins.image.repository=docker.io/jenkins/jenkins \
-    --set jenkins.image.tag=2.580.2-lts \
+    --set jenkins.image.tag=2.580.3-lts \
     --set jenkins.imagePullPolicy=IfNotPresent \
     --set jenkins.backup.makeBackupBeforePodDeletion=false \
     --set jenkins.backup.image.repository=quay.io/jenkins-kubernetes-operator/backup-pvc \
@@ -245,7 +245,7 @@ diag() {
   # The Jenkins CR must carry the controller, backup and seed job agent images composed from the split values
   run ${KUBECTL} get jenkins jenkins -o jsonpath='{.spec.master.containers[?(@.name=="jenkins-master")].image}'
   assert_success
-  assert_output "docker.io/jenkins/jenkins:2.580.2-lts"
+  assert_output "docker.io/jenkins/jenkins:2.580.3-lts"
 
   run ${KUBECTL} get jenkins jenkins -o jsonpath='{.spec.master.containers[?(@.name=="backup")].image}'
   assert_success

@@ -37,10 +37,10 @@ jenkins:
   # repository includes the registry, e.g. --set jenkins.image.repository=my.registry.local/mirror/jenkins
   # Rendered as <repository>:<tag>.
   # It's recommended to use LTS (tag: "lts") version.
-  # A plain full reference string (e.g. "jenkins/jenkins:2.580.2-lts") is still accepted.
+  # A plain full reference string (e.g. "jenkins/jenkins:2.580.3-lts") is still accepted.
   image:
     repository: jenkins/jenkins
-    tag: 2.580.2-lts
+    tag: 2.580.3-lts
 
   # env contains jenkins container environment variables
   env: []
@@ -116,11 +116,11 @@ jenkins:
   #
   # basePlugins:
   # - name: configuration-as-code
-  #   version: "2147.v8a_8d38668c72"
+  #   version: "2148.v9d0c041b_a_13c"
   # - name: git
   #   version: "5.11.0"
   # - name: job-dsl
-  #   version: "3732.v9a_c49a_61a_313"
+  #   version: "3752.vb_199526b_20c3"
   # - name: kubernetes
   #   version: "4560.vc25b_83890c34"
   # - name: kubernetes-credentials-provider

@@ -405,11 +405,11 @@ type JenkinsMaster struct {
 	// +optional
 	// Defaults to :
 	// - name: configuration-as-code
-	// version: "2147.v8a_8d38668c72"
+	// version: "2148.v9d0c041b_a_13c"
 	// - name: git
 	// version: "5.11.0"
 	// - name: job-dsl
-	// version: "3732.v9a_c49a_61a_313"
+	// version: "3752.vb_199526b_20c3"
 	// - name: kubernetes
 	// version: "4560.vc25b_83890c34"
 	// - name: kubernetes-credentials-provider
