@@ -1116,11 +1116,11 @@ More info: <a href="https://kubernetes.io/docs/concepts/storage/volumes">https:/
 <p>BasePlugins contains plugins required by operator
 Defaults to :
 - name: configuration-as-code
-version: &ldquo;2147.v8a_8d38668c72&rdquo;
+version: &ldquo;2148.v9d0c041b_a_13c&rdquo;
 - name: git
 version: &ldquo;5.11.0&rdquo;
 - name: job-dsl
-version: &ldquo;3732.v9a_c49a_61a_313&rdquo;
+version: &ldquo;3752.vb_199526b_20c3&rdquo;
 - name: kubernetes
 version: &ldquo;4560.vc25b_83890c34&rdquo;
 - name: kubernetes-credentials-provider
